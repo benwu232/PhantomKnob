@@ -125,45 +125,171 @@ func calKnob(_ points: [Int: CGPoint]) -> (KnobCore, Int, Int) {
 
 ## 5. 架构设计
 
-### 5.1 模块划分
+### 5.1 架构模式：MVVM
+
+本项目采用 **MVVM（Model-View-ViewModel）** 架构模式，这是 SwiftUI 应用的标准模式。
+
+**MVVM 架构图：**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                          View Layer                              │
+│  ┌──────────┐  ┌──────────────┐  ┌──────────┐  ┌──────────┐    │
+│  │WelcomeView│  │DetectionView │  │ResultView│  │ DemoView │    │
+│  └────┬─────┘  └──────┬───────┘  └────┬─────┘  └────┬─────┘    │
+│       │               │               │              │          │
+│       │  @StateObject │               │              │          │
+│       ▼               ▼               ▼              ▼          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              │ 数据绑定（@Published）
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       ViewModel Layer                            │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌─────────────┐  │
+│  │DetectionViewModel│  │   DemoViewModel  │  │SettingsVM   │  │
+│  │  - detectionState│  │  - knobAngle     │  │ - cache     │  │
+│  │  - isDetecting   │  │  - displayValue  │  │             │  │
+│  │  + startDetect() │  │  + handleTouches │  │ + reDetect()│  │
+│  └────────┬─────────┘  └────────┬─────────┘  └──────┬──────┘  │
+│           │                     │                    │         │
+└───────────┼─────────────────────┼────────────────────┼─────────┘
+            │                     │                    │
+            ▼                     ▼                    ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                          Model Layer                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐ │
+│  │   KnobCore   │  │DetectionResult│  │TouchpadEngine/KnobAlg│ │
+│  │ - center     │  │ - isSupported │  │ (业务逻辑服务)        │ │
+│  │ - radius     │  │ - timestamp   │  │                      │ │
+│  │ - angle      │  │ - details     │  │                      │ │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**为什么选择 MVVM：**
+
+| 特点 | 说明 |
+|------|------|
+| SwiftUI 天然搭配 | `@ObservableObject` + `@Published` 实现自动数据绑定 |
+| 可测试性 | ViewModel 独立于 View，易于单元测试 |
+| 状态管理清晰 | 所有 UI 状态集中在 ViewModel，避免分散 |
+| 易于扩展 | 添加新功能只需添加对应的 ViewModel |
+
+### 5.2 模块划分
 
 ```
 PhantomKnobDetector.app
 │
-├── Core（核心层 - 可复用）
-│   ├── TouchpadEngine     - 触摸事件引擎
-│   ├── KnobAlgorithm      - calKnob() 算法
-│   └── KnobCore           - 旋钮几何模型（center, radius, angle）
+├── View（视图层 - SwiftUI）
+│   ├── WelcomeView           - 欢迎页
+│   ├── DetectionView         - 检测页
+│   ├── ResultView            - 结果页
+│   ├── DemoView              - 演示页
+│   ├── SettingsView          - 设置页
+│   └── Components            - 可复用 UI 组件
+│       └── KnobCircleView    - 旋钮圆形视图
 │
-├── Detection（检测模块）
-│   ├── TouchpadDetector   - 检测触控板能力
-│   ├── DetectionResult    - 结果模型
-│   └── DetectionCache     - 结果缓存
+├── ViewModel（视图模型层）
+│   ├── DetectionViewModel    - 检测流程状态管理
+│   ├── DemoViewModel         - 演示页状态管理
+│   └── SettingsViewModel     - 设置页状态管理
+│
+├── Model（模型层）
+│   ├── KnobCore              - 旋钮几何模型（center, radius, angle）
+│   ├── KnobState             - 旋钮状态（current, previous, deltaAngle）
+│   ├── DetectionResult       - 检测结果模型
+│   └── DetectionDetails      - 检测详情
+│
+├── Service（服务层）
+│   ├── TouchpadEngine        - 触摸事件引擎
+│   ├── KnobAlgorithm         - calKnob() 算法
+│   ├── TouchpadDetector      - 触控板能力检测
+│   └── PermissionManager     - 权限管理（预留）
 │
 ├── Control（控制层 - 可扩展）
-│   ├── ControlTarget      - 控制目标协议
-│   └── DemoSliderTarget   - MVP：控制演示 Slider
+│   ├── ControlTarget         - 控制目标协议
+│   └── DemoSliderTarget      - MVP：控制演示数值
 │   │
 │   未来扩展：
 │   ├── SystemVolumeTarget     - Level 2：系统音量
 │   ├── SystemBrightnessTarget - Level 2：系统亮度
 │   └── ExternalAppTarget      - Level 3：跨应用控制
 │
-├── UI（界面层）
-│   ├── WelcomeView        - 欢迎页
-│   ├── DetectionView      - 检测页
-│   ├── ResultView         - 结果页
-│   ├── DemoView           - 演示页
-│   └── SettingsView       - 设置页（重新检测等）
-│
-├── Permission（权限层 - 预留）
-│   └── PermissionManager  - 当前空实现
-│
 └── Storage（存储层）
-    └── DetectionCache     - UserDefaults 封装
+    └── DetectionCache        - UserDefaults 封装
 ```
 
-### 5.2 关键接口
+### 5.3 MVVM 角色对照
+
+| 模块 | MVVM 角色 | 职责 |
+|------|-----------|------|
+| **View** | View | 纯展示，无业务逻辑，通过 `@StateObject` 持有 ViewModel |
+| **ViewModel** | ViewModel | 业务逻辑，管理 `@Published` 状态，响应 View 事件 |
+| **Model + Service** | Model | 数据结构 + 业务逻辑服务 |
+| **Control** | - | 控制目标抽象，被 ViewModel 调用 |
+
+### 5.4 典型示例：DemoViewModel
+
+```swift
+// MARK: - Model（纯数据）
+struct KnobCore {
+    let center: CGPoint
+    let radius: Double
+    let angle: Double
+    var isValid: Bool { radius > 0 }
+}
+
+// MARK: - ViewModel（状态 + 业务逻辑）
+class DemoViewModel: ObservableObject {
+    // @Published 属性：View 自动响应变化
+    @Published var knobAngle: Double = 0
+    @Published var displayValue: Double = 50.0
+    @Published var isActive: Bool = false
+    
+    private let touchpadEngine = TouchpadEngine()
+    private let knobAlgorithm = KnobAlgorithm()
+    private var controlTarget: ControlTarget
+    
+    init() {
+        self.controlTarget = DemoSliderTarget()
+        touchpadEngine.delegate = self
+    }
+    
+    // 业务逻辑：处理触摸移动
+    func handleTouchesMoved(_ touches: Set<NSTouch>) {
+        let state = knobAlgorithm.process(touches)
+        knobAngle = state.current.angle
+        displayValue = controlTarget.applyDelta(state.deltaAngle)
+        isActive = true
+    }
+}
+
+// MARK: - View（纯展示）
+struct DemoView: View {
+    @StateObject var viewModel = DemoViewModel()
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("✅ 支持检测通过")
+                .font(.headline)
+            
+            // 旋钮图形 - 绑定 ViewModel 状态
+            KnobCircleView(angle: viewModel.knobAngle)
+                .frame(width: 100, height: 100)
+            
+            // 数值显示
+            Text("\(viewModel.displayValue, specifier: "%.1f")")
+                .font(.largeTitle)
+            
+            Text("在触控板上双指旋转以调整数值")
+                .font(.caption)
+        }
+    }
+}
+```
+
+### 5.5 关键接口
 
 #### TouchpadEngine
 
@@ -191,7 +317,7 @@ protocol ControlTarget {
     var maxValue: Double { get }
     var displayName: String { get }
     
-    func applyDelta(_ delta: Double)
+    func applyDelta(_ delta: Double) -> Double
 }
 ```
 
@@ -207,7 +333,7 @@ struct KnobCore {
 }
 ```
 
-### 5.3 扩展点设计
+### 5.6 扩展点设计
 
 | 模块 | MVP 实现 | 未来扩展点 |
 |------|----------|-----------|
