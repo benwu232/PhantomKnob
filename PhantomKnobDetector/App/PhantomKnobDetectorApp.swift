@@ -2,12 +2,24 @@ import SwiftUI
 
 @main
 struct PhantomKnobDetectorApp: App {
+    @StateObject private var appViewModel = AppViewModel(cache: DetectionCache())
+    
     var body: some Scene {
         WindowGroup {
-            Text("PhantomKnobDetector - Placeholder")
-                .font(.largeTitle)
-                .padding()
-                .frame(width: 500, height: 400)
+            switch appViewModel.currentScreen {
+            case .welcome:
+                WelcomeView()
+                    .environmentObject(appViewModel)
+            case .detection:
+                DetectionView()
+                    .environmentObject(appViewModel)
+            case .result(let result):
+                ResultView(result: result)
+                    .environmentObject(appViewModel)
+            case .demo:
+                DemoView()
+                    .environmentObject(appViewModel)
+            }
         }
         .windowStyle(.hiddenTitleBar)
     }
