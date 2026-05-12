@@ -1,0 +1,442 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		643A0E8AE1F38355563DA748 /* PhantomKnobDetectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78935A2232B2B921D06D1C3E /* PhantomKnobDetectorApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A4685FB9D60946285BE00B8B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F9D549A64AAE54E3F2213EB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 89FCB8F8CD63DC7BB9E38770;
+			remoteInfo = PhantomKnobDetector;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		78935A2232B2B921D06D1C3E /* PhantomKnobDetectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomKnobDetectorApp.swift; sourceTree = "<group>"; };
+		95BA3A7D77928B20CB7C72D7 /* PhantomKnobDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhantomKnobDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		988EF2ABA55EF55B9A723AE1 /* PhantomKnobDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomKnobDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0E0B68874438C72E95D8E447 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		23840BE4CBEA0952A5DB60E9 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				78935A2232B2B921D06D1C3E /* PhantomKnobDetectorApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		30E15729A008B66CECCE958E /* Control */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Control;
+			sourceTree = "<group>";
+		};
+		31AB9C1039AA9F69F035C566 = {
+			isa = PBXGroup;
+			children = (
+				23840BE4CBEA0952A5DB60E9 /* App */,
+				30E15729A008B66CECCE958E /* Control */,
+				F8D1A488CA13B084A932747A /* Model */,
+				429E45E435054796D224634E /* PhantomKnobDetectorTests */,
+				9C8E99B5F517E08D70B19A0D /* Service */,
+				715852F8B2B7F918E249226E /* Storage */,
+				F28D610879DC6F3748FCD0A0 /* View */,
+				6716C6363D3950BD974FD4A8 /* ViewModel */,
+				CF915CA5A36174B3E44F4202 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		429E45E435054796D224634E /* PhantomKnobDetectorTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = PhantomKnobDetectorTests;
+			sourceTree = "<group>";
+		};
+		6716C6363D3950BD974FD4A8 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		715852F8B2B7F918E249226E /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		9C8E99B5F517E08D70B19A0D /* Service */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		CF915CA5A36174B3E44F4202 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				95BA3A7D77928B20CB7C72D7 /* PhantomKnobDetector.app */,
+				988EF2ABA55EF55B9A723AE1 /* PhantomKnobDetectorTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F28D610879DC6F3748FCD0A0 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0E0B68874438C72E95D8E447 /* Components */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		F8D1A488CA13B084A932747A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5E3D68853F8EB3C1DA9C873C /* PhantomKnobDetectorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B449771964BAB789D37CB55 /* Build configuration list for PBXNativeTarget "PhantomKnobDetectorTests" */;
+			buildPhases = (
+				2B38F78F4DEA8113EE161B53 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B5D4BD1276D9945B65996CC7 /* PBXTargetDependency */,
+			);
+			name = PhantomKnobDetectorTests;
+			packageProductDependencies = (
+			);
+			productName = PhantomKnobDetectorTests;
+			productReference = 988EF2ABA55EF55B9A723AE1 /* PhantomKnobDetectorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		89FCB8F8CD63DC7BB9E38770 /* PhantomKnobDetector */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D1953523395A53498E24B37 /* Build configuration list for PBXNativeTarget "PhantomKnobDetector" */;
+			buildPhases = (
+				9793DCB3187976C0A3E99677 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PhantomKnobDetector;
+			packageProductDependencies = (
+			);
+			productName = PhantomKnobDetector;
+			productReference = 95BA3A7D77928B20CB7C72D7 /* PhantomKnobDetector.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F9D549A64AAE54E3F2213EB2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					89FCB8F8CD63DC7BB9E38770 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 048FCCA3AF17FE34B453A41C /* Build configuration list for PBXProject "PhantomKnobDetector" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 31AB9C1039AA9F69F035C566;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CF915CA5A36174B3E44F4202 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				89FCB8F8CD63DC7BB9E38770 /* PhantomKnobDetector */,
+				5E3D68853F8EB3C1DA9C873C /* PhantomKnobDetectorTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2B38F78F4DEA8113EE161B53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9793DCB3187976C0A3E99677 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				643A0E8AE1F38355563DA748 /* PhantomKnobDetectorApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B5D4BD1276D9945B65996CC7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 89FCB8F8CD63DC7BB9E38770 /* PhantomKnobDetector */;
+			targetProxy = A4685FB9D60946285BE00B8B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		13AD7E3D871F640ED5BD92A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnobDetector;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2FDE9E4DA15262FCBDC24DA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnobDetectorTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomKnobDetector.app/Contents/MacOS/PhantomKnobDetector";
+			};
+			name = Release;
+		};
+		6300DEF30ACF5BC6D7563F7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = PhantomKnobDetector;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		B1A69933B98907E3B84C7FB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = PhantomKnobDetector;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		EEC319294699651D64CABB60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnobDetector;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		FE6A1CCEA5163B70B1563162 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnobDetectorTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomKnobDetector.app/Contents/MacOS/PhantomKnobDetector";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		048FCCA3AF17FE34B453A41C /* Build configuration list for PBXProject "PhantomKnobDetector" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1A69933B98907E3B84C7FB9 /* Debug */,
+				6300DEF30ACF5BC6D7563F7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3B449771964BAB789D37CB55 /* Build configuration list for PBXNativeTarget "PhantomKnobDetectorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FE6A1CCEA5163B70B1563162 /* Debug */,
+				2FDE9E4DA15262FCBDC24DA1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7D1953523395A53498E24B37 /* Build configuration list for PBXNativeTarget "PhantomKnobDetector" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13AD7E3D871F640ED5BD92A9 /* Debug */,
+				EEC319294699651D64CABB60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F9D549A64AAE54E3F2213EB2 /* Project object */;
+}

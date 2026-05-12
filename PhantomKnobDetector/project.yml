@@ -1,0 +1,73 @@
+name: PhantomKnobDetector
+options:
+  bundleIdPrefix: com.phantomknob
+  deploymentTarget:
+    macOS: "12.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    PRODUCT_NAME: PhantomKnobDetector
+    MARKETING_VERSION: 1.0
+    CURRENT_PROJECT_VERSION: 1
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "12.0"
+    ENABLE_PREVIEWS: YES
+
+targets:
+  PhantomKnobDetector:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+        excludes:
+          - "**/.DS_Store"
+      - path: Model
+        excludes:
+          - "**/.DS_Store"
+      - path: ViewModel
+        excludes:
+          - "**/.DS_Store"
+      - path: View
+        excludes:
+          - "**/.DS_Store"
+      - path: Service
+        excludes:
+          - "**/.DS_Store"
+      - path: Control
+        excludes:
+          - "**/.DS_Store"
+      - path: Storage
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        INFOPLIST_FILE: Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.phantomknob.PhantomKnobDetector
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: PhantomKnobDetector
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        LSMinimumSystemVersion: "12.0"
+        NSHighResolutionCapable: true
+        LSApplicationCategoryType: public.app-category.utilities
+        NSHumanReadableCopyright: "Copyright © 2025 Ben Wu. All rights reserved."
+
+  PhantomKnobDetectorTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: PhantomKnobDetectorTests
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - target: PhantomKnobDetector
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.phantomknob.PhantomKnobDetectorTests
