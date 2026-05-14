@@ -68,9 +68,9 @@ targets:
           - "**/.DS_Store"
     dependencies:
       - target: PhantomKnobDetector
-        link: true
     settings:
       base:
+        PRODUCT_NAME: PhantomKnobDetectorTests
         PRODUCT_BUNDLE_IDENTIFIER: com.phantomknob.PhantomKnobDetectorTests
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGN_STYLE: Automatic

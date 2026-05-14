@@ -28,5 +28,7 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2025 Ben Wu. All rights reserved.</string>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>Phantom Knob Detector 需要辅助功能权限来检测和控制其他应用中的滑块和进度条。</string>
 </dict>
 </plist>

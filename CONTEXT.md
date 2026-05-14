@@ -5,9 +5,10 @@
 ### Knob
 A two-finger rotation gesture on a trackpad that simulates a physical knob/dial. The system detects the absolute position of two fingers via `normalizedPosition`, calculates the angle between them, and derives rotation delta.
 
-**Gesture disambiguation:**
-- **MVP**: All two-finger gestures are treated as knob gestures (no conflict resolution needed)
-- **Future**: Hotkey toggle or motion pattern analysis (angle/position change rate) — not implemented in MVP
+**Gesture disambiguation (Global Control Mode):**
+- **Default mode**: Pan (two-finger scroll/translate) — gesture passes through to system
+- **Knob mode**: Activated when angle change exceeds 5° within 2-second detection window
+- **Mode locking**: Once determined (knob or pan), mode is locked until fingers leave trackpad
 
 ### Knob Detection
 The process of verifying whether a trackpad supports the absolute coordinates (`normalizedPosition`) required for Knob gesture recognition.
@@ -75,6 +76,201 @@ Visual representation of the knob in the demo page.
 - No finger position display
 - No 3D effects or shadows
 - Value displayed below knob in large system font
+
+### Global Control Mode
+A feature that allows users to control any adjustable UI element (sliders, progress bars, scroll bars) via Knob gesture across all applications.
+
+**Activation:** Hotkey (`⌘⇧K` by default, customizable in settings)
+
+**Architecture:**
+- **KnobStateManager**: Central state machine managing the entire control lifecycle
+- **TargetDetector**: Uses Accessibility API to find controllable elements under cursor
+- **AccessibilityTarget**: ControlTarget implementation for system UI elements
+- **OverlayController**: Manages the visual feedback overlay
+
+---
+
+## Global Control State Machine
+
+### KnobStateManager
+Central state machine managing global control mode. Single source of truth for all state transitions.
+
+### States
+
+| State | Color | Target | Description |
+|-------|-------|--------|-------------|
+| `inactive` | Gray | None | Feature disabled |
+| `activated` | Blue | None | Feature enabled, waiting for gesture |
+| `knobing` | Orange | Locked | Actively controlling target value |
+| `cooling` | Orange | Locked | Gesture ended, 1-second grace period for continuation |
+
+### State Transitions
+
+```
+inactive ──[hotkey]──→ activated ──[gesture + target + angle>5°]──→ knobing
+    ↑                      ↑                                          │
+    │                      │              ┌───────────────────────────┘
+    │                      │              │
+    │                   [1s timeout]   [fingers lift]
+    │                      ↑              │
+    │                      │              ▼
+    │                   cooling ←─────────┘
+    │                      │
+    │         [1s timeout] │ [gesture + same target]
+    │                      │        │
+    └──────────────────────┘        └──→ knobing (resume)
+```
+
+**Transition rules:**
+- `inactive` → `activated`: Hotkey pressed
+- `activated` → `inactive`: Hotkey pressed
+- `activated` → `knobing`: Gesture started + target detected + angle change > 5° within 2s
+- `knobing` → `cooling`: Fingers left trackpad
+- `cooling` → `knobing`: New gesture within 1s + same target
+- `cooling` → `activated`: 1s timeout OR target changed
+- `knobing`/`cooling` → `inactive`: Hotkey pressed
+- Any state → `activated`: Application switched (clears target)
+
+---
+
+## Target Detection
+
+### TargetDetector
+Detects controllable UI elements under the cursor using macOS Accessibility API.
+
+**Detection trigger:** Only when gesture starts (`touchesBegan`)
+
+**Detection flow:**
+1. Get cursor position via `NSEvent.mouseLocation`
+2. Get UI element at position via `AXUIElementCopyElementAtPosition`
+3. Check if element is adjustable (AXRole + AXValue + AXMinValue + AXMaxValue)
+4. If not adjustable, search up through parent elements (max 10 levels)
+5. Return `AccessibilityTarget` or nil
+
+**Supported element types:**
+- `AXSlider`: Volume, brightness, system sliders
+- `AXProgressIndicator`: Video progress bars, loading indicators
+- `AXScrollBar`: Scroll position controls
+
+**Target locking:** Once detected, target is locked for the entire gesture duration. User must release fingers and start new gesture to change target.
+
+### AccessibilityTarget
+ControlTarget implementation for Accessibility API elements.
+
+**Properties:**
+- `element`: AXUIElement reference
+- `value`: Current value from AXValue
+- `minValue`, `maxValue`: Range from AXMinValue/AXMaxValue
+- `displayName`: From AXTitle or AXDescription (may be empty)
+
+**Error handling:** If `AXUIElementSetAttributeValue` fails, post `accessibilityPermissionRevoked` notification.
+
+---
+
+## Gesture Classification
+
+### Detection Window
+A 2-second window starting from `touchesBegan` to determine gesture type.
+
+**Default mode:** Pan (gesture passes through to system)
+
+**Knob activation:**
+- Track initial angle on `touchesBegan`
+- On each `touchesMoved`, calculate angle delta
+- If `|angle delta| > 5°` within 2s → lock to knob mode
+- Reset initial angle when entering knob mode (subsequent deltas calculated from this point)
+
+**After detection window:**
+- If no angle threshold exceeded → stay in pan mode (locked)
+- Gesture continues to pass through to system
+
+**Threshold rationale:** 5° is sensitive enough for intentional rotation while avoiding false triggers from hand tremor during normal scrolling.
+
+---
+
+## Sensitivity
+
+### Base Sensitivity
+Default: 1° rotation → 0.5 value change (full 360° ≈ 180 value change)
+
+### Per-Type Override
+Sensitivity can be customized per element type:
+- `sliderSensitivity`: For AXSlider elements
+- `progressSensitivity`: For AXProgressIndicator elements
+- `scrollbarSensitivity`: For AXScrollBar elements
+
+If type-specific sensitivity not set, falls back to global default.
+
+### Radius-Based Sensensitivity (Future)
+Knob radius (distance between two fingers) affects sensitivity:
+- Small radius (< 0.3 normalized): High sensitivity (1° → 1.0 value)
+- Medium radius (0.3-0.7): Default sensitivity (1° → 0.5 value)
+- Large radius (> 0.7): Low sensitivity (1° → 0.25 value)
+
+Rationale: Small radius = fingers close = small physical movement = need higher sensitivity; large radius = fingers spread = large movement = finer control.
+
+### Storage
+All sensitivity settings stored in UserDefaults with auto-save on change.
+
+---
+
+## Overlay UI
+
+### Display Position
+Fixed at gesture start position (mouse cursor location with offset to avoid occlusion).
+
+### Content (Adaptive)
+```
+┌─────────────┐
+│   [Name]    │  ← Target name (if AXTitle exists and < 10 chars)
+│     ╱       │  ← Angle indicator
+│   ◉         │  ← Center point
+│    65%      │  ← Current value (percentage/time/raw)
+└─────────────┘
+```
+
+**Value format:**
+- Range 0-100: Percentage (65%)
+- Range 0-3600+ (video): Time format (01:23:45)
+- Other: Raw value
+
+### Visibility
+- Fade in when entering `knobing` state
+- Fade out over 1 second when entering `cooling` state
+- Fade in again if returning to `knobing` within 1 second
+
+---
+
+## Hotkey
+
+### Default
+`⌘⇧K` (Command + Shift + K)
+
+### Conflict Detection
+On registration, check if hotkey is already in use by another app. If conflict detected, prompt user to choose different hotkey.
+
+### Customization
+Users can change hotkey in Settings.
+
+---
+
+## Permissions
+
+### Accessibility Permission
+Required for Global Control Mode to work.
+
+**Check points:**
+1. App launch
+2. Before entering `activated` state
+3. On every `AXUIElementSetAttributeValue` call (catch failures)
+
+**Permission revoked during use:**
+- Catch API failure
+- Post notification
+- Return to `inactive` state
+- Show permission guidance UI
+
+---
 
 ## Bounded Contexts
 
