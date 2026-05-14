@@ -66,10 +66,18 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate {
     }
     
     func toggleMode() {
+        NSLog("[KnobStateManager] toggleMode() called, current state: \(state)")
         if case .inactive = state {
-            guard AXIsProcessTrusted() else { return }
+            let isTrusted = AXIsProcessTrusted()
+            NSLog("[KnobStateManager] AXIsProcessTrusted: \(isTrusted)")
+            guard isTrusted else {
+                NSLog("[KnobStateManager] Accessibility not granted, cannot activate")
+                return
+            }
+            NSLog("[KnobStateManager] Transitioning to activated")
             transition(to: .activated)
         } else {
+            NSLog("[KnobStateManager] Transitioning to inactive")
             transition(to: .inactive)
             currentTarget = nil
             overlayController.hide()
@@ -78,9 +86,11 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate {
     }
     
     private func transition(to newState: KnobGlobalState) {
+        NSLog("[KnobStateManager] transition(to: \(newState))")
         state = newState
         let targetName = currentTarget?.displayName
         statusBarController.updateState(newState, targetName: targetName)
+        NSLog("[KnobStateManager] State updated, calling statusBarController.updateState")
     }
     
     private func handleAppSwitch() {

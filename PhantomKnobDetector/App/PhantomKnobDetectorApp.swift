@@ -2,6 +2,7 @@ import SwiftUI
 
 class AppState: ObservableObject {
     let knobStateManager: KnobStateManager
+    let statusBarController: StatusBarController
     
     init() {
         let targetDetector = TargetDetector()
@@ -10,6 +11,7 @@ class AppState: ObservableObject {
         let statusBarController = StatusBarController()
         let touchHandler = GlobalTouchHandler()
         
+        self.statusBarController = statusBarController
         self.knobStateManager = KnobStateManager(
             targetDetector: targetDetector,
             gestureClassifier: gestureClassifier,
@@ -17,6 +19,13 @@ class AppState: ObservableObject {
             statusBarController: statusBarController,
             touchHandler: touchHandler
         )
+        
+        NSLog("[AppState] Initialized, statusBarController retained")
+    }
+    
+    func toggleKnobMode() {
+        NSLog("[AppState] toggleKnobMode called from UI")
+        knobStateManager.toggleMode()
     }
 }
 
@@ -27,10 +36,21 @@ struct PhantomKnobDetectorApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(appViewModel: appViewModel)
-                .onAppear {
-                    appState.knobStateManager.start()
+            VStack {
+                ContentView(appViewModel: appViewModel)
+            }
+            .onAppear {
+                appState.knobStateManager.start()
+            }
+            .toolbar {
+                ToolbarItem {
+                    Button(action: {
+                        appState.toggleKnobMode()
+                    }) {
+                        Text("切换 Knob 模式")
+                    }
                 }
+            }
         }
         .windowStyle(.hiddenTitleBar)
         
