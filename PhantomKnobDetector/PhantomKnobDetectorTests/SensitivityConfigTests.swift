@@ -25,6 +25,9 @@ final class SensitivityConfigTests: XCTestCase {
         let decoded = try! JSONDecoder().decode(SensitivityConfig.self, from: data)
         
         XCTAssertEqual(decoded.globalDefault, 0.75, accuracy: 0.01)
-        XCTAssertEqual(decoded.sliderSensitivity, 1.2, accuracy: 0.01)
+        XCTAssertNotNil(decoded.sliderSensitivity)
+        if let sliderSens = decoded.sliderSensitivity {
+            XCTAssertEqual(sliderSens, 1.2, accuracy: 0.01)
+        }
     }
 }

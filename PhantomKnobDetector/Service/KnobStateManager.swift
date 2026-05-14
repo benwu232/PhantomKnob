@@ -182,7 +182,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate {
     private func extractPoints(from touches: Set<NSTouch>) -> [Int: CGPoint] {
         var points: [Int: CGPoint] = [:]
         
-        for touch in touches {
+        for (index, touch) in touches.enumerated() {
             let normalizedPos = touch.normalizedPosition
             let mouseLocation = NSEvent.mouseLocation
             
@@ -191,7 +191,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate {
                 y: mouseLocation.y + normalizedPos.y * 100
             )
             
-            points[touch.identity.hashValue] = point
+            points[index] = point
         }
         
         return points

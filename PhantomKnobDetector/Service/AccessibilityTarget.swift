@@ -21,22 +21,22 @@ class AccessibilityTarget: ControlTarget {
         self.element = element
         self.sensitivity = sensitivity
         
-        guard let role = self.getStringValue(for: kAXRoleAttribute) else {
+        guard let role = Self.getStringValue(from: element, for: kAXRoleAttribute) else {
             return nil
         }
         
         self.controlType = ControlType.fromAXRole(role)
         
-        guard let min = self.getDoubleValue(for: kAXMinValueAttribute),
-              let max = self.getDoubleValue(for: kAXMaxValueAttribute) else {
+        guard let min = Self.getDoubleValue(from: element, for: kAXMinValueAttribute),
+              let max = Self.getDoubleValue(from: element, for: kAXMaxValueAttribute) else {
             return nil
         }
         
         self.minValue = min
         self.maxValue = max
         
-        self.displayName = self.getStringValue(for: kAXTitleAttribute)
-            ?? self.getStringValue(for: kAXDescriptionAttribute)
+        self.displayName = Self.getStringValue(from: element, for: kAXTitleAttribute)
+            ?? Self.getStringValue(from: element, for: kAXDescriptionAttribute)
             ?? role
     }
     
@@ -52,6 +52,10 @@ class AccessibilityTarget: ControlTarget {
     }
     
     private func getDoubleValue(for attribute: String) -> Double? {
+        return Self.getDoubleValue(from: element, for: attribute)
+    }
+    
+    private static func getDoubleValue(from element: AXUIElement, for attribute: String) -> Double? {
         var value: AnyObject?
         let result = AXUIElementCopyAttributeValue(element, attribute as CFString, &value)
         
@@ -64,11 +68,17 @@ class AccessibilityTarget: ControlTarget {
     
     private func setDoubleValue(_ newValue: Double) {
         var val = newValue
-        let axValue = AXValueCreate(.cgFloat, &val)
-        AXUIElementSetAttributeValue(element, kAXValueAttribute as CFString, axValue)
+        let axValue = AXValueCreate(.cgPoint, &val)
+        if let axValue = axValue {
+            AXUIElementSetAttributeValue(element, kAXValueAttribute as CFString, axValue)
+        }
     }
     
     private func getStringValue(for attribute: String) -> String? {
+        return Self.getStringValue(from: element, for: attribute)
+    }
+    
+    private static func getStringValue(from element: AXUIElement, for attribute: String) -> String? {
         var value: AnyObject?
         let result = AXUIElementCopyAttributeValue(element, attribute as CFString, &value)
         

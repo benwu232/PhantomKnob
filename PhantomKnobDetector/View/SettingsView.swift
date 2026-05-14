@@ -82,7 +82,6 @@ struct GeneralSettingsView: View {
                 }
             }
         }
-        .formStyle(.grouped)
         .padding()
     }
     
@@ -122,7 +121,6 @@ struct SensitivitySettingsView: View {
                 }
             }
         }
-        .formStyle(.grouped)
         .padding()
     }
 }

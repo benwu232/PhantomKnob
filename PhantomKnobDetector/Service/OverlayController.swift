@@ -53,14 +53,14 @@ class OverlayController: ObservableObject {
         let panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: 120, height: 140),
             styleMask: [.borderless, .nonactivatingPanel],
-            backing: .translucent,
+            backing: .buffered,
             defer: false
         )
         
-        panel.level = .floating
+        panel.level = NSWindow.Level.floating
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
         panel.isOpaque = false
-        panel.backgroundColor = .clear
+        panel.backgroundColor = NSColor.clear
         panel.ignoresMouseEvents = true
         panel.hasShadow = false
         

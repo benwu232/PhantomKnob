@@ -14,18 +14,16 @@ class TargetDetector {
         
         let mouseLocation = NSEvent.mouseLocation
         let systemWideElement = AXUIElementCreateSystemWide()
-        var element: AnyObject?
+        var element: AXUIElement?
         
-        let result = AXUIElementCopyElementAtPosition(
+        _ = AXUIElementCopyElementAtPosition(
             systemWideElement,
             Float(mouseLocation.x),
             Float(mouseLocation.y),
             &element
         )
         
-        guard result == .success, let axElement = element as! AXUIElement? else {
-            return nil
-        }
+        guard let axElement = element else { return nil }
         
         if let target = tryCreateTarget(from: axElement) {
             lastDetectedTarget = target
@@ -38,12 +36,11 @@ class TargetDetector {
     private func findAdjustableParent(of element: AXUIElement, depth: Int) -> AccessibilityTarget? {
         guard depth < Self.maxParentDepth else { return nil }
         
-        var parent: AnyObject?
-        let result = AXUIElementCopyAttributeValue(element, kAXParentAttribute as CFString, &parent)
+        var parent: CFTypeRef?
+        _ = AXUIElementCopyAttributeValue(element, kAXParentAttribute as CFString, &parent)
         
-        guard result == .success, let parentElement = parent as! AXUIElement? else {
-            return nil
-        }
+        guard let parentRef = parent else { return nil }
+        let parentElement = unsafeBitCast(parentRef, to: AXUIElement.self)
         
         if let target = tryCreateTarget(from: parentElement) {
             return target
