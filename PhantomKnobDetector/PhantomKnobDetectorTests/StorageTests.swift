@@ -77,6 +77,8 @@ final class StorageTests: XCTestCase {
         let loaded = cache.load()
         
         XCTAssertNotNil(loaded)
-        XCTAssertEqual(loaded?.timestamp.timeIntervalSince1970, testDate.timeIntervalSince1970, accuracy: 1.0)
+        if let loaded = loaded {
+            XCTAssertEqual(loaded.timestamp.timeIntervalSince1970, testDate.timeIntervalSince1970, accuracy: 1.0)
+        }
     }
 }
