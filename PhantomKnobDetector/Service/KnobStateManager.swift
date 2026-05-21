@@ -66,17 +66,25 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate {
     }
     
     func toggleMode() {
+        writeDebugLog("[KnobStateManager] toggleMode() called, current state: \(state)")
         NSLog("[KnobStateManager] toggleMode() called, current state: \(state)")
         if case .inactive = state {
             let isTrusted = AXIsProcessTrusted()
+            writeDebugLog("[KnobStateManager] AXIsProcessTrusted checked: \(isTrusted)")
             NSLog("[KnobStateManager] AXIsProcessTrusted: \(isTrusted)")
             guard isTrusted else {
+                writeDebugLog("[KnobStateManager] Accessibility not granted, cannot activate")
                 NSLog("[KnobStateManager] Accessibility not granted, cannot activate")
+                // 弹出 macOS 系统级辅助功能权限请求框，引导用户点击一键跳转至“系统设置”对应页面
+                let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+                _ = AXIsProcessTrustedWithOptions(options)
                 return
             }
+            writeDebugLog("[KnobStateManager] Transitioning to activated")
             NSLog("[KnobStateManager] Transitioning to activated")
             transition(to: .activated)
         } else {
+            writeDebugLog("[KnobStateManager] Transitioning to inactive")
             NSLog("[KnobStateManager] Transitioning to inactive")
             transition(to: .inactive)
             currentTarget = nil
@@ -191,19 +199,41 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate {
     
     private func extractPoints(from touches: Set<NSTouch>) -> [Int: CGPoint] {
         var points: [Int: CGPoint] = [:]
+        let mouseLocation = NSEvent.mouseLocation
         
-        for (index, touch) in touches.enumerated() {
+        for touch in touches {
             let normalizedPos = touch.normalizedPosition
-            let mouseLocation = NSEvent.mouseLocation
-            
             let point = CGPoint(
                 x: mouseLocation.x + normalizedPos.x * 100,
                 y: mouseLocation.y + normalizedPos.y * 100
             )
-            
-            points[index] = point
+            // Use touch.identity for a stable key across events — the same
+            // physical finger always gets the same ID, so fingerIdx1 = min(id1,id2)
+            // in KnobAlgorithm always refers to the same finger and the angle
+            // vector never flips direction mid-gesture.
+            let stableId = ObjectIdentifier(touch.identity).hashValue
+            points[stableId] = point
         }
         
         return points
+    }
+}
+
+// [DEBUG-LOG-HARNESS]
+func writeDebugLog(_ message: String) {
+    NSLog("[DEBUG-LOG-HARNESS] \(message)")
+    let logPath = "/Users/wb/work/phantom_knob_mac/debug.log"
+    let timestamp = Date().description
+    let logLine = "[\(timestamp)] \(message)\n"
+    if let data = logLine.data(using: .utf8) {
+        if FileManager.default.fileExists(atPath: logPath) {
+            if let fileHandle = FileHandle(forWritingAtPath: logPath) {
+                fileHandle.seekToEndOfFile()
+                fileHandle.write(data)
+                fileHandle.closeFile()
+            }
+        } else {
+            try? data.write(to: URL(fileURLWithPath: logPath))
+        }
     }
 }

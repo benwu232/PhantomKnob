@@ -9,7 +9,7 @@ struct KnobState {
         self.current = current
         self.previous = previous
         
-        var delta = current.angle - previous.angle
+        var delta = previous.angle - current.angle
         if delta > 180 { delta -= 360 }
         if delta < -180 { delta += 360 }
         self.deltaAngle = delta.clamped(to: -1...1)

@@ -19,9 +19,16 @@ struct KnobCircleView: View {
                 let lineLength = size / 2 - 10
                 
                 Path { path in
-                    path.move(to: center)
-                    let endX = center.x + CGFloat(cos(angle * .pi / 180)) * lineLength
-                    let endY = center.y - CGFloat(sin(angle * .pi / 180)) * lineLength
+                    let cosVal = CGFloat(cos(angle * .pi / 180))
+                    let sinVal = CGFloat(sin(angle * .pi / 180))
+                    
+                    let startX = center.x - cosVal * lineLength
+                    let startY = center.y + sinVal * lineLength
+                    
+                    let endX = center.x + cosVal * lineLength
+                    let endY = center.y - sinVal * lineLength
+                    
+                    path.move(to: CGPoint(x: startX, y: startY))
                     path.addLine(to: CGPoint(x: endX, y: endY))
                 }
                 .stroke(Color.black, lineWidth: 3)

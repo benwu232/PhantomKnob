@@ -73,23 +73,23 @@ final class KnobStateTests: XCTestCase {
         
         XCTAssertEqual(state.current.angle, 45)
         XCTAssertEqual(state.previous.angle, 30)
-        XCTAssertEqual(state.deltaAngle, 1) // clamped to ±1°
+        XCTAssertEqual(state.deltaAngle, -1) // clamped to ±1° (counter-clockwise -> negative delta)
     }
     
     func testKnobStateDeltaAngleCalculation() {
-        // 正向旋转
+        // 逆时针旋转
         let state1 = KnobState(
             current: KnobCore(center: .zero, radius: 10, angle: 10),
             previous: KnobCore(center: .zero, radius: 10, angle: 5)
         )
-        XCTAssertEqual(state1.deltaAngle, 1) // clamped from 5 to 1
+        XCTAssertEqual(state1.deltaAngle, -1) // clamped from -5 to -1
         
-        // 反向旋转
+        // 顺时针旋转
         let state2 = KnobState(
             current: KnobCore(center: .zero, radius: 10, angle: 5),
             previous: KnobCore(center: .zero, radius: 10, angle: 10)
         )
-        XCTAssertEqual(state2.deltaAngle, -1) // clamped from -5 to -1
+        XCTAssertEqual(state2.deltaAngle, 1) // clamped from 5 to 1
         
         // 无变化
         let state3 = KnobState(
@@ -105,27 +105,27 @@ final class KnobStateTests: XCTestCase {
             current: KnobCore(center: .zero, radius: 10, angle: -170),
             previous: KnobCore(center: .zero, radius: 10, angle: 170)
         )
-        // -170 - 170 = -340, -340 + 360 = 20, clamped to 1
-        XCTAssertEqual(state1.deltaAngle, 1)
+        // -170 - 170 = -340, -340 + 360 = 20, clamped to -1 (counter-clockwise)
+        XCTAssertEqual(state1.deltaAngle, -1)
         
         let state2 = KnobState(
             current: KnobCore(center: .zero, radius: 10, angle: 170),
             previous: KnobCore(center: .zero, radius: 10, angle: -170)
         )
-        // 170 - (-170) = 340, 340 - 360 = -20, clamped to -1
-        XCTAssertEqual(state2.deltaAngle, -1)
+        // 170 - (-170) = 340, 340 - 360 = -20, clamped to 1 (clockwise)
+        XCTAssertEqual(state2.deltaAngle, 1)
     }
     
     func testKnobStateRotationDirection() {
         let clockwiseState = KnobState(
-            current: KnobCore(center: .zero, radius: 10, angle: 10),
-            previous: KnobCore(center: .zero, radius: 10, angle: 5)
+            current: KnobCore(center: .zero, radius: 10, angle: 5),
+            previous: KnobCore(center: .zero, radius: 10, angle: 10)
         )
         XCTAssertEqual(clockwiseState.rotationDirection, .clockwise)
         
         let counterClockwiseState = KnobState(
-            current: KnobCore(center: .zero, radius: 10, angle: 5),
-            previous: KnobCore(center: .zero, radius: 10, angle: 10)
+            current: KnobCore(center: .zero, radius: 10, angle: 10),
+            previous: KnobCore(center: .zero, radius: 10, angle: 5)
         )
         XCTAssertEqual(counterClockwiseState.rotationDirection, .counterClockwise)
         

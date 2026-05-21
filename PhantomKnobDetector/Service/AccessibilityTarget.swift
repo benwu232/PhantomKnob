@@ -67,11 +67,8 @@ class AccessibilityTarget: ControlTarget {
     }
     
     private func setDoubleValue(_ newValue: Double) {
-        var val = newValue
-        let axValue = AXValueCreate(.cgPoint, &val)
-        if let axValue = axValue {
-            AXUIElementSetAttributeValue(element, kAXValueAttribute as CFString, axValue)
-        }
+        let number = NSNumber(value: newValue)
+        AXUIElementSetAttributeValue(element, kAXValueAttribute as CFString, number)
     }
     
     private func getStringValue(for attribute: String) -> String? {
