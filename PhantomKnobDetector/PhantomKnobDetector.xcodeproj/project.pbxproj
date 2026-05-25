@@ -20,6 +20,7 @@
 		2F53A248E5C602AB00FD6932 /* KnobGlobalStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01B041A3A1C912B6A7F7082 /* KnobGlobalStateTests.swift */; };
 		3288B7D915EC550D6B08A1E1 /* RotationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED4A45AD4D358961A9D50AD /* RotationDirection.swift */; };
 		3DF916D8EFBDBE33D766213E /* GestureClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA66AEFB2BCDBCB45C407F6 /* GestureClassifier.swift */; };
+		528857D945D6F661E2E9A79D /* GestureOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C04B072D7E1F7CAC3542C02 /* GestureOverlayController.swift */; };
 		579670092C409BA935F1F37E /* SensitivityConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD690D6413B5376C9D69F85 /* SensitivityConfig.swift */; };
 		603EFC3C20794AF117C5C2FF /* TouchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA69F6CF9C0E4C465F1CA492 /* TouchpadView.swift */; };
 		643A0E8AE1F38355563DA748 /* PhantomKnobDetectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78935A2232B2B921D06D1C3E /* PhantomKnobDetectorApp.swift */; };
@@ -90,6 +91,7 @@
 		95BA3A7D77928B20CB7C72D7 /* PhantomKnobDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhantomKnobDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9793C661FDF48F0AA09769EC /* AccessibilityTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTargetTests.swift; sourceTree = "<group>"; };
 		988EF2ABA55EF55B9A723AE1 /* PhantomKnobDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomKnobDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C04B072D7E1F7CAC3542C02 /* GestureOverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureOverlayController.swift; sourceTree = "<group>"; };
 		9EB0FF255FA2F86096619909 /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
 		C01B041A3A1C912B6A7F7082 /* KnobGlobalStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobGlobalStateTests.swift; sourceTree = "<group>"; };
 		CA69F6CF9C0E4C465F1CA492 /* TouchpadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchpadView.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 			children = (
 				7A1B7A58F52AB85B03F4D90E /* AccessibilityTarget.swift */,
 				EAA66AEFB2BCDBCB45C407F6 /* GestureClassifier.swift */,
+				9C04B072D7E1F7CAC3542C02 /* GestureOverlayController.swift */,
 				37C2D116816B8E043164B2E9 /* GlobalTouchHandler.swift */,
 				434401F1FB3CF7516FA17136 /* KnobAlgorithm.swift */,
 				CBF9A317D13976C595C6547C /* KnobStateManager.swift */,
@@ -340,6 +343,7 @@
 				068A5D70F8D6014D695550B9 /* DetectionView.swift in Sources */,
 				74B2BD3F692F724762F71E61 /* DetectionViewModel.swift in Sources */,
 				3DF916D8EFBDBE33D766213E /* GestureClassifier.swift in Sources */,
+				528857D945D6F661E2E9A79D /* GestureOverlayController.swift in Sources */,
 				70F0F3FB8B565B1744A1DB25 /* GlobalTouchHandler.swift in Sources */,
 				FD6F3999561FE1829127D058 /* KnobAlgorithm.swift in Sources */,
 				DC1C8D08084D999B13A7AFC0 /* KnobCircleView.swift in Sources */,
