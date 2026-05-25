@@ -265,8 +265,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDel
     
     private func synthesizeScrollWheelEvent(deltaX: CGFloat = 0.0, deltaY: CGFloat = 0.0) {
         let scrollEvent = CGEvent(
-            scrollWheelEvent2DSource: nil,
-            association: .byPixel,
+            scrollWheelEvent2Source: nil,
+            units: .pixel,
             wheelCount: 2,
             wheel1: Int32(deltaY), // 垂直方向
             wheel2: Int32(deltaX), // 水平方向
