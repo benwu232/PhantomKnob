@@ -2,9 +2,8 @@ import AppKit
 import Foundation
 
 protocol GlobalTouchDelegate: AnyObject {
-    func onGlobalTouchesBegan(_ touches: Set<NSTouch>)
-    func onGlobalTouchesMoved(_ touches: Set<NSTouch>)
-    func onGlobalTouchesEnded(_ touches: Set<NSTouch>)
+    func onGlobalScroll(phase: NSEvent.Phase, deltaX: CGFloat, deltaY: CGFloat)
+    func onGlobalModifierOptionChanged(isPressed: Bool)
 }
 
 class GlobalTouchHandler {
@@ -14,72 +13,36 @@ class GlobalTouchHandler {
     private var isMonitoring = false
     
     func startMonitoring() {
-        writeDebugLog("[GlobalTouchHandler] startMonitoring() called, isMonitoring: \(isMonitoring)")
         guard !isMonitoring else { return }
         
+        // 全局注册：仅监听合规的鼠标滚动及键盘修饰键变更
         eventMonitor = NSEvent.addGlobalMonitorForEvents(
-            matching: [.gesture, .indirectTouches]
+            matching: [.scrollWheel, .flagsChanged]
         ) { [weak self] event in
             self?.handleEvent(event)
         }
         
         isMonitoring = true
+        writeDebugLog("[GlobalTouchHandler] Standard global event tap started successfully")
     }
     
     func stopMonitoring() {
-        writeDebugLog("[GlobalTouchHandler] stopMonitoring() called, isMonitoring: \(isMonitoring)")
         guard isMonitoring, let monitor = eventMonitor else { return }
         
         NSEvent.removeMonitor(monitor)
         eventMonitor = nil
         isMonitoring = false
+        writeDebugLog("[GlobalTouchHandler] Standard global event tap stopped")
     }
     
     private func handleEvent(_ event: NSEvent) {
-        writeDebugLog("[GlobalTouchHandler] handleEvent: type = \(event.type)")
-        switch event.type {
-        case .gesture:
-            handleGestureEvent(event)
-        case .indirectTouches:
-            handleTouchEvent(event)
-        default:
-            break
-        }
-    }
-    
-    private func handleGestureEvent(_ event: NSEvent) {
-        writeDebugLog("[GlobalTouchHandler] handleGestureEvent: phase = \(event.phase.rawValue)")
-        switch event.phase {
-        case .began:
-            let touches = event.touches(matching: .any, in: nil)
-            writeDebugLog("[GlobalTouchHandler] began, touches count: \(touches.count)")
-            delegate?.onGlobalTouchesBegan(touches)
-        case .changed:
-            let touches = event.touches(matching: .any, in: nil)
-            delegate?.onGlobalTouchesMoved(touches)
-        case .ended, .cancelled:
-            let touches = event.touches(matching: .any, in: nil)
-            writeDebugLog("[GlobalTouchHandler] ended/cancelled, touches count: \(touches.count)")
-            delegate?.onGlobalTouchesEnded(touches)
-        default:
-            break
-        }
-    }
-    
-    private func handleTouchEvent(_ event: NSEvent) {
-        writeDebugLog("[GlobalTouchHandler] handleTouchEvent: phase = \(event.phase.rawValue)")
-        let touches = event.touches(matching: .any, in: nil)
-        switch event.phase {
-        case .began:
-            writeDebugLog("[GlobalTouchHandler] touch began, touches count: \(touches.count)")
-            delegate?.onGlobalTouchesBegan(touches)
-        case .changed:
-            delegate?.onGlobalTouchesMoved(touches)
-        case .ended, .cancelled:
-            writeDebugLog("[GlobalTouchHandler] touch ended/cancelled, touches count: \(touches.count)")
-            delegate?.onGlobalTouchesEnded(touches)
-        default:
-            break
+        if event.type == .scrollWheel {
+            // 分发标准滚动事件（用于常规的滑块侦测与备用调节）
+            delegate?.onGlobalScroll(phase: event.phase, deltaX: event.deltaX, deltaY: event.deltaY)
+        } else if event.type == .flagsChanged {
+            // 检测全局 Option 键的状态（.option 的 flagsChanged 会更改 flags）
+            let isOptionPressed = event.modifierFlags.contains(.option)
+            delegate?.onGlobalModifierOptionChanged(isPressed: isOptionPressed)
         }
     }
     
