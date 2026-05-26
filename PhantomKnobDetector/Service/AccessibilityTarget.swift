@@ -19,7 +19,6 @@ class AccessibilityTarget: ControlTarget {
     
     init?(element: AXUIElement, sensitivity: Double = 0.5) {
         self.element = element
-        self.sensitivity = sensitivity
         
         guard let role = Self.getStringValue(from: element, for: kAXRoleAttribute) else {
             return nil
@@ -38,6 +37,19 @@ class AccessibilityTarget: ControlTarget {
         self.displayName = Self.getStringValue(from: element, for: kAXTitleAttribute)
             ?? Self.getStringValue(from: element, for: kAXDescriptionAttribute)
             ?? role
+        
+        // 自适应灵敏度配置：依据可调整范围智能匹配旋转比率
+        let range = abs(max - min)
+        if range <= 1.0 {
+            // 当范围是 0-1 时（例如音量），设定每 1° 对应 1%（即灵敏度为 0.01）
+            self.sensitivity = 0.01
+        } else if range <= 100.0 {
+            // 当范围是 0-100 时，设定每 1° 对应 1%（即灵敏度为 1.0）
+            self.sensitivity = 1.0
+        } else {
+            // 其他大跨度滑块，使用平滑比例（转一整圈 360° 刚好走满整个范围）
+            self.sensitivity = range / 360.0
+        }
     }
     
     func applyDelta(_ deltaAngle: Double) -> Double {
@@ -99,6 +111,10 @@ extension ControlType {
 }
 
 func formatDisplayValue(_ value: Double, min: Double, max: Double) -> String {
+    if max <= 1.0 {
+        return "\(Int(value * 100))%"
+    }
+    
     if min == 0 && max == 100 {
         return "\(Int(value))%"
     }

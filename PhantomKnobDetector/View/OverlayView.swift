@@ -6,8 +6,6 @@ struct OverlayView: View {
     let angle: Double
     let displayValue: String
     
-    @State private var opacity: Double = 0
-    
     var body: some View {
         VStack(spacing: 8) {
             if !targetName.isEmpty {
@@ -51,12 +49,6 @@ struct OverlayView: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.black.opacity(0.75))
         )
-        .opacity(opacity)
-        .onAppear {
-            withAnimation(.easeIn(duration: 0.2)) {
-                opacity = 1
-            }
-        }
     }
 }
 

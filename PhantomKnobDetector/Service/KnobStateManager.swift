@@ -2,7 +2,7 @@ import Foundation
 import AppKit
 import Combine
 
-class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDelegate {
+class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDelegate {
     @Published private(set) var state: KnobGlobalState = .inactive
     @Published private(set) var currentAngle: Double = 0
     @Published private(set) var displayValue: String = ""
@@ -14,10 +14,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDel
     private let touchHandler: GlobalTouchHandler
     private let sensitivityConfig: SensitivityConfig
     
-    // 新增合规全屏手势遮罩管理器
-    private var gestureOverlayController: GestureOverlayController?
     private var currentTarget: ControlTarget?
     private var initialTouchPosition: CGPoint?
+    private var initialTouchPositionCarbon: CGPoint? // 锁定鼠标的 Carbon 坐标 (左上角原点)
     private var previousAngle: Double = 0
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
@@ -62,15 +61,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDel
         statusBarController.updateState(.inactive)
         touchHandler.startMonitoring()
         
-        // 初始化手势面板并挂载代理
-        let overlay = GestureOverlayController()
-        overlay.delegate = self
-        self.gestureOverlayController = overlay
+        // 绑定 MultitouchManager 代理
+        MultitouchManager.shared.delegate = self
     }
     
     func stop() {
         touchHandler.stopMonitoring()
-        gestureOverlayController?.hide()
+        MultitouchManager.shared.stop()
         overlayController.hide()
     }
     
@@ -85,11 +82,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDel
             }
             writeDebugLog("[KnobStateManager] Transitioning to activated")
             transition(to: .activated)
-            gestureOverlayController?.show() // 开启透明拦截窗口
+            
+            // 启动后台多点触控捕获
+            MultitouchManager.shared.start()
         } else {
             writeDebugLog("[KnobStateManager] Transitioning to inactive")
             transition(to: .inactive)
-            gestureOverlayController?.hide() // 彻底注销并隐藏透明窗口
+            
+            // 停止后台多点触控捕获
+            MultitouchManager.shared.stop()
+            
             currentTarget = nil
             overlayController.hide()
             targetDetector.clearCache()
@@ -113,20 +115,20 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDel
     // MARK: - GlobalTouchDelegate
     
     func onGlobalModifierOptionChanged(isPressed: Bool) {
-        // 如果用户在设置中勾选了 Option Hold 模式支持
+        // Option Hold 模式支持
         if isPressed {
             if !isOptionHoldActive && state == .inactive {
                 isOptionHoldActive = true
-                writeDebugLog("[KnobStateManager] Option key held, showing overlay panel")
+                writeDebugLog("[KnobStateManager] Option key held, starting background multitouch capture")
                 transition(to: .activated)
-                gestureOverlayController?.show()
+                MultitouchManager.shared.start()
             }
         } else {
             if isOptionHoldActive {
                 isOptionHoldActive = false
-                writeDebugLog("[KnobStateManager] Option key released, destroying overlay panel")
+                writeDebugLog("[KnobStateManager] Option key released, stopping background multitouch capture")
                 transition(to: .inactive)
-                gestureOverlayController?.hide()
+                MultitouchManager.shared.stop()
                 overlayController.hide()
                 currentTarget = nil
             }
@@ -134,118 +136,102 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDel
     }
     
     func onGlobalScroll(phase: NSEvent.Phase, deltaX: CGFloat, deltaY: CGFloat) {
-        // 保留系统底层原生滚轮调节的兜底支持，但由于手势会被透明窗口先拦截，此方法平时会自动旁路
+        // 保留系统底层原生滚轮调节的兜底支持
     }
     
-    // MARK: - GestureOverlayDelegate (物理高精坐标多指捕获)
+    // MARK: - MultitouchEventDelegate (硬件绝对坐标多指捕获)
     
-    func onOverlayTouchesBegan(points: [Int: CGPoint]) {
+    func onMultitouchBegan(points: [Int: CGPoint]) {
+        writeDebugLog("[KnobStateManager] onMultitouchBegan: points count = \(points.count), state = \(state)")
         guard state != .inactive else { return }
         
-        // 精准定位目标滑块
-        if let target = targetDetector.detectTargetAtMousePosition() {
-            writeDebugLog("[KnobStateManager] High-precision Target Captured: \(target.displayName), Role = \(target.controlType)")
-            currentTarget = target
-            initialTouchPosition = NSEvent.mouseLocation
-            
-            // 缩放物理坐标以吻合屏幕夹角向量变化
-            let scaledPoints = scaleCoordinates(points)
-            gestureClassifier.processTouchesBegan(points: scaledPoints)
-            previousAngle = gestureClassifier.getCurrentAngle(points: scaledPoints)
-        } else {
-            gestureClassifier.forcePassthrough()
-        }
+        // 尝试定位鼠标当前悬停的目标可调整滑块，若失败则使用 GenericControlTarget 兜底，保证必有 Target
+        let target = (targetDetector.detectTargetAtMousePosition() as ControlTarget?) ?? GenericControlTarget()
+        writeDebugLog("[KnobStateManager] Target obtained: \(target.displayName)")
+        currentTarget = target
+        
+        let mouseLoc = NSEvent.mouseLocation
+        initialTouchPosition = mouseLoc
+        
+        // 转换并缓存 Carbon 坐标以便于进行鼠标 Warp 锁定
+        let screenHeight = NSScreen.screens.first?.frame.height ?? 1080
+        initialTouchPositionCarbon = CGPoint(x: mouseLoc.x, y: screenHeight - mouseLoc.y)
+        
+        // 缩放物理坐标以吻合屏幕夹角向量变化
+        let scaledPoints = scaleCoordinates(points)
+        gestureClassifier.processTouchesBegan(points: scaledPoints)
+        previousAngle = gestureClassifier.getCurrentAngle(points: scaledPoints)
+        
+        // 立即进入 knobing 状态并展示 Overlay 窗口，去除 5.0 度角阈值限制！
+        transition(to: .knobing(target: target))
+        
+        let displayVal = (target as? AccessibilityTarget)?.displayValue() ?? String(format: "%.0f%%", target.value)
+        overlayController.show(
+            at: mouseLoc,
+            targetName: target.displayName,
+            displayValue: displayVal
+        )
     }
     
-    func onOverlayTouchesMoved(points: [Int: CGPoint]) {
+    func onMultitouchMoved(points: [Int: CGPoint]) {
+        writeDebugLog("[KnobStateManager] onMultitouchMoved: points count = \(points.count), state = \(state), currentTarget = \(currentTarget?.displayName ?? "nil")")
         guard state != .inactive, let target = currentTarget else { return }
         
         let scaledPoints = scaleCoordinates(points)
-        let mode = gestureClassifier.processTouchesMoved(points: scaledPoints)
         
-        switch mode {
-        case .knob:
-            let currentAngle = gestureClassifier.getCurrentAngle(points: scaledPoints)
-            
-            if case .activated = state {
-                let deltaAngle = abs(currentAngle - previousAngle)
-                
-                if let result = state.transitionWithResult(
-                    event: .gestureStartedWithTarget(target, angleDelta: deltaAngle)
-                ) {
-                    transition(to: result.state)
-                    
-                    if let position = initialTouchPosition {
-                        overlayController.show(
-                            at: position,
-                            targetName: target.displayName,
-                            displayValue: (target as? AccessibilityTarget)?.displayValue() ?? "\(Int(target.value))"
-                        )
-                    }
-                }
+        // 去除 pan/knob 分类器限制，直接按旋钮模式处理，以实现最快且 100% 成功的交互响应
+        let currentAngle = gestureClassifier.getCurrentAngle(points: scaledPoints)
+        
+        if state.isKnobing {
+            // 关键修复：当旋钮处于激活控制状态时，锁定鼠标光标到初始位置，防止其漂移出控件范围失效
+            if let lockPos = initialTouchPositionCarbon {
+                CGWarpMouseCursorPosition(lockPos)
             }
             
-            if state.isKnobing {
-                let knobState = KnobState(
-                    current: KnobCore(angle: currentAngle),
-                    previous: KnobCore(angle: previousAngle)
-                )
-                
-                // 通用滚轮映射 (方案 A)：把角度的差值 deltaAngle 转化为通用 Scroll 滚轮增量
-                let deltaRotation = knobState.deltaAngle
-                
-                // 根据目标控制控件的取值范围，平滑转换为滚轮移动步长
+            let knobState = KnobState(
+                current: KnobCore(angle: currentAngle),
+                previous: KnobCore(angle: previousAngle)
+            )
+            
+            // 计算双指单帧旋转的角度差值
+            let deltaRotation = knobState.deltaAngle
+            
+            // 在 HUD 视觉层及底层控制层同步刷新数据
+            if target is GenericControlTarget {
+                // 通用兜底控制：利用高精度滚轮投递合成，使非 AX 组件依然可以随着手势滚动
                 let range = abs(target.maxValue - target.minValue)
                 let scrollScale: Double = (range <= 1.0) ? 1.0 : ((range <= 100.0) ? 2.5 : 8.0)
                 let scrollDelta = deltaRotation * scrollScale
                 
-                // 合成硬件级垂直滚轮事件并全局 Post，实现完美通用适配！
-                synthesizeScrollWheelEvent(deltaY: CGFloat(-scrollDelta))
+                synthesizeScrollWheelEvent(deltaY: CGFloat(scrollDelta))
                 
-                // 在 HUD 视觉层同步刷新角度指针和数值反馈
-                let newValue = target.value // 滚轮投递后数值会自动变更，这里从滑块直接读取新值
+                _ = target.applyDelta(deltaRotation)
+                displayValue = String(format: "%.0f%%", target.value)
+            } else {
+                // 极简精准控制：直接通过 Accessibility API 写入属性，达到完美的 1° 对应 1% 精准调节，绕过系统复杂的滚轮加速度，杜绝调整吃力问题
+                let newValue = target.applyDelta(deltaRotation)
                 displayValue = (target as? AccessibilityTarget)?.displayValue() ?? "\(Int(newValue))"
-                overlayController.update(angle: currentAngle, displayValue: displayValue)
-                
-                self.currentAngle = currentAngle
-                previousAngle = currentAngle
             }
             
-        case .pan:
-            // 如果识别为线性滚动，则实时计算双指移动的线性偏移量，合成为普通滚轮进行物理透传
-            if let point1 = scaledPoints.values.first, scaledPoints.count >= 2 {
-                let deltaX = CGFloat(point1.x - (initialTouchPosition?.x ?? 0.0)) * 0.05
-                let deltaY = CGFloat(point1.y - (initialTouchPosition?.y ?? 0.0)) * 0.05
-                synthesizeScrollWheelEvent(deltaX: deltaX, deltaY: deltaY)
-            }
+            overlayController.update(angle: currentAngle, displayValue: displayValue)
             
-        case .passthrough:
-            break
+            self.currentAngle = currentAngle
+            previousAngle = currentAngle
         }
     }
     
-    func onOverlayTouchesEnded() {
+    func onMultitouchEnded() {
+        writeDebugLog("[KnobStateManager] onMultitouchEnded")
         guard state != .inactive else { return }
         gestureClassifier.processTouchesEnded()
+        
+        initialTouchPositionCarbon = nil // 清除鼠标锁定坐标
         
         if state.isKnobing, let target = currentTarget {
             transition(to: .cooling(target: target))
             overlayController.fadeOut { [weak self] in
                 self?.startCoolingTimer()
             }
-        }
-    }
-    
-    // 核心难点：鼠标点击与拖动动作的瞬间“智能透传”穿透重发
-    func onOverlayClickThrough(event: NSEvent) {
-        guard let overlay = gestureOverlayController else { return }
-        
-        // 1. 瞬间关闭透明手势窗口的事件拦截
-        overlay.tempDisableInterception()
-        
-        // 2. 利用 CGEvent 在 HID 底层重新发布这一物理点击/拖拽事件，使其打在原应用上
-        if let cgEvent = event.cgEvent {
-            cgEvent.post(tap: .cghidEventTap)
         }
     }
     
@@ -268,10 +254,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, GestureOverlayDel
             scrollWheelEvent2Source: nil,
             units: .pixel,
             wheelCount: 2,
-            wheel1: Int32(deltaY), // 垂直方向
-            wheel2: Int32(deltaX), // 水平方向
+            wheel1: Int32(deltaY), // 整数部分作为兼容备用
+            wheel2: Int32(deltaX),
             wheel3: 0
         )
+        // 关键修复：写入高精度浮点数 Delta 属性，使慢速微调旋转时依然能流畅响应
+        scrollEvent?.setDoubleValueField(.scrollWheelEventDeltaAxis1, value: Double(deltaY))
+        scrollEvent?.setDoubleValueField(.scrollWheelEventDeltaAxis2, value: Double(deltaX))
         scrollEvent?.post(tap: .cghidEventTap)
     }
     

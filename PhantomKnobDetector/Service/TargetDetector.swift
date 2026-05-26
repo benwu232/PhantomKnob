@@ -13,17 +13,22 @@ class TargetDetector {
         guard AXIsProcessTrusted() else { return nil }
         
         let mouseLocation = NSEvent.mouseLocation
+        
+        // 关键修复：macOS Cocoa 坐标系（左下角为原点）转换为 Carbon/Accessibility 坐标系（左上角为原点）
+        let screenHeight = NSScreen.screens.first?.frame.height ?? 1080
+        let flippedY = screenHeight - mouseLocation.y
+        
         let systemWideElement = AXUIElementCreateSystemWide()
         var element: AXUIElement?
         
-        _ = AXUIElementCopyElementAtPosition(
+        let result = AXUIElementCopyElementAtPosition(
             systemWideElement,
             Float(mouseLocation.x),
-            Float(mouseLocation.y),
+            Float(flippedY),
             &element
         )
         
-        guard let axElement = element else { return nil }
+        guard result == .success, let axElement = element else { return nil }
         
         if let target = tryCreateTarget(from: axElement) {
             lastDetectedTarget = target

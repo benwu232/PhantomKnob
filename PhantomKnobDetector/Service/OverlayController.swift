@@ -10,20 +10,28 @@ class OverlayController: ObservableObject {
     @Published var angle: Double = 0
     @Published var displayValue: String = ""
     
-    private var position: CGPoint = .zero
+        private var position: CGPoint = .zero
+    private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
     
     func show(at position: CGPoint, targetName: String, displayValue: String) {
         self.position = position
         self.targetName = targetName
         self.displayValue = displayValue
         
+        showCount += 1
+        writeDebugLog("[OverlayController] show() called: targetName = \(targetName), displayValue = \(displayValue), showCount = \(showCount), position = \(position)")
+        
         if panel == nil {
             createPanel()
         }
         
+        // 显式停止之前的动画并强制恢复不透明度
+        panel?.animator().alphaValue = 1.0
+        panel?.alphaValue = 1.0
+        
         let screenPosition = convertToScreenCoordinates(position)
         panel?.setFrameOrigin(screenPosition)
-        panel?.makeKeyAndOrderFront(nil)
+        panel?.orderFrontRegardless()
         isVisible = true
     }
     
@@ -34,15 +42,30 @@ class OverlayController: ObservableObject {
     }
     
     func hide() {
+        writeDebugLog("[OverlayController] hide() called: ordering panel out, isVisible was \(isVisible)")
         panel?.orderOut(nil)
         isVisible = false
     }
     
     func fadeOut(duration: TimeInterval = 1.0, completion: (() -> Void)? = nil) {
+        let currentGeneration = showCount // 捕获开启淡出时的代数标记
+        writeDebugLog("[OverlayController] fadeOut() initiated: duration = \(duration), currentGeneration = \(currentGeneration)")
+        
         NSAnimationContext.runAnimationGroup { context in
             context.duration = duration
+            context.allowsImplicitAnimation = true // 🌟 必须开启隐式动画以确保 NSWindow/NSPanel 动画正常运转且回调 100% 触发
             panel?.animator().alphaValue = 0
-        } completionHandler: {
+        } completionHandler: { [weak self] in
+            guard let self = self else { return }
+            
+            // 竞态校验：如果在淡出期间或之后，开启了新的手势周期（showCount 发生变更），
+            // 则说明新 Overlay 已经激活，必须立刻跳过隐藏逻辑，防止误关新界面的 Bug！
+            guard self.showCount == currentGeneration else {
+                writeDebugLog("[OverlayController] fadeOut aborted: new gesture session detected (showCount changed from \(currentGeneration) to \(self.showCount))")
+                return
+            }
+            
+            writeDebugLog("[OverlayController] fadeOut completed successfully: calling hide() for generation \(currentGeneration)")
             self.hide()
             self.panel?.alphaValue = 1
             completion?()
@@ -57,7 +80,7 @@ class OverlayController: ObservableObject {
             defer: false
         )
         
-        panel.level = NSWindow.Level.floating
+        panel.level = NSWindow.Level.statusBar
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
         panel.isOpaque = false
         panel.backgroundColor = NSColor.clear
@@ -85,11 +108,9 @@ class OverlayController: ObservableObject {
     }
     
     private func convertToScreenCoordinates(_ position: CGPoint) -> CGPoint {
-        guard let screen = NSScreen.main else { return position }
-        let screenHeight = screen.frame.height
         return CGPoint(
             x: position.x - 60,
-            y: screenHeight - position.y - 70
+            y: position.y - 70
         )
     }
 }
