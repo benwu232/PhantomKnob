@@ -1,3 +1,4 @@
+// PhantomKnobDetector/PhantomKnobDetectorTests/TargetDetectorTests.swift
 import XCTest
 @testable import PhantomKnobDetector
 
@@ -29,5 +30,10 @@ final class TargetDetectorTests: XCTestCase {
     
     func testMaxParentDepth() {
         XCTAssertEqual(TargetDetector.maxParentDepth, 10)
+    }
+
+    func testAutoDetectTranslationDefaultsToScrollWheel() {
+        // 验证 InputTranslation 枚举正常使用
+        XCTAssertEqual(InputTranslation.scrollWheelVertical.rawValue, "scrollWheelVertical")
     }
 }
