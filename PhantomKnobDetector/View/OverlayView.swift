@@ -1,29 +1,30 @@
+// PhantomKnobDetector/View/OverlayView.swift
 import SwiftUI
 import AppKit
 
 struct OverlayView: View {
-    let targetName: String
+    let targetName: String?
     let angle: Double
-    let displayValue: String
-    
+    let displayValue: String?
+
     var body: some View {
         VStack(spacing: 8) {
-            if !targetName.isEmpty {
+            if let targetName = targetName, !targetName.isEmpty {
                 Text(targetName)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white)
             }
-            
+
             ZStack {
                 Circle()
                     .stroke(Color.white.opacity(0.3), lineWidth: 2)
                     .frame(width: 60, height: 60)
-                
+
                 GeometryReader { geometry in
                     let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     let radius: CGFloat = 25
                     let angleRad = angle * .pi / 180
-                    
+
                     Path { path in
                         path.move(to: center)
                         path.addLine(to: CGPoint(
@@ -34,15 +35,17 @@ struct OverlayView: View {
                     .stroke(Color.white, lineWidth: 2)
                 }
                 .frame(width: 60, height: 60)
-                
+
                 Circle()
                     .fill(Color.white)
                     .frame(width: 8, height: 8)
             }
-            
-            Text(displayValue)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white)
+
+            if let displayValue = displayValue, !displayValue.isEmpty {
+                Text(displayValue)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+            }
         }
         .padding(16)
         .background(

@@ -20,7 +20,7 @@ final class AccessibilityTargetTests: XCTestCase {
     
     func testFormatDisplayValue() {
         XCTAssertEqual(formatDisplayValue(65, min: 0, max: 100), "65%")
-        XCTAssertEqual(formatDisplayValue(3725, min: 0, max: 7200), "01:02:05")
-        XCTAssertEqual(formatDisplayValue(50, min: 0, max: 200), "50")
+        XCTAssertEqual(formatDisplayValue(3725, min: 0, max: 7200), "01:02:05.00")
+        XCTAssertEqual(formatDisplayValue(50, min: 0, max: 200), "00:50.00")
     }
 }
