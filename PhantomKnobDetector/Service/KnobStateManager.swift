@@ -14,8 +14,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private let overlayController: OverlayController
     private let statusBarController: StatusBarController
     private let touchHandler: GlobalTouchHandler
-    private let sensitivityConfig: SensitivityConfig
-
     private var currentTarget: DetectedTarget?
     private var currentTranslator: InputTranslator?
     private var initialTouchPosition: CGPoint?
@@ -39,7 +37,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         self.overlayController = overlayController
         self.statusBarController = statusBarController
         self.touchHandler = touchHandler
-        self.sensitivityConfig = sensitivityConfig
 
         setupBindings()
     }
