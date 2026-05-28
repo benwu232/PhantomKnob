@@ -55,3 +55,26 @@ final class InputTranslationTests: XCTestCase {
         XCTAssertEqual(target.ruleKey.identifier, "timeline")
     }
 }
+
+// MARK: - ArrowKeyTranslator accumulator
+
+final class ArrowKeyTranslatorTests: XCTestCase {
+
+    func testAccumulatorHoldsSmallDeltas() {
+        // scale=1, 每次 0.3，需要累积 4 次（1.2）才发 1 个按键
+        // 本测试只验证 accumulator 不崩溃，实际按键无法在单元测试中验证
+        let t = ArrowKeyTranslator(axis: .upDown, scale: 1.0)
+        // 不超过 1.0，不应发送按键（无法断言无副作用，只验证不 crash）
+        t.apply(units: 0.3, direction: .clockwise)
+        t.apply(units: 0.3, direction: .clockwise)
+        t.apply(units: 0.3, direction: .clockwise)
+        // 第三次累积 = 0.9，仍不足 1.0
+        XCTAssertNil(t.displayValue)
+    }
+
+    func testScrollWheelDisplayValueIsNil() {
+        let t = ScrollWheelTranslator(axis: .vertical, scale: 1.0)
+        XCTAssertNil(t.displayValue)
+    }
+}
+
