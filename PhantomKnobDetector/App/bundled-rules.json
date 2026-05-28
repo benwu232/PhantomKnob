@@ -1,0 +1,32 @@
+[
+  {
+    "key": {
+      "bundleID": "com.apple.QuickTimePlayerX",
+      "axRole": "AXSlider",
+      "identifier": null
+    },
+    "translation": "scrollWheelVertical",
+    "scaleConfig": { "fixed": 8.0 },
+    "extra": { "reason": "AXWrite causes integer truncation bug in QuickTime" }
+  },
+  {
+    "key": {
+      "bundleID": "com.apple.FinalCut",
+      "axRole": "AXSlider",
+      "identifier": null
+    },
+    "translation": "scrollWheelVertical",
+    "scaleConfig": { "fixed": 8.0 },
+    "extra": null
+  },
+  {
+    "key": {
+      "bundleID": "com.blackmagic-design.DaVinciResolve",
+      "axRole": "AXSlider",
+      "identifier": null
+    },
+    "translation": "scrollWheelVertical",
+    "scaleConfig": { "fixed": 8.0 },
+    "extra": null
+  }
+]

@@ -23,6 +23,8 @@ targets:
       - path: App
         excludes:
           - "**/.DS_Store"
+      - path: App/bundled-rules.json
+        buildPhase: resources
       - path: Model
         excludes:
           - "**/.DS_Store"
