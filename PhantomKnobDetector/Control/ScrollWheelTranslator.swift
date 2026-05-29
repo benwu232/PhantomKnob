@@ -7,6 +7,7 @@ import CoreGraphics
 final class ScrollWheelTranslator: InputTranslator {
     private let axis: Axis
     private let scale: Double
+    private var accumulator: Double = 0
 
     enum Axis { case vertical, horizontal }
 
@@ -17,11 +18,18 @@ final class ScrollWheelTranslator: InputTranslator {
 
     func apply(units: Double, direction: RotationDirection) {
         let delta = units * scale * (direction == .clockwise ? 1.0 : -1.0)
+        accumulator += delta
+        
+        let steps = Int(accumulator)
+        guard steps != 0 else { return }
+        
+        accumulator -= Double(steps) // 扣除整数部分，保留余数
+
         switch axis {
         case .vertical:
-            synthesizeScroll(deltaY: CGFloat(delta), deltaX: 0)
+            synthesizeScroll(deltaY: CGFloat(steps), deltaX: 0)
         case .horizontal:
-            synthesizeScroll(deltaY: 0, deltaX: CGFloat(delta))
+            synthesizeScroll(deltaY: 0, deltaX: CGFloat(steps))
         }
     }
 
