@@ -3,14 +3,26 @@
     "key": {
       "bundleID": "com.apple.QuickTimePlayerX",
       "axRole": "AXSlider",
-      "identifier": null
+      "displayName": "volume"
+    },
+    "translation": "arrowKeyUpDown",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
+    "extra": null
+  },
+  {
+    "key": {
+      "bundleID": "com.apple.QuickTimePlayerX",
+      "axRole": "AXSlider",
+      "displayName": "timeline"
     },
     "translation": "arrowKeyLeftRight",
     "scaleConfig": {
       "fixed": 1.0
     },
     "extra": {
-      "reason": "AXWrite causes integer truncation bug in QuickTime"
+      "reason": "AXWrite causes integer truncation bug in QuickTime timeline"
     }
   },
   {
