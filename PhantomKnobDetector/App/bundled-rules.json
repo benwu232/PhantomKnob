@@ -40,7 +40,7 @@
   {
     "key": {
       "bundleID": "com.blackmagic-design.DaVinciResolve",
-      "axRole": "AXSlider",
+      "axRole": "unknown",
       "identifier": null
     },
     "translation": "arrowKeyLeftRight",

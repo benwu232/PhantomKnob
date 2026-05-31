@@ -46,10 +46,9 @@ final class ArrowKeyTranslator: InputTranslator {
     }
 
     private func pressKey(_ keyCode: CGKeyCode) {
-        let src = CGEventSource(stateID: .hidSystemState)
-        let down = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: true)
-        let up   = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: false)
-        down?.post(tap: .cghidEventTap)
-        up?.post(tap: .cghidEventTap)
+        let down = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true)
+        let up   = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: false)
+        down?.post(tap: .cgSessionEventTap)
+        up?.post(tap: .cgSessionEventTap)
     }
 }
