@@ -39,9 +39,9 @@ final class RuleLibrary {
     }
 
     /// 按优先级顺序查找匹配 ruleKey 的第一条规则。
-    /// 精度：(bundleID + axRole + identifier) > (bundleID + axRole) > (axRole only)
+    /// 精度：(bundleID + axRole + identifier) > (bundleID + axRole + displayName) > (bundleID + axRole) > (axRole only)
     func lookup(for ruleKey: RuleKey) -> ControlRule? {
-        // 精确匹配（identifier 完全相同）
+        // 1. 精确 ID 匹配
         if let exact = rules.first(where: {
             $0.key.bundleID == ruleKey.bundleID &&
             $0.key.axRole == ruleKey.axRole &&
@@ -49,14 +49,24 @@ final class RuleLibrary {
             $0.key.identifier == ruleKey.identifier
         }) { return exact }
 
-        // 宽泛匹配（同 app 同 role，identifier 为 nil 的规则）
+        // 2. DisplayName 匹配
+        if let byDisplayName = rules.first(where: {
+            $0.key.bundleID == ruleKey.bundleID &&
+            $0.key.axRole == ruleKey.axRole &&
+            $0.key.displayName != nil &&
+            ruleKey.displayName != nil &&
+            $0.key.displayName == ruleKey.displayName
+        }) { return byDisplayName }
+
+        // 3. 宽泛匹配（同 app 同 role，identifier/displayName 均为 nil）
         if let broad = rules.first(where: {
             $0.key.bundleID == ruleKey.bundleID &&
             $0.key.axRole == ruleKey.axRole &&
-            $0.key.identifier == nil
+            $0.key.identifier == nil &&
+            $0.key.displayName == nil
         }) { return broad }
 
-        // 跨 app 匹配（只匹配 role）
+        // 4. 跨 app 匹配（只匹配 role）
         if let byRole = rules.first(where: {
             $0.key.bundleID.isEmpty &&
             $0.key.axRole == ruleKey.axRole

@@ -12,6 +12,6 @@ struct DetectedTarget {
 
     /// 用于规则库查找和状态机 identity 比较。
     var ruleKey: RuleKey {
-        RuleKey(bundleID: bundleID, axRole: axRole, identifier: identifier)
+        RuleKey(bundleID: bundleID, axRole: axRole, identifier: identifier, displayName: displayName)
     }
 }

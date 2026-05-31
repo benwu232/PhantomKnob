@@ -42,6 +42,27 @@ final class RuleLibraryTests: XCTestCase {
         XCTAssertNil(lib.lookup(for: key))
     }
 
+    func testDisplayNameMatchWins() {
+        let displayNameRule = ControlRule(
+            key: RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "timeline"),
+            translation: .arrowKeyLeftRight
+        )
+        let broadRule = ControlRule(
+            key: RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider"),
+            translation: .scrollWheelVertical
+        )
+        
+        let lib = makeLibrary(rules: [displayNameRule, broadRule])
+        
+        // 当查询时间轴（displayName == "timeline"）时，应该命中特定规则
+        let timelineKey = RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "timeline")
+        XCTAssertEqual(lib.lookup(for: timelineKey)?.translation, .arrowKeyLeftRight)
+        
+        // 当查询音量（displayName == "volume"）时，应该退回到宽泛规则
+        let volumeKey = RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "volume")
+        XCTAssertEqual(lib.lookup(for: volumeKey)?.translation, .scrollWheelVertical)
+    }
+
     func testScaleConfigParsing() throws {
         let json = """
         [{"key":{"bundleID":"x","axRole":"AXSlider","identifier":null},

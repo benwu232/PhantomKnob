@@ -7,12 +7,21 @@ struct RuleKey: Codable, Hashable {
     let bundleID: String    // "com.apple.QuickTimePlayerX"
     let axRole: String      // "AXSlider"
     let identifier: String? // AXIdentifier，nil 表示匹配该 app 下所有同类控件
+    let displayName: String? // AXTitle 或 AXDescription，可为 nil
+
+    init(bundleID: String, axRole: String, identifier: String? = nil, displayName: String? = nil) {
+        self.bundleID = bundleID
+        self.axRole = axRole
+        self.identifier = identifier
+        self.displayName = displayName
+    }
 
     // 精确匹配（bundleID + axRole + identifier 全部相等）
     func matches(_ other: RuleKey) -> Bool {
         bundleID == other.bundleID &&
         axRole == other.axRole &&
-        (identifier == nil || identifier == other.identifier)
+        (identifier == nil || identifier == other.identifier) &&
+        (displayName == nil || displayName == other.displayName)
     }
 }
 
