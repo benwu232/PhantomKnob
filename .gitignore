@@ -67,3 +67,6 @@ fastlane/test_output
 # Git Worktrees
 .worktrees/
 
+# Logs
+debug.log
+

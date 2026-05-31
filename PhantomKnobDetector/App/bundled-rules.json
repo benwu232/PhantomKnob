@@ -5,9 +5,13 @@
       "axRole": "AXSlider",
       "identifier": null
     },
-    "translation": "scrollWheelVertical",
-    "scaleConfig": { "fixed": 8.0 },
-    "extra": { "reason": "AXWrite causes integer truncation bug in QuickTime" }
+    "translation": "arrowKeyLeftRight",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
+    "extra": {
+      "reason": "AXWrite causes integer truncation bug in QuickTime"
+    }
   },
   {
     "key": {
@@ -16,7 +20,9 @@
       "identifier": null
     },
     "translation": "scrollWheelVertical",
-    "scaleConfig": { "fixed": 8.0 },
+    "scaleConfig": {
+      "fixed": 1.0
+    },
     "extra": null
   },
   {
@@ -25,8 +31,10 @@
       "axRole": "AXSlider",
       "identifier": null
     },
-    "translation": "scrollWheelVertical",
-    "scaleConfig": { "fixed": 8.0 },
+    "translation": "arrowKeyLeftRight",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
     "extra": null
   }
 ]

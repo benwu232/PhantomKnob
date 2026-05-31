@@ -119,11 +119,19 @@ func formatDisplayValue(_ value: Double, min: Double, max: Double) -> String {
         return "\(Int(value))%"
     }
     
-    if min == 0 && max >= 3600 {
-        let hours = Int(value) / 3600
-        let minutes = (Int(value) % 3600) / 60
-        let seconds = Int(value) % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+    // 如果是时间轴（max > 1.0），我们提供高精度的亚秒级格式化显示（带 2 位毫秒/帧级小数）
+    if max > 1.0 {
+        let totalSeconds = value
+        let hours = Int(totalSeconds) / 3600
+        let minutes = (Int(totalSeconds) % 3600) / 60
+        let seconds = Int(totalSeconds) % 60
+        let milliseconds = Int(abs(totalSeconds.truncatingRemainder(dividingBy: 1.0)) * 100)
+        
+        if hours > 0 {
+            return String(format: "%02d:%02d:%02d.%02d", hours, minutes, seconds, milliseconds)
+        } else {
+            return String(format: "%02d:%02d.%02d", minutes, seconds, milliseconds)
+        }
     }
     
     return "\(Int(value))"

@@ -12,7 +12,7 @@ struct KnobState {
         var delta = previous.angle - current.angle
         if delta > 180 { delta -= 360 }
         if delta < -180 { delta += 360 }
-        self.deltaAngle = delta.clamped(to: -15.0...15.0)
+        self.deltaAngle = delta.clamped(to: -1.0...1.0)
     }
     
     var rotationDirection: RotationDirection {

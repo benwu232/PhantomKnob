@@ -53,7 +53,8 @@ Core algorithm ported from Flutter version. Finds the two most-distant touch poi
 - Formula: `angle = atan2(dy, dx) * 180 / π`
 
 ### ControlTarget
-A protocol abstracting any object that can be controlled by a Knob gesture (e.g., a demo slider, system volume, system brightness).
+**(Deprecated — being replaced by `DetectedTarget` + `InputTranslator`. See below.)**
+A protocol that previously mixed identity metadata with execution logic. `DemoSliderTarget` and `GenericControlTarget` remain until migration is complete.
 
 ### DemoSliderTarget
 The MVP implementation of ControlTarget for the demo page.
@@ -138,14 +139,14 @@ inactive ──[hotkey]──→ activated ──[gesture + target + angle>5°]�
 ### TargetDetector
 Detects controllable UI elements under the cursor using macOS Accessibility API.
 
-**Detection trigger:** Only when gesture starts (`touchesBegan`)
+**Detection trigger:** Only when gesture starts (`touchesBegan`). No continuous hover detection (Plan B).
 
 **Detection flow:**
 1. Get cursor position via `NSEvent.mouseLocation`
 2. Get UI element at position via `AXUIElementCopyElementAtPosition`
 3. Check if element is adjustable (AXRole + AXValue + AXMinValue + AXMaxValue)
 4. If not adjustable, search up through parent elements (max 10 levels)
-5. Return `AccessibilityTarget` or nil
+5. Return `DetectedTarget` or nil
 
 **Supported element types:**
 - `AXSlider`: Volume, brightness, system sliders
@@ -154,16 +155,29 @@ Detects controllable UI elements under the cursor using macOS Accessibility API.
 
 **Target locking:** Once detected, target is locked for the entire gesture duration. User must release fingers and start new gesture to change target.
 
-### AccessibilityTarget
-ControlTarget implementation for Accessibility API elements.
+### DetectedTarget
+Pure metadata struct describing the UI element under cursor. No execution logic.
 
-**Properties:**
-- `element`: AXUIElement reference
-- `value`: Current value from AXValue
-- `minValue`, `maxValue`: Range from AXMinValue/AXMaxValue
-- `displayName`: From AXTitle or AXDescription (may be empty)
+**Fields:**
+- `bundleID`: Bundle identifier of the frontmost app
+- `axRole`: AX role string (e.g., `"AXSlider"`)
+- `identifier`: `AXIdentifier` value, nil if not set by the app
+- `displayName`: From `AXTitle` or `AXDescription`, used in overlay
+- `element`: `AXUIElement` reference, nil when no AX element is found
+- `ruleKey`: Computed from `bundleID + axRole + identifier`; used for identity comparison and rule lookup
 
-**Error handling:** If `AXUIElementSetAttributeValue` fails, post `accessibilityPermissionRevoked` notification.
+**Identity comparison:** Two targets are considered the same if their `ruleKey` matches (replaces previous `displayName` comparison).
+
+### RuleKey
+Unique identifier for a `ControlRule`. Used as lookup key in the RuleLibrary and for target identity comparison in the state machine.
+
+**Structure:** `bundleID · axRole · identifier?`
+
+**Matching precedence (most to least specific):**
+1. `bundleID + axRole + identifier` — exact match
+2. `bundleID + axRole` — all controls of that type in the app
+3. `axRole` only — cross-app type default
+4. Auto-detect fallback — no rule found
 
 ---
 
@@ -188,29 +202,81 @@ A 2-second window starting from `touchesBegan` to determine gesture type.
 
 ---
 
-## Sensitivity
+## Input Translation System
 
-### Base Sensitivity
-Default: 1° rotation → 0.5 value change (full 360° ≈ 180 value change)
+### InputTranslation
+The strategy for converting a rotation delta into a re-injected system event. Describes *how* the knob's intent is delivered — not *what* is being controlled.
+_Avoid: mapping, method, action_
 
-### Per-Type Override
-Sensitivity can be customized per element type:
-- `sliderSensitivity`: For AXSlider elements
-- `progressSensitivity`: For AXProgressIndicator elements
-- `scrollbarSensitivity`: For AXScrollBar elements
+**Supported kinds:**
+- `axWrite`: Read current AXValue, add delta, write back via Accessibility API
+- `scrollWheelVertical`: Synthesize a vertical scroll wheel CGEvent
+- `scrollWheelHorizontal`: Synthesize a horizontal scroll wheel CGEvent
+- `arrowKeyUpDown`: Synthesize up/down arrow key events
+- `arrowKeyLeftRight`: Synthesize left/right arrow key events
+- `swipeVertical`: Synthesize a vertical two-finger swipe gesture
+- `swipeHorizontal`: Synthesize a horizontal two-finger swipe gesture
 
-If type-specific sensitivity not set, falls back to global default.
+**Auto-detection hierarchy (when no rule exists):**
+1. `AXUIElementIsAttributeSettable(kAXValueAttribute) == true` → `axWrite`
+2. AX actions include `AXIncrement`/`AXDecrement` → `arrowKeyUpDown`
+3. No AX attributes / custom Canvas → `scrollWheelVertical` (default fallback)
 
-### Radius-Based Sensensitivity (Future)
-Knob radius (distance between two fingers) affects sensitivity:
-- Small radius (< 0.3 normalized): High sensitivity (1° → 1.0 value)
-- Medium radius (0.3-0.7): Default sensitivity (1° → 0.5 value)
-- Large radius (> 0.7): Low sensitivity (1° → 0.25 value)
+### InputTranslator
+Runtime object that executes an `InputTranslation` for a given delta. Owns an internal accumulator for discrete event types (e.g., arrow keys require integer presses; fractional deltas are accumulated across frames).
 
-Rationale: Small radius = fingers close = small physical movement = need higher sensitivity; large radius = fingers spread = large movement = finer control.
+**Interface:**
+```
+apply(units: Double, direction: RotationDirection)
+displayValue: String?   // nil for non-axWrite translations
+```
 
-### Storage
-All sensitivity settings stored in UserDefaults with auto-save on change.
+**Accumulator rule:** Continuous events (scrollWheel, swipe) accept fractional units directly via CGEvent double-value fields. Discrete events (arrowKey) accumulate until ≥ 1.0, fire integer presses, carry remainder.
+
+### ScaleConfig
+Configuration describing how rotation angle maps to InputTranslation units.
+
+**Default:** `fixed(1.0)` — 1° rotation = 1 minimum unit (universal, no heuristics)
+
+**MVP:** `fixed(Double)` only — single scale value regardless of finger radius.
+
+**Future:** `discreteRadius([RadiusZone])` — different scale per finger-spread range:
+```
+RadiusZone(range: 0.0...0.3, scale: 3.0)  // fingers close → coarse
+RadiusZone(range: 0.3...0.7, scale: 1.0)  // default zone
+RadiusZone(range: 0.7...1.0, scale: 0.3)  // fingers spread → fine
+```
+Rationale: small radius = small physical movement = needs higher sensitivity; large radius = large movement = finer control.
+
+### ControlRule
+A stored entry in the RuleLibrary describing how to control a specific element.
+
+**Fields:**
+- `key`: `RuleKey` (identity + lookup key)
+- `translation`: `InputTranslation` kind
+- `scaleConfig`: `ScaleConfig` (default: `.fixed(1.0)`)
+- `extra`: `[String: String]?` (reserved for future extension without breaking Codable)
+
+### RuleLibrary
+Lookup table mapping `RuleKey` → `ControlRule`. Consulted at gesture start before auto-detection.
+
+**Matching strategy:** First match wins (ordered by specificity). No cascading/inheritance.
+
+**Storage — two layers:**
+1. **Bundled rules** (read-only, in App Bundle): Ships with built-in rules for known apps (Final Cut Pro, DaVinci Resolve, CapCut, etc.). Updated via app releases.
+2. **User rules** (`~/Library/Application Support/PhantomKnob/rules.json`): User-defined overrides, higher priority. File created only when user explicitly saves a rule.
+
+---
+
+## Scale
+
+**Default scale:** 1° rotation = 1 minimum adjustment unit (same across all `InputTranslation` types).
+
+The "minimum unit" is translation-specific:
+- `scrollWheel`: 1 pixel (CGEvent delta)
+- `arrowKey`: 1 key press
+- `axWrite`: 1 AX value unit
+- `swipe`: 1 pixel (gesture delta)
 
 ---
 
@@ -233,6 +299,10 @@ Fixed at gesture start position (mouse cursor location with offset to avoid occl
 - Range 0-100: Percentage (65%)
 - Range 0-3600+ (video): Time format (01:23:45)
 - Other: Raw value
+
+### Value Display
+- `axWrite` translation: shows current value read from AXValue (percentage, time, or raw)
+- All other translations: value area is hidden (user observes effect directly on screen)
 
 ### Visibility
 - Fade in when entering `knobing` state
