@@ -151,15 +151,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         // 1. 探测目标元素
         let detectedTarget = targetDetector.detectTargetAtMousePosition()
 
-        // 2. 查规则库（未命中则自动探测）
-        let rule: ControlRule?
-        if let target = detectedTarget {
-            rule = RuleLibrary.shared.lookup(for: target.ruleKey)
-        } else {
-            rule = nil
-        }
-
-        // 3. 创建兜底 DetectedTarget（无 AX 元素时用当前 app 信息填充）
+        // 2. 创建 DetectedTarget（无 AX 元素时用当前 app 信息填充）
         let target = detectedTarget ?? DetectedTarget(
             bundleID: NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "",
             axRole: "unknown",
@@ -168,6 +160,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             element: nil
         )
         currentTarget = target
+
+        // 3. 查规则库（未命中则自动探测）
+        let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
 
         // 4. 创建 InputTranslator
         let translator = makeTranslator(for: target, rule: rule)
