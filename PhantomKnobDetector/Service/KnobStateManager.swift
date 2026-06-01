@@ -21,6 +21,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private var previousAngle: Double = 0
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
+    private var fixedCenter: CGPoint?
+    private var fingerIdx1: Int?
+    private var fingerIdx2: Int?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -175,8 +178,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         initialTouchPositionCarbon = CGPoint(x: mouseLoc.x, y: screenHeight - mouseLoc.y)
 
         let scaledPoints = scaleCoordinates(points)
+        let (knobCore, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
+        if knobCore.isValid {
+            self.fixedCenter = knobCore.center
+            self.fingerIdx1 = idx1
+            self.fingerIdx2 = idx2
+            self.previousAngle = knobCore.angle
+        }
         gestureClassifier.processTouchesBegan(points: scaledPoints)
-        previousAngle = gestureClassifier.getCurrentAngle(points: scaledPoints)
 
         transition(to: .knobing(target: target))
 
@@ -191,7 +200,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         guard state != .inactive, let translator = currentTranslator else { return }
 
         let scaledPoints = scaleCoordinates(points)
-        let currentAngle = gestureClassifier.getCurrentAngle(points: scaledPoints)
+        guard let currentAngle = calculateRawAngle(points: scaledPoints) else { return }
+
+        let currentTouchCount = scaledPoints.count
+        // 单指重新升级回双指时，重新缓存双指的 ID 对应关系以备下一次抬指匹配
+        if currentTouchCount >= 2 {
+            let (_, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
+            self.fingerIdx1 = idx1
+            self.fingerIdx2 = idx2
+        }
 
         if state.isKnobing {
             if let lockPos = initialTouchPositionCarbon {
@@ -231,6 +248,35 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     // MARK: - Helper Methods
+
+    private func calculateRawAngle(points: [Int: CGPoint]) -> Double? {
+        if points.count >= 2 {
+            let (knobCore, _, _) = KnobAlgorithm().calKnob(points)
+            return knobCore.isValid ? knobCore.angle : nil
+        } else if points.count == 1,
+                  let fixedCenter = self.fixedCenter,
+                  let fingerIdx1 = self.fingerIdx1,
+                  let fingerIdx2 = self.fingerIdx2,
+                  let remainId = points.keys.first,
+                  let remainPoint = points[remainId] {
+            
+            let dx: CGFloat
+            let dy: CGFloat
+            // 根据剩余手指硬件 ID，决定矢量方向，抵消 180 度偏置
+            if remainId == fingerIdx1 {
+                dx = remainPoint.x - fixedCenter.x
+                dy = remainPoint.y - fixedCenter.y
+            } else if remainId == fingerIdx2 {
+                dx = fixedCenter.x - remainPoint.x
+                dy = fixedCenter.y - remainPoint.y
+            } else {
+                dx = remainPoint.x - fixedCenter.x
+                dy = remainPoint.y - fixedCenter.y
+            }
+            return atan2(dy, dx) * 180 / .pi
+        }
+        return nil
+    }
 
     private func scaleCoordinates(_ points: [Int: CGPoint]) -> [Int: CGPoint] {
         var scaled: [Int: CGPoint] = [:]
