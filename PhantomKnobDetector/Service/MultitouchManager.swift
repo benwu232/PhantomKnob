@@ -92,10 +92,8 @@ class MultitouchManager {
         writeDebugLog("[MultitouchManager] Stopped global background multitouch monitoring")
     }
     
-    // 双指手势生命周期状态机与去抖动（Debounce）缓冲
+    // 双指手势生命周期状态机
     private var inGesture = false
-    private var consecutiveFramesBelowThreshold = 0
-    private let endGestureFrameThreshold = 6 // 连续 6 帧（约 50-60ms）活动手指小于 2 根才真正判定手势结束
     
     private func handleContacts(_ contactsPtr: UnsafeMutablePointer<MTContact>?, count: Int) {
         guard let contacts = contactsPtr else { return }
@@ -124,11 +122,10 @@ class MultitouchManager {
             }
         }
         
-        writeDebugLog("[MultitouchManager] handleContacts: activePoints count = \(activePoints.count), inGesture = \(inGesture), consecutiveFramesBelowThreshold = \(consecutiveFramesBelowThreshold)")
+        writeDebugLog("[MultitouchManager] handleContacts: activePoints count = \(activePoints.count), inGesture = \(inGesture)")
         
         // 当触控板上有且至少有 2 根手指活动时，激活或更新旋钮手势
         if activePoints.count >= 2 {
-            consecutiveFramesBelowThreshold = 0 // 只要稳定探测到双指，就重置去抖计数器
             if !inGesture {
                 inGesture = true
                 writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchBegan with points = \(activePoints)")
@@ -141,30 +138,21 @@ class MultitouchManager {
                     self.delegate?.onMultitouchMoved(points: activePoints)
                 }
             }
+        } else if activePoints.count == 1 {
+            if inGesture {
+                // 🌟 核心改进：当处于手势中且降为单指时，延续旋钮手势，继续发送 Moved 事件
+                writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchMoved (1 finger) with points = \(activePoints)")
+                DispatchQueue.main.async {
+                    self.delegate?.onMultitouchMoved(points: activePoints)
+                }
+            }
         } else if activePoints.count == 0 {
-            // 🌟 核心改进：当触碰点数为 0 时，说明手指完全抬起，不存在防抖抖动需要，立即无延迟终止手势！
-            // 这也避免了由于触碰点归零后硬件不再发送 Callback 帧，导致防抖计数器卡在半途无法触发 End 的 Bug
+            // 🌟 当触碰点归零时，说明所有手指完全抬起，立即无延迟终止手势
             if inGesture {
                 inGesture = false
-                consecutiveFramesBelowThreshold = 0
                 writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchEnded (Immediate - 0 fingers)")
                 DispatchQueue.main.async {
                     self.delegate?.onMultitouchEnded()
-                }
-            }
-        } else {
-            // 如果活动手指为 1 根，且之前处于旋钮状态中，则进行去抖动判定，防止接触面积微调导致闪烁
-            if inGesture {
-                consecutiveFramesBelowThreshold += 1
-                writeDebugLog("[MultitouchManager] Jitter Warning: Active count \(activePoints.count) is below 2. Consecutive frames below threshold: \(consecutiveFramesBelowThreshold)/\(endGestureFrameThreshold)")
-                
-                if consecutiveFramesBelowThreshold >= endGestureFrameThreshold {
-                    inGesture = false
-                    consecutiveFramesBelowThreshold = 0
-                    writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchEnded (Debounced - 1 finger)")
-                    DispatchQueue.main.async {
-                        self.delegate?.onMultitouchEnded()
-                    }
                 }
             }
         }
