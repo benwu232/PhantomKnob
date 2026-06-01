@@ -80,17 +80,19 @@ struct ResultView: View {
     }
 }
 
-#Preview {
-    ResultView(result: DetectionResult(
-        isSupported: false,
-        timestamp: Date(),
-        deviceModel: "MacBookPro18,3",
-        macOSVersion: "macOS 14.0",
-        details: DetectionResult.DetectionDetails(
-            normalizedPositionAvailable: false,
-            sampleCount: 0,
-            errorMessage: "无法获取触摸绝对坐标"
-        )
-    ))
-    .environmentObject(AppViewModel(cache: DetectionCache()))
+struct ResultView_Previews: PreviewProvider {
+    static var previews: some View {
+        ResultView(result: DetectionResult(
+            isSupported: false,
+            timestamp: Date(),
+            deviceModel: "MacBookPro18,3",
+            macOSVersion: "macOS 14.0",
+            details: DetectionResult.DetectionDetails(
+                normalizedPositionAvailable: false,
+                sampleCount: 0,
+                errorMessage: "无法获取触摸绝对坐标"
+            )
+        ))
+        .environmentObject(AppViewModel(cache: DetectionCache()))
+    }
 }

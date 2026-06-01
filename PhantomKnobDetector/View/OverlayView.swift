@@ -55,11 +55,13 @@ struct OverlayView: View {
     }
 }
 
-#Preview {
-    OverlayView(
-        targetName: "音量",
-        angle: 45,
-        displayValue: "65%"
-    )
-    .background(Color.gray)
+struct OverlayView_Previews: PreviewProvider {
+    static var previews: some View {
+        OverlayView(
+            targetName: "音量",
+            angle: 45,
+            displayValue: "65%"
+        )
+        .background(Color.gray)
+    }
 }

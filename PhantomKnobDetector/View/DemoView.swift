@@ -38,7 +38,9 @@ struct DemoView: View {
     }
 }
 
-#Preview {
-    DemoView()
-        .environmentObject(AppViewModel(cache: DetectionCache()))
+struct DemoView_Previews: PreviewProvider {
+    static var previews: some View {
+        DemoView()
+            .environmentObject(AppViewModel(cache: DetectionCache()))
+    }
 }

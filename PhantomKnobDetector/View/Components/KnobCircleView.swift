@@ -38,14 +38,16 @@ struct KnobCircleView: View {
     }
 }
 
-#Preview {
-    VStack {
-        KnobCircleView(angle: 0)
-        KnobCircleView(angle: 45)
-        KnobCircleView(angle: 90)
-        KnobCircleView(angle: 180)
-        KnobCircleView(angle: -45)
+struct KnobCircleView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            KnobCircleView(angle: 0)
+            KnobCircleView(angle: 45)
+            KnobCircleView(angle: 90)
+            KnobCircleView(angle: 180)
+            KnobCircleView(angle: -45)
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
     }
-    .padding()
-    .background(Color.gray.opacity(0.1))
 }

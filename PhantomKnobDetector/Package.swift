@@ -18,7 +18,6 @@ let package = Package(
             path: ".",
             sources: [
                 "App/PhantomKnobDetectorApp.swift",
-                "App/bundled-rules.json",
                 "Model/",
                 "ViewModel/",
                 "View/",
