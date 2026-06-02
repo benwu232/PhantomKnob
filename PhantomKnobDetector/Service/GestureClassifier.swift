@@ -11,7 +11,7 @@ class GestureClassifier {
     private(set) var currentMode: GestureMode = .pan
     private var initialAngle: Double?
     private var detectionStartTime: Date?
-    private let detectionWindow: TimeInterval = 2.0
+    private let detectionWindow: TimeInterval = 0.8
     private let angleThreshold: Double = 5.0
     private let algorithm = KnobAlgorithm()
     
