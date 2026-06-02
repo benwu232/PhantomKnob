@@ -151,6 +151,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         writeDebugLog("[KnobStateManager] onMultitouchBegan: points count = \(points.count), state = \(state)")
         guard state != .inactive else { return }
 
+        // 立即清除并废止冷却倒计时，防止在检测期间状态突变
+        coolingTimer?.invalidate()
+        coolingTimer = nil
+
+        // 如果前一次是在冷却状态，重置回激活状态准备新一轮手势判定
+        if state.isCooling {
+            transition(to: .activated)
+        }
+
         // 1. 探测目标元素
         let detectedTarget = targetDetector.detectTargetAtMousePosition()
 
@@ -171,7 +180,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let translator = makeTranslator(for: target, rule: rule)
         currentTranslator = translator
 
-        // 5. 缓存鼠标位置，进入 knobing
+        // 5. 缓存鼠标位置，不直接进入 knobing
         let mouseLoc = NSEvent.mouseLocation
         initialTouchPosition = mouseLoc
         let screenHeight = NSScreen.screens.first?.frame.height ?? 1080
@@ -186,14 +195,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.previousAngle = knobCore.angle
         }
         gestureClassifier.processTouchesBegan(points: scaledPoints)
-
-        transition(to: .knobing(target: target))
-
-        overlayController.show(
-            at: mouseLoc,
-            targetName: target.displayName.isEmpty ? nil : target.displayName,
-            displayValue: translator.displayValue
-        )
     }
 
     func onMultitouchMoved(points: [Int: CGPoint]) {
@@ -208,6 +209,21 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             let (_, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
             self.fingerIdx1 = idx1
             self.fingerIdx2 = idx2
+        }
+
+        // 🌟 进行手势判定是否升级为 knob
+        let mode = gestureClassifier.processTouchesMoved(points: scaledPoints)
+        if mode == .knob && !state.isKnobing {
+            if let target = currentTarget {
+                transition(to: .knobing(target: target))
+                if let mouseLoc = initialTouchPosition {
+                    overlayController.show(
+                        at: mouseLoc,
+                        targetName: target.displayName.isEmpty ? nil : target.displayName,
+                        displayValue: translator.displayValue
+                    )
+                }
+            }
         }
 
         if state.isKnobing {
@@ -244,6 +260,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             overlayController.fadeOut { [weak self] in
                 self?.startCoolingTimer()
             }
+        } else {
+            // 🌟 若手指抬起前从未触发过旋钮手势，静默归位激活状态并清除临时变量
+            transition(to: .activated)
+            currentTarget = nil
+            currentTranslator = nil
+            fixedCenter = nil
+            fingerIdx1 = nil
+            fingerIdx2 = nil
         }
     }
 
