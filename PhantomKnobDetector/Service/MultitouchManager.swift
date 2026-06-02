@@ -21,11 +21,13 @@ class MultitouchManager {
     private typealias MTRegisterContactFrameCallbackFunc = @convention(c) (OpaquePointer?, MTContactCallback?) -> Void
     private typealias MTDeviceStartFunc = @convention(c) (OpaquePointer?, Int32) -> Void
     private typealias MTDeviceStopFunc = @convention(c) (OpaquePointer?) -> Void
+    private typealias MTDeviceReleaseFunc = @convention(c) (OpaquePointer?) -> Void
     
     private var MTDeviceCreateDefault: MTDeviceCreateDefaultFunc?
     private var MTRegisterContactFrameCallback: MTRegisterContactFrameCallbackFunc?
     private var MTDeviceStart: MTDeviceStartFunc?
     private var MTDeviceStop: MTDeviceStopFunc?
+    private var MTDeviceRelease: MTDeviceReleaseFunc?
     
     private init() {
         let libPath = "/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport"
@@ -48,6 +50,9 @@ class MultitouchManager {
         if let sym = dlsym(h, "MTDeviceStop") {
             MTDeviceStop = unsafeBitCast(sym, to: MTDeviceStopFunc.self)
         }
+        if let sym = dlsym(h, "MTDeviceRelease") {
+            MTDeviceRelease = unsafeBitCast(sym, to: MTDeviceReleaseFunc.self)
+        }
         
         writeDebugLog("[MultitouchManager] Dynamic library loaded and C functions bound successfully")
     }
@@ -55,6 +60,9 @@ class MultitouchManager {
     func start() {
         writeDebugLog("[MultitouchManager] start() requested, isRunning: \(isRunning)")
         guard !isRunning else { return }
+        
+        inGesture = false // 🌟 重置手势生命周期状态机变量，确保不会继承过往周期的残留
+        
         guard let createDefault = MTDeviceCreateDefault,
               let registerCallback = MTRegisterContactFrameCallback,
               let startDevice = MTDeviceStart else {
@@ -73,6 +81,9 @@ class MultitouchManager {
             if let rawPtr = contactsRawPtr {
                 let contactsPtr = rawPtr.assumingMemoryBound(to: MTContact.self)
                 MultitouchManager.shared.handleContacts(contactsPtr, count: Int(numContacts))
+            } else {
+                // 🌟 即使 contactsRawPtr 为 nil（通常在 numContacts 为 0 时），也需要驱动 handleContacts 正常执行以进行 inGesture 复位
+                MultitouchManager.shared.handleContacts(nil, count: Int(numContacts))
             }
             return 0
         }
@@ -87,8 +98,15 @@ class MultitouchManager {
         writeDebugLog("[MultitouchManager] stop() requested, isRunning: \(isRunning)")
         guard isRunning, let dev = device, let stopDevice = MTDeviceStop else { return }
         stopDevice(dev)
+        
+        // 🌟 显式释放底层连接，解决 Mach 端口泄漏导致旋钮使用几轮后失效的系统 slot 耗尽 Bug
+        if let releaseDevice = MTDeviceRelease {
+            releaseDevice(dev)
+        }
+        
         device = nil
         isRunning = false
+        inGesture = false // 🌟 显式复位手势状态，保障生命周期干净
         writeDebugLog("[MultitouchManager] Stopped global background multitouch monitoring")
     }
     
@@ -96,29 +114,31 @@ class MultitouchManager {
     private var inGesture = false
     
     private func handleContacts(_ contactsPtr: UnsafeMutablePointer<MTContact>?, count: Int) {
-        guard let contacts = contactsPtr else { return }
-        
         var activePoints: [Int: CGPoint] = [:]
-        for i in 0..<count {
-            let contact = contacts[i]
-            // 印出所有手指的 state 信息用于诊断
-            writeDebugLog("[MultitouchManager] Contact[\(i)]: ID = \(contact.identifier), state = \(contact.state), pos = (\(contact.normalized.pos.x), \(contact.normalized.pos.y))")
-            
-            // state 的取值范围说明：
-            // 0 = not touching (空插槽)
-            // 1 = starting (手指刚接触)
-            // 2 = hovering (悬停，如果硬件支持)
-            // 3 = making (开始触碰)
-            // 4 = touching (正在稳定触碰)
-            // 5 = breaking (手指离开/断开接触)
-            // 6 = lingering (残留接触)
-            // 7 = leaving (完全离开)
-            // 为了最安全的捕获，我们将 1 至 6 均视为有效的活动或边缘触控状态，全面对接手指在触控板上的动作
-            if contact.state >= 1 && contact.state <= 6 {
-                let id = Int(contact.identifier)
-                let x = CGFloat(contact.normalized.pos.x)
-                let y = CGFloat(contact.normalized.pos.y)
-                activePoints[id] = CGPoint(x: x, y: y)
+        
+        // 只有当 count > 0 且指针不为空时，才进行触点状态遍历
+        if count > 0, let contacts = contactsPtr {
+            for i in 0..<count {
+                let contact = contacts[i]
+                // 印出所有手指的 state 信息用于诊断
+                writeDebugLog("[MultitouchManager] Contact[\(i)]: ID = \(contact.identifier), state = \(contact.state), pos = (\(contact.normalized.pos.x), \(contact.normalized.pos.y))")
+                
+                // state 的取值范围说明：
+                // 0 = not touching (空插槽)
+                // 1 = starting (手指刚接触)
+                // 2 = hovering (悬停，如果硬件支持)
+                // 3 = making (开始触碰)
+                // 4 = touching (正在稳定触碰)
+                // 5 = breaking (手指离开/断开接触)
+                // 6 = lingering (残留接触)
+                // 7 = leaving (完全离开)
+                // 为了最安全的捕获，我们将 1 至 6 均视为有效的活动或边缘触控状态，全面对接手指在触控板上的动作
+                if contact.state >= 1 && contact.state <= 6 {
+                    let id = Int(contact.identifier)
+                    let x = CGFloat(contact.normalized.pos.x)
+                    let y = CGFloat(contact.normalized.pos.y)
+                    activePoints[id] = CGPoint(x: x, y: y)
+                }
             }
         }
         
