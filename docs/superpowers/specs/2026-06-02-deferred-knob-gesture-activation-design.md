@@ -2,19 +2,22 @@
 
 ## 1. 概述与背景 (Overview & Background)
 
-在当前的 `PhantomKnobDetector` 实现中，一旦用户将两根手指放在触控板上，系统便会在 `onMultitouchBegan` 阶段无条件、立即地切入 `.knobing`（正在旋转）状态并弹出 Overlay 提示。
+在当前的 `PhantomKnobDetector` 实现中，一旦用户将两根手指放在触控板上，系统便会在 `onMultitouchBegan` 阶段无条件并立即地切入 `.knobing` 状态并弹出 Overlay 提示。
 
 ### 1.1 现有局限
-这种“即触即弹”的逻辑极立干扰了用户的日常操作。当用户只是想在触控板上进行普通的“两指滚动 (Scroll)”或“两指横扫 (Swipe)”时，旋钮 Overlay 也会频繁弹出并锁定光标，造成非常糟糕的系统级误触体感。
-尤其是左右横向滑动（Swipe Horizontal）时，受人体指骨生理结构限制，手指在平移的瞬间会不可避免地伴随微小的相对扭转，在极短时间内（小于0.8秒）角度极易超过 $5^\circ$，导致直接误触发旋钮。
+这种“即触即弹”的逻辑极大地干扰了用户的日常操作。当用户只是想在触控板上进行普通的“两指滚动 (Scroll)”或“两指横扫 (Swipe)”时，旋钮 Overlay 也会频繁弹出，造成明显的误触。
+尤其是左右横向滑动（Swipe Horizontal）时，受人体手部骨骼生理结构限制，手指在平移的瞬间会不可避免地伴随微小的相对扭转，角度容易超过 $5^\circ$，从而误触发旋钮。
 
-### 1.2 升级目标与方案 A：中心点位移锁死 (Centroid Translation Lockout)
-为了彻底解决滑动时的旋转抖动误触，我们引入**中心点位移锁死机制**：
-1. **触碰静默阶段**：双指首次接触触控板时，系统在后台计算并缓存目标元素与几何中心，**不**弹出 Overlay，**不**锁死光标，事件继续放行。
-2. **0.8秒判定窗口下的双轨竞争**：
-   * **位移竞争（拦截）**：计算双指几何中心点 (Centroid) 相比初始中心点的位移。如果在 0.8s 内位移超过了阈值 $T_d$（设定为 15.0，约占触控板尺寸的 15%），则断定为**平移手势（Scroll/Swipe）**，立即将手势永久锁死为 `.pan`，本轮触摸结束前绝不再激活旋钮。
-   * **角度竞争（激活）**：如果在位移尚未超过阈值前，双指的相对旋转角度超过了阈值 $T_a$ (设定为 $5^\circ$)，则判定为**旋钮手势（Rotation）**，升级状态为 `.knobing`，锁定鼠标并弹出 Overlay。
-3. **超时兜底锁死**：若 0.8 秒内两轨均未判定成功（例如手指静止不动），则超时后手势自动锁死为 `.pan`。
+### 1.2 升级目标：判定逻辑简化
+我们将逻辑简化为：**在两指接触触控板的特定时间窗口（0.8 秒）内，只有当两指中心的位移小于位移阈值，且两指相对旋转的角度变化大于角度阈值时，才激活并进入旋钮手势（`.knob`）。**
+
+具体规则：
+1. **触碰静默阶段**：双指首次接触触控板时，静默捕获并缓存初始中心点与角度，**不**弹出 Overlay，**不**锁死光标，事件继续放行。
+2. **0.8秒内判定条件**：
+   * **中心点位移**：$Distance(Centroid_{current}, Centroid_{initial}) < T_d$ (设定为 15.0，约占触控板尺寸的 15%)。
+   * **相对旋转角度**：$Delta(Angle_{current}, Angle_{initial}) > T_a$ (设定为 $5^\circ$)。
+   * 当且仅当 **在 0.8 秒内** 以上两个条件同时满足，才切入 `.knob` 状态（显示 Overlay 并锁定光标）。
+3. **超时或未满足条件**：若超过 0.8 秒未满足条件，或平移位移超标导致条件不再可能满足，则手势维持 `.pan`（普通滑动）。
 
 ---
 
@@ -24,21 +27,16 @@
 digraph gesture_state {
     node [shape=box, style=filled, fillcolor=lightyellow];
     "activated\n(全局激活等待)" -> "onMultitouchBegan\n(手指触摸)" [label="静默捕获初始中心点与角度，不弹 Overlay"];
-    "onMultitouchBegan\n(手指触摸)" -> "双轨判定窗口 (0.8s 内)";
+    "onMultitouchBegan\n(手指触摸)" -> "判定窗口 (0.8s 内)";
     
-    "双轨判定窗口 (0.8s 内)" -> "旋转角度 > 5° (位移未超标)" [color=orange];
-    "旋转角度 > 5° (位移未超标)" -> "knobing\n(锁定并显示 Overlay)" [color=orange];
+    "判定窗口 (0.8s 内)" -> "位移 < 15.0 且 旋转角度 > 5°" [color=orange];
+    "位移 < 15.0 且 旋转角度 > 5°" -> "knobing\n(锁定并显示 Overlay)" [color=orange];
     
-    "双轨判定窗口 (0.8s 内)" -> "中心点位移 > 15.0" [color=blue];
-    "中心点位移 > 15.0" -> "isLockedToPan = true\n(锁死为 Pan 模式)" [color=blue];
-    
-    "双轨判定窗口 (0.8s 内)" -> "超过 0.8s 未旋转且位移未超标" [color=blue];
-    "超过 0.8s 未旋转且位移未超标" -> "isLockedToPan = true\n(锁死为 Pan 模式)" [color=blue];
-
-    "isLockedToPan = true\n(锁死为 Pan 模式)" -> "pan / scroll\n(静默状态，放行事件)" [color=blue];
+    "判定窗口 (0.8s 内)" -> "超时 0.8s / 位移 >= 15.0" [color=blue];
+    "超时 0.8s / 位移 >= 15.0" -> "pan / scroll\n(静默状态，放行事件)" [color=blue];
     
     "knobing\n(锁定并显示 Overlay)" -> "手指全部抬起" -> "cooling (渐隐冷却)";
-    "pan / scroll\n(静默状态，放行事件)" -> "手指全部抬起" -> "直接复位 activated (重置锁标记)";
+    "pan / scroll\n(静默状态，放行事件)" -> "手指全部抬起" -> "直接复位 activated";
 }
 ```
 
@@ -51,40 +49,44 @@ digraph gesture_state {
 
 ## 3. 详细设计与模块改动 (Detailed Component Changes)
 
-### 3.1 `GestureClassifier.swift` ── 增加位移判定锁死
+### 3.1 `GestureClassifier.swift` ── 逻辑重构
 
-#### 内部字段变更：
+#### 内部字段：
 * `private var initialCentroid: CGPoint?`
-* `private var isLockedToPan = false`
 * `private let translationThreshold: CGFloat = 15.0`
 
 #### 方法重构：
 1. `processTouchesBegan(points:)`
-   * 初始化 `initialAngle` 与 `initialCentroid`，清除 `isLockedToPan = false`。
+   * 记录 `initialAngle` 与 `initialCentroid = calculateCentroid(points: points)`。
 2. `processTouchesMoved(points:)`
-   * 检查 `isLockedToPan`。如果为 `true`，直接返回 `.pan`。
-   * 计算当前中心点与 `initialCentroid` 的距离。若超过 `translationThreshold`，则设置 `isLockedToPan = true` 并返回 `.pan`。
-   * 检查 `Date().timeIntervalSince(startTime) > detectionWindow`。若超时，则设置 `isLockedToPan = true` 并返回 `.pan`。
-   * 计算旋转角度。若变化超过 `angleThreshold`，则将 `currentMode` 置为 `.knob`。
+   * 检查 `currentMode == .knob`。若为 `true`，直接返回 `.knob`。
+   * 检查时间窗口：若 `Date().timeIntervalSince(startTime) > detectionWindow`，则返回 `.pan`。
+   * 计算位移距离 `distanceMoved`。
+   * 计算角度变化 `delta`。
+   * 判断条件：
+     ```swift
+     if distanceMoved < translationThreshold && delta > angleThreshold {
+         currentMode = .knob
+     }
+     ```
+   * 返回 `currentMode`。
 3. `processTouchesEnded()`
-   * 重置 `isLockedToPan = false`，`initialCentroid = nil`。
+   * 清空 `initialCentroid = nil`，`initialAngle = nil`，`detectionStartTime = nil`，重置 `currentMode = .pan`。
 
-### 3.2 `KnobStateManager.swift` ── 延迟流转逻辑 (保持不变)
-* **Began 阶段静默化**：只在后台缓存变量，不触发状态流转与 Overlay 弹出。
-* **Moved 阶段手势升级**：依赖 `GestureClassifier` 判定。如果返回 `.knob` 且当前状态为 `.activated`，则 transition 为 `.knobing` 并显示 Overlay，同时锁定鼠标位置。
-* **Ended 阶段静默复位**：若从未触发 `.knobing`，则静默复位，不弹出 Overlay 且不执行 cooling 渐隐。
+### 3.2 `KnobStateManager.swift` ── 保持不变
+* 维持已实现的延迟判定及静默复位。
 
 ---
 
 ## 4. 验证与测试方案 (Verification Plan)
 
 ### 4.1 单元测试 (Unit Tests)
-在 `GestureClassifierTests.swift` 中需要增加/修改测试用例：
-1. **测试 0.8s 判定成功**：双指开始移动，并在 0.5 秒内完成了 8° 旋转（且中心点位移小于 15.0），验证返回手势为 `.knob`。
-2. **测试 0.8s 超时锁定**：双指开始移动，在 0.9 秒内只平移没有旋转（旋转角度 0°），随后第 1.0 秒模拟进行 10° 旋转，验证返回手势依然锁死为 `.pan`。
-3. **测试位移即时锁定**：双指落下，立即在 0.2 秒内横移，位移量达到 20.0（此时旋转角度小于 3°）。随后在该手势内模拟进行 15° 的大范围旋转。验证：返回手势依然为 `.pan`，没有被触发为 `.knob`。
+在 `GestureClassifierTests.swift` 中更新/新增测试用例：
+1. **测试判定成功**：双指在 0.5 秒内旋转 8° 且中心位移小于 10，验证返回 `.knob`。
+2. **测试超时不激活**：双指在 0.9 秒内旋转 10° 且中心位移小于 10，验证返回 `.pan`。
+3. **测试位移超标不激活**：双指在 0.3 秒内旋转 10° 但中心位移达到 20.0，验证返回 `.pan`。
 
 ### 4.2 手动功能测试 (Manual Tests)
-1. **两指快速横向/纵向滑动测试**：按住 Option 键，两指放上去在触控板上自然地进行快速横向或纵向滑动。验证：**Overlay 完全没有弹出**，系统滚动十分流畅。
-2. **旋钮手势激活测试**：两指放上去，立刻原地做旋转动作，验证在旋转初始阶段 Overlay 迅速弹出，并且光标被锁定。
-3. **超时锁定测试**：两指放上去静止不转动，等待 1 秒钟，然后开始做旋转动作。验证：Overlay **没有弹出**，手势被锁死。
+1. **两指快速滑动**：两指自然快速横向/纵向滑动，确认不弹出 Overlay。
+2. **两指原地旋转**：两指原地迅速旋转，确认 Overlay 正常弹出且光标锁定。
+3. **静止后旋转**：两指放下静止 1 秒后再旋转，确认 Overlay 不弹出。
