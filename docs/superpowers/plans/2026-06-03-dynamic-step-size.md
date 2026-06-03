@@ -9,11 +9,11 @@
 2. 引入 `AppSettings` 处理 JSONC 加载与剥离注释。
 3. 实现 `ScaleResolver`，提供 Hysteresis 迟滞多环状态机和 Linear 渐变解析，并在 `radius < minRadius` 时返回 `nil` 进入死区状态。
 4. 改造 `OverlayView` / `OverlayController` 以支持死区变灰的视觉反馈。
-5. 在 `KnobStateManager` 中整合逻辑：
-   - 转移到 `.knobing` 状态时，通过 `CGEventSource.keyState` 进行 retroactive 扫描绑定初始被按下的数字键及锁定状态。
-   - 在 `.knobing` 状态下使用全局事件 tap 监听数字键 2-9 并进行乘数叠加。
-   - `onMultitouchMoved` 计算当前 `radius` 并通过 `ScaleResolver` 求解。如果处于死区（返回 `nil`），丢弃该帧旋转量且将 Overlay UI 设为变灰状态。
-   - 读取 UserDefaults 中的系统设置灵敏度（根据 AXRole 的 ControlType 进行匹配覆盖），应用公式：`finalScale = baseScale * activeKeyboardMultiplier * settingsSensitivity` 动态写入 translator。
+5. 在 `KnobStateManager.onMultitouchMoved` 每帧事件中整合逻辑：
+   - 轮询 `CGEventSource.keyState` 探测当前是否有数字键 2-9 被按下。
+   - 若检测到被按下的键且之前未锁定，锁定当前基础步长为 `lockedBaseScale`，并在按键期间保持该倍率乘积。松开时解锁恢复动态计算。
+   - 计算当前 `radius` 并通过 `ScaleResolver` 求解。如果处于死区（返回 `nil`），丢弃该帧旋转量且将 Overlay UI 设为变灰状态。
+   - 读取 UserDefaults 中的系统设置灵敏度，应用公式：`finalScale = baseScale * activeKeyboardMultiplier * settingsSensitivity` 动态写入 translator。
 
 **技术栈：** Swift 5.9, Foundation, ApplicationServices, AppKit, XCTest
 
@@ -98,7 +98,7 @@ final class ScaleConfigCompatibilityTests: XCTestCase {
 
 - [ ] **步骤 3：重构 ScaleConfig 并实现 JSONCParser**
 
-在 `ControlRule.swift` 中修改 `ScaleConfig`：
+在 `ControlRule.swift` 中修改 `ScaleConfig` :
 ```swift
 struct RadiusZone: Codable {
     let minRadius: Double
@@ -386,11 +386,11 @@ git commit -m "feat: implement ScaleResolver hysteresis and linear resolvers wit
 - [ ] **步骤 2：运行测试验证失败**
 
 运行：`swift test --filter InputTranslationTests`
-预期：编译失败，因为 `InputTranslator` 不具备 `scale` 属性 of get/set 接口。
+预期：编译失败，因为 `InputTranslator` 不具备 `scale` 属性的 get/set 接口。
 
 - [ ] **步骤 3：修改协议与具体实现**
 
-in `InputTranslator.swift` 中更新协议：
+在 `InputTranslator.swift` 中更新协议：
 ```swift
 protocol InputTranslator: AnyObject {
     func apply(units: Double, direction: RotationDirection)
@@ -423,66 +423,7 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
 
 - [ ] **步骤 1：修改 OverlayView 添加 isDeadzone 样式**
 
-在 `OverlayView.swift` 中添加 `isDeadzone` 属性：
-```swift
-struct OverlayView: View {
-    let targetName: String?
-    let angle: Double
-    let displayValue: String?
-    var isDeadzone: Bool = false
-
-    var body: some View {
-        let overlayColor = isDeadzone ? Color.gray.opacity(0.5) : Color.white
-        let strokeColor = isDeadzone ? Color.gray.opacity(0.2) : Color.white.opacity(0.3)
-        let textColor = isDeadzone ? Color.gray : Color.white
-        
-        VStack(spacing: 8) {
-            if let targetName = targetName, !targetName.isEmpty {
-                Text(targetName)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(textColor)
-            }
-
-            ZStack {
-                Circle()
-                    .stroke(strokeColor, lineWidth: 2)
-                    .frame(width: 60, height: 60)
-
-                GeometryReader { geometry in
-                    let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                    let radius: CGFloat = 25
-                    let angleRad = angle * .pi / 180
-
-                    Path { path in
-                        path.move(to: center)
-                        path.addLine(to: CGPoint(
-                            x: center.x + radius * cos(angleRad),
-                            y: center.y - radius * sin(angleRad)
-                        ))
-                    }
-                    .stroke(overlayColor, lineWidth: 2)
-                }
-                .frame(width: 60, height: 60)
-
-                Circle()
-                    .fill(overlayColor)
-                    .frame(width: 8, height: 8)
-            }
-
-            if let displayValue = displayValue, !displayValue.isEmpty {
-                Text(displayValue)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(textColor)
-            }
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.75))
-        )
-    }
-}
-```
+在 `OverlayView.swift` 中添加 `isDeadzone` 属性并在 body 中控制颜色显示（变灰）。
 
 - [ ] **步骤 2：在 OverlayController 中提供 isDeadzone 的更新接口**
 
@@ -524,132 +465,101 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
 
 ---
 
-### 任务 5：系统灵敏度读取、键盘监控与 KnobStateManager 整合
+### 任务 5：KnobStateManager 整合每帧按键轮询与系统灵敏度合成
 
 **文件：**
 - 修改：`PhantomKnobDetector/Service/KnobStateManager.swift`
 
-- [ ] **步骤 1：集成状态维护与 retroactive 物理按键扫描**
+- [ ] **步骤 1：集成状态变量维护与 MultitouchBegan 初始化**
 
 在 `KnobStateManager.swift` 中增加以下私有属性：
 ```swift
     private var activeKeyboardMultiplier: Double = 1.0
-    private var globalKeyboardMonitor: Any?
     private var currentZoneIndex: Int = 0
     private var activeScaleConfig: ScaleConfig = .fixed(1.0)
     private var lastResolvedBaseScale: Double = 1.0
     private var lockedBaseScale: Double? = nil
 ```
 
-在 `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
-
-实现键盘监听与 **`CGEventSource.keyState` 初始扫描锁定** 逻辑：
+在 `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态：
 ```swift
-    private func startKeyboardMonitoring() {
-        guard AppSettings.shared.enableKeyboardNumberMultiplier, globalKeyboardMonitor == nil else { return }
-        
-        // 1. Retroactive 状态继承扫描
-        let keyMapping: [Int: CGKeyCode] = [
-            2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25
-        ]
-        
-        for (num, keyCode) in keyMapping {
-            if CGEventSource.keyState(.combinedSessionState, key: keyCode) {
-                self.lockedBaseScale = self.lastResolvedBaseScale
-                self.activeKeyboardMultiplier = Double(num)
-                writeDebugLog("[KnobStateManager] Detected pre-held key \(num) during startup, locked base scale: \(self.lastResolvedBaseScale)")
-                break
-            }
-        }
-        
-        // 2. 正常注册监听器
-        globalKeyboardMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
-            guard let self = self else { return }
-            if event.type == .keyDown {
-                if let chars = event.characters, chars.count == 1,
-                   let num = Int(chars), num >= 2 && num <= 9 {
-                    if self.lockedBaseScale == nil {
-                        self.lockedBaseScale = self.lastResolvedBaseScale
-                    }
-                    self.activeKeyboardMultiplier = Double(num)
-                    writeDebugLog("[KnobStateManager] Keyboard multiplier set to: \(self.activeKeyboardMultiplier), locked scale: \(self.lockedBaseScale ?? self.lastResolvedBaseScale)")
+        // 查找匹配的 rule 并缓存对应的 ScaleConfig
+        let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
+        let resolvedScaleConfig: ScaleConfig
+        if let ruleScaleConfig = rule?.scaleConfig {
+            switch ruleScaleConfig {
+            case .fixed(let val):
+                if val == 1.0 {
+                    resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
+                        ? .linear(AppSettings.shared.linear)
+                        : .zones(AppSettings.shared.fixed.zones)
+                } else {
+                    resolvedScaleConfig = .fixed(val)
                 }
-            } else if event.type == .keyUp {
-                if let chars = event.characters, chars.count == 1,
-                   let num = Int(chars), Double(num) == self.activeKeyboardMultiplier {
-                    self.lockedBaseScale = nil
-                    self.activeKeyboardMultiplier = 1.0
-                    writeDebugLog("[KnobStateManager] Keyboard multiplier reset to 1.0, unlocked scale")
-                }
+            default:
+                resolvedScaleConfig = ruleScaleConfig
             }
+        } else {
+            resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
+                ? .linear(AppSettings.shared.linear)
+                : .zones(AppSettings.shared.fixed.zones)
         }
-    }
-
-    private func stopKeyboardMonitoring() {
-        if let monitor = globalKeyboardMonitor {
-            NSEvent.removeMonitor(monitor)
-            globalKeyboardMonitor = nil
-        }
-        activeKeyboardMultiplier = 1.0
-        lockedBaseScale = nil
-    }
+        self.activeScaleConfig = resolvedScaleConfig
+        self.currentZoneIndex = 0
+        self.lastResolvedBaseScale = 1.0
+        self.lockedBaseScale = nil
 ```
 
-- [ ] **步骤 2：在 transition 方法中整合监控器生命周期**
+- [ ] **步骤 2：在 transition 方法中重置键盘锁定变量**
 
-在 `transition(to newState: KnobGlobalState)` 方法中：
+在 `transition(to newState: KnobGlobalState)` 中：
 ```swift
         state = newState
-        if case .knobing = newState {
-            startKeyboardMonitoring()
+        if case .activated = newState {
+            lockedBaseScale = nil
+            activeKeyboardMultiplier = 1.0
         } else if case .inactive = newState {
-            stopKeyboardMonitoring()
-        } else if case .activated = newState {
-            stopKeyboardMonitoring()
+            lockedBaseScale = nil
+            activeKeyboardMultiplier = 1.0
         }
 ```
 
-- [ ] **步骤 3：在 onMultitouchMoved 中动态更新步长与系统灵敏度乘数**
+- [ ] **步骤 3：在 onMultitouchMoved 中增加每帧按键轮询与最终步长合成**
 
+在 `onMultitouchMoved` 触发时：
 ```swift
-    func onMultitouchMoved(points: [Int: CGPoint]) {
-        guard state != .inactive, let translator = currentTranslator else { return }
-
-        let scaledPoints = scaleCoordinates(points)
-        guard let currentAngle = calculateRawAngle(points: scaledPoints) else { return }
-
-        let currentTouchCount = scaledPoints.count
-        if currentTouchCount >= 2 {
-            let (_, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
-            self.fingerIdx1 = idx1
-            self.fingerIdx2 = idx2
-        }
-
-        let mode = gestureClassifier.processTouchesMoved(points: points)
-        if mode == .knob && !state.isKnobing {
-            if let target = currentTarget {
-                transition(to: .knobing(target: target))
-                if let mouseLoc = initialTouchPosition {
-                    overlayController.show(
-                        at: mouseLoc,
-                        targetName: target.displayName.isEmpty ? nil : target.displayName,
-                        displayValue: translator.displayValue
-                    )
-                }
-            }
-        }
-
         if state.isKnobing {
             if let lockPos = initialTouchPositionCarbon {
                 CGWarpMouseCursorPosition(lockPos)
             }
 
-            // 1. 半径死区与步长倍率求解
-            let radius = calculateRawRadius(points: scaledPoints)
+            // 1. 轮询 CGEventSource.keyState 探测当前是否有数字键 2-9 被物理按住
+            var activeNum: Int? = nil
+            if AppSettings.shared.enableKeyboardNumberMultiplier {
+                let keyMapping: [Int: CGKeyCode] = [
+                    2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25
+                ]
+                for (num, keyCode) in keyMapping {
+                    if CGEventSource.keyState(.combinedSessionState, key: keyCode) {
+                        activeNum = num
+                        break
+                    }
+                }
+            }
+
+            // 2. 根据按键状态执行步长锁定或动态解析
             let baseScale: Double?
-            if let locked = lockedBaseScale {
-                baseScale = locked
+            if let num = activeNum {
+                if lockedBaseScale == nil {
+                    lockedBaseScale = lastResolvedBaseScale
+                }
+                activeKeyboardMultiplier = Double(num)
+                baseScale = lockedBaseScale
             } else {
+                lockedBaseScale = nil
+                activeKeyboardMultiplier = 1.0
+                
+                let radius = calculateRawRadius(points: scaledPoints)
                 switch activeScaleConfig {
                 case .fixed(let val):
                     baseScale = val
@@ -663,7 +573,7 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
                 }
             }
 
-            // 2. 检查死区判定
+            // 3. 检查死区判定
             guard let activeBaseScale = baseScale else {
                 // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
                 let displayVal = translator.displayValue
@@ -673,7 +583,7 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
                 return
             }
 
-            // 3. 读取系统面板灵敏度 (并应用覆盖)
+            // 4. 读取系统面板灵敏度并合成最终步长倍率
             let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 0.5
             let settingsSensitivity: Double
             if let target = currentTarget {
@@ -689,10 +599,10 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
                 settingsSensitivity = globalSens
             }
 
-            // 4. 合成最终步长倍率
             let finalScale = activeBaseScale * activeKeyboardMultiplier * settingsSensitivity
             translator.scale = finalScale
 
+            // 5. 注入翻译事件
             let knobState = KnobState(
                 current: KnobCore(angle: currentAngle),
                 previous: KnobCore(angle: previousAngle)
@@ -708,18 +618,8 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
             self.currentAngle = currentAngle
             previousAngle = currentAngle
         }
-    }
 ```
-新增 `calculateRawRadius` 辅助方法：
-```swift
-    private func calculateRawRadius(points: [Int: CGPoint]) -> Double {
-        if points.count >= 2 {
-            let (knobCore, _, _) = KnobAlgorithm().calKnob(points)
-            return knobCore.isValid ? knobCore.radius : 0.0
-        }
-        return 0.0
-    }
-```
+新增 `calculateRawRadius` 辅助方法并在末尾整合。
 
 - [ ] **步骤 4:: 运行测试确认通过**
 
@@ -731,5 +631,5 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
 
 ```bash
 git add PhantomKnobDetector/Service/KnobStateManager.swift
-git commit -m "feat: integrate dynamic scale resolver, deadzone filtering, retroactive keyboard scan and settings sensitivity multiplier"
+git commit -m "feat: implement per-frame key polling via CGEventSource.keyState with scale-locking and settings sensitivity multiplier"
 ```

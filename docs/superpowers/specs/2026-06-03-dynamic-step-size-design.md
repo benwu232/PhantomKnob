@@ -9,11 +9,11 @@
 1. **键盘数字键倍率与步长锁定（键盘与旋钮并存）**：
    * 在调节过程中，长按数字键 `2-9` 可临时将当前步长放大 `2-9` 倍。
    * **锁定机制**：当按下数字键的瞬间，锁定当前旋钮的半径基础步长（Base Scale），在此期间忽略手指半径的波动，直到数字键松开。
-   * **状态继承（Retroactive Detection）**：在进入旋钮控制（`knobing`）的瞬间，主动查询当前键盘的物理按键状态。如果用户在旋转前已经按住了数字键 `2-9`，进入状态时自动锁定并应用对应的倍率。
+   * **轮询机制（Polling via keyState）**：在旋转的每一帧中，主动轮询当前键盘的物理按键状态（使用 `CGEventSource.keyState`）。这种拉取模式完全避免了全局键盘事件 tap 带来的复杂生命周期管理及沙盒权限敏感问题，且能完美支持“先按数字键、后转旋钮”的无缝继承体验。
 2. **多档半径分段机制（Fixed Zones with Hysteresis）与小半径死区（Deadzone）**：
    * 支持多档半径分段（Zones），当配置 $\ge 2$ 个环时，自动启用**迟滞缓冲区机制（Hysteresis）**。
    * 每个环由：**内界（minRadius）**、**外界（maxRadius）**、**缓冲区宽度（margin）**和**步长倍率（scale）**定义。
-   * **死区保护**：如果 `radius < zones[0].minRadius`，判定手指贴合过紧，忽略该帧 of 旋转量不发送任何调节事件，并在 Overlay UI 上显示不可用的视觉反馈（灰色）。
+   * **死区保护**：如果 `radius < zones[0].minRadius`，判定手指贴合过紧，忽略该帧的旋转量不发送任何调节事件，并在 Overlay UI 上显示不可用的视觉反馈（灰色）。
 3. **线性渐变机制（Linear Interpolation）**：步长随半径大小在一定区间内线性平滑过渡。如果 `radius < linear.minRadius`，同样进入死区保护，丢弃事件，且 Overlay UI 灰色显示。
 4. **两级配置与个性化定制**：
    * **全局默认**：由 `settings.jsonc` 定义全局默认的步长方案及参数。
@@ -85,9 +85,12 @@ protocol InputTranslator: AnyObject {
 * 当处于死区时，OverlayView 中的线条和文本变为灰色半透明样式。
 
 ### 4. 最终步长合成流程 (`KnobStateManager` 整合)
-* 读取当前 Target 的 `ControlType`。
-* 从 `SensitivityConfig` 中读取对应的系统设置灵敏度 `settingsSensitivity`。
-* 最终步长为 `(lockedBaseScale ?? lastResolvedBaseScale) * activeKeyboardMultiplier * settingsSensitivity`。
+在 `onMultitouchMoved` 每帧触发时：
+* 轮询 `CGEventSource.keyState` 检测 2-9 数字键的物理状态：
+  * 若被按下：若 `lockedBaseScale` 为 `nil`，则将其锁定为当前的 `lastResolvedBaseScale`，并在该帧及后续按键帧中直接使用 `lockedBaseScale` 作为基础步长，乘数设为对应数字。
+  * 若未被按下：重置 `lockedBaseScale = nil`，乘数设为 `1.0`，并重新通过 `ScaleResolver` 结合 radius 进行动态求解和更新 `lastResolvedBaseScale`。
+* 读取 `SensitivityConfig` 中的系统设置灵敏度 `settingsSensitivity`。
+* 最终步长为 `baseScale * activeKeyboardMultiplier * settingsSensitivity`。
 
 ---
 
