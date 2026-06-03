@@ -320,7 +320,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             }
 
             // 4. 读取系统面板灵敏度并合成最终步长倍率
-            let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 0.5
+            let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 1.0
             let settingsSensitivity: Double
             if let target = currentTarget {
                 switch target.axRole {

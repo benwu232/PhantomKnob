@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("globalSensitivity") private var globalSensitivity = 0.5
+    @AppStorage("globalSensitivity") private var globalSensitivity = 1.0
     @AppStorage("sliderSensitivity") private var sliderSensitivity: Double?
     @AppStorage("progressSensitivity") private var progressSensitivity: Double?
     
