@@ -5,42 +5,50 @@
 ## 目标描述
 
 在两指旋转（Knob）手势中，用户希望根据当前手指间的半径距离或辅助键盘按键，动态调整调节的步长灵敏度。
-为了支持高度的定制化，系统需同时支持：
+为了支持高度的定制化与可读性，系统需同时支持：
 1. **键盘数字键倍率（键盘与旋钮并存）**：在调节过程中，长按数字键 `2-9` 可临时将当前步长放大 `2-9` 倍。
 2. **多档半径分段机制（Fixed Zones with Hysteresis）**：
    * 支持多档半径分段（Zones），当配置 $\ge 2$ 个环时，自动启用**迟滞缓冲区机制（Hysteresis）**。
    * 每个环由：**内界（minRadius）**、**外界（maxRadius）**、**缓冲区宽度（margin）**和**步长倍率（scale）**定义。
 3. **线性渐变机制（Linear Interpolation）**：步长随半径大小在一定区间内线性平滑过渡。
 4. **两级配置与个性化定制**：
-   * **全局默认**：由 `settings.json` 定义全局默认的步长方案及参数。
-   * **单 Knob 定制**：在规则库 `rules.json` 或 `bundled-rules.json` 中，每条规则可以拥有专属的 `scaleConfig` 配置，覆盖全局默认设置，实现针对每个具体 Knob 的个性化微调。
+   * **全局默认**：由 `settings.jsonc` 定义全局默认的步长方案及参数。
+   * **单 Knob 定制**：在规则库中，每条规则可以拥有专属的 `scaleConfig` 配置，覆盖全局默认设置。
+5. **配置文件支持注释 (JSONC)**：配置文件使用 `.jsonc` 后缀，支持单行 `//` 和多行 `/* */` 注释，在 Swift 加载时进行预处理过滤。
 
 ---
 
 ## 配置文件设计
 
-### 1. 全局默认设置 (`settings.json`)
-存储于：`~/Library/Application Support/PhantomKnob/settings.json`。
-```json
+### 1. 全局默认设置 (`settings.jsonc`)
+存储于：`~/Library/Application Support/PhantomKnob/settings.jsonc`。
+```jsonc
 {
+  // 默认启用的半径方案: "fixed"（环分段/固定倍率）、"linear"（线性渐变）
   "activeScheme": "fixed",
+  
+  // 是否允许在调节时按数字键 2-9 放大步长
   "enableKeyboardNumberMultiplier": true,
+  
+  // 环分段方案配置
   "fixed": {
     "zones": [
       {
         "minRadius": 0.0,
         "maxRadius": 12.0,
-        "margin": 2.0,
-        "scale": 1.0
+        "margin": 2.0,  // 迟滞宽度，防止临界点频繁抖动
+        "scale": 1.0    // 捏合（小半径）时的步长倍率
       },
       {
         "minRadius": 12.0,
         "maxRadius": 100.0,
         "margin": 2.0,
-        "scale": 0.2
+        "scale": 0.2    // 张开（大半径）时的步长倍率
       }
     ]
   },
+  
+  // 线性渐变方案配置
   "linear": {
     "minRadius": 10.0,
     "maxRadius": 20.0,
@@ -50,49 +58,8 @@
 }
 ```
 
-### 2. 单 Knob 规则配置 (`rules.json` 或 `bundled-rules.json`)
-每条规则的 `scaleConfig` 可单独配置。我们对 `ScaleConfig` 进行了扩展，并保持了向后兼容性。
-
-#### A. 兼容旧版固定步长（单值形式）：
-```json
-{
-  "key": { "bundleID": "com.apple.QuickTimePlayerX", "axRole": "AXSlider", "displayName": "volume" },
-  "translation": "arrowKeyUpDown",
-  "scaleConfig": {
-    "fixed": 1.0
-  }
-}
-```
-
-#### B. 新版个性化分档（多 Zones 形式）：
-```json
-{
-  "key": { "bundleID": "com.apple.FinalCut", "axRole": "AXSlider", "displayName": "timeline" },
-  "translation": "scrollWheelHorizontal",
-  "scaleConfig": {
-    "zones": [
-      { "minRadius": 0.0, "maxRadius": 10.0, "margin": 1.5, "scale": 2.0 },
-      { "minRadius": 10.0, "maxRadius": 100.0, "margin": 1.5, "scale": 0.5 }
-    ]
-  }
-}
-```
-
-#### C. 新版个性化渐变（Linear 形式）：
-```json
-{
-  "key": { "bundleID": "com.apple.LogicPro", "axRole": "AXSlider", "displayName": "frequency" },
-  "translation": "axWrite",
-  "scaleConfig": {
-    "linear": {
-      "minRadius": 5.0,
-      "maxRadius": 15.0,
-      "minScale": 1.5,
-      "maxScale": 0.1
-    }
-  }
-}
-```
+### 2. 单 Knob 规则配置 (`rules.jsonc` 或 `bundled-rules.json`)
+每条规则的 `scaleConfig` 可单独配置，同样支持 JSONC 格式。
 
 ---
 
@@ -121,13 +88,35 @@ enum ScaleConfig: Codable {
     case linear(ScaleConfigLinear)
 }
 ```
-**自定义 Codable 解码逻辑**：
-* 尝试解码 `"fixed"` 键：
-  * 若为 `Double` 数值 $\rightarrow$ 解码为 `.fixed(val)`。
-* 尝试解码 `"zones"` 键 $\rightarrow$ 解码为 `.zones([RadiusZone])`。
-* 尝试解码 `"linear"` 键 $\rightarrow$ 解码为 `.linear(ScaleConfigLinear)`。
 
-### 2. 接口协议扩展 (`InputTranslator` 改造)
+### 2. JSONC 预处理助手
+在读取 `.jsonc` 文件时，先通过正则表达式剥离注释，再进行标准的 JSON 反序列化：
+```swift
+struct JSONCParser {
+    static func stripComments(from jsonString: String) -> String {
+        // 匹配单行 // 注释和多行 /* */ 注释的正则表达式
+        let pattern = #"(?:/\*(?:[^*]|\*(?!/))*\*/)|(?://.*)"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
+            return jsonString
+        }
+        let range = NSRange(jsonString.startIndex..., in: jsonString)
+        return regex.stringByReplacingMatches(in: jsonString, options: [], range: range, withTemplate: "")
+    }
+
+    static func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
+        guard let rawString = String(data: data, encoding: .utf8) else {
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "无法解析为 UTF-8 字符串"))
+        }
+        let cleanString = stripComments(from: rawString)
+        guard let cleanData = cleanString.data(using: .utf8) else {
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "清理注释后无法转换回 Data"))
+        }
+        return try JSONDecoder().decode(type, from: cleanData)
+    }
+}
+```
+
+### 3. 接口协议扩展 (`InputTranslator` 改造)
 ```swift
 protocol InputTranslator: AnyObject {
     func apply(units: Double, direction: RotationDirection)
@@ -136,16 +125,16 @@ protocol InputTranslator: AnyObject {
 }
 ```
 
-### 3. 动态步长解析流程
+### 4. 动态步长解析流程
 在手势开始时（`onMultitouchBegan`），确定采用哪套 `ScaleConfig`：
 1. **策略优先级**：
    * 检查当前匹配规则的 `scaleConfig` 是否为定制版（即 `zones` 数量 $\ge 2$ 或为 `linear`）。
    * 如果是，则当前手势完全使用该规则自带的 `scaleConfig` 进行解析。
-   * 如果规则不存在，或者规则为旧版 `.fixed(Double)` 且其值为 `1.0`（代表未特意覆盖默认步长），则**回退使用全局 `AppSettings` 中定义的 `activeScheme` 配置**。
+   * 如果规则不存在，或者规则为旧版 `.fixed(Double)` 且其值为 `1.0`，则**回退使用全局 `AppSettings` 中定义的 `activeScheme` 配置**。
 2. **状态维护**：
-   * `KnobStateManager` 内部维护一个 `var currentZoneIndex: Int = 0`。每次开始新手势时重置为 0。
+   * `KnobStateManager` 内部维护一个 `var currentZoneIndex: Int = 0`。每次开始新手势时重置为 0.
 
-### 4. 键盘数字键监控器
+### 5. 键盘数字键监控器
 * 在手势开始并在 `.knobing` 时开启 `.keyDown`/`.keyUp` 全局监控。
 * 若按下 `2-9`，设置全局叠加倍率乘数 `activeKeyboardMultiplier = Double(char)`。松开时还原为 `1.0`。
 * `最终步长倍率 = 半径解析倍率 (baseScale) * 键盘乘数 (activeKeyboardMultiplier)`。
@@ -157,9 +146,9 @@ protocol InputTranslator: AnyObject {
 ### 自动化单元测试
 在 `PhantomKnobDetectorTests` 目录下新增测试文件：
 1. **`AppSettingsTests.swift`**：测试默认配置生成，文件读取与写入，配置校验。
-2. **`ScaleConfigCompatibilityTests.swift`**：验证 `ScaleConfig` 能够正确解码旧版 JSON（单精度浮点）以及新版（多 zones / linear 格式）。
-3. **`ScaleResolverTests.swift`**：验证在同时存在全局配置和单 Knob 专属规则时，解析器能正确匹配高优先级个性化配置。
+2. **`JSONCParserTests.swift`**：验证 `stripComments` 能成功剥离单行/多行注释，保证解析不崩溃。
+3. **`ScaleConfigCompatibilityTests.swift`**：验证 `ScaleConfig` 能够正确解码旧版 JSON 以及新版（多 zones / linear 格式）。
+4. **`ScaleResolverTests.swift`**：验证解析优先级及多环迟滞逻辑。
 
 ### 手动验证
-1. 编写一条特定 App 的 rules，并在其中配置独有的 zones，运行此 App，验证其步长变化半径临界点是按照 rule 内的数据触发，而不是按照全局 `settings.json`。
-2. 在旋转过程中按下键盘数字键（2-9），验证数值变化速度是否瞬时加快。
+1. 在 `settings.jsonc` 中编写带注释的配置，并在旋转过程中按下键盘数字键（2-9），验证是否生效，并检查 debug.log 确认注释已被成功滤除且没有报错。
