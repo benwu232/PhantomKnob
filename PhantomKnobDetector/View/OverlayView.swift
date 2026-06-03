@@ -6,18 +6,19 @@ struct OverlayView: View {
     let targetName: String?
     let angle: Double
     let displayValue: String?
+    var isDeadzone: Bool = false
 
     var body: some View {
         VStack(spacing: 8) {
             if let targetName = targetName, !targetName.isEmpty {
                 Text(targetName)
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(isDeadzone ? .gray : .white)
             }
 
             ZStack {
                 Circle()
-                    .stroke(Color.white.opacity(0.3), lineWidth: 2)
+                    .stroke(isDeadzone ? Color.gray.opacity(0.3) : Color.white.opacity(0.3), lineWidth: 2)
                     .frame(width: 60, height: 60)
 
                 GeometryReader { geometry in
@@ -32,25 +33,25 @@ struct OverlayView: View {
                             y: center.y - radius * sin(angleRad)
                         ))
                     }
-                    .stroke(Color.white, lineWidth: 2)
+                    .stroke(isDeadzone ? Color.gray : Color.white, lineWidth: 2)
                 }
                 .frame(width: 60, height: 60)
 
                 Circle()
-                    .fill(Color.white)
+                    .fill(isDeadzone ? Color.gray : Color.white)
                     .frame(width: 8, height: 8)
             }
 
             if let displayValue = displayValue, !displayValue.isEmpty {
                 Text(displayValue)
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(isDeadzone ? .gray : .white)
             }
         }
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.75))
+                .fill(Color.black.opacity(isDeadzone ? 0.6 : 0.75))
         )
     }
 }

@@ -10,6 +10,7 @@ class OverlayController: ObservableObject {
     @Published var targetName: String? = nil
     @Published var angle: Double = 0
     @Published var displayValue: String? = nil
+    @Published var isDeadzone: Bool = false
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
@@ -36,9 +37,10 @@ class OverlayController: ObservableObject {
         isVisible = true
     }
 
-    func update(angle: Double, displayValue: String?) {
+    func update(angle: Double, displayValue: String?, isDeadzone: Bool = false) {
         self.angle = angle
         self.displayValue = displayValue
+        self.isDeadzone = isDeadzone
         updateOverlayView()
     }
 
@@ -91,7 +93,8 @@ class OverlayController: ObservableObject {
         let view = NSHostingView(rootView: OverlayView(
             targetName: targetName,
             angle: angle,
-            displayValue: displayValue
+            displayValue: displayValue,
+            isDeadzone: isDeadzone
         ))
 
         panel.contentView = view
@@ -104,7 +107,8 @@ class OverlayController: ObservableObject {
         hostingView.rootView = OverlayView(
             targetName: targetName,
             angle: angle,
-            displayValue: displayValue
+            displayValue: displayValue,
+            isDeadzone: isDeadzone
         )
     }
 
