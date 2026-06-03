@@ -234,19 +234,18 @@ displayValue: String?   // nil for non-axWrite translations
 **Accumulator rule:** Continuous events (scrollWheel, swipe) accept fractional units directly via CGEvent double-value fields. Discrete events (arrowKey) accumulate until ≥ 1.0, fire integer presses, carry remainder.
 
 ### ScaleConfig
-Configuration describing how rotation angle maps to InputTranslation units.
+Configuration describing how rotation angle maps to InputTranslation units. It can be defined globally in `settings.jsonc` or overridden per-knob in `rules.jsonc`.
 
 **Default:** `fixed(1.0)` — 1° rotation = 1 minimum unit (universal, no heuristics)
 
-**MVP:** `fixed(Double)` only — single scale value regardless of finger radius.
+**Schemes:**
+1. **fixed**: Resolves to a fixed multiplier.
+   * If a single zone is configured: resolved to that fixed scale value.
+   * If 2 or more zones are configured: dynamically resolves to a zone's scale using a hysteresis state machine based on `minRadius`, `maxRadius`, and `margin`.
+2. **linear**: Linearly interpolates the scale between `minRadius` (maps to `minScale`) and `maxRadius` (maps to `maxScale`).
 
-**Future:** `discreteRadius([RadiusZone])` — different scale per finger-spread range:
-```
-RadiusZone(range: 0.0...0.3, scale: 3.0)  // fingers close → coarse
-RadiusZone(range: 0.3...0.7, scale: 1.0)  // default zone
-RadiusZone(range: 0.7...1.0, scale: 0.3)  // fingers spread → fine
-```
-Rationale: small radius = small physical movement = needs higher sensitivity; large radius = large movement = finer control.
+**Keyboard Override (Numeric keys 2-9):**
+* Pressing a numeric key `2-9` during rotation locks the base scale resolved at that moment and multiplies it by the key value. Releasing the key restores dynamic resolution.
 
 ### ControlRule
 A stored entry in the RuleLibrary describing how to control a specific element.
@@ -303,6 +302,9 @@ Fixed at gesture start position (mouse cursor location with offset to avoid occl
 ### Value Display
 - `axWrite` translation: shows current value read from AXValue (percentage, time, or raw)
 - All other translations: value area is hidden (user observes effect directly on screen)
+
+### Radius Deadzone State
+- When `radius < minRadius` (fingers too close), the overlay circle and angle indicator turn gray (disabled style) to indicate that the gesture is in the inactive deadzone, and value adjustments are suspended. Returning above `minRadius` restores the active visual style.
 
 ### Visibility
 - Fade in when entering `knobing` state

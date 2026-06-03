@@ -7,9 +7,12 @@
 **架构：**
 1. 改造 `ScaleConfig` 及协议 `InputTranslator`，允许在手势运动中动态写入 `scale`。
 2. 引入 `AppSettings` 处理 JSONC 加载与剥离注释。
-3. 实现 `ScaleResolver`，提供 Hysteresis 迟滞多环状态机和 Linear 渐变解析。
-4. 在 `KnobStateManager` 中，在 `.knobing` 状态下使用全局事件 tap 监听数字键 2-9 并将其与半径步长倍率进行乘数叠加。
-5. 按下数字键的瞬间，锁定当时的基础步长（Base Scale），屏蔽之后的半径变动影响，直至按键释放。
+3. 实现 `ScaleResolver`，提供 Hysteresis 迟滞多环状态机和 Linear 渐变解析，并在 `radius < minRadius` 时返回 `nil` 进入死区状态。
+4. 改造 `OverlayView` / `OverlayController` 以支持死区变灰的视觉反馈。
+5. 在 `KnobStateManager` 中整合逻辑：
+   - 转移到 `.knobing` 状态时，通过 `CGEventSource.keyState` 进行 retroactive 扫描绑定初始被按下的数字键及锁定状态。
+   - 在 `.knobing` 状态下使用全局事件 tap 监听数字键 2-9 并进行乘数叠加。
+   - `onMultitouchMoved` 计算当前 `radius` 并通过 `ScaleResolver` 求解。如果处于死区（返回 `nil`），丢弃该帧旋转量且将 Overlay UI 设为变灰状态；否则恢复正常 Overlay 并更新步长。
 
 **技术栈：** Swift 5.9, Foundation, ApplicationServices, AppKit, XCTest
 
@@ -166,11 +169,11 @@ struct AppSettings: Codable {
     var activeScheme: String = "fixed"
     var enableKeyboardNumberMultiplier: Bool = true
     var fixed: FixedSchemeConfig = FixedSchemeConfig()
-    var linear: ScaleConfigLinear = ScaleConfigLinear(minRadius: 10.0, maxRadius: 20.0, minScale: 1.0, maxScale: 0.2)
+    var linear: ScaleConfigLinear = ScaleConfigLinear(minRadius: 5.0, maxRadius: 20.0, minScale: 1.0, maxScale: 0.2)
 
     struct FixedSchemeConfig: Codable {
         var zones: [RadiusZone] = [
-            RadiusZone(minRadius: 0.0, maxRadius: 12.0, margin: 2.0, scale: 1.0),
+            RadiusZone(minRadius: 5.0, maxRadius: 12.0, margin: 2.0, scale: 1.0),
             RadiusZone(minRadius: 12.0, maxRadius: 100.0, margin: 2.0, scale: 0.2)
         ]
     }
@@ -234,13 +237,13 @@ git commit -m "feat: add ScaleConfig zones/linear models and JSONCParser with te
 
 ---
 
-### 任务 2：实现半径步长求解器 `ScaleResolver`
+### 任务 2：实现半径步长求解器 `ScaleResolver`（支持死区检测）
 
 **文件：**
 - 创建：`PhantomKnobDetector/Service/ScaleResolver.swift`
 - 测试：`PhantomKnobDetectorTests/ScaleResolverTests.swift`
 
-- [ ] **步骤 1：编写 ScaleResolverTests 迟滞与线性测试**
+- [ ] **步骤 1：编写 ScaleResolverTests 迟滞、线性及死区测试**
 
 ```swift
 // PhantomKnobDetectorTests/ScaleResolverTests.swift
@@ -248,39 +251,39 @@ import XCTest
 @testable import PhantomKnobDetector
 
 final class ScaleResolverTests: XCTestCase {
-    func testHysteresisZones() {
+    func testHysteresisZonesAndDeadzone() {
         let zones = [
-            RadiusZone(minRadius: 0.0, maxRadius: 12.0, margin: 2.0, scale: 1.0),
+            RadiusZone(minRadius: 5.0, maxRadius: 12.0, margin: 2.0, scale: 1.0),
             RadiusZone(minRadius: 12.0, maxRadius: 100.0, margin: 2.0, scale: 0.2)
         ]
         
         var zoneIndex = 0
         
+        // 低于 5.0 触发死区返回 nil
+        XCTAssertNil(ScaleResolver.resolveHysteresis(radius: 4.5, zones: zones, currentZoneIndex: &zoneIndex))
+        
         // 初始留在 Zone 0
-        XCTAssertEqual(ScaleResolver.resolveHysteresis(radius: 5.0, zones: zones, currentZoneIndex: &zoneIndex), 1.0)
+        XCTAssertEqual(ScaleResolver.resolveHysteresis(radius: 6.0, zones: zones, currentZoneIndex: &zoneIndex), 1.0)
         XCTAssertEqual(zoneIndex, 0)
         
         // 大于 max + margin (12 + 2 = 14) 才进入 Zone 1
         XCTAssertEqual(ScaleResolver.resolveHysteresis(radius: 13.0, zones: zones, currentZoneIndex: &zoneIndex), 1.0)
-        XCTAssertEqual(zoneIndex, 0)
-        
         XCTAssertEqual(ScaleResolver.resolveHysteresis(radius: 14.5, zones: zones, currentZoneIndex: &zoneIndex), 0.2)
         XCTAssertEqual(zoneIndex, 1)
         
         // 小于 min - margin (12 - 2 = 10) 才返回 Zone 0
         XCTAssertEqual(ScaleResolver.resolveHysteresis(radius: 11.0, zones: zones, currentZoneIndex: &zoneIndex), 0.2)
-        XCTAssertEqual(zoneIndex, 1)
-        
         XCTAssertEqual(ScaleResolver.resolveHysteresis(radius: 9.5, zones: zones, currentZoneIndex: &zoneIndex), 1.0)
         XCTAssertEqual(zoneIndex, 0)
     }
 
-    func testLinearInterpolation() {
-        let config = ScaleConfigLinear(minRadius: 10.0, maxRadius: 20.0, minScale: 1.0, maxScale: 0.2)
+    func testLinearInterpolationAndDeadzone() {
+        let config = ScaleConfigLinear(minRadius: 5.0, maxRadius: 20.0, minScale: 1.0, maxScale: 0.2)
         
+        XCTAssertNil(ScaleResolver.resolveLinear(radius: 4.5, config: config))
         XCTAssertEqual(ScaleResolver.resolveLinear(radius: 5.0, config: config), 1.0)
         XCTAssertEqual(ScaleResolver.resolveLinear(radius: 25.0, config: config), 0.2)
-        XCTAssertEqual(ScaleResolver.resolveLinear(radius: 15.0, config: config), 0.6)
+        XCTAssertEqual(ScaleResolver.resolveLinear(radius: 12.5, config: config), 0.6)
     }
 }
 ```
@@ -297,8 +300,14 @@ final class ScaleResolverTests: XCTestCase {
 import Foundation
 
 struct ScaleResolver {
-    static func resolveHysteresis(radius: Double, zones: [RadiusZone], currentZoneIndex: inout Int) -> Double {
+    static func resolveHysteresis(radius: Double, zones: [RadiusZone], currentZoneIndex: inout Int) -> Double? {
         guard !zones.isEmpty else { return 1.0 }
+        
+        // 校验死区限制
+        if radius < zones[0].minRadius {
+            return nil
+        }
+        
         if zones.count == 1 { return zones[0].scale }
         
         let i = currentZoneIndex
@@ -329,8 +338,8 @@ struct ScaleResolver {
         }
     }
 
-    static func resolveLinear(radius: Double, config: ScaleConfigLinear) -> Double {
-        if radius <= config.minRadius { return config.minScale }
+    static func resolveLinear(radius: Double, config: ScaleConfigLinear) -> Double? {
+        if radius < config.minRadius { return nil }
         if radius >= config.maxRadius { return config.maxScale }
         let ratio = (radius - config.minRadius) / (config.maxRadius - config.minRadius)
         return config.minScale + ratio * (config.maxScale - config.minScale)
@@ -347,7 +356,7 @@ struct ScaleResolver {
 
 ```bash
 git add PhantomKnobDetector/Service/ScaleResolver.swift PhantomKnobDetectorTests/ScaleResolverTests.swift
-git commit -m "feat: implement ScaleResolver hysteresis and linear resolvers with tests"
+git commit -m "feat: implement ScaleResolver hysteresis and linear resolvers with deadzone detection"
 ```
 
 ---
@@ -385,52 +394,11 @@ git commit -m "feat: implement ScaleResolver hysteresis and linear resolvers wit
 protocol InputTranslator: AnyObject {
     func apply(units: Double, direction: RotationDirection)
     var displayValue: String? { get }
-    var scale: Double { get set }  // 新增：动态步长缩放
+    var scale: Double { get set }
 }
 ```
 
-在 `ArrowKeyTranslator.swift` 中修改：
-```swift
-final class ArrowKeyTranslator: InputTranslator {
-    private let axis: Axis
-    var scale: Double  // 改为 var
-
-    init(axis: Axis = .upDown, scale: Double = 1.0) {
-        self.axis = axis
-        self.scale = scale
-    }
-    // ...其余逻辑不变
-```
-
-在 `ScrollWheelTranslator.swift` 中修改：
-```swift
-final class ScrollWheelTranslator: InputTranslator {
-    private let axis: Axis
-    var scale: Double  // 改为 var
-
-    init(axis: Axis = .vertical, scale: Double = 1.0) {
-        self.axis = axis
-        self.scale = scale
-    }
-    // ...其余逻辑不变
-```
-
-在 `AXWriteTranslator.swift` 中修改：
-```swift
-final class AXWriteTranslator: InputTranslator {
-    private let element: AXUIElement
-    private let minValue: Double
-    private let maxValue: Double
-    var scale: Double  // 改为 var
-
-    init(element: AXUIElement, minValue: Double, maxValue: Double, scale: Double = 1.0) {
-        self.element = element
-        self.minValue = minValue
-        self.maxValue = maxValue
-        self.scale = scale
-    }
-    // ...其余逻辑不变
-```
+改造 ArrowKeyTranslator.swift, ScrollWheelTranslator.swift, AXWriteTranslator.swift（将 `private let scale` 修改为 `var scale`）。
 
 - [ ] **步骤 4：运行所有已有测试验证通过**
 
@@ -446,12 +414,124 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
 
 ---
 
-### 任务 4：全局键盘事件监控与 KnobStateManager 整合
+### 任务 4：Overlay UI 死区状态改造
+
+**文件：**
+- 修改：`PhantomKnobDetector/View/OverlayView.swift`
+- 修改：`PhantomKnobDetector/Service/OverlayController.swift`
+
+- [ ] **步骤 1：修改 OverlayView 添加 isDeadzone 样式**
+
+在 `OverlayView.swift` 中添加 `isDeadzone` 属性：
+```swift
+struct OverlayView: View {
+    let targetName: String?
+    let angle: Double
+    let displayValue: String?
+    var isDeadzone: Bool = false  // 新增
+
+    var body: some View {
+        let overlayColor = isDeadzone ? Color.gray.opacity(0.5) : Color.white
+        let strokeColor = isDeadzone ? Color.gray.opacity(0.2) : Color.white.opacity(0.3)
+        let textColor = isDeadzone ? Color.gray : Color.white
+        
+        VStack(spacing: 8) {
+            if let targetName = targetName, !targetName.isEmpty {
+                Text(targetName)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(textColor)
+            }
+
+            ZStack {
+                Circle()
+                    .stroke(strokeColor, lineWidth: 2)
+                    .frame(width: 60, height: 60)
+
+                GeometryReader { geometry in
+                    let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                    let radius: CGFloat = 25
+                    let angleRad = angle * .pi / 180
+
+                    Path { path in
+                        path.move(to: center)
+                        path.addLine(to: CGPoint(
+                            x: center.x + radius * cos(angleRad),
+                            y: center.y - radius * sin(angleRad)
+                        ))
+                    }
+                    .stroke(overlayColor, lineWidth: 2)
+                }
+                .frame(width: 60, height: 60)
+
+                Circle()
+                    .fill(overlayColor)
+                    .frame(width: 8, height: 8)
+            }
+
+            if let displayValue = displayValue, !displayValue.isEmpty {
+                Text(displayValue)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(textColor)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.75))
+        )
+    }
+}
+```
+
+- [ ] **步骤 2：在 OverlayController 中提供 isDeadzone 的更新接口**
+
+在 `OverlayController.swift` 中：
+```swift
+class OverlayController: ObservableObject {
+    // ...其余属性不变
+    @Published var isDeadzone: Bool = false  // 新增
+    
+    // 改造 update 方法
+    func update(angle: Double, displayValue: String?, isDeadzone: Bool = false) {
+        self.angle = angle
+        self.displayValue = displayValue
+        self.isDeadzone = isDeadzone
+        updateOverlayView()
+    }
+    
+    private func updateOverlayView() {
+        guard let hostingView = hostingView else { return }
+        hostingView.rootView = OverlayView(
+            targetName: targetName,
+            angle: angle,
+            displayValue: displayValue,
+            isDeadzone: isDeadzone
+        )
+    }
+    // ...其余代码同步更新
+}
+```
+
+- [ ] **步骤 3：运行测试验证通过**
+
+运行：`swift test`
+预期：PASS
+
+- [ ] **步骤 4：Commit**
+
+```bash
+git add PhantomKnobDetector/View/OverlayView.swift PhantomKnobDetector/Service/OverlayController.swift
+git commit -m "feat: add deadzone support and visual style (grayed out) to OverlayView and OverlayController"
+```
+
+---
+
+### 任务 5：键盘状态监测、主动扫描与 KnobStateManager 整合
 
 **文件：**
 - 修改：`PhantomKnobDetector/Service/KnobStateManager.swift`
 
-- [ ] **步骤 1：集成配置查找与键盘事件监控**
+- [ ] **步骤 1：集成状态维护与 retroactive 物理按键扫描**
 
 在 `KnobStateManager.swift` 中增加以下私有属性：
 ```swift
@@ -463,50 +543,39 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
     private var lockedBaseScale: Double? = nil
 ```
 
-在 `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态：
-```swift
-        // 查找匹配的 rule 并缓存对应的 ScaleConfig
-        let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
-        let resolvedScaleConfig: ScaleConfig
-        if let ruleScaleConfig = rule?.scaleConfig {
-            switch ruleScaleConfig {
-            case .fixed(let val):
-                // 如果是旧版单值 fixed(1.0)，代表使用全局默认配置；否则使用单 Knob 的个性化配置
-                if val == 1.0 {
-                    resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
-                        ? .linear(AppSettings.shared.linear)
-                        : .zones(AppSettings.shared.fixed.zones)
-                } else {
-                    resolvedScaleConfig = .fixed(val)
-                }
-            default:
-                resolvedScaleConfig = ruleScaleConfig
-            }
-        } else {
-            // 回退全局默认
-            resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
-                ? .linear(AppSettings.shared.linear)
-                : .zones(AppSettings.shared.fixed.zones)
-        }
-        self.activeScaleConfig = resolvedScaleConfig
-        self.currentZoneIndex = 0
-        self.lastResolvedBaseScale = 1.0
-        self.lockedBaseScale = nil
-```
+in `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
 
-增加键盘监听开启与重置方法：
+实现键盘监听与 **`CGEventSource.keyState` 初始扫描锁定** 逻辑：
 ```swift
     private func startKeyboardMonitoring() {
         guard AppSettings.shared.enableKeyboardNumberMultiplier, globalKeyboardMonitor == nil else { return }
         
+        // 1. Retroactive 状态继承扫描
+        // 映射按键字符到 macOS CGKeyCode
+        let keyMapping: [Int: CGKeyCode] = [
+            2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25
+        ]
+        
+        for (num, keyCode) in keyMapping {
+            if CGEventSource.keyState(.combinedSessionState, key: keyCode) {
+                self.lockedBaseScale = self.lastResolvedBaseScale
+                self.activeKeyboardMultiplier = Double(num)
+                writeDebugLog("[KnobStateManager] Detected pre-held key \(num) during startup, locked base scale: \(self.lastResolvedBaseScale)")
+                break
+            }
+        }
+        
+        // 2. 正常注册监听器
         globalKeyboardMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
             guard let self = self else { return }
             if event.type == .keyDown {
                 if let chars = event.characters, chars.count == 1,
                    let num = Int(chars), num >= 2 && num <= 9 {
-                    self.lockedBaseScale = self.lastResolvedBaseScale
+                    if self.lockedBaseScale == nil {
+                        self.lockedBaseScale = self.lastResolvedBaseScale
+                    }
                     self.activeKeyboardMultiplier = Double(num)
-                    writeDebugLog("[KnobStateManager] Keyboard multiplier set to: \(self.activeKeyboardMultiplier), locked scale: \(self.lastResolvedBaseScale)")
+                    writeDebugLog("[KnobStateManager] Keyboard multiplier set to: \(self.activeKeyboardMultiplier), locked scale: \(self.lockedBaseScale ?? self.lastResolvedBaseScale)")
                 }
             } else if event.type == .keyUp {
                 if let chars = event.characters, chars.count == 1,
@@ -541,34 +610,94 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
         } else if case .activated = newState {
             stopKeyboardMonitoring()
         }
-        // ...其余逻辑不变
 ```
 
-- [ ] **步骤 3：在 onMultitouchMoved 中动态更新步长倍率**
+- [ ] **步骤 3：在 onMultitouchMoved 中动态更新步长与死区拦截**
 
-在 `onMultitouchMoved` 获取到最新 radius 后，求解基础步长并写入 translator：
 ```swift
-        // 🌟 在 apply 前，解析当前的 baseScale
-        let radius = calculateRawRadius(points: scaledPoints)
-        let baseScale: Double
-        if let locked = lockedBaseScale {
-            baseScale = locked
-        } else {
-            switch activeScaleConfig {
-            case .fixed(let val):
-                baseScale = val
-            case .zones(let zones):
-                baseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &currentZoneIndex)
-            case .linear(let config):
-                baseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
-            }
-            self.lastResolvedBaseScale = baseScale
+    func onMultitouchMoved(points: [Int: CGPoint]) {
+        guard state != .inactive, let translator = currentTranslator else { return }
+
+        let scaledPoints = scaleCoordinates(points)
+        guard let currentAngle = calculateRawAngle(points: scaledPoints) else { return }
+
+        let currentTouchCount = scaledPoints.count
+        if currentTouchCount >= 2 {
+            let (_, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
+            self.fingerIdx1 = idx1
+            self.fingerIdx2 = idx2
         }
-        
-        let finalScale = baseScale * activeKeyboardMultiplier
-        translator.scale = finalScale
+
+        let mode = gestureClassifier.processTouchesMoved(points: points)
+        if mode == .knob && !state.isKnobing {
+            if let target = currentTarget {
+                transition(to: .knobing(target: target))
+                if let mouseLoc = initialTouchPosition {
+                    overlayController.show(
+                        at: mouseLoc,
+                        targetName: target.displayName.isEmpty ? nil : target.displayName,
+                        displayValue: translator.displayValue
+                    )
+                }
+            }
+        }
+
+        if state.isKnobing {
+            if let lockPos = initialTouchPositionCarbon {
+                CGWarpMouseCursorPosition(lockPos)
+            }
+
+            // 1. 半径死区与步长倍率求解
+            let radius = calculateRawRadius(points: scaledPoints)
+            let baseScale: Double?
+            if let locked = lockedBaseScale {
+                baseScale = locked
+            } else {
+                switch activeScaleConfig {
+                case .fixed(let val):
+                    baseScale = val
+                case .zones(let zones):
+                    baseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &currentZoneIndex)
+                case .linear(let config):
+                    baseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+                }
+                if let resolved = baseScale {
+                    self.lastResolvedBaseScale = resolved
+                }
+            }
+
+            // 2. 检查死区判定
+            guard let activeBaseScale = baseScale else {
+                // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
+                let displayVal = translator.displayValue
+                overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: true)
+                self.currentAngle = currentAngle
+                previousAngle = currentAngle
+                return
+            }
+
+            // 正常运行调节
+            let finalScale = activeBaseScale * activeKeyboardMultiplier
+            translator.scale = finalScale
+
+            let knobState = KnobState(
+                current: KnobCore(angle: currentAngle),
+                previous: KnobCore(angle: previousAngle)
+            )
+            let deltaAngle = abs(knobState.deltaAngle)
+            let direction: RotationDirection = knobState.deltaAngle >= 0 ? .clockwise : .counterClockwise
+
+            translator.apply(units: deltaAngle, direction: direction)
+
+            let displayVal = translator.displayValue
+            overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: false)
+
+            self.currentAngle = currentAngle
+            previousAngle = currentAngle
+        }
+    }
 ```
-其中需要添加一个辅助方法 `calculateRawRadius` 求解当前半径：
+新增 `calculateRawRadius` 辅助方法：
 ```swift
     private func calculateRawRadius(points: [Int: CGPoint]) -> Double {
         if points.count >= 2 {
@@ -589,5 +718,5 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
 
 ```bash
 git add PhantomKnobDetector/Service/KnobStateManager.swift
-git commit -m "feat: integrate dynamic scale resolver with scale-locking when keyboard multiplier is pressed"
+git commit -m "feat: integrate dynamic scale resolver, deadzone filtering with grayed-out overlay update, and keyboard retroactive monitoring"
 ```
