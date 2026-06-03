@@ -9,6 +9,7 @@
 2. 引入 `AppSettings` 处理 JSONC 加载与剥离注释。
 3. 实现 `ScaleResolver`，提供 Hysteresis 迟滞多环状态机和 Linear 渐变解析。
 4. 在 `KnobStateManager` 中，在 `.knobing` 状态下使用全局事件 tap 监听数字键 2-9 并将其与半径步长倍率进行乘数叠加。
+5. 按下数字键的瞬间，锁定当时的基础步长（Base Scale），屏蔽之后的半径变动影响，直至按键释放。
 
 **技术栈：** Swift 5.9, Foundation, ApplicationServices, AppKit, XCTest
 
@@ -458,6 +459,8 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
     private var globalKeyboardMonitor: Any?
     private var currentZoneIndex: Int = 0
     private var activeScaleConfig: ScaleConfig = .fixed(1.0)
+    private var lastResolvedBaseScale: Double = 1.0
+    private var lockedBaseScale: Double? = nil
 ```
 
 在 `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态：
@@ -487,6 +490,8 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
         }
         self.activeScaleConfig = resolvedScaleConfig
         self.currentZoneIndex = 0
+        self.lastResolvedBaseScale = 1.0
+        self.lockedBaseScale = nil
 ```
 
 增加键盘监听开启与重置方法：
@@ -499,14 +504,16 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
             if event.type == .keyDown {
                 if let chars = event.characters, chars.count == 1,
                    let num = Int(chars), num >= 2 && num <= 9 {
+                    self.lockedBaseScale = self.lastResolvedBaseScale
                     self.activeKeyboardMultiplier = Double(num)
-                    writeDebugLog("[KnobStateManager] Keyboard multiplier set to: \(self.activeKeyboardMultiplier)")
+                    writeDebugLog("[KnobStateManager] Keyboard multiplier set to: \(self.activeKeyboardMultiplier), locked scale: \(self.lastResolvedBaseScale)")
                 }
             } else if event.type == .keyUp {
                 if let chars = event.characters, chars.count == 1,
                    let num = Int(chars), Double(num) == self.activeKeyboardMultiplier {
+                    self.lockedBaseScale = nil
                     self.activeKeyboardMultiplier = 1.0
-                    writeDebugLog("[KnobStateManager] Keyboard multiplier reset to 1.0")
+                    writeDebugLog("[KnobStateManager] Keyboard multiplier reset to 1.0, unlocked scale")
                 }
             }
         }
@@ -518,6 +525,7 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
             globalKeyboardMonitor = nil
         }
         activeKeyboardMultiplier = 1.0
+        lockedBaseScale = nil
     }
 ```
 
@@ -543,13 +551,18 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
         // 🌟 在 apply 前，解析当前的 baseScale
         let radius = calculateRawRadius(points: scaledPoints)
         let baseScale: Double
-        switch activeScaleConfig {
-        case .fixed(let val):
-            baseScale = val
-        case .zones(let zones):
-            baseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &currentZoneIndex)
-        case .linear(let config):
-            baseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+        if let locked = lockedBaseScale {
+            baseScale = locked
+        } else {
+            switch activeScaleConfig {
+            case .fixed(let val):
+                baseScale = val
+            case .zones(let zones):
+                baseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &currentZoneIndex)
+            case .linear(let config):
+                baseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+            }
+            self.lastResolvedBaseScale = baseScale
         }
         
         let finalScale = baseScale * activeKeyboardMultiplier
@@ -566,7 +579,7 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
     }
 ```
 
-- [ ] **步骤 4：运行测试确认通过**
+- [ ] **步骤 4:: 运行测试确认通过**
 
 编译并运行全部已有单元测试，确认一切正常。
 运行：`swift test`
@@ -576,5 +589,5 @@ git commit -m "refactor: make scale mutable on InputTranslator protocol and impl
 
 ```bash
 git add PhantomKnobDetector/Service/KnobStateManager.swift
-git commit -m "feat: integrate dynamic scale resolver and keyboard multiplier monitoring in KnobStateManager"
+git commit -m "feat: integrate dynamic scale resolver with scale-locking when keyboard multiplier is pressed"
 ```
