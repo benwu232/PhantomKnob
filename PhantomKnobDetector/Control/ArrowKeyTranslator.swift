@@ -5,7 +5,7 @@ import CoreGraphics
 /// 合成方向键事件，支持 accumulator（积累到 ≥ 1.0 才发送，余数保留）。
 final class ArrowKeyTranslator: InputTranslator {
     private let axis: Axis
-    private let scale: Double
+    var scale: Double
     private var accumulator: Double = 0
 
     enum Axis { case upDown, leftRight }

@@ -6,7 +6,7 @@ import CoreGraphics
 /// 连续事件：CGEvent 支持浮点 delta，无需 accumulator。
 final class ScrollWheelTranslator: InputTranslator {
     private let axis: Axis
-    private let scale: Double
+    var scale: Double
     private var accumulator: Double = 0
 
     enum Axis { case vertical, horizontal }

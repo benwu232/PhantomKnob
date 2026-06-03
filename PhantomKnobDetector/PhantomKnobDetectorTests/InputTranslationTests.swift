@@ -76,5 +76,12 @@ final class ArrowKeyTranslatorTests: XCTestCase {
         let t = ScrollWheelTranslator(axis: .vertical, scale: 1.0)
         XCTAssertNil(t.displayValue)
     }
+
+    func testTranslatorDynamicScaleChange() {
+        let t = ArrowKeyTranslator(axis: .upDown, scale: 1.0)
+        XCTAssertEqual(t.scale, 1.0)
+        t.scale = 0.5
+        XCTAssertEqual(t.scale, 0.5)
+    }
 }
 

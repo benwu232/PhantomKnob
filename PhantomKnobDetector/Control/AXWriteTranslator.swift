@@ -8,7 +8,7 @@ final class AXWriteTranslator: InputTranslator {
     private let element: AXUIElement
     private let minValue: Double
     private let maxValue: Double
-    private let scale: Double   // 从 ScaleConfig 解析好后传入
+    var scale: Double   // 从 ScaleConfig 解析好后传入
 
     init(element: AXUIElement, minValue: Double, maxValue: Double, scale: Double = 1.0) {
         self.element = element
