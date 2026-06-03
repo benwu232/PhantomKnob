@@ -24,6 +24,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private var fixedCenter: CGPoint?
     private var fingerIdx1: Int?
     private var fingerIdx2: Int?
+    
+    private var activeKeyboardMultiplier: Double = 1.0
+    private var currentZoneIndex: Int = 0
+    private var activeScaleConfig: ScaleConfig = .fixed(1.0)
+    private var lastResolvedBaseScale: Double = 1.0
+    private var lockedBaseScale: Double? = nil
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -104,6 +110,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     private func transition(to newState: KnobGlobalState) {
         state = newState
+        if case .activated = newState {
+            lockedBaseScale = nil
+            activeKeyboardMultiplier = 1.0
+        } else if case .inactive = newState {
+            lockedBaseScale = nil
+            activeKeyboardMultiplier = 1.0
+        }
         let targetName = currentTarget?.displayName
         statusBarController.updateState(newState, targetName: targetName)
     }
@@ -179,6 +192,31 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         // 4. 创建 InputTranslator
         let translator = makeTranslator(for: target, rule: rule)
         currentTranslator = translator
+ 
+        // 解析并缓存 ScaleConfig 与状态变量重置
+        let resolvedScaleConfig: ScaleConfig
+        if let ruleScaleConfig = rule?.scaleConfig {
+            switch ruleScaleConfig {
+            case .fixed(let val):
+                if val == 1.0 {
+                    resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
+                        ? .linear(AppSettings.shared.linear)
+                        : .zones(AppSettings.shared.fixed.zones)
+                } else {
+                    resolvedScaleConfig = .fixed(val)
+                }
+            default:
+                resolvedScaleConfig = ruleScaleConfig
+            }
+        } else {
+            resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
+                ? .linear(AppSettings.shared.linear)
+                : .zones(AppSettings.shared.fixed.zones)
+        }
+        self.activeScaleConfig = resolvedScaleConfig
+        self.currentZoneIndex = 0
+        self.lastResolvedBaseScale = 1.0
+        self.lockedBaseScale = nil
 
         // 5. 缓存鼠标位置，不直接进入 knobing
         let mouseLoc = NSEvent.mouseLocation
@@ -231,6 +269,76 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 CGWarpMouseCursorPosition(lockPos)
             }
 
+            // 1. 轮询 CGEventSource.keyState 探测当前是否有数字键 2-9 被物理按住
+            var activeNum: Int? = nil
+            if AppSettings.shared.enableKeyboardNumberMultiplier {
+                let keyMapping: [Int: CGKeyCode] = [
+                    2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25
+                ]
+                for (num, keyCode) in keyMapping {
+                    if CGEventSource.keyState(.combinedSessionState, key: keyCode) {
+                        activeNum = num
+                        break
+                    }
+                }
+            }
+
+            // 2. 根据按键状态执行步长锁定或动态解析
+            let baseScale: Double?
+            if let num = activeNum {
+                if lockedBaseScale == nil {
+                    lockedBaseScale = lastResolvedBaseScale
+                }
+                activeKeyboardMultiplier = Double(num)
+                baseScale = lockedBaseScale
+            } else {
+                lockedBaseScale = nil
+                activeKeyboardMultiplier = 1.0
+                
+                let radius = calculateRawRadius(points: scaledPoints)
+                switch activeScaleConfig {
+                case .fixed(let val):
+                    baseScale = val
+                case .zones(let zones):
+                    baseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &currentZoneIndex)
+                case .linear(let config):
+                    baseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+                }
+                if let resolved = baseScale {
+                    self.lastResolvedBaseScale = resolved
+                }
+            }
+
+            // 3. 检查死区判定
+            guard let activeBaseScale = baseScale else {
+                // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
+                let displayVal = translator.displayValue
+                overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: true)
+                self.currentAngle = currentAngle
+                previousAngle = currentAngle
+                return
+            }
+
+            // 4. 读取系统面板灵敏度并合成最终步长倍率
+            let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 0.5
+            let settingsSensitivity: Double
+            if let target = currentTarget {
+                switch target.axRole {
+                case "AXSlider":
+                    settingsSensitivity = UserDefaults.standard.object(forKey: "sliderSensitivity") as? Double ?? globalSens
+                case "AXProgressIndicator":
+                    settingsSensitivity = UserDefaults.standard.object(forKey: "progressSensitivity") as? Double ?? globalSens
+                default:
+                    settingsSensitivity = globalSens
+                }
+            } else {
+                settingsSensitivity = globalSens
+            }
+
+            let finalScale = activeBaseScale * activeKeyboardMultiplier * settingsSensitivity
+            translator.scale = finalScale
+
+            // 5. 注入翻译事件
             let knobState = KnobState(
                 current: KnobCore(angle: currentAngle),
                 previous: KnobCore(angle: previousAngle)
@@ -241,12 +349,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             translator.apply(units: deltaAngle, direction: direction)
 
             let displayVal = translator.displayValue
-            overlayController.update(angle: currentAngle, displayValue: displayVal)
+            overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: false)
 
             self.currentAngle = currentAngle
             previousAngle = currentAngle
 
-            writeDebugLog("[KnobStateManager] applied delta=\(deltaAngle) dir=\(direction)")
+            writeDebugLog("[KnobStateManager] applied delta=\(deltaAngle) dir=\(direction) scale=\(finalScale)")
         }
     }
 
@@ -312,6 +420,21 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             )
         }
         return scaled
+    }
+
+    private func calculateRawRadius(points: [Int: CGPoint]) -> Double {
+        if points.count >= 2 {
+            let (knobCore, _, _) = KnobAlgorithm().calKnob(points)
+            return knobCore.isValid ? knobCore.radius : 0.0
+        } else if points.count == 1,
+                  let fixedCenter = self.fixedCenter,
+                  let remainId = points.keys.first,
+                  let remainPoint = points[remainId] {
+            let dx = remainPoint.x - fixedCenter.x
+            let dy = remainPoint.y - fixedCenter.y
+            return sqrt(dx * dx + dy * dy)
+        }
+        return 0.0
     }
 
     private func startCoolingTimer() {
