@@ -13,12 +13,15 @@
 2. **多档半径分段机制（Fixed Zones with Hysteresis）与小半径死区（Deadzone）**：
    * 支持多档半径分段（Zones），当配置 $\ge 2$ 个环时，自动启用**迟滞缓冲区机制（Hysteresis）**。
    * 每个环由：**内界（minRadius）**、**外界（maxRadius）**、**缓冲区宽度（margin）**和**步长倍率（scale）**定义。
-   * **死区保护**：如果 `radius < zones[0].minRadius`，判定手指贴合过紧，忽略该帧的旋转量不发送任何调节事件，并在 Overlay UI 上显示不可用的视觉反馈（灰色）。
+   * **死区保护**：如果 `radius < zones[0].minRadius`，判定手指贴合过紧，忽略该帧 of 旋转量不发送任何调节事件，并在 Overlay UI 上显示不可用的视觉反馈（灰色）。
 3. **线性渐变机制（Linear Interpolation）**：步长随半径大小在一定区间内线性平滑过渡。如果 `radius < linear.minRadius`，同样进入死区保护，丢弃事件，且 Overlay UI 灰色显示。
 4. **两级配置与个性化定制**：
    * **全局默认**：由 `settings.jsonc` 定义全局默认的步长方案及参数。
    * **单 Knob 定制**：在规则库中，每条规则可以拥有专属的 `scaleConfig` 配置，覆盖全局默认设置。
-5. **配置文件支持注释 (JSONC)**：配置文件使用 `.jsonc` 后缀，支持单行 `//` 和多行 `/* */` 注释，在 Swift 加载时进行预处理过滤。
+5. **系统灵敏度结合（Settings Sensitivity）**：
+   * 乘数叠加逻辑：$\text{最终步长倍率} = \text{基础步长 (Base Scale)} \times \text{数字键倍数 (Keyboard Multiplier)} \times \text{系统设置灵敏度 (Settings Sensitivity)}$。
+   * 系统设置灵敏度从 UserDefaults 中的 `globalSensitivity` 等读取（可通过控件类型进行覆盖），做为最终的总阀门。
+6. **配置文件支持注释 (JSONC)**：配置文件使用 `.jsonc` 后缀，支持单行 `//` 和多行 `/* */` 注释，在 Swift 加载时进行预处理过滤。
 
 ---
 
@@ -77,35 +80,14 @@ protocol InputTranslator: AnyObject {
 
 ### 2. 运行时死区与步长求解器 (`ScaleResolver` 新类)
 * **死区状态判断**：求解器在计算基础步长时，若 `radius < minRadius`，返回 `nil`，表示当前处于死区状态。
-* **Hysteresis 逻辑与死区**：
-  * 若 `radius < zones[0].minRadius` $\rightarrow$ 返回 `nil`。
-  * 若 `radius >= zones[0].minRadius` $\rightarrow$ 正常执行迟滞解析。
-* **Linear 渐变与死区**：
-  * 若 `radius < config.minRadius` $\rightarrow$ 返回 `nil`。
 
 ### 3. Overlay UI 视觉反馈扩展
-为了向用户提示“进入死区，调节暂停”的状态，我们需要更新 Overlay 界面的颜色：
-* **`OverlayView` 改造**：
-  ```swift
-  struct OverlayView: View {
-      let targetName: String?
-      let angle: Double
-      let displayValue: String?
-      var isDeadzone: Bool = false // 新增属性
-      
-      // 当 isDeadzone 为 true 时，线条与文本使用灰色/半透明样式；否则使用纯白色样式。
-  }
-  ```
-* **`OverlayController` 改造**：
-  * `update(angle: Double, displayValue: String?, isDeadzone: Bool)`
+* 当处于死区时，OverlayView 中的线条和文本变为灰色半透明样式。
 
-### 4. 键盘数字键监控、步长锁定与 retroactive 扫描
-* 在手势开始并在 `.knobing` 状态转移时，通过 `CGEventSource.keyState(.combinedSessionState, key: ...)` 顺序扫描键盘 `2` 到 `9` 键的按下状态：
-  * 如果有被按下的键（例如键 `5`），则立刻锁定当前基础步长为 `lockedBaseScale = lastResolvedBaseScale` 并设置 `activeKeyboardMultiplier = 5.0`。
-* 同时开启全局 `.keyDown`/`.keyUp` 监控：
-  * **按键按下时**：若按下 `2-9` 键且此前未锁定，锁定当前基础步长并修改倍率。
-  * **按键松开时**：重置 `lockedBaseScale = nil`，叠加倍率置为 `1.0`。
-* `最终步长倍率 = (lockedBaseScale ?? lastResolvedBaseScale) * activeKeyboardMultiplier`。
+### 4. 最终步长合成流程 (`KnobStateManager` 整合)
+* 读取当前 Target 的 `ControlType`。
+* 从 `SensitivityConfig` 中读取对应的系统设置灵敏度 `settingsSensitivity`。
+* 最终步长为 `(lockedBaseScale ?? lastResolvedBaseScale) * activeKeyboardMultiplier * settingsSensitivity`。
 
 ---
 
@@ -117,3 +99,4 @@ protocol InputTranslator: AnyObject {
 ### 手动验证
 1. 在缓慢捏合/张开手指（使步长不断发生变化）的同时，按下数字键 `5`，验证在此期间即使手指继续大幅度张开或捏合，数值变化幅度仅与按下瞬间的步长乘 5 挂钩（即步长被成功锁定）。
 2. 将手指紧贴，使半径小于最小值（如 5.0），观察 Overlay UI 是否变灰，且调节动作暂停。稍微张开手指后，Overlay 恢复白色，调节继续。
+3. 调整 App 设置窗口中的“全局灵敏度”滑块，验证动态步长的最终调节速度会按滑块比例成倍放大或缩小。

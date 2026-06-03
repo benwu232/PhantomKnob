@@ -12,7 +12,8 @@
 5. 在 `KnobStateManager` 中整合逻辑：
    - 转移到 `.knobing` 状态时，通过 `CGEventSource.keyState` 进行 retroactive 扫描绑定初始被按下的数字键及锁定状态。
    - 在 `.knobing` 状态下使用全局事件 tap 监听数字键 2-9 并进行乘数叠加。
-   - `onMultitouchMoved` 计算当前 `radius` 并通过 `ScaleResolver` 求解。如果处于死区（返回 `nil`），丢弃该帧旋转量且将 Overlay UI 设为变灰状态；否则恢复正常 Overlay 并更新步长。
+   - `onMultitouchMoved` 计算当前 `radius` 并通过 `ScaleResolver` 求解。如果处于死区（返回 `nil`），丢弃该帧旋转量且将 Overlay UI 设为变灰状态。
+   - 读取 UserDefaults 中的系统设置灵敏度（根据 AXRole 的 ControlType 进行匹配覆盖），应用公式：`finalScale = baseScale * activeKeyboardMultiplier * settingsSensitivity` 动态写入 translator。
 
 **技术栈：** Swift 5.9, Foundation, ApplicationServices, AppKit, XCTest
 
@@ -385,11 +386,11 @@ git commit -m "feat: implement ScaleResolver hysteresis and linear resolvers wit
 - [ ] **步骤 2：运行测试验证失败**
 
 运行：`swift test --filter InputTranslationTests`
-预期：编译失败，因为 `InputTranslator` 不具备 `scale` 属性的 get/set 接口。
+预期：编译失败，因为 `InputTranslator` 不具备 `scale` 属性 of get/set 接口。
 
 - [ ] **步骤 3：修改协议与具体实现**
 
-在 `InputTranslator.swift` 中更新协议：
+in `InputTranslator.swift` 中更新协议：
 ```swift
 protocol InputTranslator: AnyObject {
     func apply(units: Double, direction: RotationDirection)
@@ -428,7 +429,7 @@ struct OverlayView: View {
     let targetName: String?
     let angle: Double
     let displayValue: String?
-    var isDeadzone: Bool = false  // 新增
+    var isDeadzone: Bool = false
 
     var body: some View {
         let overlayColor = isDeadzone ? Color.gray.opacity(0.5) : Color.white
@@ -488,10 +489,8 @@ struct OverlayView: View {
 在 `OverlayController.swift` 中：
 ```swift
 class OverlayController: ObservableObject {
-    // ...其余属性不变
-    @Published var isDeadzone: Bool = false  // 新增
+    @Published var isDeadzone: Bool = false
     
-    // 改造 update 方法
     func update(angle: Double, displayValue: String?, isDeadzone: Bool = false) {
         self.angle = angle
         self.displayValue = displayValue
@@ -508,7 +507,6 @@ class OverlayController: ObservableObject {
             isDeadzone: isDeadzone
         )
     }
-    // ...其余代码同步更新
 }
 ```
 
@@ -526,7 +524,7 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
 
 ---
 
-### 任务 5：键盘状态监测、主动扫描与 KnobStateManager 整合
+### 任务 5：系统灵敏度读取、键盘监控与 KnobStateManager 整合
 
 **文件：**
 - 修改：`PhantomKnobDetector/Service/KnobStateManager.swift`
@@ -543,7 +541,7 @@ git commit -m "feat: add deadzone support and visual style (grayed out) to Overl
     private var lockedBaseScale: Double? = nil
 ```
 
-in `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
+在 `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
 
 实现键盘监听与 **`CGEventSource.keyState` 初始扫描锁定** 逻辑：
 ```swift
@@ -551,7 +549,6 @@ in `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
         guard AppSettings.shared.enableKeyboardNumberMultiplier, globalKeyboardMonitor == nil else { return }
         
         // 1. Retroactive 状态继承扫描
-        // 映射按键字符到 macOS CGKeyCode
         let keyMapping: [Int: CGKeyCode] = [
             2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25
         ]
@@ -612,7 +609,7 @@ in `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
         }
 ```
 
-- [ ] **步骤 3：在 onMultitouchMoved 中动态更新步长与死区拦截**
+- [ ] **步骤 3：在 onMultitouchMoved 中动态更新步长与系统灵敏度乘数**
 
 ```swift
     func onMultitouchMoved(points: [Int: CGPoint]) {
@@ -676,8 +673,24 @@ in `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
                 return
             }
 
-            // 正常运行调节
-            let finalScale = activeBaseScale * activeKeyboardMultiplier
+            // 3. 读取系统面板灵敏度 (并应用覆盖)
+            let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 0.5
+            let settingsSensitivity: Double
+            if let target = currentTarget {
+                switch target.axRole {
+                case "AXSlider":
+                    settingsSensitivity = UserDefaults.standard.object(forKey: "sliderSensitivity") as? Double ?? globalSens
+                case "AXProgressIndicator":
+                    settingsSensitivity = UserDefaults.standard.object(forKey: "progressSensitivity") as? Double ?? globalSens
+                default:
+                    settingsSensitivity = globalSens
+                }
+            } else {
+                settingsSensitivity = globalSens
+            }
+
+            // 4. 合成最终步长倍率
+            let finalScale = activeBaseScale * activeKeyboardMultiplier * settingsSensitivity
             translator.scale = finalScale
 
             let knobState = KnobState(
@@ -714,9 +727,9 @@ in `onMultitouchBegan` 初始化该次手势的 ScaleConfig 与状态。
 运行：`swift test`
 预期：PASS
 
-- [ ] **步骤 5：Commit**
+- [ ] **步骤 5:: Commit**
 
 ```bash
 git add PhantomKnobDetector/Service/KnobStateManager.swift
-git commit -m "feat: integrate dynamic scale resolver, deadzone filtering with grayed-out overlay update, and keyboard retroactive monitoring"
+git commit -m "feat: integrate dynamic scale resolver, deadzone filtering, retroactive keyboard scan and settings sensitivity multiplier"
 ```
