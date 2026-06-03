@@ -14,7 +14,7 @@ class GestureClassifier {
     private var detectionStartTime: Date?
     private let detectionWindow: TimeInterval = 0.8
     private let angleThreshold: Double = 8.0
-    private let translationThreshold: CGFloat = 0.08
+    private let translationThreshold: CGFloat = 0.03
     private let algorithm = KnobAlgorithm()
     
     func processTouchesBegan(points: [Int: CGPoint]) {
