@@ -194,7 +194,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.fingerIdx2 = idx2
             self.previousAngle = knobCore.angle
         }
-        gestureClassifier.processTouchesBegan(points: scaledPoints)
+        gestureClassifier.processTouchesBegan(points: points)
     }
 
     func onMultitouchMoved(points: [Int: CGPoint]) {
@@ -212,7 +212,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
 
         // 🌟 进行手势判定是否升级为 knob
-        let mode = gestureClassifier.processTouchesMoved(points: scaledPoints)
+        let mode = gestureClassifier.processTouchesMoved(points: points)
         if mode == .knob && !state.isKnobing {
             if let target = currentTarget {
                 transition(to: .knobing(target: target))
