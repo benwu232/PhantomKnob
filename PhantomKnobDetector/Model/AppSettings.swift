@@ -9,8 +9,8 @@ struct AppSettings: Codable {
 
     struct FixedSchemeConfig: Codable {
         var zones: [RadiusZone] = [
-            RadiusZone(minRadius: 5.0, maxRadius: 12.0, margin: 2.0, scale: 10.0),
-            RadiusZone(minRadius: 12.0, maxRadius: 100.0, margin: 2.0, scale: 1.0)
+            RadiusZone(minRadius: 5.0, maxRadius: 20.0, margin: 2.0, scale: 10.0),
+            RadiusZone(minRadius: 20.0, maxRadius: 100.0, margin: 2.0, scale: 1.0)
         ]
     }
 
