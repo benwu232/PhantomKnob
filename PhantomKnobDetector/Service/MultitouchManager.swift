@@ -135,8 +135,8 @@ class MultitouchManager {
                 // 为了最安全的捕获，我们将 1 至 6 均视为有效的活动或边缘触控状态，全面对接手指在触控板上的动作
                 if contact.state >= 1 && contact.state <= 6 {
                     let id = Int(contact.identifier)
-                    let x = CGFloat(contact.normalized.pos.x)
-                    let y = CGFloat(contact.normalized.pos.y)
+                    let x = CGFloat(contact.mm.pos.x)
+                    let y = CGFloat(contact.mm.pos.y)
                     activePoints[id] = CGPoint(x: x, y: y)
                 }
             }

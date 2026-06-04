@@ -415,8 +415,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let mouseLocation = NSEvent.mouseLocation
         for (id, pt) in points {
             scaled[id] = CGPoint(
-                x: mouseLocation.x + pt.x * 100,
-                y: mouseLocation.y + pt.y * 100
+                x: mouseLocation.x + pt.x,
+                y: mouseLocation.y + pt.y
             )
         }
         return scaled
