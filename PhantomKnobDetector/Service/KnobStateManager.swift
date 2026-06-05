@@ -251,7 +251,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     overlayController.show(
                         at: mouseLoc,
                         targetName: target.displayName.isEmpty ? nil : target.displayName,
-                        displayValue: translator.displayValue
+                        displayValue: translator.displayValue,
+                        scale: self.lastResolvedBaseScale
                     )
                 }
             }
@@ -351,7 +352,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             guard let activeBaseScale = baseScale else {
                 // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
                 let displayVal = translator.displayValue
-                overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: true)
+                overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: true, scale: self.lastResolvedBaseScale)
                 self.currentAngle = currentAngle
                 previousAngle = currentAngle
                 return
@@ -387,7 +388,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             translator.apply(units: deltaAngle, direction: direction)
 
             let displayVal = translator.displayValue
-            overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: false)
+            overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: false, scale: activeBaseScale)
 
             self.currentAngle = currentAngle
             previousAngle = currentAngle

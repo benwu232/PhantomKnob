@@ -11,17 +11,19 @@ class OverlayController: ObservableObject {
     @Published var angle: Double = 0
     @Published var displayValue: String? = nil
     @Published var isDeadzone: Bool = false
+    @Published var scale: Double? = nil
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
 
-    func show(at position: CGPoint, targetName: String?, displayValue: String?) {
+    func show(at position: CGPoint, targetName: String?, displayValue: String?, scale: Double? = nil) {
         self.position = position
         self.targetName = targetName
         self.displayValue = displayValue
+        self.scale = scale
 
         showCount += 1
-        writeDebugLog("[OverlayController] show() called: targetName = \(targetName ?? "nil"), displayValue = \(displayValue ?? "nil"), showCount = \(showCount), position = \(position)")
+        writeDebugLog("[OverlayController] show() called: targetName = \(targetName ?? "nil"), displayValue = \(displayValue ?? "nil"), scale = \(scale ?? 0.0), showCount = \(showCount), position = \(position)")
 
         if panel == nil {
             createPanel()
@@ -37,10 +39,11 @@ class OverlayController: ObservableObject {
         isVisible = true
     }
 
-    func update(angle: Double, displayValue: String?, isDeadzone: Bool = false) {
+    func update(angle: Double, displayValue: String?, isDeadzone: Bool = false, scale: Double? = nil) {
         self.angle = angle
         self.displayValue = displayValue
         self.isDeadzone = isDeadzone
+        self.scale = scale
         updateOverlayView()
     }
 
@@ -94,7 +97,8 @@ class OverlayController: ObservableObject {
             targetName: targetName,
             angle: angle,
             displayValue: displayValue,
-            isDeadzone: isDeadzone
+            isDeadzone: isDeadzone,
+            scale: scale
         ))
 
         panel.contentView = view
@@ -108,7 +112,8 @@ class OverlayController: ObservableObject {
             targetName: targetName,
             angle: angle,
             displayValue: displayValue,
-            isDeadzone: isDeadzone
+            isDeadzone: isDeadzone,
+            scale: scale
         )
     }
 

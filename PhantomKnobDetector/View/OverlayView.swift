@@ -7,11 +7,13 @@ struct OverlayView: View {
     let angle: Double
     let displayValue: String?
     var isDeadzone: Bool = false
+    var scale: Double? = nil
 
     var body: some View {
         VStack(spacing: 8) {
             if let targetName = targetName, !targetName.isEmpty {
-                Text(targetName)
+                let suffix = scale.map { String(format: " (%.1fx)", $0) } ?? ""
+                Text(targetName + suffix)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(isDeadzone ? .gray : .white)
             }
