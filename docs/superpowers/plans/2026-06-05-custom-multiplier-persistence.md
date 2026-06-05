@@ -1,25 +1,29 @@
-# 旋钮手势个性化倍率记忆与按键调速优化 实现计划
+# 旋钮手势个性化倍率记忆与按键调速优化 (CGEventTap) 实现计划
 
 > **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [ ]`）语法来跟踪进度。
 
-**目标：** 实现按键调速（Option 组合键）、各档位半径独立微调、倍率的持久化记忆与安全重置（Option+1 设为 1.0），且新旋钮缺省为单半径，并在 Overlay UI 上实时显示倍数。
+**目标：** 实现 CGEventTap 全局键盘拦截（仅在 Knobing 时启用），使用户无需组合 Option 键、直接按下 `1-9` 或方向键微调速度，并且该事件 100% 被拦截吞掉，前台 App（如 QuickTime）无按键冲突。倍率按 Zone 独立保存与安全重置（按 1 设为 1.0），新旋钮缺省为单半径。
 
-**架构：** 在 `AppSettings` 中将默认区域设为单半径（1个 Zone）。在 `KnobStateManager` 每次移动帧检测中，结合 `Option` 键（KeyCode 58/61）与上一帧按键状态做 Edge-triggered 差集。计算所得的 Zone Index 对应的 `UserDefaults` 覆盖值被用来覆盖默认 `baseScale`，修改结果使用 `(val * 10).rounded() / 10` 进行四舍五入并写入存储。在手势中向 `OverlayController` 传入计算得到的倍率并更新 Overlay UI 视图的显示文本。
-
-**技术栈：** Swift 5.0+, Apple private MultitouchSupport framework, CoreGraphics (CGEventSource.keyState), UserDefaults, SwiftUI.
+**架构：**
+1. 在 `KnobStateManager` 中创建一个 `CGEventTap` 并挂载到主 RunLoop，初始为 disabled。
+2. 在手势进入 `knobing` 时调用 `CGEvent.tapEnable(tap: tap, enable: true)`。
+3. 手势结束（`cooling`、`activated` 或 `inactive`）时调用 `CGEvent.tapEnable(tap: tap, enable: false)`。
+4. EventTap 监听到感兴趣键码（1-9、方向键）时，将 keyUp / keyDown 事件吞掉（返回 `nil`）。
+5. 针对 `keyDown` 事件，在主线程触发修改，在当前 Zone 独立读写覆盖值，上限不设，下限 0.1，浮点数四舍五入。
+6. 按下 `1` 时将当前 Zone 的倍率覆盖值设为 `1.0`。
+7. 在手势中传入倍率并更新 Overlay UI 视图的显示文本。
 
 ---
 
 ### 任务 1：更新 AppSettings 全局默认值为单半径模式
 
 **文件：**
-- 修改：`PhantomKnobDetector/Model/AppSettings.swift:11-14`
+- 修改：`PhantomKnobDetector/Model/AppSettings.swift:11-13`
 - 测试：`PhantomKnobDetector/PhantomKnobDetectorTests/AppSettingsTests.swift`
 
 - [ ] **步骤 1：修改 AppSettings.swift 全局默认值为单半径**
   将 `FixedSchemeConfig` 里的默认 `zones` 修改为只有一个 Zone（范围 5.0 至 100.0，倍率 1.0）。
   ```swift
-  // PhantomKnobDetector/Model/AppSettings.swift 核心修改内容：
   struct FixedSchemeConfig: Codable {
       var zones: [RadiusZone] = [
           RadiusZone(minRadius: 5.0, maxRadius: 100.0, margin: 2.0, scale: 1.0)
@@ -28,9 +32,7 @@
   ```
 
 - [ ] **步骤 2：创建单元测试文件验证 AppSettings 默认值**
-  创建 `AppSettingsTests.swift` 验证默认的 `zones` 数量为 1，且默认倍率为 `1.0`。
   ```swift
-  // PhantomKnobDetectorTests/AppSettingsTests.swift
   import XCTest
   @testable import PhantomKnobDetector
 
@@ -52,88 +54,136 @@
 - [ ] **步骤 4：Commit**
   ```bash
   git add PhantomKnobDetector/Model/AppSettings.swift PhantomKnobDetector/PhantomKnobDetectorTests/AppSettingsTests.swift
-  git commit -m "feat: default AppSettings to single radius and add unit tests"
+  git commit -m "feat: default AppSettings to single radius (Task 1)"
   ```
 
 ---
 
-### 任务 2：实现键状态边沿触发与 Option 组合键检测
+### 任务 2：创建 CGEventTap 全局拦截键盘事件
 
 **文件：**
 - 修改：`PhantomKnobDetector/Service/KnobStateManager.swift`
 
-- [ ] **步骤 1：增加 previousKeysState 成员变量并定义按键常量**
-  在 `KnobStateManager` 类中增加 `previousKeysState` 用于缓存上一帧的按键，定义 Option 键和功能键码。
+- [ ] **步骤 1：在 KnobStateManager 中定义 EventTap 成员变量**
   ```swift
-  // KnobStateManager.swift 属性声明区：
-  private var previousKeysState: Set<CGKeyCode> = []
+  private var eventTap: CFMachPort?
+  private var runLoopSource: CFRunLoopSource?
+  private var previousKeysState: Set<CGKeyCode> = [] // 保留用于其它键盘缓存逻辑
   ```
 
-- [ ] **步骤 2：在 `onMultitouchBegan` 与 `onMultitouchEnded` 中清空上一帧状态**
-  在手势生命周期的开始和结束时清除 `previousKeysState`。
+- [ ] **步骤 2：编写 setupEventTap() 函数并在 init 时调用**
   ```swift
-  previousKeysState.removeAll()
+  private func setupEventTap() {
+      let eventMask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue)
+      let selfPtr = Unmanaged.passUnretained(self).toOpaque()
+      
+      guard let tap = CGEvent.tapCreate(
+          tap: .cgSessionEventTap,
+          place: .headInsertEventTap,
+          options: .defaultTap,
+          eventsOfInterest: CGEventMask(eventMask),
+          callback: { proxy, type, event, refcon in
+              guard let refcon = refcon else { return Unmanaged.passRetained(event) }
+              let manager = Unmanaged<KnobStateManager>.fromOpaque(refcon).takeUnretainedValue()
+              if manager.handleEventTap(proxy: proxy, type: type, event: event) {
+                  return nil // 拦截并吞掉事件
+              }
+              return Unmanaged.passRetained(event)
+          },
+          userInfo: selfPtr
+      ) else {
+          writeDebugLog("[KnobStateManager] Failed to create CGEventTap")
+          return
+      }
+      
+      self.eventTap = tap
+      let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+      self.runLoopSource = source
+      CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
+      CGEvent.tapEnable(tap: tap, enable: false)
+      writeDebugLog("[KnobStateManager] CGEventTap initialized (disabled)")
+  }
   ```
+  在 `init()` 末尾添加 `setupEventTap()`。
 
-- [ ] **步骤 3：在 `onMultitouchMoved` 中编写 Edge-Triggered 按键过滤**
-  只在 `Option` 键按下时检测其他键，通过上一帧与当前帧的差集获取当前帧新按下的键。
+- [ ] **步骤 3：编写 handleEventTap 及按键响应逻辑**
+  当处于 knobing 时，过滤数字 1-9 和方向键，阻断并返回 `true` 吞掉它们，在 keyDown 时分发到主线程更新倍数。
   ```swift
-  // KnobStateManager.swift inside onMultitouchMoved:
-  let optionDown = CGEventSource.keyState(.combinedSessionState, key: 58) || CGEventSource.keyState(.combinedSessionState, key: 61)
-  
-  var newlyPressed: Set<CGKeyCode> = []
-  if optionDown {
-      let keysToPoll: [CGKeyCode] = [
+  func handleEventTap(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Bool {
+      guard state.isKnobing else { return false }
+      
+      let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+      let keysOfInterest: Set<CGKeyCode> = [
           18, // 1
           19, 20, 21, 23, 22, 26, 28, 25, // 2-9
           126, 125, 123, 124 // Up, Down, Left, Right
       ]
-      var currentPressed: Set<CGKeyCode> = []
-      for keyCode in keysToPoll {
-          if CGEventSource.keyState(.combinedSessionState, key: keyCode) {
-              currentPressed.insert(keyCode)
+      
+      guard keysOfInterest.contains(CGKeyCode(keyCode)) else {
+          return false
+      }
+      
+      if type == .keyDown {
+          DispatchQueue.main.async { [weak self] in
+              self?.handleDirectKeyPress(keyCode: CGKeyCode(keyCode))
           }
       }
-      newlyPressed = currentPressed.subtracting(previousKeysState)
-      previousKeysState = currentPressed
-  } else {
-      previousKeysState.removeAll()
+      
+      return true // 拦截事件
   }
   ```
 
-- [ ] **步骤 4：编译检查**
-  运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnobDetector -project PhantomKnobDetector/PhantomKnobDetector.xcodeproj -destination 'generic/platform=macOS' build`
-  预期：BUILD SUCCEEDED
+- [ ] **步骤 4：在 transition(to:) 中动态控制 EventTap 启闭**
+  在手势升级到 `knobing` 时调用 `CGEvent.tapEnable(tap: tap, enable: true)`。
+  在手势退出 `knobing` 时调用 `CGEvent.tapEnable(tap: tap, enable: false)`。
 
-- [ ] **步骤 5：Commit**
+- [ ] **步骤 5：编译与测试**
+  运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnobDetector -project PhantomKnobDetector/PhantomKnobDetector.xcodeproj -destination 'platform=macOS' test`
+  预期：PASS
+
+- [ ] **步骤 6：Commit**
   ```bash
   git add PhantomKnobDetector/Service/KnobStateManager.swift
-  git commit -m "feat: add edge-triggered key polling and option modifier check"
+  git commit -m "feat: add CGEventTap lifecycle and interception handler (Task 2)"
   ```
 
 ---
 
-### 任务 3：实现对多档半径的独立倍率查询与调整记忆逻辑
+### 任务 3：实现对各 Zone 的独立倍率查询与调整持久化逻辑
 
 **文件：**
 - 修改：`PhantomKnobDetector/Service/KnobStateManager.swift`
 
-- [ ] **步骤 1：增加唯一持久化 Key 生成助手函数**
-  在 `KnobStateManager` 尾部定义根据 target 和 zoneIndex 生成存储 Key 的函数。
+- [ ] **步骤 1：添加唯一存储 Key 助手函数与按键转换助手**
   ```swift
-  private func persistentKey(for target: ControlTarget, zoneIndex: Int) -> String {
+  private func persistentKey(for target: DetectedTarget, zoneIndex: Int) -> String {
       let bundleID = target.bundleID
       let axRole = target.axRole
       let identifier = target.identifier ?? ""
       let displayName = target.displayName
       return "knob_scale_override_\(bundleID)_\(axRole)_\(identifier)_\(displayName)_zone_\(zoneIndex)"
   }
+  
+  private func getNumberFromKeyCode(_ keyCode: CGKeyCode) -> Int? {
+      let keyMapping: [CGKeyCode: Int] = [
+          19: 2, 20: 3, 21: 4, 23: 5, 22: 6, 26: 7, 28: 8, 25: 9
+      ]
+      return keyMapping[keyCode]
+  }
+
+  private func getDeltaFromKeyCode(_ keyCode: CGKeyCode) -> Double? {
+      switch keyCode {
+      case 126: return 1.0  // Up
+      case 125: return -1.0 // Down
+      case 124: return 0.1  // Right
+      case 123: return -0.1 // Left
+      default: return nil
+      }
+  }
   ```
 
-- [ ] **步骤 2：改造求值逻辑以动态从 UserDefaults 加载已存倍率**
-  获取默认求出的 `defaultBaseScale` 后，如果有已存的覆写值则对其覆盖。
+- [ ] **步骤 2：在 onMultitouchMoved 中从 UserDefaults 加载已存倍率**
   ```swift
-  // KnobStateManager.swift onMultitouchMoved 核心求值修改：
   var resolvedZoneIndex = currentZoneIndex
   let defaultBaseScale: Double?
   
@@ -170,90 +220,105 @@
   }
   ```
 
-- [ ] **步骤 3：实现按键修改及保存逻辑**
-  解析 `newlyPressed` 键，应用数字设置、方向键增减并限制下限 0.1 及保存。
+- [ ] **步骤 3：编写 handleDirectKeyPress 修改与实时更新逻辑**
   ```swift
-  // 按键触发修改逻辑：
-  if let target = currentTarget, let currentVal = baseScale {
+  private func handleDirectKeyPress(keyCode: CGKeyCode) {
+      guard let target = currentTarget, let translator = currentTranslator else { return }
+      
       let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
       
-      if newlyPressed.contains(18) {
-          // Option + 1 -> 重置为安全值 1.0
-          UserDefaults.standard.set(1.0, forKey: key)
-      } else if let num = getNumberPressed(from: newlyPressed) {
-          // Option + 2-9
-          UserDefaults.standard.set(Double(num), forKey: key)
-      } else if let delta = getArrowDelta(from: newlyPressed) {
-          // Option + 方向键
+      // 读取当前的 Zone 倍率值（包含覆盖）
+      let currentVal: Double = (UserDefaults.standard.object(forKey: key) as? Double) ?? lastResolvedBaseScale
+      
+      var updatedVal: Double? = nil
+      if keyCode == 18 {
+          updatedVal = 1.0 // Reset to 1.0
+      } else if let num = getNumberFromKeyCode(keyCode) {
+          updatedVal = Double(num)
+      } else if let delta = getDeltaFromKeyCode(keyCode) {
           let rawNewVal = currentVal + delta
-          let newVal = max(0.1, (rawNewVal * 10).rounded() / 10)
-          UserDefaults.standard.set(newVal, forKey: key)
+          updatedVal = max(0.1, (rawNewVal * 10).rounded() / 10)
       }
-  }
-  
-  // 两个键值解析助手方法：
-  private func getNumberPressed(from pressed: Set<CGKeyCode>) -> Int? {
-      let keyMapping: [CGKeyCode: Int] = [
-          19: 2, 20: 3, 21: 4, 23: 5, 22: 6, 26: 7, 28: 8, 25: 9
-      ]
-      for (k, v) in keyMapping {
-          if pressed.contains(k) { return v }
+      
+      if let nextVal = updatedVal {
+          UserDefaults.standard.set(nextVal, forKey: key)
+          self.lastResolvedBaseScale = nextVal
+          
+          // 立即更新 Translator 的实际比例
+          let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 1.0
+          let settingsSensitivity: Double
+          switch target.axRole {
+          case "AXSlider":
+              settingsSensitivity = UserDefaults.standard.object(forKey: "sliderSensitivity") as? Double ?? globalSens
+          case "AXProgressIndicator":
+              settingsSensitivity = UserDefaults.standard.object(forKey: "progressSensitivity") as? Double ?? globalSens
+          default:
+              settingsSensitivity = globalSens
+          }
+          translator.scale = nextVal * settingsSensitivity
+          
+          // 立即刷新 Overlay UI 视图的显示
+          overlayController.update(angle: self.currentAngle, displayValue: translator.displayValue, isDeadzone: false, scale: nextVal)
+          
+          writeDebugLog("[KnobStateManager] handleDirectKeyPress: updated multiplier to \(nextVal) for target: \(target.displayName)")
       }
-      return nil
-  }
-  
-  private func getArrowDelta(from pressed: Set<CGKeyCode>) -> Double? {
-      if pressed.contains(126) { return 1.0 }   // Up
-      if pressed.contains(125) { return -1.0 }  // Down
-      if pressed.contains(124) { return 0.1 }   // Right
-      if pressed.contains(123) { return -0.1 }  // Left
-      return nil
   }
   ```
 
-- [ ] **步骤 4：编译检查**
-  运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnobDetector -project PhantomKnobDetector/PhantomKnobDetector.xcodeproj -destination 'generic/platform=macOS' build`
-  预期：BUILD SUCCEEDED
+- [ ] **步骤 4：编译与测试**
+  运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnobDetector -project PhantomKnobDetector/PhantomKnobDetector.xcodeproj -destination 'platform=macOS' test`
+  预期：PASS
 
 - [ ] **步骤 5：Commit**
   ```bash
   git add PhantomKnobDetector/Service/KnobStateManager.swift
-  git commit -m "feat: implement target zone-specific multiplier lookup, update and persistence"
+  git commit -m "feat: implement persistentKey override resolution and direct key update handlers (Task 3)"
   ```
 
 ---
 
-### 任务 4：在 Overlay UI 上展示当前倍数及视觉同步
+### 任务 4：在 Overlay UI 上展示当前倍数及精度规范
 
 **文件：**
 - 修改：`PhantomKnobDetector/View/OverlayView.swift`
 - 修改：`PhantomKnobDetector/Service/OverlayController.swift`
 - 修改：`PhantomKnobDetector/Service/KnobStateManager.swift`
 
-- [ ] **步骤 1：扩展 OverlayView 及 controller 以支持显示 multiplier 字段**
-  在 `OverlayView` 和 `OverlayController` 中暴露 `scale` 属性或直接在显示标题后缀叠加倍率。
+- [ ] **步骤 1：修改 OverlayView 以支持 scale 后缀展示**
   ```swift
-  // OverlayController.swift 接口变更：
-  func show(at point: NSPoint, targetName: String?, displayValue: String?, scale: Double?)
-  func update(angle: Double, displayValue: String?, isDeadzone: Bool, scale: Double?)
+  struct OverlayView: View {
+      let targetName: String?
+      let angle: Double
+      let displayValue: String?
+      var isDeadzone: Bool = false
+      var scale: Double? = nil
+      
+      var body: some View {
+          VStack(spacing: 8) {
+              if let targetName = targetName, !targetName.isEmpty {
+                  let suffix = scale.map { String(format: " (%.1fx)", $0) } ?? ""
+                  Text(targetName + suffix)
+                      .font(.system(size: 12, weight: .medium))
+                      .foregroundColor(isDeadzone ? .gray : .white)
+              }
   ```
-  如果 `scale` 存在且不为 `nil`，我们将其格式化为 `String(format: "%.1fx", scale)`。
-  更新 `OverlayView.swift` 的 UI 排版，例如在标题后显示：`"\(targetName) (\(scaleText))"`。
 
-- [ ] **步骤 2：在 `KnobStateManager.swift` 刷新时将当前倍数传入**
-  在调用 `overlayController.show` 和 `overlayController.update` 时传入 `baseScale`。
+- [ ] **步骤 2：更改 OverlayController 接收 scale 参数**
   ```swift
-  overlayController.show(..., scale: activeBaseScale)
-  overlayController.update(..., scale: activeBaseScale)
+  func show(at position: CGPoint, targetName: String?, displayValue: String?, scale: Double? = nil)
+  func update(angle: Double, displayValue: String?, isDeadzone: Bool = false, scale: Double? = nil)
   ```
 
-- [ ] **步骤 3：编译检查**
-  运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnobDetector -project PhantomKnobDetector/PhantomKnobDetector.xcodeproj -destination 'generic/platform=macOS' build`
-  预期：BUILD SUCCEEDED
+- [ ] **步骤 3：在 KnobStateManager 中刷新时传入 scale**
+  在 `onMultitouchMoved` 触发的 `show` 与 `update` 中传入当前的 `activeBaseScale` 或 `lastResolvedBaseScale`。
 
-- [ ] **步骤 4：Commit**
+- [ ] **步骤 4：编译与测试**
+  运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnobDetector -project PhantomKnobDetector/PhantomKnobDetector.xcodeproj -destination 'platform=macOS' test`
+  预期：PASS
+
+- [ ] **步骤 5：Commit**
   ```bash
-  git commit -am "feat: display current multiplier on Overlay UI with format consistency"
+  git commit -am "feat: display current multiplier on Overlay UI and specify formatting (Task 4)"
   ```
 
 ---
@@ -264,54 +329,13 @@
 - 创建/修改：`PhantomKnobDetector/PhantomKnobDetectorTests/CustomMultiplierTests.swift`
 
 - [ ] **步骤 1：编写 CustomMultiplierTests 单元测试**
-  编写测试用例覆盖以下情况：
-  1. `testPrecisionRounding`：验证浮点精度在增减 `0.1` 后被 `(val * 10).rounded() / 10` 四舍五入，并正确限制下限 `0.1`。
-  2. `testZoneIndependentPersistence`：模拟两个 Zone，修改并存储 Zone 0 以后，读取 Zone 1 依然能读到默认值。
-  3. `testSafeResetToOne`：验证写入自定义倍率后，按 1 键将覆盖值安全重置为 `1.0`。
-  
-  示例如下：
-  ```swift
-  // PhantomKnobDetectorTests/CustomMultiplierTests.swift
-  import XCTest
-  @testable import PhantomKnobDetector
+  验证精度控制、Zone 独立持久化及重置为 `1.0`。
 
-  final class CustomMultiplierTests: XCTestCase {
-      override func setUp() {
-          super.setUp()
-          // 清除测试用的 UserDefaults 键值
-          UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-      }
-
-      func testPrecisionRounding() {
-          let val = 1.0000000000000002 - 0.1
-          let rounded = (val * 10).rounded() / 10
-          XCTAssertEqual(rounded, 0.9)
-
-          let lowVal = 0.05
-          let clamped = max(0.1, (lowVal * 10).rounded() / 10)
-          XCTAssertEqual(clamped, 0.1)
-      }
-      
-      func testZoneIndependentPersistence() {
-          let target = ControlTarget(bundleID: "com.test.app", axRole: "AXSlider", identifier: "volume", displayName: "Volume")
-          let key0 = "knob_scale_override_com.test.app_AXSlider_volume_Volume_zone_0"
-          let key1 = "knob_scale_override_com.test.app_AXSlider_volume_Volume_zone_1"
-          
-          UserDefaults.standard.set(3.5, forKey: key0)
-          UserDefaults.standard.set(1.5, forKey: key1)
-          
-          XCTAssertEqual(UserDefaults.standard.double(forKey: key0), 3.5)
-          XCTAssertEqual(UserDefaults.standard.double(forKey: key1), 1.5)
-      }
-  }
-  ```
-
-- [ ] **步骤 2：运行单元测试验证全绿**
-  运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnobDetector -project PhantomKnobDetector/PhantomKnobDetector.xcodeproj -destination 'platform=macOS' test`
-  预期：Test Suite Passed
+- [ ] **步骤 2：运行单元测试验证全红变全绿**
+  运行测试确保全部 85 个测试通过。
 
 - [ ] **步骤 3：Commit**
   ```bash
   git add PhantomKnobDetector/PhantomKnobDetectorTests/CustomMultiplierTests.swift
-  git commit -m "test: add unit tests for custom multiplier persistence, precision rounding and safe reset"
+  git commit -m "test: add unit tests for custom multiplier persistence, rounding, and safe reset (Task 5)"
   ```
