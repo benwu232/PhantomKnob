@@ -25,11 +25,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private var fingerIdx1: Int?
     private var fingerIdx2: Int?
     
-    private var activeKeyboardMultiplier: Double = 1.0
     private var currentZoneIndex: Int = 0
     private var activeScaleConfig: ScaleConfig = .fixed(1.0)
     private var lastResolvedBaseScale: Double = 1.0
-    private var lockedBaseScale: Double? = nil
+    private var previousKeysState: Set<CGKeyCode> = []
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -110,13 +109,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     private func transition(to newState: KnobGlobalState) {
         state = newState
-        if case .activated = newState {
-            lockedBaseScale = nil
-            activeKeyboardMultiplier = 1.0
-        } else if case .inactive = newState {
-            lockedBaseScale = nil
-            activeKeyboardMultiplier = 1.0
-        }
         let targetName = currentTarget?.displayName
         statusBarController.updateState(newState, targetName: targetName)
     }
@@ -163,6 +155,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     func onMultitouchBegan(points: [Int: CGPoint]) {
         writeDebugLog("[KnobStateManager] onMultitouchBegan: points count = \(points.count), state = \(state)")
         guard state != .inactive else { return }
+        
+        previousKeysState.removeAll()
 
         // 立即清除并废止冷却倒计时，防止在检测期间状态突变
         coolingTimer?.invalidate()
@@ -216,7 +210,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         self.activeScaleConfig = resolvedScaleConfig
         self.currentZoneIndex = 0
         self.lastResolvedBaseScale = 1.0
-        self.lockedBaseScale = nil
 
         // 5. 缓存鼠标位置，不直接进入 knobing
         let mouseLoc = NSEvent.mouseLocation
@@ -269,44 +262,89 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 CGWarpMouseCursorPosition(lockPos)
             }
 
-            // 1. 轮询 CGEventSource.keyState 探测当前是否有数字键 2-9 被物理按住
-            var activeNum: Int? = nil
-            if AppSettings.shared.enableKeyboardNumberMultiplier {
-                let keyMapping: [Int: CGKeyCode] = [
-                    2: 19, 3: 20, 4: 21, 5: 23, 6: 22, 7: 26, 8: 28, 9: 25
+            // 1. Option Modifier and Edge-Triggered Polling
+            let optionDown = CGEventSource.keyState(.combinedSessionState, key: 58) || CGEventSource.keyState(.combinedSessionState, key: 61)
+            var newlyPressed: Set<CGKeyCode> = []
+            if optionDown && AppSettings.shared.enableKeyboardNumberMultiplier {
+                let keysToPoll: [CGKeyCode] = [
+                    18, // 1
+                    19, 20, 21, 23, 22, 26, 28, 25, // 2-9
+                    126, 125, 123, 124 // Up, Down, Left, Right
                 ]
-                for (num, keyCode) in keyMapping {
+                var currentPressed: Set<CGKeyCode> = []
+                for keyCode in keysToPoll {
                     if CGEventSource.keyState(.combinedSessionState, key: keyCode) {
-                        activeNum = num
-                        break
+                        currentPressed.insert(keyCode)
                     }
                 }
+                newlyPressed = currentPressed.subtracting(previousKeysState)
+                previousKeysState = currentPressed
+            } else {
+                previousKeysState.removeAll()
             }
 
-            // 2. 根据按键状态执行步长锁定或动态解析
-            let baseScale: Double?
-            if let num = activeNum {
-                if lockedBaseScale == nil {
-                    lockedBaseScale = lastResolvedBaseScale
+            // 2. Resolve default base scale dynamically from radius
+            var resolvedZoneIndex = currentZoneIndex
+            let defaultBaseScale: Double?
+            
+            let radius = calculateRawRadius(points: scaledPoints)
+            switch activeScaleConfig {
+            case .fixed(let val):
+                defaultBaseScale = val
+                resolvedZoneIndex = 0
+            case .zones(let zones):
+                defaultBaseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &resolvedZoneIndex)
+            case .linear(let config):
+                defaultBaseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+                resolvedZoneIndex = 0
+            }
+            
+            if resolvedZoneIndex != currentZoneIndex {
+                currentZoneIndex = resolvedZoneIndex
+            }
+            
+            // Apply override if available
+            var baseScale: Double?
+            if let defaultScale = defaultBaseScale {
+                if let target = currentTarget {
+                    let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
+                    if let overrideValue = UserDefaults.standard.object(forKey: key) as? Double {
+                        baseScale = overrideValue
+                    } else {
+                        baseScale = defaultScale
+                    }
+                } else {
+                    baseScale = defaultScale
                 }
-                activeKeyboardMultiplier = Double(num)
-                baseScale = lockedBaseScale
             } else {
-                lockedBaseScale = nil
-                activeKeyboardMultiplier = 1.0
+                baseScale = nil
+            }
+            
+            // Handle edge-triggered key overrides and modifications
+            if let target = currentTarget, let currentVal = baseScale {
+                let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
+                var updatedVal: Double? = nil
                 
-                let radius = calculateRawRadius(points: scaledPoints)
-                switch activeScaleConfig {
-                case .fixed(let val):
-                    baseScale = val
-                case .zones(let zones):
-                    baseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &currentZoneIndex)
-                case .linear(let config):
-                    baseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+                if newlyPressed.contains(18) {
+                    // Option + 1 -> Reset to safe value 1.0
+                    updatedVal = 1.0
+                } else if let num = getNumberPressed(from: newlyPressed) {
+                    // Option + 2-9
+                    updatedVal = Double(num)
+                } else if let delta = getArrowDelta(from: newlyPressed) {
+                    // Option + Arrow keys
+                    let rawNewVal = currentVal + delta
+                    updatedVal = max(0.1, (rawNewVal * 10).rounded() / 10)
                 }
-                if let resolved = baseScale {
-                    self.lastResolvedBaseScale = resolved
+                
+                if let nextVal = updatedVal {
+                    UserDefaults.standard.set(nextVal, forKey: key)
+                    baseScale = nextVal
                 }
+            }
+            
+            if let resolved = baseScale {
+                self.lastResolvedBaseScale = resolved
             }
 
             // 3. 检查死区判定
@@ -335,7 +373,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 settingsSensitivity = globalSens
             }
 
-            let finalScale = activeBaseScale * activeKeyboardMultiplier * settingsSensitivity
+            let finalScale = activeBaseScale * settingsSensitivity
             translator.scale = finalScale
 
             // 5. 注入翻译事件
@@ -360,6 +398,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     func onMultitouchEnded() {
         guard state != .inactive else { return }
+        previousKeysState.removeAll()
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
 
@@ -379,8 +418,34 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
     }
 
-    // MARK: - Helper Methods
+    private func persistentKey(for target: DetectedTarget, zoneIndex: Int) -> String {
+        let bundleID = target.bundleID
+        let axRole = target.axRole
+        let identifier = target.identifier ?? ""
+        let displayName = target.displayName
+        return "knob_scale_override_\(bundleID)_\(axRole)_\(identifier)_\(displayName)_zone_\(zoneIndex)"
+    }
 
+    private func getNumberPressed(from pressed: Set<CGKeyCode>) -> Int? {
+        let keyMapping: [CGKeyCode: Int] = [
+            19: 2, 20: 3, 21: 4, 23: 5, 22: 6, 26: 7, 28: 8, 25: 9
+        ]
+        for (k, v) in keyMapping {
+            if pressed.contains(k) { return v }
+        }
+        return nil
+    }
+
+    private func getArrowDelta(from pressed: Set<CGKeyCode>) -> Double? {
+        if pressed.contains(126) { return 1.0 }   // Up
+        if pressed.contains(125) { return -1.0 }  // Down
+        if pressed.contains(124) { return 0.1 }   // Right
+        if pressed.contains(123) { return -0.1 }  // Left
+        return nil
+    }
+
+    // MARK: - Helper Methods
+    
     private func calculateRawAngle(points: [Int: CGPoint]) -> Double? {
         if points.count >= 2 {
             let (knobCore, _, _) = KnobAlgorithm().calKnob(points)
