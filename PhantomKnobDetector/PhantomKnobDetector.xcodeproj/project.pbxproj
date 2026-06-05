@@ -64,6 +64,7 @@
 		F433D0C4FCEFBD47B753172E /* GestureClassifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6268A4299177BA4DF15AF778 /* GestureClassifierTests.swift */; };
 		F50286E49BF18BF660289399 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4B47D7DBF39A7ED1B06FE3 /* StatusBarController.swift */; };
 		F82FEB0E509E422D0725D6A9 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E15AAACA0AFF120616FB1CC /* ResultView.swift */; };
+		F91BCA64CB9A52F3CA2395EA /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F78957DB97C0018E23D2E49 /* AppSettingsTests.swift */; };
 		FD6F3999561FE1829127D058 /* KnobAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434401F1FB3CF7516FA17136 /* KnobAlgorithm.swift */; };
 /* End PBXBuildFile section */
 
@@ -105,6 +106,7 @@
 		625E6EA1DB2526ECCF4ADF7F /* DemoSliderTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSliderTarget.swift; sourceTree = "<group>"; };
 		6268A4299177BA4DF15AF778 /* GestureClassifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureClassifierTests.swift; sourceTree = "<group>"; };
 		6E720FE246909EA3842966A5 /* TouchpadEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchpadEngine.swift; sourceTree = "<group>"; };
+		6F78957DB97C0018E23D2E49 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 		78935A2232B2B921D06D1C3E /* PhantomKnobDetectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomKnobDetectorApp.swift; sourceTree = "<group>"; };
 		7A1B7A58F52AB85B03F4D90E /* AccessibilityTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTarget.swift; sourceTree = "<group>"; };
 		7C6CF6C828BA0800340EA5B8 /* DetectedTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedTarget.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				9793C661FDF48F0AA09769EC /* AccessibilityTargetTests.swift */,
+				6F78957DB97C0018E23D2E49 /* AppSettingsTests.swift */,
 				CD8B97CB220881FCBC6E9993 /* ControlTests.swift */,
 				6268A4299177BA4DF15AF778 /* GestureClassifierTests.swift */,
 				C6EF5FF74E6C0C9F7A970AF9 /* InputTranslationTests.swift */,
@@ -380,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CF5355081F8797F8A86A9D0 /* AccessibilityTargetTests.swift in Sources */,
+				F91BCA64CB9A52F3CA2395EA /* AppSettingsTests.swift in Sources */,
 				A4915B2B22AB0FA95425F2F8 /* ControlTests.swift in Sources */,
 				F433D0C4FCEFBD47B753172E /* GestureClassifierTests.swift in Sources */,
 				A841CF8D2E3938E0713FBDCF /* InputTranslationTests.swift in Sources */,
