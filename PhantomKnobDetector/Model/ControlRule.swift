@@ -52,17 +52,25 @@ struct ControlRule: Codable {
     let key: RuleKey
     let translation: InputTranslation
     let scaleConfig: ScaleConfig
-
-    /// 保留扩展槽，不破坏未来 Codable 兼容性
     var extra: [String: String]?
+
+    var themeColor: String?
+    var overlayStyle: String?
+    var rotationStyle: String?
 
     init(key: RuleKey,
          translation: InputTranslation,
          scaleConfig: ScaleConfig = .fixed(1.0),
+         themeColor: String? = nil,
+         overlayStyle: String? = nil,
+         rotationStyle: String? = nil,
          extra: [String: String]? = nil) {
         self.key = key
         self.translation = translation
         self.scaleConfig = scaleConfig
+        self.themeColor = themeColor
+        self.overlayStyle = overlayStyle
+        self.rotationStyle = rotationStyle
         self.extra = extra
     }
 }

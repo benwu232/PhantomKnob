@@ -221,7 +221,31 @@ final class DetectionResultTests: XCTestCase {
         XCTAssertEqual(decoded.details.normalizedPositionAvailable, original.details.normalizedPositionAvailable)
         XCTAssertEqual(decoded.details.sampleCount, original.details.sampleCount)
     }
+
+    func testControlRuleCustomStyleDecoding() throws {
+        let json = """
+        {
+            "key": {
+                "bundleID": "com.apple.FinalCut",
+                "axRole": "AXSlider"
+            },
+            "translation": "axWrite",
+            "scaleConfig": {
+                "fixed": 1.5
+            },
+            "themeColor": "#0A84FF",
+            "overlayStyle": "minimal",
+            "rotationStyle": "cleanArc"
+        }
+        """.data(using: .utf8)!
+        
+        let rule = try JSONDecoder().decode(ControlRule.self, from: json)
+        XCTAssertEqual(rule.themeColor, "#0A84FF")
+        XCTAssertEqual(rule.overlayStyle, "minimal")
+        XCTAssertEqual(rule.rotationStyle, "cleanArc")
+    }
 }
+
 
 final class ComparableExtensionTests: XCTestCase {
     

@@ -7,6 +7,10 @@ struct AppSettings: Codable {
     var fixed: FixedSchemeConfig = FixedSchemeConfig()
     var linear: ScaleConfigLinear = ScaleConfigLinear(minRadius: 5.0, maxRadius: 20.0, minScale: 1.0, maxScale: 0.2)
 
+    var defaultThemeColor: String = "#0A84FF"
+    var defaultOverlayStyle: String = "hud"
+    var defaultRotationStyle: String = "ticks"
+
     struct FixedSchemeConfig: Codable {
         var zones: [RadiusZone] = [
             RadiusZone(minRadius: 5.0, maxRadius: 100.0, margin: 2.0, scale: 1.0)
