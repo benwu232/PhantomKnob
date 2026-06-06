@@ -19,7 +19,20 @@
     },
     "translation": "arrowKeyLeftRight",
     "scaleConfig": {
-      "fixed": 1.0
+      "zones": [
+        {
+          "minRadius": 5.0,
+          "maxRadius": 20.0,
+          "margin": 2.0,
+          "scale": 10.0
+        },
+        {
+          "minRadius": 20.0,
+          "maxRadius": 100.0,
+          "margin": 2.0,
+          "scale": 1.0
+        }
+      ]
     },
     "extra": {
       "reason": "AXWrite causes integer truncation bug in QuickTime timeline"
