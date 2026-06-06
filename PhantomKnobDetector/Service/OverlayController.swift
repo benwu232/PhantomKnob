@@ -123,4 +123,39 @@ class OverlayController: ObservableObject {
             y: position.y - 70
         )
     }
+
+    static func calculateDiameter(for radius: Double) -> CGFloat {
+        let raw = CGFloat(radius * 2.0 * 10.0)
+        return min(max(raw, 80.0), 400.0)
+    }
+
+    static func calculateBestFrame(cursor: CGPoint, diameter: CGFloat, visibleFrame: NSRect) -> NSRect {
+        let offset: CGFloat = 15.0
+        let w = diameter
+        let h = diameter
+        
+        let candidates: [CGPoint] = [
+            // 1. 右下 (Bottom-Right)
+            CGPoint(x: cursor.x + offset, y: cursor.y - offset - h),
+            // 2. 右上 (Top-Right)
+            CGPoint(x: cursor.x + offset, y: cursor.y + offset),
+            // 3. 左下 (Bottom-Left)
+            CGPoint(x: cursor.x - offset - w, y: cursor.y - offset - h),
+            // 4. 左上 (Top-Left)
+            CGPoint(x: cursor.x - offset - w, y: cursor.y + offset)
+        ]
+        
+        for origin in candidates {
+            let rect = NSRect(origin: origin, size: CGSize(width: w, height: h))
+            if visibleFrame.contains(rect) {
+                return rect
+            }
+        }
+        
+        // Fallback: 使用右下，并进行屏幕边缘夹紧 (Clamp)
+        let rawOrigin = candidates[0]
+        let clampedX = min(max(rawOrigin.x, visibleFrame.minX), visibleFrame.maxX - w)
+        let clampedY = min(max(rawOrigin.y, visibleFrame.minY), visibleFrame.maxY - h)
+        return NSRect(x: clampedX, y: clampedY, width: w, height: h)
+    }
 }
