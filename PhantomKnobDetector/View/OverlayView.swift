@@ -11,12 +11,14 @@ struct OverlayView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            if let targetName = targetName, !targetName.isEmpty {
+            let titleText: String = {
+                let name = (targetName == nil || targetName!.isEmpty) ? "Knob" : targetName!
                 let suffix = scale.map { String(format: " (%.1fx)", $0) } ?? ""
-                Text(targetName + suffix)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(isDeadzone ? .gray : .white)
-            }
+                return name + suffix
+            }()
+            Text(titleText)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(isDeadzone ? .gray : .white)
 
             ZStack {
                 Circle()

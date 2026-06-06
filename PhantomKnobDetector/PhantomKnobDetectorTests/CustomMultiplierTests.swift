@@ -66,4 +66,76 @@ final class CustomMultiplierTests: XCTestCase {
         UserDefaults.standard.set(1.0, forKey: key)
         XCTAssertEqual(UserDefaults.standard.double(forKey: key), 1.0)
     }
+
+    func testDirectKeyPressCustomMultiplierPersistence() {
+        let manager = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        
+        let target = DetectedTarget(
+            bundleID: "com.test.directkey",
+            axRole: "AXSlider",
+            identifier: "volume",
+            displayName: "Volume",
+            element: nil
+        )
+        
+        manager.currentTarget = target
+        manager.currentZoneIndex = 0
+        manager.transition(to: .knobing(target: target))
+        
+        // Key 3 -> keycode 20
+        manager.handleDirectKeyPress(keyCode: 20)
+        
+        let key = "knob_scale_override_com.test.directkey_AXSlider_volume_Volume_zone_0"
+        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 3.0)
+        
+        // Arrow Right -> keycode 124 (+0.1)
+        manager.handleDirectKeyPress(keyCode: 124)
+        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 3.1)
+        
+        // Arrow Down -> keycode 125 (-1.0)
+        manager.handleDirectKeyPress(keyCode: 125)
+        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 2.1)
+        
+        // Key 1 -> keycode 18 (reset to 1.0)
+        manager.handleDirectKeyPress(keyCode: 18)
+        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 1.0)
+    }
+
+    func testOneFingerContinuationLocksMultiplier() {
+        let manager = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        
+        let target = DetectedTarget(
+            bundleID: "com.test.lock",
+            axRole: "AXSlider",
+            identifier: "volume",
+            displayName: "Volume",
+            element: nil
+        )
+        
+        manager.currentTarget = target
+        manager.currentZoneIndex = 1
+        manager.lastResolvedBaseScale = 4.2
+        manager.fixedCenter = CGPoint.zero
+        manager.fingerIdx1 = 0
+        manager.fingerIdx2 = 1
+        manager.transition(to: .knobing(target: target))
+        
+        // Simulating 1-finger move
+        manager.onMultitouchMoved(points: [0: CGPoint(x: 10, y: 10)])
+        
+        // The scale should remain locked at 4.2
+        XCTAssertEqual(manager.lastResolvedBaseScale, 4.2)
+    }
 }

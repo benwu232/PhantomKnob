@@ -35,9 +35,15 @@ final class ScrollWheelTranslator: InputTranslator {
 
     var displayValue: String? { nil }
 
+    private static let eventSource: CGEventSource? = {
+        let source = CGEventSource(stateID: .privateState)
+        source?.userData = 0xDEADC0DE
+        return source
+    }()
+
     private func synthesizeScroll(deltaY: CGFloat, deltaX: CGFloat) {
         let event = CGEvent(
-            scrollWheelEvent2Source: nil,
+            scrollWheelEvent2Source: Self.eventSource,
             units: .pixel,
             wheelCount: 2,
             wheel1: Int32(deltaY),

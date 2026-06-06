@@ -14,21 +14,22 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private let overlayController: OverlayController
     private let statusBarController: StatusBarController
     private let touchHandler: GlobalTouchHandler
-    private var currentTarget: DetectedTarget?
+    var currentTarget: DetectedTarget?
     private var currentTranslator: InputTranslator?
     private var initialTouchPosition: CGPoint?
-    private var initialTouchPositionCarbon: CGPoint? // 锁定鼠标的 Carbon 坐标 (左上角原点)
+    private var initialTouchPositionCarbon: CGPoint? // 锁定鼠标 of Carbon coordinate (top-left origin)
     private var previousAngle: Double = 0
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
-    private var fixedCenter: CGPoint?
-    private var fingerIdx1: Int?
-    private var fingerIdx2: Int?
+    var fixedCenter: CGPoint?
+    var fingerIdx1: Int?
+    var fingerIdx2: Int?
     
-    private var currentZoneIndex: Int = 0
+    var currentZoneIndex: Int = 0
     private var activeScaleConfig: ScaleConfig = .fixed(1.0)
-    private var lastResolvedBaseScale: Double = 1.0
-    private var previousKeysState: Set<CGKeyCode> = []
+    var lastResolvedBaseScale: Double = 1.0
+    private var eventTap: CFMachPort?
+    private var runLoopSource: CFRunLoopSource?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -47,6 +48,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         self.touchHandler = touchHandler
 
         setupBindings()
+        setupEventTap()
+    }
+
+    deinit {
+        if let source = runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source, .commonModes)
+        }
     }
 
     private func setupBindings() {
@@ -107,10 +115,24 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
     }
 
-    private func transition(to newState: KnobGlobalState) {
+    func transition(to newState: KnobGlobalState) {
         state = newState
         let targetName = currentTarget?.displayName
         statusBarController.updateState(newState, targetName: targetName)
+        
+        if eventTap == nil {
+            setupEventTap()
+        }
+        
+        if let tap = eventTap {
+            if case .knobing = newState, AppSettings.shared.enableKeyboardNumberMultiplier {
+                CGEvent.tapEnable(tap: tap, enable: true)
+                writeDebugLog("[KnobStateManager] Enabled event tap for state: \(newState)")
+            } else {
+                CGEvent.tapEnable(tap: tap, enable: false)
+                writeDebugLog("[KnobStateManager] Disabled event tap for state: \(newState)")
+            }
+        }
     }
 
     private func handleAppSwitch() {
@@ -156,8 +178,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         writeDebugLog("[KnobStateManager] onMultitouchBegan: points count = \(points.count), state = \(state)")
         guard state != .inactive else { return }
         
-        previousKeysState.removeAll()
-
         // 立即清除并废止冷却倒计时，防止在检测期间状态突变
         coolingTimer?.invalidate()
         coolingTimer = nil
@@ -263,92 +283,53 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 CGWarpMouseCursorPosition(lockPos)
             }
 
-            // 1. Option Modifier and Edge-Triggered Polling
-            let optionDown = CGEventSource.keyState(.combinedSessionState, key: 58) || CGEventSource.keyState(.combinedSessionState, key: 61)
-            var newlyPressed: Set<CGKeyCode> = []
-            if optionDown && AppSettings.shared.enableKeyboardNumberMultiplier {
-                let keysToPoll: [CGKeyCode] = [
-                    18, // 1
-                    19, 20, 21, 23, 22, 26, 28, 25, // 2-9
-                    126, 125, 123, 124 // Up, Down, Left, Right
-                ]
-                var currentPressed: Set<CGKeyCode> = []
-                for keyCode in keysToPoll {
-                    if CGEventSource.keyState(.combinedSessionState, key: keyCode) {
-                        currentPressed.insert(keyCode)
-                    }
-                }
-                newlyPressed = currentPressed.subtracting(previousKeysState)
-                previousKeysState = currentPressed
-            } else {
-                previousKeysState.removeAll()
-            }
-
-            // 2. Resolve default base scale dynamically from radius
-            var resolvedZoneIndex = currentZoneIndex
-            let defaultBaseScale: Double?
-            
-            let radius = calculateRawRadius(points: scaledPoints)
-            switch activeScaleConfig {
-            case .fixed(let val):
-                defaultBaseScale = val
-                resolvedZoneIndex = 0
-            case .zones(let zones):
-                defaultBaseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &resolvedZoneIndex)
-            case .linear(let config):
-                defaultBaseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
-                resolvedZoneIndex = 0
-            }
-            
-            if resolvedZoneIndex != currentZoneIndex {
-                currentZoneIndex = resolvedZoneIndex
-            }
-            
-            // Apply override if available
+            // 1. Resolve default base scale dynamically from radius
             var baseScale: Double?
-            if let defaultScale = defaultBaseScale {
-                if let target = currentTarget {
-                    let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
-                    if let overrideValue = UserDefaults.standard.object(forKey: key) as? Double {
-                        baseScale = overrideValue
+            if scaledPoints.count >= 2 {
+                var resolvedZoneIndex = currentZoneIndex
+                let defaultBaseScale: Double?
+                
+                let radius = calculateRawRadius(points: scaledPoints)
+                switch activeScaleConfig {
+                case .fixed(let val):
+                    defaultBaseScale = val
+                    resolvedZoneIndex = 0
+                case .zones(let zones):
+                    defaultBaseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &resolvedZoneIndex)
+                case .linear(let config):
+                    defaultBaseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+                    resolvedZoneIndex = 0
+                }
+                
+                if resolvedZoneIndex != currentZoneIndex {
+                    currentZoneIndex = resolvedZoneIndex
+                }
+                
+                // Apply override if available
+                if let defaultScale = defaultBaseScale {
+                    if let target = currentTarget {
+                        let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
+                        if let overrideValue = UserDefaults.standard.object(forKey: key) as? Double {
+                            baseScale = overrideValue
+                        } else {
+                            baseScale = defaultScale
+                        }
                     } else {
                         baseScale = defaultScale
                     }
                 } else {
-                    baseScale = defaultScale
+                    baseScale = nil
+                }
+                
+                if let resolved = baseScale {
+                    self.lastResolvedBaseScale = resolved
                 }
             } else {
-                baseScale = nil
-            }
-            
-            // Handle edge-triggered key overrides and modifications
-            if let target = currentTarget, let currentVal = baseScale {
-                let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
-                var updatedVal: Double? = nil
-                
-                if newlyPressed.contains(18) {
-                    // Option + 1 -> Reset to safe value 1.0
-                    updatedVal = 1.0
-                } else if let num = getNumberPressed(from: newlyPressed) {
-                    // Option + 2-9
-                    updatedVal = Double(num)
-                } else if let delta = getArrowDelta(from: newlyPressed) {
-                    // Option + Arrow keys
-                    let rawNewVal = currentVal + delta
-                    updatedVal = max(0.1, (rawNewVal * 10).rounded() / 10)
-                }
-                
-                if let nextVal = updatedVal {
-                    UserDefaults.standard.set(nextVal, forKey: key)
-                    baseScale = nextVal
-                }
-            }
-            
-            if let resolved = baseScale {
-                self.lastResolvedBaseScale = resolved
+                // Lock multiplier for 1-finger continuation
+                baseScale = self.lastResolvedBaseScale
             }
 
-            // 3. 检查死区判定
+            // 2. 检查死区判定
             guard let activeBaseScale = baseScale else {
                 // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
                 let displayVal = translator.displayValue
@@ -358,7 +339,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 return
             }
 
-            // 4. 读取系统面板灵敏度并合成最终步长倍率
+            // 3. 读取系统面板灵敏度并合成最终步长倍率
             let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 1.0
             let settingsSensitivity: Double
             if let target = currentTarget {
@@ -377,7 +358,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             let finalScale = activeBaseScale * settingsSensitivity
             translator.scale = finalScale
 
-            // 5. 注入翻译事件
+            // 4. 注入翻译事件
             let knobState = KnobState(
                 current: KnobCore(angle: currentAngle),
                 previous: KnobCore(angle: previousAngle)
@@ -399,7 +380,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     func onMultitouchEnded() {
         guard state != .inactive else { return }
-        previousKeysState.removeAll()
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
 
@@ -427,21 +407,161 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         return "knob_scale_override_\(bundleID)_\(axRole)_\(identifier)_\(displayName)_zone_\(zoneIndex)"
     }
 
-    private func getNumberPressed(from pressed: Set<CGKeyCode>) -> Int? {
+    private func setupEventTap() {
+        guard eventTap == nil else { return }
+        
+        let eventMask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue)
+        
+        let selfPointer = Unmanaged.passUnretained(self).toOpaque()
+        
+        guard let tap = CGEvent.tapCreate(
+            tap: .cgSessionEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: CGEventMask(eventMask),
+            callback: { (proxy, type, event, refcon) -> Unmanaged<CGEvent>? in
+                guard let refcon = refcon else {
+                    return Unmanaged.passRetained(event)
+                }
+                let manager = Unmanaged<KnobStateManager>.fromOpaque(refcon).takeUnretainedValue()
+                
+                if type == .tapDisabledByTimeout {
+                    manager.reEnableEventTap()
+                    return nil
+                }
+                
+                if manager.handleEventTap(proxy: proxy, type: type, event: event) {
+                    return nil
+                }
+                return Unmanaged.passRetained(event)
+            },
+            userInfo: selfPointer
+        ) else {
+            writeDebugLog("[KnobStateManager] Failed to create event tap")
+            return
+        }
+        
+        self.eventTap = tap
+        self.runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+        
+        if let source = self.runLoopSource {
+            CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
+        }
+        
+        CGEvent.tapEnable(tap: tap, enable: false)
+    }
+
+    func reEnableEventTap() {
+        if let tap = eventTap {
+            CGEvent.tapEnable(tap: tap, enable: true)
+            writeDebugLog("[KnobStateManager] Re-enabled event tap after timeout/disable event")
+        }
+    }
+
+    private func handleEventTap(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Bool {
+        guard state.isKnobing else { return false }
+        
+        // Skip events posted by our own translators
+        let sourceUserData = event.getIntegerValueField(.eventSourceUserData)
+        guard sourceUserData != 0xDEADC0DE else { return false }
+        
+        guard type == .keyDown || type == .keyUp else { return false }
+        
+        let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
+        
+        let targetKeyCodes: Set<CGKeyCode> = [18, 19, 20, 21, 22, 23, 25, 26, 28, 123, 124, 125, 126]
+        guard targetKeyCodes.contains(keyCode) else { return false }
+        
+        if type == .keyDown {
+            DispatchQueue.main.async { [weak self] in
+                self?.handleDirectKeyPress(keyCode: keyCode)
+            }
+        }
+        return true
+    }
+
+    func handleDirectKeyPress(keyCode: CGKeyCode) {
+        guard state.isKnobing, let target = currentTarget else { return }
+        
+        let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
+        let currentVal: Double
+        
+        // Resolve default base scale dynamically
+        let defaultBaseScale: Double
+        switch activeScaleConfig {
+        case .fixed(let val):
+            defaultBaseScale = val
+        case .zones(let zones):
+            if currentZoneIndex >= 0 && currentZoneIndex < zones.count {
+                defaultBaseScale = zones[currentZoneIndex].scale
+            } else {
+                defaultBaseScale = 1.0
+            }
+        case .linear:
+            defaultBaseScale = 1.0
+        }
+        
+        if let overrideValue = UserDefaults.standard.object(forKey: key) as? Double {
+            currentVal = overrideValue
+        } else {
+            currentVal = defaultBaseScale
+        }
+        
+        var updatedVal: Double? = nil
+        
+        if keyCode == 18 {
+            // Key 1 -> Reset to safe value 1.0
+            updatedVal = 1.0
+        } else if let num = getNumberValue(for: keyCode) {
+            // Keys 2-9
+            updatedVal = Double(num)
+        } else if let delta = getArrowDelta(for: keyCode) {
+            // Arrow keys
+            let rawNewVal = currentVal + delta
+            updatedVal = max(0.1, (rawNewVal * 10).rounded() / 10)
+        }
+        
+        if let nextVal = updatedVal {
+            UserDefaults.standard.set(nextVal, forKey: key)
+            self.lastResolvedBaseScale = nextVal
+            
+            // Apply immediately to currentTranslator scale
+            if let translator = currentTranslator {
+                let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 1.0
+                let settingsSensitivity: Double
+                switch target.axRole {
+                case "AXSlider":
+                    settingsSensitivity = UserDefaults.standard.object(forKey: "sliderSensitivity") as? Double ?? globalSens
+                case "AXProgressIndicator":
+                    settingsSensitivity = UserDefaults.standard.object(forKey: "progressSensitivity") as? Double ?? globalSens
+                default:
+                    settingsSensitivity = globalSens
+                }
+                translator.scale = nextVal * settingsSensitivity
+            }
+            
+            // Update Overlay UI immediately
+            overlayController.update(
+                angle: self.currentAngle,
+                displayValue: currentTranslator?.displayValue ?? "",
+                isDeadzone: false,
+                scale: nextVal
+            )
+        }
+    }
+
+    private func getNumberValue(for keyCode: CGKeyCode) -> Int? {
         let keyMapping: [CGKeyCode: Int] = [
             19: 2, 20: 3, 21: 4, 23: 5, 22: 6, 26: 7, 28: 8, 25: 9
         ]
-        for (k, v) in keyMapping {
-            if pressed.contains(k) { return v }
-        }
-        return nil
+        return keyMapping[keyCode]
     }
 
-    private func getArrowDelta(from pressed: Set<CGKeyCode>) -> Double? {
-        if pressed.contains(126) { return 1.0 }   // Up
-        if pressed.contains(125) { return -1.0 }  // Down
-        if pressed.contains(124) { return 0.1 }   // Right
-        if pressed.contains(123) { return -0.1 }  // Left
+    private func getArrowDelta(for keyCode: CGKeyCode) -> Double? {
+        if keyCode == 126 { return 1.0 }   // Up
+        if keyCode == 125 { return -1.0 }  // Down
+        if keyCode == 124 { return 0.1 }   // Right
+        if keyCode == 123 { return -0.1 }  // Left
         return nil
     }
 
