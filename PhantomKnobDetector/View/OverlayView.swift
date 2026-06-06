@@ -78,8 +78,8 @@ struct OverlayView: View {
             ZStack {
                 // 圆形底色渲染
                 if overlayStyle == "hud" {
-                    VisualEffectView(material: .hudWindow, blendingMode: .withinWindow)
-                        .clipShape(Circle())
+                    Circle()
+                        .fill(Color.clear)
                         .overlay(
                             Circle()
                                 .stroke(isDeadzone ? Color.gray.opacity(0.3) : activeColor.opacity(0.4), lineWidth: 1.5)
@@ -102,8 +102,8 @@ struct OverlayView: View {
                     let center = CGPoint(x: size.width / 2, y: size.height / 2)
                     let r = min(size.width, size.height) / 2 - 8
                     
-                    // 应用手势旋转角度（转为弧度进行旋转）
-                    // macOS 坐标系 Y 轴朝上，逆时针为正，顺时针为负
+                    // 平移到圆心，然后围绕圆心旋转
+                    context.translateBy(x: center.x, y: center.y)
                     context.rotate(by: Angle(degrees: angle))
                     
                     if rotationStyle == "ticks" {
@@ -111,31 +111,33 @@ struct OverlayView: View {
                         for i in 0..<tickCount {
                             let tickAngle = Double(i) * (2 * .pi) / Double(tickCount)
                             let isMain = (i == 0)
-                            let startR = isMain ? (r - 8) : (r - 4)
+                            let tickLength: CGFloat = isMain ? max(2.5, r * 0.11) : max(1.5, r * 0.055)
+                            let startR = r - tickLength
                             
                             var path = Path()
                             path.move(to: CGPoint(
-                                x: center.x + CGFloat(startR * cos(tickAngle)),
-                                y: center.y + CGFloat(startR * sin(tickAngle))
+                                x: CGFloat(startR * cos(tickAngle)),
+                                y: CGFloat(startR * sin(tickAngle))
                             ))
                             path.addLine(to: CGPoint(
-                                x: center.x + CGFloat(r * cos(tickAngle)),
-                                y: center.y + CGFloat(r * sin(tickAngle))
+                                x: CGFloat(r * cos(tickAngle)),
+                                y: CGFloat(r * sin(tickAngle))
                             ))
                             
                             context.stroke(
                                 path,
                                 with: .color(isMain ? (isDeadzone ? .gray : activeColor) : Color.white.opacity(0.3)),
-                                lineWidth: isMain ? 2.0 : 1.0
+                                lineWidth: isMain ? 1.5 : 0.75
                             )
                         }
                     } else if rotationStyle == "rimDot" {
                         // 边缘圆点反馈
-                        let dotX = center.x + r * CGFloat(cos(0.0))
-                        let dotY = center.y + r * CGFloat(sin(0.0))
+                        let dotX = r * CGFloat(cos(0.0))
+                        let dotY = r * CGFloat(sin(0.0))
+                        let dotRadius = max(1.5, r * 0.055)
                         
                         var path = Path()
-                        path.addArc(center: CGPoint(x: dotX, y: dotY), radius: 4, startAngle: .zero, endAngle: Angle(degrees: 360), clockwise: false)
+                        path.addArc(center: CGPoint(x: dotX, y: dotY), radius: dotRadius, startAngle: .zero, endAngle: Angle(degrees: 360), clockwise: false)
                         context.fill(path, with: .color(isDeadzone ? .gray : activeColor))
                     }
                 }

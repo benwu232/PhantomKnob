@@ -6,10 +6,10 @@ class OverlayControllerTests: XCTestCase {
     // 测试半径公式换算及 Clamping [80, 400]
     func testDiameterCalculation() {
         let testCases: [(radius: Double, expectedDiameter: CGFloat)] = [
-            (2.0, 80.0),   // 2mm * 2 * 10 = 40, clamped to 80
-            (5.0, 100.0),  // 5mm * 2 * 10 = 100
-            (15.0, 300.0), // 15mm * 2 * 10 = 300
-            (30.0, 400.0)  // 30mm * 2 * 10 = 600, clamped to 400
+            (2.0, 80.0 / 3.0),   // 2mm * 2 * 10 = 40, clamped to 80 / 3
+            (5.0, 100.0 / 3.0),  // 5mm * 2 * 10 = 100 / 3
+            (15.0, 300.0 / 3.0), // 15mm * 2 * 10 = 300 / 3
+            (30.0, 400.0 / 3.0)  // 30mm * 2 * 10 = 600, clamped to 400 / 3
         ]
         
         for tc in testCases {
