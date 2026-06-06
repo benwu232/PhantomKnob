@@ -110,24 +110,41 @@ struct OverlayView: View {
                         for i in 0..<tickCount {
                             let tickAngle = Double(i) * (2 * .pi) / Double(tickCount)
                             let isMain = (i == 0)
-                            let tickLength: CGFloat = isMain ? max(2.5, r * 0.11) : max(1.5, r * 0.055)
-                            let startR = r - tickLength
                             
-                            var path = Path()
-                            path.move(to: CGPoint(
-                                x: CGFloat(startR * cos(tickAngle)),
-                                y: CGFloat(startR * sin(tickAngle))
-                            ))
-                            path.addLine(to: CGPoint(
-                                x: CGFloat(r * cos(tickAngle)),
-                                y: CGFloat(r * sin(tickAngle))
-                            ))
-                            
-                            context.stroke(
-                                path,
-                                with: .color(isMain ? (isDeadzone ? .gray : activeColor) : Color.white.opacity(0.3)),
-                                lineWidth: isMain ? 1.5 : 0.75
-                            )
+                            if isMain {
+                                // 将主 Notch 画为一个位于刻度圈内侧的实心小圆点
+                                let dotRadius = max(2.5, r * 0.08)
+                                let dotDist = r - dotRadius - 3.5
+                                var path = Path()
+                                path.addArc(
+                                    center: CGPoint(x: dotDist * CGFloat(cos(tickAngle)), y: dotDist * CGFloat(sin(tickAngle))),
+                                    radius: dotRadius,
+                                    startAngle: .zero,
+                                    endAngle: Angle(degrees: 360),
+                                    clockwise: false
+                                )
+                                context.fill(path, with: .color(isDeadzone ? .gray : activeColor))
+                            } else {
+                                // 普通刻度线，粗细改为与原 Notch 相同的 1.5
+                                let tickLength: CGFloat = max(1.5, r * 0.055)
+                                let startR = r - tickLength
+                                
+                                var path = Path()
+                                path.move(to: CGPoint(
+                                    x: CGFloat(startR * cos(tickAngle)),
+                                    y: CGFloat(startR * sin(tickAngle))
+                                ))
+                                path.addLine(to: CGPoint(
+                                    x: CGFloat(r * cos(tickAngle)),
+                                    y: CGFloat(r * sin(tickAngle))
+                                ))
+                                
+                                context.stroke(
+                                    path,
+                                    with: .color(Color.white.opacity(0.3)),
+                                    lineWidth: 1.5
+                                )
+                            }
                         }
                     } else if rotationStyle == "rimDot" {
                         // 边缘圆点反馈
