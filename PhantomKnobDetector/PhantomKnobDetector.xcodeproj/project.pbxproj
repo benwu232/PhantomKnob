@@ -14,6 +14,7 @@
 		0FDBD160B937B66DF8B0ED51 /* TouchpadDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7DB4221E95922F2E1884D1 /* TouchpadDetector.swift */; };
 		105C3D67F1A8C97782798A70 /* InputTranslation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5C6EC64D1998EC255C1D68 /* InputTranslation.swift */; };
 		19CE2CE36339241C9D02E9E5 /* DemoSliderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625E6EA1DB2526ECCF4ADF7F /* DemoSliderTarget.swift */; };
+		1D33BDBEFCBC977D7802767C /* OverlayControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0FF5175F80D44F0D370DBB /* OverlayControllerTests.swift */; };
 		1FB9B96D415A97056EB06D23 /* SensitivityConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9265A789C2C6FB2D52CB9EF /* SensitivityConfigTests.swift */; };
 		2562CACCF13EC8EA286DECD9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D21A1016CCFF504806DB7C /* SettingsView.swift */; };
 		26191A263CF93346F0E2E4F7 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24264A5D15DB56E0316F92E9 /* ModelTests.swift */; };
@@ -122,6 +123,7 @@
 		95BA3A7D77928B20CB7C72D7 /* PhantomKnobDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhantomKnobDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9793C661FDF48F0AA09769EC /* AccessibilityTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTargetTests.swift; sourceTree = "<group>"; };
 		988EF2ABA55EF55B9A723AE1 /* PhantomKnobDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomKnobDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E0FF5175F80D44F0D370DBB /* OverlayControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayControllerTests.swift; sourceTree = "<group>"; };
 		9EB0FF255FA2F86096619909 /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
 		AA67AD94ECFE9918BF0D42D7 /* ArrowKeyTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowKeyTranslator.swift; sourceTree = "<group>"; };
 		ABCF2E55B63F3CF7E884CDED /* InputTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslator.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				428F89026CB6D1EBB0F60A6D /* KnobAlgorithmTests.swift */,
 				C01B041A3A1C912B6A7F7082 /* KnobGlobalStateTests.swift */,
 				24264A5D15DB56E0316F92E9 /* ModelTests.swift */,
+				9E0FF5175F80D44F0D370DBB /* OverlayControllerTests.swift */,
 				8E0B8A94FD971A1EC3A228DD /* RuleLibraryTests.swift */,
 				8658F3CF4D6D9F1A843CDEB8 /* ScaleConfigCompatibilityTests.swift */,
 				5AC9FE7637B5E51561FFE90A /* ScaleResolverTests.swift */,
@@ -395,6 +398,7 @@
 				06580DE356F87888CBB78347 /* KnobAlgorithmTests.swift in Sources */,
 				2F53A248E5C602AB00FD6932 /* KnobGlobalStateTests.swift in Sources */,
 				26191A263CF93346F0E2E4F7 /* ModelTests.swift in Sources */,
+				1D33BDBEFCBC977D7802767C /* OverlayControllerTests.swift in Sources */,
 				3715C34D7A7682F01D2838E8 /* RuleLibraryTests.swift in Sources */,
 				66BAE0059A081763665E88CC /* ScaleConfigCompatibilityTests.swift in Sources */,
 				A2A00A9BE1E585561D30D1B4 /* ScaleResolverTests.swift in Sources */,

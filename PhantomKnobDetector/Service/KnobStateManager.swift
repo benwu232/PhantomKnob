@@ -28,6 +28,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var currentZoneIndex: Int = 0
     private var activeScaleConfig: ScaleConfig = .fixed(1.0)
     var lastResolvedBaseScale: Double = 1.0
+    private var currentRadius: Double = 0.0
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
 
@@ -267,12 +268,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         if mode == .knob && !state.isKnobing {
             if let target = currentTarget {
                 transition(to: .knobing(target: target))
+                let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
                 if let mouseLoc = initialTouchPosition {
                     overlayController.show(
                         at: mouseLoc,
                         targetName: target.displayName.isEmpty ? nil : target.displayName,
-                        displayValue: translator.displayValue,
-                        scale: self.lastResolvedBaseScale
+                        scale: self.lastResolvedBaseScale,
+                        themeColor: rule?.themeColor,
+                        overlayStyle: rule?.overlayStyle,
+                        rotationStyle: rule?.rotationStyle
                     )
                 }
             }
@@ -283,13 +287,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 CGWarpMouseCursorPosition(lockPos)
             }
 
+            let radius = calculateRawRadius(points: scaledPoints)
+            self.currentRadius = radius
+
             // 1. Resolve default base scale dynamically from radius
             var baseScale: Double?
             if scaledPoints.count >= 2 {
                 var resolvedZoneIndex = currentZoneIndex
                 let defaultBaseScale: Double?
                 
-                let radius = calculateRawRadius(points: scaledPoints)
                 switch activeScaleConfig {
                 case .fixed(let val):
                     defaultBaseScale = val
@@ -332,8 +338,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             // 2. 检查死区判定
             guard let activeBaseScale = baseScale else {
                 // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
-                let displayVal = translator.displayValue
-                overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: true, scale: self.lastResolvedBaseScale)
+                overlayController.update(angle: currentAngle, radius: radius, isDeadzone: true, scale: self.lastResolvedBaseScale)
                 self.currentAngle = currentAngle
                 previousAngle = currentAngle
                 return
@@ -368,8 +373,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
             translator.apply(units: deltaAngle, direction: direction)
 
-            let displayVal = translator.displayValue
-            overlayController.update(angle: currentAngle, displayValue: displayVal, isDeadzone: false, scale: activeBaseScale)
+            overlayController.update(angle: currentAngle, radius: radius, isDeadzone: false, scale: activeBaseScale)
 
             self.currentAngle = currentAngle
             previousAngle = currentAngle
@@ -543,7 +547,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             // Update Overlay UI immediately
             overlayController.update(
                 angle: self.currentAngle,
-                displayValue: currentTranslator?.displayValue ?? "",
+                radius: self.currentRadius,
                 isDeadzone: false,
                 scale: nextVal
             )

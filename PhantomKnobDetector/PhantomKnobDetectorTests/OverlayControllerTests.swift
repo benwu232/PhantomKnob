@@ -30,9 +30,9 @@ class OverlayControllerTests: XCTestCase {
             diameter: diameter,
             visibleFrame: visibleFrame
         )
-        // 预期右下：x = 500 + 15 = 515, y = 500 - 15 - 100 = 385
+        // 预期右下：x = 500 + 15 = 515, y = 500 - 15 - 120 = 365
         XCTAssertEqual(frame1.origin.x, 515)
-        XCTAssertEqual(frame1.origin.y, 385)
+        XCTAssertEqual(frame1.origin.y, 365)
         
         // Case 2: 鼠标在右下角 (950, 50)，右下、右上、左下均越界，应该使用左上
         let posBottomRight = CGPoint(x: 950, y: 50)

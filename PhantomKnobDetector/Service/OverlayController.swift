@@ -166,7 +166,7 @@ class OverlayController: ObservableObject {
     static func calculateBestFrame(cursor: CGPoint, diameter: CGFloat, visibleFrame: NSRect) -> NSRect {
         let offset: CGFloat = 15.0
         let w = diameter
-        let h = diameter
+        let h = diameter + 20.0
         
         let candidates: [CGPoint] = [
             // 1. 右下 (Bottom-Right)
