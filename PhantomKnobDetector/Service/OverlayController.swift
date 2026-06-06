@@ -160,7 +160,7 @@ class OverlayController: ObservableObject {
 
     static func calculateDiameter(for radius: Double) -> CGFloat {
         let raw = CGFloat(radius * 2.0 * 5.0)
-        return min(max(raw, 40.0), 200.0)
+        return min(max(raw, 40.0), 400.0)
     }
 
     static func calculateBestFrame(cursor: CGPoint, diameter: CGFloat, visibleFrame: NSRect) -> NSRect {
