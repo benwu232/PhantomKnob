@@ -70,7 +70,6 @@ struct OverlayView: View {
             Text(titleText)
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(isDeadzone ? Color.gray.opacity(0.6) : activeColor.opacity(0.8))
-                .shadow(color: Color.black.opacity(0.8), radius: 2, x: 0, y: 1)
                 .lineLimit(1)
                 .frame(height: 17)
             
@@ -107,7 +106,7 @@ struct OverlayView: View {
                     context.rotate(by: Angle(degrees: -angle))
                     
                     if rotationStyle == "ticks" {
-                        let tickCount = 48
+                        let tickCount = 64
                         for i in 0..<tickCount {
                             let tickAngle = Double(i) * (2 * .pi) / Double(tickCount)
                             let isMain = (i == 0)
@@ -145,7 +144,7 @@ struct OverlayView: View {
                 // 4. 正中心倍数显示
                 if let scale = scale {
                     Text(String(format: "%.1fx", scale))
-                        .font(.system(size: max(11, diameter * 0.15), weight: .black, design: .monospaced))
+                        .font(.system(size: max(10, diameter * 0.11), weight: .black, design: .monospaced))
                         .foregroundColor(isDeadzone ? Color.gray.opacity(0.6) : activeColor.opacity(0.8))
                         .shadow(color: Color.black.opacity(0.4), radius: 1, x: 0, y: 1)
                 }
