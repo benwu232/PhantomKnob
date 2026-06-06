@@ -77,7 +77,7 @@ class MultitouchManager {
         }
         
         let callback: MTContactCallback = { device, contactsRawPtr, numContacts, timestamp, frame in
-            writeDebugLog("[MultitouchManager] Raw Callback: numContacts = \(numContacts), frame = \(frame)")
+            writeVerboseLog("[MultitouchManager] Raw Callback: numContacts = \(numContacts), frame = \(frame)")
             if let rawPtr = contactsRawPtr {
                 let contactsPtr = rawPtr.assumingMemoryBound(to: MTContact.self)
                 MultitouchManager.shared.handleContacts(contactsPtr, count: Int(numContacts))
@@ -121,7 +121,7 @@ class MultitouchManager {
             for i in 0..<count {
                 let contact = contacts[i]
                 // 印出所有手指的 state 信息用于诊断
-                writeDebugLog("[MultitouchManager] Contact[\(i)]: ID = \(contact.identifier), state = \(contact.state), pos = (\(contact.normalized.pos.x), \(contact.normalized.pos.y))")
+                writeVerboseLog("[MultitouchManager] Contact[\(i)]: ID = \(contact.identifier), state = \(contact.state), pos = (\(contact.normalized.pos.x), \(contact.normalized.pos.y))")
                 
                 // state 的取值范围说明：
                 // 0 = not touching (空插槽)
@@ -142,7 +142,7 @@ class MultitouchManager {
             }
         }
         
-        writeDebugLog("[MultitouchManager] handleContacts: activePoints count = \(activePoints.count), inGesture = \(inGesture)")
+        writeVerboseLog("[MultitouchManager] handleContacts: activePoints count = \(activePoints.count), inGesture = \(inGesture)")
         
         // 当触控板上有且至少有 2 根手指活动时，激活或更新旋钮手势
         if activePoints.count >= 2 {
@@ -153,7 +153,7 @@ class MultitouchManager {
                     self.delegate?.onMultitouchBegan(points: activePoints)
                 }
             } else {
-                writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchMoved with points = \(activePoints)")
+                writeVerboseLog("[MultitouchManager] Gesture trigger: onMultitouchMoved with points = \(activePoints)")
                 DispatchQueue.main.async {
                     self.delegate?.onMultitouchMoved(points: activePoints)
                 }
@@ -161,7 +161,7 @@ class MultitouchManager {
         } else if activePoints.count == 1 {
             if inGesture {
                 // 🌟 核心改进：当处于手势中且降为单指时，延续旋钮手势，继续发送 Moved 事件
-                writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchMoved (1 finger) with points = \(activePoints)")
+                writeVerboseLog("[MultitouchManager] Gesture trigger: onMultitouchMoved (1 finger) with points = \(activePoints)")
                 DispatchQueue.main.async {
                     self.delegate?.onMultitouchMoved(points: activePoints)
                 }

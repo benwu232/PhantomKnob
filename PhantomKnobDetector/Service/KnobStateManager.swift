@@ -378,7 +378,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.currentAngle = currentAngle
             previousAngle = currentAngle
 
-            writeDebugLog("[KnobStateManager] applied delta=\(deltaAngle) dir=\(direction) scale=\(finalScale)")
+            writeVerboseLog("[KnobStateManager] applied delta=\(deltaAngle) dir=\(direction) scale=\(finalScale)")
         }
     }
 
@@ -684,20 +684,30 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 }
 
 // [DEBUG-LOG-HARNESS]
+private let debugLogQueue = DispatchQueue(label: "com.phantomknob.debugLogQueue")
+
 func writeDebugLog(_ message: String) {
-    NSLog("[DEBUG-LOG-HARNESS] \(message)")
-    let logPath = "/Users/wb/work/phantom_knob_mac/debug.log"
-    let timestamp = Date().description
-    let logLine = "[\(timestamp)] \(message)\n"
-    if let data = logLine.data(using: .utf8) {
-        if FileManager.default.fileExists(atPath: logPath) {
-            if let fileHandle = FileHandle(forWritingAtPath: logPath) {
-                fileHandle.seekToEndOfFile()
-                fileHandle.write(data)
-                fileHandle.closeFile()
+    debugLogQueue.async {
+        NSLog("[DEBUG-LOG-HARNESS] \(message)")
+        let logPath = "/Users/wb/work/phantom_knob_mac/debug.log"
+        let timestamp = Date().description
+        let logLine = "[\(timestamp)] \(message)\n"
+        if let data = logLine.data(using: .utf8) {
+            if FileManager.default.fileExists(atPath: logPath) {
+                if let fileHandle = FileHandle(forWritingAtPath: logPath) {
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                }
+            } else {
+                try? data.write(to: URL(fileURLWithPath: logPath))
             }
-        } else {
-            try? data.write(to: URL(fileURLWithPath: logPath))
         }
     }
+}
+
+func writeVerboseLog(_ message: String) {
+    #if DEBUG
+    writeDebugLog(message)
+    #endif
 }

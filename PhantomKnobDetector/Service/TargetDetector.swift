@@ -18,9 +18,11 @@ class TargetDetector {
         let flippedY = screenHeight - mouseLocation.y
 
         let systemWide = AXUIElementCreateSystemWide()
+        _ = AXUIElementSetMessagingTimeout(systemWide, 0.1)
         var element: AXUIElement?
         guard AXUIElementCopyElementAtPosition(systemWide, Float(mouseLocation.x), Float(flippedY), &element) == .success,
               let axElement = element else { return nil }
+        _ = AXUIElementSetMessagingTimeout(axElement, 0.1)
 
         return findAdjustableTarget(from: axElement, depth: 0)
     }
@@ -49,6 +51,7 @@ class TargetDetector {
     // MARK: - Private
 
     private func findAdjustableTarget(from element: AXUIElement, depth: Int) -> DetectedTarget? {
+        _ = AXUIElementSetMessagingTimeout(element, 0.1)
         if let target = tryBuildTarget(from: element) { return target }
         guard depth < Self.maxParentDepth else { return nil }
 

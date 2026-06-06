@@ -15,6 +15,7 @@ final class AXWriteTranslator: InputTranslator {
         self.minValue = minValue
         self.maxValue = maxValue
         self.scale = scale
+        _ = AXUIElementSetMessagingTimeout(element, 0.1)
     }
 
     func apply(units: Double, direction: RotationDirection) {
