@@ -104,7 +104,7 @@ struct OverlayView: View {
                     
                     // 平移到圆心，然后围绕圆心旋转
                     context.translateBy(x: center.x, y: center.y)
-                    context.rotate(by: Angle(degrees: angle))
+                    context.rotate(by: Angle(degrees: -angle))
                     
                     if rotationStyle == "ticks" {
                         let tickCount = 48
