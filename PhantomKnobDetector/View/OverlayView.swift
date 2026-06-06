@@ -2,61 +2,155 @@
 import SwiftUI
 import AppKit
 
+struct VisualEffectView: NSViewRepresentable {
+    var material: NSVisualEffectView.Material
+    var blendingMode: NSVisualEffectView.BlendingMode
+    
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = material
+        view.blendingMode = blendingMode
+        view.state = .active
+        return view
+    }
+    
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.material = material
+        nsView.blendingMode = blendingMode
+    }
+}
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 113, 227) // 科技蓝 Fallback
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+}
+
 struct OverlayView: View {
     let targetName: String?
     let angle: Double
-    let displayValue: String?
     var isDeadzone: Bool = false
     var scale: Double? = nil
-
+    
+    let themeColorHex: String
+    let overlayStyle: String
+    let rotationStyle: String
+    let diameter: CGFloat
+    
     var body: some View {
-        VStack(spacing: 8) {
+        let activeColor = Color(hex: themeColorHex)
+        
+        VStack(spacing: 4) {
+            // 1. 名字悬浮正上方
             let titleText: String = {
                 let name = (targetName == nil || targetName!.isEmpty) ? "Knob" : targetName!
-                let suffix = scale.map { String(format: " (%.1fx)", $0) } ?? ""
-                return name + suffix
+                return name
             }()
+            
             Text(titleText)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 11, weight: .bold))
                 .foregroundColor(isDeadzone ? .gray : .white)
-
+                .shadow(color: Color.black.opacity(0.8), radius: 2, x: 0, y: 1)
+                .lineLimit(1)
+                .frame(height: 14)
+            
+            // 2. 圆形 Overlay 容器
             ZStack {
-                Circle()
-                    .stroke(isDeadzone ? Color.gray.opacity(0.3) : Color.white.opacity(0.3), lineWidth: 2)
-                    .frame(width: 60, height: 60)
-
-                GeometryReader { geometry in
-                    let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                    let radius: CGFloat = 25
-                    let angleRad = angle * .pi / 180
-
-                    Path { path in
-                        path.move(to: center)
-                        path.addLine(to: CGPoint(
-                            x: center.x + radius * cos(angleRad),
-                            y: center.y - radius * sin(angleRad)
-                        ))
-                    }
-                    .stroke(isDeadzone ? Color.gray : Color.white, lineWidth: 2)
+                // 圆形底色渲染
+                if overlayStyle == "hud" {
+                    VisualEffectView(material: .hudWindow, blendingMode: .withinWindow)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(isDeadzone ? Color.gray.opacity(0.3) : activeColor.opacity(0.4), lineWidth: 1.5)
+                        )
+                } else if overlayStyle == "solid" {
+                    Circle()
+                        .fill(Color.black.opacity(0.85))
+                        .overlay(
+                            Circle()
+                                .stroke(isDeadzone ? Color.gray.opacity(0.5) : activeColor, lineWidth: 2)
+                        )
+                } else {
+                    // "minimal": 无背景，仅绘制虚线边圈
+                    Circle()
+                        .stroke(Color.white.opacity(0.15), style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [4]))
                 }
-                .frame(width: 60, height: 60)
-
-                Circle()
-                    .fill(isDeadzone ? Color.gray : Color.white)
-                    .frame(width: 8, height: 8)
+                
+                // 3. 外围旋转反馈 Canvas
+                Canvas { context, size in
+                    let center = CGPoint(x: size.width / 2, y: size.height / 2)
+                    let r = min(size.width, size.height) / 2 - 8
+                    
+                    // 应用手势旋转角度（转为弧度进行旋转）
+                    // macOS 坐标系 Y 轴朝上，逆时针为正，顺时针为负
+                    context.rotate(by: Angle(degrees: angle))
+                    
+                    if rotationStyle == "ticks" {
+                        let tickCount = 24
+                        for i in 0..<tickCount {
+                            let tickAngle = Double(i) * (2 * .pi) / Double(tickCount)
+                            let isMain = (i == 0)
+                            let startR = isMain ? (r - 8) : (r - 4)
+                            
+                            var path = Path()
+                            path.move(to: CGPoint(
+                                x: center.x + CGFloat(startR * cos(tickAngle)),
+                                y: center.y + CGFloat(startR * sin(tickAngle))
+                            ))
+                            path.addLine(to: CGPoint(
+                                x: center.x + CGFloat(r * cos(tickAngle)),
+                                y: center.y + CGFloat(r * sin(tickAngle))
+                            ))
+                            
+                            context.stroke(
+                                path,
+                                with: .color(isMain ? (isDeadzone ? .gray : activeColor) : Color.white.opacity(0.3)),
+                                lineWidth: isMain ? 2.0 : 1.0
+                            )
+                        }
+                    } else if rotationStyle == "rimDot" {
+                        // 边缘圆点反馈
+                        let dotX = center.x + r * CGFloat(cos(0.0))
+                        let dotY = center.y + r * CGFloat(sin(0.0))
+                        
+                        var path = Path()
+                        path.addArc(center: CGPoint(x: dotX, y: dotY), radius: 4, startAngle: .zero, endAngle: Angle(degrees: 360), clockwise: false)
+                        context.fill(path, with: .color(isDeadzone ? .gray : activeColor))
+                    }
+                }
+                
+                // 4. 正中心倍数显示
+                if let scale = scale {
+                    Text(String(format: "%.1fx", scale))
+                        .font(.system(size: max(12, diameter * 0.22), weight: .black, design: .monospaced))
+                        .foregroundColor(isDeadzone ? .gray : .white)
+                        .shadow(color: Color.black.opacity(0.4), radius: 1, x: 0, y: 1)
+                }
             }
-
-            if let displayValue = displayValue, !displayValue.isEmpty {
-                Text(displayValue)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(isDeadzone ? .gray : .white)
-            }
+            .frame(width: diameter, height: diameter)
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(isDeadzone ? 0.6 : 0.75))
-        )
+        .frame(width: diameter, height: diameter + 20)
     }
 }
 
@@ -65,7 +159,12 @@ struct OverlayView_Previews: PreviewProvider {
         OverlayView(
             targetName: "音量",
             angle: 45,
-            displayValue: "65%"
+            isDeadzone: false,
+            scale: 1.5,
+            themeColorHex: "#34C759",
+            overlayStyle: "hud",
+            rotationStyle: "ticks",
+            diameter: 160
         )
         .background(Color.gray)
     }
