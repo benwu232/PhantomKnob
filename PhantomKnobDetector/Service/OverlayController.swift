@@ -14,7 +14,7 @@ class OverlayController: ObservableObject {
     @Published var themeColor: String = "#0A84FF"
     @Published var overlayStyle: String = "hud"
     @Published var rotationStyle: String = "ticks"
-    @Published var diameter: CGFloat = 53.33
+    @Published var diameter: CGFloat = 106.66
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
@@ -31,7 +31,7 @@ class OverlayController: ObservableObject {
         self.themeColor = themeColor ?? AppSettings.shared.defaultThemeColor
         self.overlayStyle = overlayStyle ?? AppSettings.shared.defaultOverlayStyle
         self.rotationStyle = rotationStyle ?? AppSettings.shared.defaultRotationStyle
-        self.diameter = 53.33 // 默认直径 (160 / 3)
+        self.diameter = 106.66 // 默认直径 (320 / 3)
 
         showCount += 1
         writeDebugLog("[OverlayController] show() called: targetName = \(targetName ?? "nil"), scale = \(scale ?? 0.0), showCount = \(showCount), position = \(position)")
@@ -159,8 +159,8 @@ class OverlayController: ObservableObject {
     }
 
     static func calculateDiameter(for radius: Double) -> CGFloat {
-        let raw = CGFloat(radius * 2.0 * 10.0 / 3.0)
-        return min(max(raw, 80.0 / 3.0), 400.0 / 3.0)
+        let raw = CGFloat(radius * 2.0 * 10.0 * 2.0 / 3.0)
+        return min(max(raw, 160.0 / 3.0), 800.0 / 3.0)
     }
 
     static func calculateBestFrame(cursor: CGPoint, diameter: CGFloat, visibleFrame: NSRect) -> NSRect {

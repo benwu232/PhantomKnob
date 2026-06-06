@@ -107,7 +107,7 @@ struct OverlayView: View {
                     context.rotate(by: Angle(degrees: angle))
                     
                     if rotationStyle == "ticks" {
-                        let tickCount = 24
+                        let tickCount = 48
                         for i in 0..<tickCount {
                             let tickAngle = Double(i) * (2 * .pi) / Double(tickCount)
                             let isMain = (i == 0)
