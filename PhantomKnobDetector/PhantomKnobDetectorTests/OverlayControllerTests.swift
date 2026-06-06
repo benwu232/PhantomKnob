@@ -3,13 +3,13 @@ import XCTest
 
 class OverlayControllerTests: XCTestCase {
     
-    // 测试半径公式换算及 Clamping [80, 400]
+    // 测试半径公式换算及 Clamping [40, 200]
     func testDiameterCalculation() {
         let testCases: [(radius: Double, expectedDiameter: CGFloat)] = [
-            (2.0, 160.0 / 3.0),   // 2mm * 2 * 10 = 40, * 2/3 = 26.67, clamped to 160/3
-            (5.0, 200.0 / 3.0),   // 5mm * 2 * 10 = 100, * 2/3 = 66.67
-            (15.0, 600.0 / 3.0),  // 15mm * 2 * 10 = 300, * 2/3 = 200.0
-            (30.0, 800.0 / 3.0)   // 30mm * 2 * 10 = 600, * 2/3 = 400, clamped to 800/3
+            (2.0, 40.0),   // 2mm * 2 * 5 = 20, clamped to 40
+            (5.0, 50.0),   // 5mm * 2 * 5 = 50
+            (15.0, 150.0), // 15mm * 2 * 5 = 150
+            (30.0, 200.0)  // 30mm * 2 * 5 = 300, clamped to 200
         ]
         
         for tc in testCases {
