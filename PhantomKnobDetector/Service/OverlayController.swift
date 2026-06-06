@@ -9,21 +9,32 @@ class OverlayController: ObservableObject {
     @Published var isVisible: Bool = false
     @Published var targetName: String? = nil
     @Published var angle: Double = 0
-    @Published var displayValue: String? = nil
     @Published var isDeadzone: Bool = false
     @Published var scale: Double? = nil
+    @Published var themeColor: String = "#0A84FF"
+    @Published var overlayStyle: String = "hud"
+    @Published var rotationStyle: String = "ticks"
+    @Published var diameter: CGFloat = 160.0
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
 
-    func show(at position: CGPoint, targetName: String?, displayValue: String?, scale: Double? = nil) {
+    func show(at position: CGPoint, 
+              targetName: String?, 
+              scale: Double? = nil, 
+              themeColor: String? = nil, 
+              overlayStyle: String? = nil, 
+              rotationStyle: String? = nil) {
         self.position = position
         self.targetName = targetName
-        self.displayValue = displayValue
         self.scale = scale
+        self.themeColor = themeColor ?? AppSettings.shared.defaultThemeColor
+        self.overlayStyle = overlayStyle ?? AppSettings.shared.defaultOverlayStyle
+        self.rotationStyle = rotationStyle ?? AppSettings.shared.defaultRotationStyle
+        self.diameter = 160.0 // 默认直径
 
         showCount += 1
-        writeDebugLog("[OverlayController] show() called: targetName = \(targetName ?? "nil"), displayValue = \(displayValue ?? "nil"), scale = \(scale ?? 0.0), showCount = \(showCount), position = \(position)")
+        writeDebugLog("[OverlayController] show() called: targetName = \(targetName ?? "nil"), scale = \(scale ?? 0.0), showCount = \(showCount), position = \(position)")
 
         if panel == nil {
             createPanel()
@@ -33,17 +44,18 @@ class OverlayController: ObservableObject {
         panel?.animator().alphaValue = 1.0
         panel?.alphaValue = 1.0
 
-        let screenPosition = convertToScreenCoordinates(position)
-        panel?.setFrameOrigin(screenPosition)
+        updatePanelFrame()
         panel?.orderFrontRegardless()
         isVisible = true
     }
 
-    func update(angle: Double, displayValue: String?, isDeadzone: Bool = false, scale: Double? = nil) {
+    func update(angle: Double, radius: Double, isDeadzone: Bool = false, scale: Double? = nil) {
         self.angle = angle
-        self.displayValue = displayValue
         self.isDeadzone = isDeadzone
         self.scale = scale
+        self.diameter = Self.calculateDiameter(for: radius)
+        
+        updatePanelFrame()
         updateOverlayView()
     }
 
@@ -78,9 +90,25 @@ class OverlayController: ObservableObject {
         }
     }
 
+    private func updatePanelFrame() {
+        guard let panel = panel else { return }
+        
+        let cursorPt = NSEvent.mouseLocation
+        let activeScreen = NSScreen.screens.first { $0.frame.contains(cursorPt) } ?? NSScreen.main ?? NSScreen.screens[0]
+        let visibleFrame = activeScreen.visibleFrame
+        
+        let targetFrame = Self.calculateBestFrame(
+            cursor: cursorPt,
+            diameter: diameter,
+            visibleFrame: visibleFrame
+        )
+        
+        panel.setFrame(targetFrame, display: true)
+    }
+
     private func createPanel() {
         let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 120, height: 140),
+            contentRect: NSRect(x: 0, y: 0, width: diameter, height: diameter + 20.0),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -96,9 +124,12 @@ class OverlayController: ObservableObject {
         let view = NSHostingView(rootView: OverlayView(
             targetName: targetName,
             angle: angle,
-            displayValue: displayValue,
             isDeadzone: isDeadzone,
-            scale: scale
+            scale: scale,
+            themeColorHex: themeColor,
+            overlayStyle: overlayStyle,
+            rotationStyle: rotationStyle,
+            diameter: diameter
         ))
 
         panel.contentView = view
@@ -111,9 +142,12 @@ class OverlayController: ObservableObject {
         hostingView.rootView = OverlayView(
             targetName: targetName,
             angle: angle,
-            displayValue: displayValue,
             isDeadzone: isDeadzone,
-            scale: scale
+            scale: scale,
+            themeColorHex: themeColor,
+            overlayStyle: overlayStyle,
+            rotationStyle: rotationStyle,
+            diameter: diameter
         )
     }
 
