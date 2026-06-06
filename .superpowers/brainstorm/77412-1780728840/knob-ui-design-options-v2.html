@@ -1,0 +1,631 @@
+<style>
+  /* Base styles for the custom overlay presentation */
+  .knob-container {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+  }
+  
+  .design-selector {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .playground-panel {
+    flex: 1.5;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 1rem;
+  }
+  
+  .playground-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .playground-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  
+  /* Simulator area */
+  .simulator-screen {
+    background: radial-gradient(circle, #3a3a3c 0%, #1c1c1e 100%);
+    border-radius: 12px;
+    height: 320px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+    border: 1px solid #444;
+  }
+  
+  .mock-screen-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.25;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    font-size: 0.75rem;
+    color: #fff;
+    pointer-events: none;
+    font-family: monospace;
+  }
+
+  .mock-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
+    background-size: 20px 20px;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+  }
+  
+  /* Mock Cursor */
+  .mock-cursor {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' stroke='black' stroke-width='2'%3E%3Cpath d='M4.5 3V19L9.4 14.1L14.7 21L17.5 19.3L12.3 12.6L18 12.1L4.5 3Z'/%3E%3C/svg%3E");
+    background-size: contain;
+    z-index: 100;
+    pointer-events: none;
+    transform: translate(-2px, -2px);
+    transition: left 0.3s ease, top 0.3s ease;
+  }
+  
+  /* Interactive Simulated Knob */
+  .simulated-overlay {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.1s ease, height 0.1s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  
+  /* Positions relative to cursor */
+  .pos-bottom-right { transform: translate(15px, 15px); }
+  .pos-top-right { transform: translate(15px, -115%); }
+  .pos-bottom-left { transform: translate(-115%, 15px); }
+  .pos-top-left { transform: translate(-115%, -115%); }
+  
+  /* Style Variations */
+  .style-hud {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.35);
+  }
+  
+  .style-minimal {
+    background-color: transparent !important;
+    border: 1px dashed rgba(255,255,255,0.2);
+  }
+  
+  .style-solid {
+    border: 2px solid rgba(255, 255, 255, 0.6);
+  }
+  
+  /* Inner components of the knob */
+  .knob-label-top {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    white-space: nowrap;
+  }
+  
+  .knob-label-center {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .knob-sub-multiplier {
+    font-size: 9px;
+    opacity: 0.7;
+    margin-top: 1px;
+  }
+  
+  .knob-label-bottom {
+    position: absolute;
+    top: 100%;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    white-space: nowrap;
+  }
+  
+  .knob-canvas {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    border-radius: 50%;
+  }
+  
+  /* Playground controls */
+  .control-group {
+    margin-bottom: 1rem;
+  }
+  
+  .control-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--text-secondary);
+  }
+  
+  .slider-control {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  
+  .slider-control::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  
+  .btn-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .btn-select {
+    flex: 1;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.4rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.1s ease;
+  }
+  
+  .btn-select.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  
+  .btn-select:hover:not(.active) {
+    background: var(--bg-tertiary);
+  }
+
+  .options-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .options-cards .card {
+    border: 2px solid var(--border);
+    transition: all 0.2s ease;
+  }
+
+  .options-cards .card.selected {
+    border-color: var(--accent);
+    background: var(--selected-bg);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-left: 0.5rem;
+  }
+  .badge-rec { background: #e3f2fd; color: #0d47a1; }
+</style>
+
+<h2>旋钮 Overlay UI (V2 - 去除中心指针设计)</h2>
+<p class="subtitle">根据你的反馈，我们去掉了旋钮中心的直线指针（以防影响中心倍数值的视线）。现在你可以测试三种代替内部指针的旋转反馈方案。</p>
+
+<div class="knob-container">
+  <!-- Left Side: Design Options -->
+  <div class="design-selector">
+    <div class="label">选择你倾向的“非指针”旋转反馈机制</div>
+    
+    <div class="options-cards">
+      <!-- Option A -->
+      <div class="card option selected" data-choice="rot_rim_dot" id="choice-a" onclick="selectRotationPreset('rim_dot', this)">
+        <div class="card-body">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3>方案 A：外周刻度小圆点 (Rim Indicator Dot) <span class="badge badge-rec">推荐</span></h3>
+            <div class="letter">A</div>
+          </div>
+          <p style="margin-top: 0.5rem;">保持中心完全空白，仅在圆形 Overlay <strong>外边缘的圆环轨道上显示一个发光小圆点</strong>。小圆点随手指角度旋转，清晰指示旋钮朝向，同时不对任何文本造成干扰。</p>
+        </div>
+      </div>
+      
+      <!-- Option B -->
+      <div class="card option" data-choice="rot_ticks" id="choice-b" onclick="selectRotationPreset('ticks', this)">
+        <div class="card-body">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3>方案 B：外围刻度线整体转动 (Rotating Tick Ring)</h3>
+            <div class="letter">B</div>
+          </div>
+          <p style="margin-top: 0.5rem;">在圆形外围绘制一圈极细的刻度线。旋转手势时，<strong>整圈刻度线随角度同步旋转</strong>（其中一根刻度线加粗/加亮以作为主刻度）。有非常强的机械齿轮咬合感。</p>
+        </div>
+      </div>
+      
+      <!-- Option C -->
+      <div class="card option" data-choice="rot_clean_arc" id="choice-c" onclick="selectRotationPreset('clean_arc', this)">
+        <div class="card-body">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3>方案 C：极简弧线充能 (Dynamic Radial Arc)</h3>
+            <div class="letter">C</div>
+          </div>
+          <p style="margin-top: 0.5rem;">没有单独的旋转指标。仅有一根沿着外侧圆环生长的进度弧线，弧线的起始位置或长度直接与数值绑定。视觉上最为扁平和现代，类似智能手表的环状图表。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right Side: Interactive Playground -->
+  <div class="playground-panel">
+    <div class="playground-header">
+      <div class="playground-title">🎨 实时沙盒模拟器 (V2)</div>
+      <div style="font-size: 0.75rem; color: var(--text-secondary);">已移除中心指针</div>
+    </div>
+    
+    <!-- Simulator Screen -->
+    <div class="simulator-screen" id="sim-screen">
+      <div class="mock-grid"></div>
+      <div class="mock-screen-content">
+        <div>[App: Final Cut Pro]</div>
+        <div>[Pointer line removed: center elements preserved]</div>
+      </div>
+      
+      <!-- Simulated Mouse Cursor -->
+      <div class="mock-cursor" id="cursor-el" style="left: 50%; top: 50%;"></div>
+      
+      <!-- Simulated Knob Overlay -->
+      <div class="simulated-overlay style-hud" id="overlay-el" style="left: 50%; top: 50%;">
+        <canvas class="knob-canvas" id="knob-canvas"></canvas>
+        <div class="knob-label-top" id="label-top">Timeline Zoom</div>
+        <div class="knob-label-center" id="label-center">
+          <span id="mult-text">3.0x</span>
+          <span class="knob-sub-multiplier" id="sub-mult">Speed</span>
+        </div>
+        <div class="knob-label-bottom" id="label-bottom">78%</div>
+      </div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="control-group">
+      <div class="control-label">
+        <span>两指跨度 (决定 Overlay 尺寸)</span>
+        <span id="val-radius">80px (直径 160px)</span>
+      </div>
+      <input type="range" class="slider-control" id="slider-radius" min="30" max="120" value="70" oninput="updateSim()">
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label">
+        <span>旋转角度 (模拟物理扭动)</span>
+        <span id="val-angle">120°</span>
+      </div>
+      <input type="range" class="slider-control" id="slider-angle" min="0" max="360" value="120" oninput="updateSim()">
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label">
+        <span>反馈数值 (调节范围 0% - 100%)</span>
+        <span id="val-progress">78%</span>
+      </div>
+      <input type="range" class="slider-control" id="slider-progress" min="0" max="100" value="78" oninput="updateSim()">
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">
+        <span>旋转反馈类型</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn-select active" id="btn-rot-rim_dot" onclick="setRotationStyle('rim_dot')">外周圆点</button>
+        <button class="btn-select" id="btn-rot-ticks" onclick="setRotationStyle('ticks')">整体刻度线</button>
+        <button class="btn-select" id="btn-rot-clean_arc" onclick="setRotationStyle('clean_arc')">极简进度弧</button>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label">
+        <span>遮罩层底色风格 (圆形 Overlay)</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn-select active" id="btn-bg-hud" onclick="setOverlayStyle('hud')">毛玻璃</button>
+        <button class="btn-select" id="btn-bg-minimal" onclick="setOverlayStyle('minimal')">无背景</button>
+        <button class="btn-select" id="btn-bg-solid" onclick="setOverlayStyle('solid')">半透暗色</button>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <div class="control-label">
+        <span>显示位置 (相对于鼠标光标)</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn-select active" id="btn-pos-br" onclick="setPositionStyle('bottom-right')">右下</button>
+        <button class="btn-select" id="btn-pos-tr" onclick="setPositionStyle('top-right')">右上</button>
+        <button class="btn-select" id="btn-pos-bl" onclick="setPositionStyle('bottom-left')">左下</button>
+        <button class="btn-select" id="btn-pos-tl" onclick="setPositionStyle('top-left')">左上</button>
+      </div>
+    </div>
+    
+    <div style="font-size: 0.75rem; color: var(--text-secondary); background: var(--bg-primary); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border); margin-top: 1rem; line-height: 1.4;">
+      <strong>💡 V2 版本改进点：</strong><br>
+      • <strong>零指针遮挡</strong>：移除了穿过内部的指针线条，倍数文本（如 3.0x）能 100% 毫无遮挡地呈现，视觉上更加干净。<br>
+      • <strong>外周圆点反馈</strong>：当转动旋钮时，边缘处的外周小圆点（类似电子仪表面板的物理旋钮侧边指示点）会沿着边缘滑行。
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentStyle = 'hud'; // hud, minimal, solid
+  let currentPos = 'bottom-right';
+  let currentRotationStyle = 'rim_dot'; // rim_dot, ticks, clean_arc
+  let currentColorPreset = 'dynamic';
+  
+  function updateSim() {
+    const radiusVal = parseInt(document.getElementById('slider-radius').value);
+    const angleVal = parseInt(document.getElementById('slider-angle').value);
+    const progressVal = parseInt(document.getElementById('slider-progress').value);
+    
+    // Update texts
+    document.getElementById('val-radius').textContent = radiusVal + 'px (直径 ' + (radiusVal * 2) + 'px)';
+    document.getElementById('val-angle').textContent = angleVal + '°';
+    document.getElementById('val-progress').textContent = progressVal + '%';
+    document.getElementById('label-bottom').textContent = progressVal + '%';
+    
+    // Calculate Multiplier based on Radius
+    let mult = 1.0;
+    if (radiusVal < 50) {
+      mult = (0.2 + (radiusVal - 30) * 0.04).toFixed(1);
+    } else if (radiusVal < 90) {
+      mult = (1.0 + (radiusVal - 50) * 0.05).toFixed(1);
+    } else {
+      mult = (3.0 + (radiusVal - 90) * 0.033).toFixed(1);
+    }
+    document.getElementById('mult-text').textContent = mult + 'x';
+    
+    // Decide active color based on preset or dynamic radius mapping
+    let activeColor = '#0071e3'; 
+    if (radiusVal < 50) {
+      activeColor = '#34c759'; // Fine-tune: green
+    } else if (radiusVal < 90) {
+      activeColor = '#ff9f0a'; // Medium: orange
+    } else {
+      activeColor = '#ff3b30'; // Fast: red
+    }
+    
+    // Update colors on DOM
+    const overlay = document.getElementById('overlay-el');
+    overlay.style.width = (radiusVal * 2) + 'px';
+    overlay.style.height = (radiusVal * 2) + 'px';
+    
+    if (currentStyle === 'hud') {
+      overlay.style.backgroundColor = 'rgba(28, 28, 30, 0.6)';
+      overlay.style.borderColor = activeColor + '80';
+      overlay.style.boxShadow = '0 8px 32px rgba(0,0,0,0.5), inset 0 0 10px ' + activeColor + '40';
+    } else if (currentStyle === 'minimal') {
+      overlay.style.backgroundColor = 'transparent';
+      overlay.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+      overlay.style.boxShadow = 'none';
+    } else if (currentStyle === 'solid') {
+      overlay.style.backgroundColor = 'rgba(15, 15, 17, 0.9)';
+      overlay.style.borderColor = activeColor;
+      overlay.style.boxShadow = '0 8px 24px rgba(0,0,0,0.6)';
+    }
+    
+    // Update fonts sizing
+    const fontSizeCenter = Math.max(10, Math.min(22, radiusVal * 0.25));
+    document.getElementById('label-center').style.fontSize = fontSizeCenter + 'px';
+    const subMult = document.getElementById('sub-mult');
+    if (radiusVal < 45) {
+      subMult.style.display = 'none';
+    } else {
+      subMult.style.display = 'inline';
+      subMult.style.fontSize = Math.max(7, Math.min(10, radiusVal * 0.11)) + 'px';
+    }
+    
+    // Redraw Canvas representation
+    drawKnobCanvas(radiusVal, angleVal, progressVal, activeColor);
+  }
+  
+  function drawKnobCanvas(radius, angle, progress, color) {
+    const canvas = document.getElementById('knob-canvas');
+    const dpr = window.devicePixelRatio || 1;
+    const size = radius * 2;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, size, size);
+    
+    const center = size / 2;
+    const r = center - 8; // margin
+    
+    // macOS convention: 0 is right (+X), counter-clockwise positive.
+    const angleRad = -angle * Math.PI / 180;
+    
+    // 1. Draw outer circle background track
+    ctx.beginPath();
+    ctx.arc(center, center, r, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    
+    // 2. Draw active progress sweep arc (always from top)
+    ctx.beginPath();
+    const startAngle = -0.5 * Math.PI;
+    const endAngle = startAngle + (progress / 100) * 2 * Math.PI;
+    ctx.arc(center, center, r, startAngle, endAngle);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    
+    // 3. Draw pointer-free rotation feedback based on current style
+    if (currentRotationStyle === 'rim_dot') {
+      // Draw a glowing indicator dot traveling along the outer border
+      const dotRadius = r;
+      const dotX = center + dotRadius * Math.cos(angleRad);
+      const dotY = center + dotRadius * Math.sin(angleRad);
+      
+      // Draw outer circle indicator dot glow
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0; // reset shadow
+      
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      
+    } else if (currentRotationStyle === 'ticks') {
+      // Draw rotating tick marks on the circle edge
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.rotate(angleRad); // Rotate entire canvas context based on angle
+      
+      const tickCount = 24;
+      for (let i = 0; i < tickCount; i++) {
+        const tickAngle = (i * 2 * Math.PI) / tickCount;
+        ctx.beginPath();
+        const tickLength = (i === 0) ? 7 : 4; // Main tick is longer
+        ctx.moveTo((r - tickLength) * Math.cos(tickAngle), (r - tickLength) * Math.sin(tickAngle));
+        ctx.lineTo(r * Math.cos(tickAngle), r * Math.sin(tickAngle));
+        ctx.strokeStyle = (i === 0) ? color : 'rgba(255,255,255,0.4)';
+        ctx.lineWidth = (i === 0) ? 2 : 1;
+        ctx.stroke();
+      }
+      ctx.restore();
+    } else if (currentRotationStyle === 'clean_arc') {
+      // No extra indicator. The progress arc itself represents rotation + progress.
+      // Let's add a small dot at the end of the progress arc to make it premium
+      const endX = center + r * Math.cos(endAngle);
+      const endY = center + r * Math.sin(endAngle);
+      ctx.beginPath();
+      ctx.arc(endX, endY, 3.5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+    }
+  }
+  
+  function setOverlayStyle(style) {
+    currentStyle = style;
+    
+    document.getElementById('btn-bg-hud').classList.toggle('active', style === 'hud');
+    document.getElementById('btn-bg-minimal').classList.toggle('active', style === 'minimal');
+    document.getElementById('btn-bg-solid').classList.toggle('active', style === 'solid');
+    
+    const overlay = document.getElementById('overlay-el');
+    overlay.className = 'simulated-overlay';
+    
+    if (style === 'hud') {
+      overlay.classList.add('style-hud');
+    } else if (style === 'minimal') {
+      overlay.classList.add('style-minimal');
+    } else if (style === 'solid') {
+      overlay.classList.add('style-solid');
+    }
+    
+    overlay.classList.add('pos-' + currentPos);
+    updateSim();
+  }
+
+  function setRotationStyle(style) {
+    currentRotationStyle = style;
+    document.getElementById('btn-rot-rim_dot').classList.toggle('active', style === 'rim_dot');
+    document.getElementById('btn-rot-ticks').classList.toggle('active', style === 'ticks');
+    document.getElementById('btn-rot-clean_arc').classList.toggle('active', style === 'clean_arc');
+    updateSim();
+  }
+  
+  function setPositionStyle(pos) {
+    const overlay = document.getElementById('overlay-el');
+    overlay.classList.remove('pos-' + currentPos);
+    currentPos = pos;
+    overlay.classList.add('pos-' + currentPos);
+    
+    document.getElementById('btn-pos-br').classList.toggle('active', pos === 'bottom-right');
+    document.getElementById('btn-pos-tr').classList.toggle('active', pos === 'top-right');
+    document.getElementById('btn-pos-bl').classList.toggle('active', pos === 'bottom-left');
+    document.getElementById('btn-pos-tl').classList.toggle('active', pos === 'top-left');
+    
+    const cursor = document.getElementById('cursor-el');
+    if (pos === 'bottom-right') {
+      cursor.style.left = '35%'; cursor.style.top = '35%';
+      overlay.style.left = '35%'; overlay.style.top = '35%';
+    } else if (pos === 'top-right') {
+      cursor.style.left = '35%'; cursor.style.top = '65%';
+      overlay.style.left = '35%'; overlay.style.top = '65%';
+    } else if (pos === 'bottom-left') {
+      cursor.style.left = '65%'; cursor.style.top = '35%';
+      overlay.style.left = '65%'; overlay.style.top = '35%';
+    } else if (pos === 'top-left') {
+      cursor.style.left = '65%'; cursor.style.top = '65%';
+      overlay.style.left = '65%'; overlay.style.top = '65%';
+    }
+  }
+
+  function selectRotationPreset(preset, cardEl) {
+    setRotationStyle(preset);
+    document.querySelectorAll('.options-cards .card').forEach(c => c.classList.remove('selected'));
+    cardEl.classList.add('selected');
+    
+    if (window.toggleSelect) {
+      window.toggleSelect(cardEl);
+    }
+  }
+  
+  // Initialize on load
+  setTimeout(() => {
+    setPositionStyle('bottom-right');
+    updateSim();
+  }, 100);
+</script>
