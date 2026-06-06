@@ -68,11 +68,11 @@ struct OverlayView: View {
             }()
             
             Text(titleText)
-                .font(.system(size: 11, weight: .bold))
-                .foregroundColor(isDeadzone ? .gray : .white)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(isDeadzone ? Color.gray.opacity(0.6) : activeColor.opacity(0.8))
                 .shadow(color: Color.black.opacity(0.8), radius: 2, x: 0, y: 1)
                 .lineLimit(1)
-                .frame(height: 14)
+                .frame(height: 17)
             
             // 2. 圆形 Overlay 容器
             ZStack {
@@ -145,8 +145,8 @@ struct OverlayView: View {
                 // 4. 正中心倍数显示
                 if let scale = scale {
                     Text(String(format: "%.1fx", scale))
-                        .font(.system(size: max(12, diameter * 0.22), weight: .black, design: .monospaced))
-                        .foregroundColor(isDeadzone ? .gray : .white)
+                        .font(.system(size: max(11, diameter * 0.15), weight: .black, design: .monospaced))
+                        .foregroundColor(isDeadzone ? Color.gray.opacity(0.6) : activeColor.opacity(0.8))
                         .shadow(color: Color.black.opacity(0.4), radius: 1, x: 0, y: 1)
                 }
             }
