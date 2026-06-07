@@ -17,8 +17,16 @@ class KnobAlgorithm {
                 let dist = distance(p1, p2)
                 if dist > maxDist {
                     maxDist = dist
-                    fingerIdx1 = min(id1, id2)
-                    fingerIdx2 = max(id1, id2)
+                    if p1.y > p2.y {
+                        fingerIdx1 = id1
+                        fingerIdx2 = id2
+                    } else if p1.y < p2.y {
+                        fingerIdx1 = id2
+                        fingerIdx2 = id1
+                    } else {
+                        fingerIdx1 = min(id1, id2)
+                        fingerIdx2 = max(id1, id2)
+                    }
                 }
             }
         }

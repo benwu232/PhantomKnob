@@ -72,7 +72,13 @@ class TargetDetector {
         let displayName = Self.getString(from: element, attribute: kAXTitleAttribute)
                        ?? Self.getString(from: element, attribute: kAXDescriptionAttribute)
                        ?? role
-        let bundleID    = NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? ""
+        var bundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? ""
+        var pid: pid_t = 0
+        if AXUIElementGetPid(element, &pid) == .success,
+           let app = NSRunningApplication(processIdentifier: pid),
+           let bid = app.bundleIdentifier {
+            bundleID = bid
+        }
 
         return DetectedTarget(
             bundleID: bundleID,

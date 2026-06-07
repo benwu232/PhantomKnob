@@ -68,6 +68,10 @@ class GestureClassifier {
         detectionStartTime = nil
     }
     
+    func forceKnob() {
+        currentMode = .knob
+    }
+    
     func getCurrentAngle(points: [Int: CGPoint]) -> Double {
         return calculateAngle(points: points)
     }

@@ -65,6 +65,16 @@ final class KnobAlgorithmTests: XCTestCase {
         XCTAssertEqual(knob.center.y, 0.5)
     }
     
+    func testTwoPointsYOrder() {
+        let points: [Int: CGPoint] = [
+            1: CGPoint(x: 0.5, y: 0.2),
+            2: CGPoint(x: 0.5, y: 0.8)
+        ]
+        let (_, id1, id2) = algorithm.calKnob(points)
+        XCTAssertEqual(id1, 2)
+        XCTAssertEqual(id2, 1)
+    }
+    
     func testEmptyPoints() {
         let points: [Int: CGPoint] = [:]
         let (knob, _, _) = algorithm.calKnob(points)

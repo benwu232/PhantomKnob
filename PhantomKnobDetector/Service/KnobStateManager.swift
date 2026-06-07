@@ -126,7 +126,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
         
         if let tap = eventTap {
-            if case .knobing = newState, AppSettings.shared.enableKeyboardNumberMultiplier {
+            if case .knobing = newState {
                 CGEvent.tapEnable(tap: tap, enable: true)
                 writeDebugLog("[KnobStateManager] Enabled event tap for state: \(newState)")
             } else {
@@ -183,11 +183,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         coolingTimer?.invalidate()
         coolingTimer = nil
 
-        // 如果前一次是在冷却状态，重置回激活状态准备新一轮手势判定
-        if state.isCooling {
-            transition(to: .activated)
-        }
-
         // 1. 探测目标元素
         let detectedTarget = targetDetector.detectTargetAtMousePosition()
 
@@ -199,6 +194,20 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             displayName: "",
             element: nil
         )
+
+        // 检查是否是从冷却状态恢复（如果目标相同，则跳过 5° 的激活阈值）
+        var isResuming = false
+        if case .cooling(let coolingTarget) = state {
+            if target.ruleKey == coolingTarget.ruleKey {
+                isResuming = true
+            }
+        }
+
+        // 如果不是恢复状态，且当前处于冷却状态，重置回激活状态准备新一轮手势判定
+        if !isResuming && state.isCooling {
+            transition(to: .activated)
+        }
+
         currentTarget = target
 
         // 3. 查规则库（未命中则自动探测）
@@ -229,8 +238,11 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 : .zones(AppSettings.shared.fixed.zones)
         }
         self.activeScaleConfig = resolvedScaleConfig
-        self.currentZoneIndex = 0
-        self.lastResolvedBaseScale = 1.0
+        
+        if !isResuming {
+            self.currentZoneIndex = 0
+            self.lastResolvedBaseScale = 1.0
+        }
 
         // 5. 缓存鼠标位置，不直接进入 knobing
         let mouseLoc = NSEvent.mouseLocation
@@ -246,7 +258,23 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.fingerIdx2 = idx2
             self.previousAngle = knobCore.angle
         }
-        gestureClassifier.processTouchesBegan(points: points)
+        
+        if isResuming {
+            transition(to: .knobing(target: target))
+            gestureClassifier.forceKnob()
+            if let mouseLoc = initialTouchPosition {
+                overlayController.show(
+                    at: mouseLoc,
+                    targetName: target.displayName.isEmpty ? nil : target.displayName,
+                    scale: self.lastResolvedBaseScale,
+                    themeColor: rule?.themeColor,
+                    overlayStyle: rule?.overlayStyle,
+                    rotationStyle: rule?.rotationStyle
+                )
+            }
+        } else {
+            gestureClassifier.processTouchesBegan(points: points)
+        }
     }
 
     func onMultitouchMoved(points: [Int: CGPoint]) {
@@ -414,7 +442,11 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private func setupEventTap() {
         guard eventTap == nil else { return }
         
-        let eventMask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue)
+        let eventMask = UInt64(1 << CGEventType.keyDown.rawValue) |
+                        UInt64(1 << CGEventType.keyUp.rawValue) |
+                        UInt64(1 << 29) | // gesture
+                        UInt64(1 << 19) | // magnify
+                        UInt64(1 << 18)   // rotate
         
         let selfPointer = Unmanaged.passUnretained(self).toOpaque()
         
@@ -469,7 +501,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let sourceUserData = event.getIntegerValueField(.eventSourceUserData)
         guard sourceUserData != 0xDEADC0DE else { return false }
         
+        // Block zoom (magnify), rotate, and general gestures during knobing
+        let typeVal = type.rawValue
+        if typeVal == 29 || typeVal == 19 || typeVal == 18 {
+            writeDebugLog("[KnobStateManager] Swallowed gesture event of type: \(typeVal)")
+            return true
+        }
+        
         guard type == .keyDown || type == .keyUp else { return false }
+        
+        // If keyboard multiplier is disabled in settings, do not block or handle key events
+        guard AppSettings.shared.enableKeyboardNumberMultiplier else { return false }
         
         let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
         

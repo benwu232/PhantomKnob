@@ -68,32 +68,24 @@ struct OverlayView: View {
             }()
             
             Text(titleText)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(isDeadzone ? Color.gray.opacity(0.6) : activeColor.opacity(0.8))
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4))
                 .lineLimit(1)
-                .frame(height: 17)
+                .frame(height: 20)
             
             // 2. 圆形 Overlay 容器
             ZStack {
-                // 圆形底色渲染
+                // 圆形底色渲染 (已去掉最外面的圆圈边框)
                 if overlayStyle == "hud" {
                     Circle()
                         .fill(Color.clear)
-                        .overlay(
-                            Circle()
-                                .stroke(isDeadzone ? Color.gray.opacity(0.3) : activeColor.opacity(0.4), lineWidth: 1.5)
-                        )
                 } else if overlayStyle == "solid" {
                     Circle()
                         .fill(Color.black.opacity(0.85))
-                        .overlay(
-                            Circle()
-                                .stroke(isDeadzone ? Color.gray.opacity(0.5) : activeColor, lineWidth: 2)
-                        )
                 } else {
-                    // "minimal": 无背景，仅绘制虚线边圈
+                    // "minimal": 无背景，无边框
                     Circle()
-                        .stroke(Color.white.opacity(0.15), style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [4]))
+                        .fill(Color.clear)
                 }
                 
                 // 3. 外围旋转反馈 Canvas
@@ -106,15 +98,15 @@ struct OverlayView: View {
                     context.rotate(by: Angle(degrees: -angle))
                     
                     if rotationStyle == "ticks" {
-                        let tickCount = 64
+                        let tickCount = 60
                         for i in 0..<tickCount {
                             let tickAngle = Double(i) * (2 * .pi) / Double(tickCount)
                             let isMain = (i == 0)
                             
                             if isMain {
-                                // 将主 Notch 画为一个位于刻度圈内侧的实心小圆点
+                                // 将主 Notch 画为一个位于 0.75 半径处的实心小圆点，大小恢复为原方案
                                 let dotRadius = max(2.5, r * 0.08)
-                                let dotDist = r - dotRadius - 3.5
+                                let dotDist = r * 0.75
                                 var path = Path()
                                 path.addArc(
                                     center: CGPoint(x: dotDist * CGFloat(cos(tickAngle)), y: dotDist * CGFloat(sin(tickAngle))),
@@ -123,28 +115,31 @@ struct OverlayView: View {
                                     endAngle: Angle(degrees: 360),
                                     clockwise: false
                                 )
-                                context.fill(path, with: .color(isDeadzone ? .gray : activeColor))
-                            } else {
-                                // 普通刻度线，粗细改为与原 Notch 相同的 1.5
-                                let tickLength: CGFloat = max(1.5, r * 0.055)
-                                let startR = r - tickLength
-                                
-                                var path = Path()
-                                path.move(to: CGPoint(
-                                    x: CGFloat(startR * cos(tickAngle)),
-                                    y: CGFloat(startR * sin(tickAngle))
-                                ))
-                                path.addLine(to: CGPoint(
-                                    x: CGFloat(r * cos(tickAngle)),
-                                    y: CGFloat(r * sin(tickAngle))
-                                ))
-                                
-                                context.stroke(
-                                    path,
-                                    with: .color(Color.white.opacity(0.3)),
-                                    lineWidth: 1.5
-                                )
+                                context.fill(path, with: .color(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4)))
                             }
+                            
+                            // 所有刻度线都在外侧绘制（包括与主 Notch 对应的 0 号大刻度）
+                            let baseLength = max(3.5, r * 0.09)
+                            let isMajorTick = (i % 5 == 0)
+                            let tickLength: CGFloat = isMajorTick ? baseLength * 1.5 : baseLength
+                            let startR = r - tickLength
+                            
+                            var path = Path()
+                            path.move(to: CGPoint(
+                                x: CGFloat(startR * cos(tickAngle)),
+                                y: CGFloat(startR * sin(tickAngle))
+                            ))
+                            path.addLine(to: CGPoint(
+                                x: CGFloat(r * cos(tickAngle)),
+                                y: CGFloat(r * sin(tickAngle))
+                            ))
+                            
+                            let thickness: CGFloat = isMajorTick ? 3.0 : 1.5
+                            context.stroke(
+                                path,
+                                with: .color(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4)),
+                                lineWidth: thickness
+                            )
                         }
                     } else if rotationStyle == "rimDot" {
                         // 边缘圆点反馈
@@ -154,16 +149,16 @@ struct OverlayView: View {
                         
                         var path = Path()
                         path.addArc(center: CGPoint(x: dotX, y: dotY), radius: dotRadius, startAngle: .zero, endAngle: Angle(degrees: 360), clockwise: false)
-                        context.fill(path, with: .color(isDeadzone ? .gray : activeColor))
+                        context.fill(path, with: .color(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4)))
                     }
                 }
                 
-                // 4. 正中心倍数显示
+                // 4. 正中心倍数显示 (调整为更小、与整体透明度一致为 0.4)
                 if let scale = scale {
                     Text(String(format: "%.1fx", scale))
-                        .font(.system(size: max(10, diameter * 0.11), weight: .black, design: .monospaced))
-                        .foregroundColor(isDeadzone ? Color.gray.opacity(0.6) : activeColor.opacity(0.8))
-                        .shadow(color: Color.black.opacity(0.4), radius: 1, x: 0, y: 1)
+                        .font(.system(size: max(8, diameter * 0.08), weight: .black, design: .monospaced))
+                        .foregroundColor(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4))
+                        .shadow(color: Color.black.opacity(0.2), radius: 1, x: 0, y: 1)
                 }
             }
             .frame(width: diameter, height: diameter)
