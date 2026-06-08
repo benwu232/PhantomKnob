@@ -615,6 +615,41 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     // MARK: - Helper Methods
     
     func isAdjustable(target: DetectedTarget) -> Bool {
+        // 1. 如果命中规则库中的任何规则，说明用户/内置规则已为此进行了特化，必然是可调节的
+        if RuleLibrary.shared.lookup(for: target.ruleKey) != nil {
+            return true
+        }
+        
+        // 2. 如果具备 AX 元素，根据 AX 角色与属性判定
+        if let element = target.element {
+            // A. Role 白名单中的标准可调节控件
+            let role = TargetDetector.getString(from: element, attribute: kAXRoleAttribute) ?? ""
+            let adjustableRoles: Set<String> = ["AXSlider", "AXScrollBar", "AXValueIndicator", "AXStepper", "AXDial", "AXIncrementor"]
+            if adjustableRoles.contains(role) {
+                return true
+            }
+            
+            // B. 具备最小值和最大值的数值控件
+            if TargetDetector.getDouble(from: element, attribute: kAXMinValueAttribute) != nil &&
+               TargetDetector.getDouble(from: element, attribute: kAXMaxValueAttribute) != nil {
+                return true
+            }
+            
+            // C. 具备可写的 AXValue 属性
+            var settable: DarwinBoolean = false
+            if AXUIElementIsAttributeSettable(element, kAXValueAttribute as CFString, &settable) == .success, settable.boolValue {
+                return true
+            }
+            
+            // D. 支持递增/递减 Action
+            var actions: CFArray?
+            if AXUIElementCopyActionNames(element, &actions) == .success,
+               let actionList = actions as? [String],
+               (actionList.contains(kAXIncrementAction) || actionList.contains(kAXDecrementAction)) {
+                return true
+            }
+        }
+        
         return false
     }
     
