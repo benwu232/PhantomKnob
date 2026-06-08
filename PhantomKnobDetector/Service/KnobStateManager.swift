@@ -211,6 +211,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
         currentTarget = target
 
+        // 检查修饰键激活或当前控件是否可调节
+        if isOptionHoldActive || isAdjustable(target: target) {
+            isInterceptingGestures = true
+            if let tap = eventTap {
+                CGEvent.tapEnable(tap: tap, enable: true)
+                writeDebugLog("[KnobStateManager] Enabled event tap on begin (adjustable/option hold)")
+            }
+        } else {
+            isInterceptingGestures = false
+        }
+
         // 3. 查规则库（未命中则自动探测）
         let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
 
@@ -413,6 +424,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     func onMultitouchEnded() {
         guard state != .inactive else { return }
+        isInterceptingGestures = false
+        if let tap = eventTap {
+            CGEvent.tapEnable(tap: tap, enable: false)
+        }
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
 
@@ -496,16 +511,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     private func handleEventTap(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Bool {
-        guard state.isKnobing else { return false }
+        guard state.isKnobing || isInterceptingGestures else { return false }
         
         // Skip events posted by our own translators
         let sourceUserData = event.getIntegerValueField(.eventSourceUserData)
         guard sourceUserData != 0xDEADC0DE else { return false }
         
-        // Block zoom (magnify), rotate, and general gestures during knobing
+        // Block zoom (magnify), rotate, and general gestures during knobing/interception
         let typeVal = type.rawValue
         if typeVal == 29 || typeVal == 19 || typeVal == 18 {
-            writeDebugLog("[KnobStateManager] Swallowed gesture event of type: \(typeVal)")
+            writeDebugLog("[KnobStateManager] Swallowed gesture event of type: \(typeVal) (knobing: \(state.isKnobing), intercepting: \(isInterceptingGestures))")
             return true
         }
         
