@@ -18,6 +18,7 @@ class OverlayController: ObservableObject {
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
+    private var fixedCenter: CGPoint = .zero
 
     func show(at position: CGPoint, 
               targetName: String?, 
@@ -33,8 +34,50 @@ class OverlayController: ObservableObject {
         self.rotationStyle = rotationStyle ?? AppSettings.shared.defaultRotationStyle
         self.diameter = 80.0 // 默认直径 (16mm * 5px/mm)
 
+        let activeScreen = NSScreen.screens.first { $0.frame.contains(position) } ?? NSScreen.main ?? NSScreen.screens[0]
+        let visibleFrame = activeScreen.visibleFrame
+        let maxD: CGFloat = 300.0
+        let centerOffset: CGFloat = 105.0 // 15.0 + 150.0 * 0.6
+        
+        let candidates: [CGPoint] = [
+            CGPoint(x: position.x + centerOffset, y: position.y - centerOffset), // 右下
+            CGPoint(x: position.x + centerOffset, y: position.y + centerOffset), // 右上
+            CGPoint(x: position.x - centerOffset, y: position.y - centerOffset), // 左下
+            CGPoint(x: position.x - centerOffset, y: position.y + centerOffset)  // 左上
+        ]
+        
+        var chosenCenter = candidates[0]
+        var found = false
+        for center in candidates {
+            let rect = NSRect(
+                x: center.x - maxD / 2,
+                y: center.y - maxD / 2,
+                width: maxD,
+                height: maxD + 20.0
+            )
+            if visibleFrame.contains(rect) {
+                chosenCenter = center
+                found = true
+                break
+            }
+        }
+        
+        if !found {
+            let halfMaxD = maxD / 2
+            let minX = visibleFrame.minX + halfMaxD
+            let maxX = visibleFrame.maxX - halfMaxD
+            let minY = visibleFrame.minY + halfMaxD
+            let maxY = visibleFrame.maxY - (halfMaxD + 20.0)
+            
+            let clampedX = min(max(chosenCenter.x, minX), maxX)
+            let clampedY = min(max(chosenCenter.y, minY), maxY)
+            chosenCenter = CGPoint(x: clampedX, y: clampedY)
+        }
+        
+        self.fixedCenter = chosenCenter
+
         showCount += 1
-        writeDebugLog("[OverlayController] show() called: targetName = \(targetName ?? "nil"), scale = \(scale ?? 0.0), showCount = \(showCount), position = \(position)")
+        writeDebugLog("[OverlayController] show() called: targetName = \(targetName ?? "nil"), scale = \(scale ?? 0.0), showCount = \(showCount), position = \(position), fixedCenter = \(fixedCenter)")
 
         if panel == nil {
             createPanel()
@@ -93,14 +136,11 @@ class OverlayController: ObservableObject {
     private func updatePanelFrame() {
         guard let panel = panel else { return }
         
-        let cursorPt = NSEvent.mouseLocation
-        let activeScreen = NSScreen.screens.first { $0.frame.contains(cursorPt) } ?? NSScreen.main ?? NSScreen.screens[0]
-        let visibleFrame = activeScreen.visibleFrame
-        
-        let targetFrame = Self.calculateBestFrame(
-            cursor: cursorPt,
-            diameter: diameter,
-            visibleFrame: visibleFrame
+        let targetFrame = NSRect(
+            x: fixedCenter.x - diameter / 2,
+            y: fixedCenter.y - diameter / 2,
+            width: diameter,
+            height: diameter + 20.0
         )
         
         panel.setFrame(targetFrame, display: true)
@@ -164,32 +204,49 @@ class OverlayController: ObservableObject {
     }
 
     static func calculateBestFrame(cursor: CGPoint, diameter: CGFloat, visibleFrame: NSRect) -> NSRect {
-        let offset: CGFloat = 15.0
-        let w = diameter
-        let h = diameter + 20.0
+        let maxD: CGFloat = 300.0
+        let centerOffset: CGFloat = 105.0 // 15 + 150 * 0.6
         
         let candidates: [CGPoint] = [
-            // 1. 右下 (Bottom-Right)
-            CGPoint(x: cursor.x + offset, y: cursor.y - offset - h),
-            // 2. 右上 (Top-Right)
-            CGPoint(x: cursor.x + offset, y: cursor.y + offset),
-            // 3. 左下 (Bottom-Left)
-            CGPoint(x: cursor.x - offset - w, y: cursor.y - offset - h),
-            // 4. 左上 (Top-Left)
-            CGPoint(x: cursor.x - offset - w, y: cursor.y + offset)
+            CGPoint(x: cursor.x + centerOffset, y: cursor.y - centerOffset),
+            CGPoint(x: cursor.x + centerOffset, y: cursor.y + centerOffset),
+            CGPoint(x: cursor.x - centerOffset, y: cursor.y - centerOffset),
+            CGPoint(x: cursor.x - centerOffset, y: cursor.y + centerOffset)
         ]
         
-        for origin in candidates {
-            let rect = NSRect(origin: origin, size: CGSize(width: w, height: h))
+        var chosenCenter = candidates[0]
+        var found = false
+        for center in candidates {
+            let rect = NSRect(
+                x: center.x - maxD / 2,
+                y: center.y - maxD / 2,
+                width: maxD,
+                height: maxD + 20.0
+            )
             if visibleFrame.contains(rect) {
-                return rect
+                chosenCenter = center
+                found = true
+                break
             }
         }
         
-        // Fallback: 使用右下，并进行屏幕边缘夹紧 (Clamp)
-        let rawOrigin = candidates[0]
-        let clampedX = min(max(rawOrigin.x, visibleFrame.minX), visibleFrame.maxX - w)
-        let clampedY = min(max(rawOrigin.y, visibleFrame.minY), visibleFrame.maxY - h)
-        return NSRect(x: clampedX, y: clampedY, width: w, height: h)
+        if !found {
+            let halfMaxD = maxD / 2
+            let minX = visibleFrame.minX + halfMaxD
+            let maxX = visibleFrame.maxX - halfMaxD
+            let minY = visibleFrame.minY + halfMaxD
+            let maxY = visibleFrame.maxY - (halfMaxD + 20.0)
+            
+            let clampedX = min(max(chosenCenter.x, minX), maxX)
+            let clampedY = min(max(chosenCenter.y, minY), maxY)
+            chosenCenter = CGPoint(x: clampedX, y: clampedY)
+        }
+        
+        return NSRect(
+            x: chosenCenter.x - diameter / 2,
+            y: chosenCenter.y - diameter / 2,
+            width: diameter,
+            height: diameter + 20.0
+        )
     }
 }

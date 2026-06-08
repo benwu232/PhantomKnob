@@ -31,9 +31,12 @@ class OverlayControllerTests: XCTestCase {
             diameter: diameter,
             visibleFrame: visibleFrame
         )
-        // 预期右下：x = 500 + 15 = 515, y = 500 - 15 - 120 = 365
-        XCTAssertEqual(frame1.origin.x, 515)
-        XCTAssertEqual(frame1.origin.y, 365)
+        // 预期右下圆心：x = 500 + 105 = 605, y = 500 - 105 = 395
+        // 对应直径 100 的窗口 origin 应该是：
+        // x = 605 - 50 = 555
+        // y = 395 - 50 = 345
+        XCTAssertEqual(frame1.origin.x, 555)
+        XCTAssertEqual(frame1.origin.y, 345)
         
         // Case 2: 鼠标在右下角 (950, 50)，右下、右上、左下均越界，应该使用左上
         let posBottomRight = CGPoint(x: 950, y: 50)
@@ -42,9 +45,12 @@ class OverlayControllerTests: XCTestCase {
             diameter: diameter,
             visibleFrame: visibleFrame
         )
-        // 预期左上：x = 950 - 15 - 100 = 835, y = 50 + 15 = 65
-        XCTAssertEqual(frame2.origin.x, 835)
-        XCTAssertEqual(frame2.origin.y, 65)
+        // 左上圆心 x = 950 - 105 = 845, y = 50 + 105 = 155
+        // 对应直径 100 的窗口 origin 应该是：
+        // x = 845 - 50 = 795
+        // y = 155 - 50 = 105
+        XCTAssertEqual(frame2.origin.x, 795)
+        XCTAssertEqual(frame2.origin.y, 105)
         
         // Case 3: 鼠标在左下角 (10, 10)，越界，夹紧在屏幕边界
         let posCorner = CGPoint(x: 10, y: 10)
