@@ -61,5 +61,65 @@
       "fixed": 1.0
     },
     "extra": null
+  },
+  {
+    "key": {
+      "bundleID": "com.lemon.lvoverseas",
+      "axRole": "unknown",
+      "identifier": null
+    },
+    "translation": "arrowKeyLeftRight",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
+    "extra": null
+  },
+  {
+    "key": {
+      "bundleID": "com.lemon.lv",
+      "axRole": "unknown",
+      "identifier": null
+    },
+    "translation": "arrowKeyLeftRight",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
+    "extra": null
+  },
+  {
+    "key": {
+      "bundleID": "com.lemon.lvediting",
+      "axRole": "unknown",
+      "identifier": null
+    },
+    "translation": "arrowKeyLeftRight",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
+    "extra": null
+  },
+  {
+    "key": {
+      "bundleID": "com.lemon.jianying",
+      "axRole": "unknown",
+      "identifier": null
+    },
+    "translation": "arrowKeyLeftRight",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
+    "extra": null
+  },
+  {
+    "key": {
+      "bundleID": "com.lemon.jianyingpro",
+      "axRole": "unknown",
+      "identifier": null
+    },
+    "translation": "arrowKeyLeftRight",
+    "scaleConfig": {
+      "fixed": 1.0
+    },
+    "extra": null
   }
 ]

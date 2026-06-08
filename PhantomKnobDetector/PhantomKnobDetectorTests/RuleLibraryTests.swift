@@ -72,4 +72,24 @@ final class RuleLibraryTests: XCTestCase {
         let rules = try JSONDecoder().decode([ControlRule].self, from: json)
         XCTAssertEqual(rules.first?.scaleConfig.resolve(), 8.0)
     }
+
+    func testCapCutRulesAreBundled() {
+        let lib = RuleLibrary.shared
+        lib.reload() // Make sure bundled rules are loaded
+        
+        let bundleIDs = [
+            "com.lemon.lvoverseas",
+            "com.lemon.lv",
+            "com.lemon.lvediting",
+            "com.lemon.jianying",
+            "com.lemon.jianyingpro"
+        ]
+        
+        for bid in bundleIDs {
+            let key = RuleKey(bundleID: bid, axRole: "unknown")
+            let match = lib.lookup(for: key)
+            XCTAssertNotNil(match, "CapCut/Jianying rule should be bundled for \(bid)")
+            XCTAssertEqual(match?.translation, .arrowKeyLeftRight)
+        }
+    }
 }
