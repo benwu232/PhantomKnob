@@ -17,7 +17,7 @@ final class ScrollWheelTranslator: InputTranslator {
     }
 
     func apply(units: Double, direction: RotationDirection) {
-        let delta = units * scale * (direction == .clockwise ? 1.0 : -1.0)
+        let delta = units * scale * (direction == .clockwise ? -1.0 : 1.0)
         accumulator += delta
         
         let steps = Int(accumulator)
