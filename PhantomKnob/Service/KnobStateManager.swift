@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Service/KnobStateManager.swift
+// PhantomKnob/Service/KnobStateManager.swift
 import Foundation
 import AppKit
 import Combine

@@ -1,4 +1,4 @@
-// PhantomKnobDetector/View/OverlayView.swift
+// PhantomKnob/View/OverlayView.swift
 import SwiftUI
 import AppKit
 

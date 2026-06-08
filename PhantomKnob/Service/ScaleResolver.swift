@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Service/ScaleResolver.swift
+// PhantomKnob/Service/ScaleResolver.swift
 import Foundation
 
 struct ScaleResolver {

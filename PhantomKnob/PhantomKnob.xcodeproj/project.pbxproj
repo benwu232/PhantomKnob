@@ -1,0 +1,710 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01A6D704DC3678F59BEE0232 /* ArrowKeyTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D76A85C86CFA1CEFA58915D /* ArrowKeyTranslator.swift */; };
+		08725A37A3171E8C9E1D442D /* KnobCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73263D014AF58E4418641B4A /* KnobCircleView.swift */; };
+		0C92020E5937FF28D75398DA /* SensitivityConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24BD249E7CFB5B5F78FC45EB /* SensitivityConfigTests.swift */; };
+		19EAA3A782F956431C311D9F /* ScaleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB013A64BA258E0802863E95 /* ScaleResolver.swift */; };
+		25D87235AD562FC280186E55 /* SensitivityConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B2E400E0342B8F7F55FC01 /* SensitivityConfig.swift */; };
+		27EED49ED490800EA0FC1A6E /* OverlayControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE54ECD0C705E6ED8E5CCA5 /* OverlayControllerTests.swift */; };
+		2C9B5146B062FB1B035278C0 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14058306126BA0F12A966584 /* OverlayController.swift */; };
+		2E1279868AA8F928C0F4538A /* KnobGlobalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4C81CBF98264E7686C45B /* KnobGlobalState.swift */; };
+		2EB6D26926C635E725560A6E /* DetectionCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF4456DBACA3DF475E343C7 /* DetectionCache.swift */; };
+		33971F76665F69DB98FCFF5C /* InputTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C955EF152C23C292A17B7F8A /* InputTranslator.swift */; };
+		367F55A8914856016C59C71D /* TargetDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB470A7453374CC4862FD7 /* TargetDetector.swift */; };
+		37B5CCF456D3EE1E46375088 /* KnobAlgorithmTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */; };
+		393E036246B7D2A4184280D8 /* AccessibilityTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8B3F088E7994F950CBAA6B /* AccessibilityTarget.swift */; };
+		420339FEBDE051C4655DC2FE /* PhantomKnobApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */; };
+		467E33FB2518EA0F2030ECD0 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE64900D039A90EF7F38282 /* AppSettings.swift */; };
+		5151B5E0C1F387D41985B145 /* DetectionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C109FD66257B97887BB03E7 /* DetectionResult.swift */; };
+		536CF28CE80EAC23CBFB3C6B /* DemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E1E91C9DAE9E7A7908E9DD /* DemoView.swift */; };
+		54E2FA22B48C99A111A24420 /* DetectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E8EC9F1DAE55B4495B63D2 /* DetectionViewModel.swift */; };
+		55F5DCD9ECDD28004DFEA03A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F265AA267220CC6CEE2B9C1A /* SettingsView.swift */; };
+		5B0159A542CFECBEC84D42F7 /* MultitouchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */; };
+		5D875172E63F00839967981A /* RuleLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91C125C7972A950C35E9F3E /* RuleLibraryTests.swift */; };
+		621563693C5385127863B1C9 /* ControlTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B109ECB0852202921BB4627 /* ControlTests.swift */; };
+		63E525A54A0379329A2409D4 /* KnobGlobalStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1EC8639129B1EA4015970A /* KnobGlobalStateTests.swift */; };
+		6D99BA3F54A87A56FC3699DF /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */; };
+		6E745EF097F35F553CEA425A /* ControlRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824393D26BE2CFB97C3AED7 /* ControlRule.swift */; };
+		73535C7231C6DCFB956DBB0F /* RotationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE2E4031E90F1B450E1D5CD /* RotationDirection.swift */; };
+		782BBECA7771215D3AC55E1D /* InputTranslationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */; };
+		7BFFB745C067E91F8395B361 /* DemoSliderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83D8874A40287B9C9842B36 /* DemoSliderTarget.swift */; };
+		7D7BA2ED5031E27BCAF0FDBA /* KnobCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA0C61599821948945AC9 /* KnobCore.swift */; };
+		7E3E2D338ACCE6980F6E380A /* KnobAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CF154D12272E6CFC5DC7EB /* KnobAlgorithm.swift */; };
+		7E88A5B26CC52AA53A804A1D /* ScaleConfigCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */; };
+		7EC546E05D400231F6C5E287 /* bundled-rules.json in Resources */ = {isa = PBXBuildFile; fileRef = CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */; };
+		7F3E3AE0423173C20098D763 /* GenericControlTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EDB94410F54B36050C406F /* GenericControlTarget.swift */; };
+		81C54DE6F0BD0486FBBF80CA /* TargetDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */; };
+		82BBAB63D2E9D62FDE90805C /* DetectedTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */; };
+		86B5FBD17C12E7D00F0BC8AE /* ScrollWheelTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E9AB06D406D93054769DF3 /* ScrollWheelTranslator.swift */; };
+		89CC4DDB76C47724BEEF1BC0 /* JSONCParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DD05C13BC59773FD98055F /* JSONCParserTests.swift */; };
+		9517D0F648E2CE11D3436865 /* DemoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33997C526CE3C79D79F6AC92 /* DemoViewModel.swift */; };
+		980F61BEBC4E13990EDB9CF9 /* DetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0ACED4958B16C6659B21CD /* DetectionView.swift */; };
+		9CD064A910A69A1B74089CA5 /* TouchpadDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960F46D34B7016779EFC648E /* TouchpadDetector.swift */; };
+		9D43C46E67005EC6776B824E /* TouchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B499ACF164A9451B0AAD1C /* TouchpadView.swift */; };
+		9E21ED3BDDB126A6A6905E2C /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276B847C3350CE8E5BEE90C /* AppSettingsTests.swift */; };
+		9F4C5719CF0BE0C6FFA610B6 /* AXWriteTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 899D86B28252691F994F0E31 /* AXWriteTranslator.swift */; };
+		B94BA13F948C499CB5120913 /* TouchpadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165D5400DF747E8DCDF6022A /* TouchpadEngine.swift */; };
+		BC52F5E3D8B52D106443D731 /* AccessibilityTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BD32B64AEEADC3B93F1335 /* AccessibilityTargetTests.swift */; };
+		BF29018F2C89BA7835834BC7 /* GestureClassifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */; };
+		BF4938502FA65592B733B49E /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3DB025F61E6FD30C8D7D0E /* AppViewModel.swift */; };
+		C38EB6989296E836A2B30500 /* KnobStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */; };
+		C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B15AA0918B5B487EAD25BC /* GestureClassifier.swift */; };
+		C9F6F3BCA2F7399BE23BDD76 /* GestureConflictTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0704C959B2850EE4DF5B9648 /* GestureConflictTests.swift */; };
+		CD89F7BED76AAC7E84CCB3A0 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33AD01815C50D7A5A0A9EAB /* ResultView.swift */; };
+		D52F23DBE99A803318F93ABE /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3404B1CF882FCC096CCD11B4 /* WelcomeView.swift */; };
+		D61FAFC54E4662475B43B82E /* KnobState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0279BBA53DE238B7A49EE6A6 /* KnobState.swift */; };
+		D8EDE11220DF5C7F6A758198 /* InputTranslation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8776E7B99B66A818472F3AD2 /* InputTranslation.swift */; };
+		D9AA75CFB01B353867490AC0 /* CustomMultiplierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */; };
+		DA239AC64B92C952567FFAC8 /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E59D5E06F5866BA93B2D8A /* OverlayView.swift */; };
+		E1E6D32A585B80562D9AC88F /* ControlTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFBC93A9CF84BA475F758FD /* ControlTarget.swift */; };
+		E20AAAAD9FA748A54342DF1F /* RuleLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322C04438C22BB8A78D9F208 /* RuleLibrary.swift */; };
+		EF138900E1C6F71B57127BE9 /* GlobalTouchHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD747C9F6DC171899EA02CC /* GlobalTouchHandler.swift */; };
+		F11E3F872A077A8F3BE8ABFE /* ScaleResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF51B47DC27F97A4D1FB480E /* ScaleResolverTests.swift */; };
+		F98DA7426A0EACB5865365D4 /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE26673E7C32FBA94B3CDDA /* StorageTests.swift */; };
+		FCD6CEE952DDCB62D6405CA0 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09176C4330342A99B8E6D12 /* ModelTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9D8579449157F7428A93A146 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B10F9B6433F5F844F0C50F0F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 609BE1C03A51F470FDB98841;
+			remoteInfo = PhantomKnob;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0279BBA53DE238B7A49EE6A6 /* KnobState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobState.swift; sourceTree = "<group>"; };
+		0704C959B2850EE4DF5B9648 /* GestureConflictTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureConflictTests.swift; sourceTree = "<group>"; };
+		0BD747C9F6DC171899EA02CC /* GlobalTouchHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTouchHandler.swift; sourceTree = "<group>"; };
+		12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedTarget.swift; sourceTree = "<group>"; };
+		14058306126BA0F12A966584 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
+		165D5400DF747E8DCDF6022A /* TouchpadEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchpadEngine.swift; sourceTree = "<group>"; };
+		16E9AB06D406D93054769DF3 /* ScrollWheelTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollWheelTranslator.swift; sourceTree = "<group>"; };
+		18CF154D12272E6CFC5DC7EB /* KnobAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobAlgorithm.swift; sourceTree = "<group>"; };
+		1AE54ECD0C705E6ED8E5CCA5 /* OverlayControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayControllerTests.swift; sourceTree = "<group>"; };
+		1B109ECB0852202921BB4627 /* ControlTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlTests.swift; sourceTree = "<group>"; };
+		1F1EC8639129B1EA4015970A /* KnobGlobalStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobGlobalStateTests.swift; sourceTree = "<group>"; };
+		24BD249E7CFB5B5F78FC45EB /* SensitivityConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityConfigTests.swift; sourceTree = "<group>"; };
+		27B2E400E0342B8F7F55FC01 /* SensitivityConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityConfig.swift; sourceTree = "<group>"; };
+		28B15AA0918B5B487EAD25BC /* GestureClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureClassifier.swift; sourceTree = "<group>"; };
+		28E8EC9F1DAE55B4495B63D2 /* DetectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionViewModel.swift; sourceTree = "<group>"; };
+		2F0ACED4958B16C6659B21CD /* DetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionView.swift; sourceTree = "<group>"; };
+		2F3DB025F61E6FD30C8D7D0E /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomKnobApp.swift; sourceTree = "<group>"; };
+		322C04438C22BB8A78D9F208 /* RuleLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleLibrary.swift; sourceTree = "<group>"; };
+		33997C526CE3C79D79F6AC92 /* DemoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewModel.swift; sourceTree = "<group>"; };
+		3404B1CF882FCC096CCD11B4 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslationTests.swift; sourceTree = "<group>"; };
+		3CE26673E7C32FBA94B3CDDA /* StorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageTests.swift; sourceTree = "<group>"; };
+		4FF4456DBACA3DF475E343C7 /* DetectionCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionCache.swift; sourceTree = "<group>"; };
+		54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		58E1E91C9DAE9E7A7908E9DD /* DemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoView.swift; sourceTree = "<group>"; };
+		5C109FD66257B97887BB03E7 /* DetectionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionResult.swift; sourceTree = "<group>"; };
+		5FE64900D039A90EF7F38282 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		7276B847C3350CE8E5BEE90C /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
+		73263D014AF58E4418641B4A /* KnobCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCircleView.swift; sourceTree = "<group>"; };
+		7824393D26BE2CFB97C3AED7 /* ControlRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlRule.swift; sourceTree = "<group>"; };
+		78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureClassifierTests.swift; sourceTree = "<group>"; };
+		79E59D5E06F5866BA93B2D8A /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
+		7D8B3F088E7994F950CBAA6B /* AccessibilityTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTarget.swift; sourceTree = "<group>"; };
+		7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetDetectorTests.swift; sourceTree = "<group>"; };
+		8776E7B99B66A818472F3AD2 /* InputTranslation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslation.swift; sourceTree = "<group>"; };
+		88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultitouchManager.swift; sourceTree = "<group>"; };
+		899D86B28252691F994F0E31 /* AXWriteTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXWriteTranslator.swift; sourceTree = "<group>"; };
+		8D76A85C86CFA1CEFA58915D /* ArrowKeyTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowKeyTranslator.swift; sourceTree = "<group>"; };
+		960F46D34B7016779EFC648E /* TouchpadDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchpadDetector.swift; sourceTree = "<group>"; };
+		A8EDB94410F54B36050C406F /* GenericControlTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericControlTarget.swift; sourceTree = "<group>"; };
+		AF56817E9D1B61DD9BB426A4 /* PhantomKnobTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomKnobTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2DD05C13BC59773FD98055F /* JSONCParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCParserTests.swift; sourceTree = "<group>"; };
+		B83D8874A40287B9C9842B36 /* DemoSliderTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSliderTarget.swift; sourceTree = "<group>"; };
+		BB013A64BA258E0802863E95 /* ScaleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleResolver.swift; sourceTree = "<group>"; };
+		C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobStateManager.swift; sourceTree = "<group>"; };
+		C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMultiplierTests.swift; sourceTree = "<group>"; };
+		C955EF152C23C292A17B7F8A /* InputTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslator.swift; sourceTree = "<group>"; };
+		CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "bundled-rules.json"; sourceTree = "<group>"; };
+		CF3EA0C61599821948945AC9 /* KnobCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCore.swift; sourceTree = "<group>"; };
+		D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleConfigCompatibilityTests.swift; sourceTree = "<group>"; };
+		D2B499ACF164A9451B0AAD1C /* TouchpadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchpadView.swift; sourceTree = "<group>"; };
+		D33AD01815C50D7A5A0A9EAB /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		D91C125C7972A950C35E9F3E /* RuleLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleLibraryTests.swift; sourceTree = "<group>"; };
+		DA6C8F511A5273CBF2A8094B /* PhantomKnob.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhantomKnob.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBFB470A7453374CC4862FD7 /* TargetDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetDetector.swift; sourceTree = "<group>"; };
+		DEE2E4031E90F1B450E1D5CD /* RotationDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationDirection.swift; sourceTree = "<group>"; };
+		E2BD32B64AEEADC3B93F1335 /* AccessibilityTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTargetTests.swift; sourceTree = "<group>"; };
+		E8C4C81CBF98264E7686C45B /* KnobGlobalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobGlobalState.swift; sourceTree = "<group>"; };
+		EBFBC93A9CF84BA475F758FD /* ControlTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlTarget.swift; sourceTree = "<group>"; };
+		F09176C4330342A99B8E6D12 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		F265AA267220CC6CEE2B9C1A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobAlgorithmTests.swift; sourceTree = "<group>"; };
+		FF51B47DC27F97A4D1FB480E /* ScaleResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleResolverTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		3C9E425469C6BD831E85F72C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DA6C8F511A5273CBF2A8094B /* PhantomKnob.app */,
+				AF56817E9D1B61DD9BB426A4 /* PhantomKnobTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4653D3D3CA63B50686ABDAA5 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				2F3DB025F61E6FD30C8D7D0E /* AppViewModel.swift */,
+				33997C526CE3C79D79F6AC92 /* DemoViewModel.swift */,
+				28E8EC9F1DAE55B4495B63D2 /* DetectionViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		50110A052D3D411FDB492928 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				58E1E91C9DAE9E7A7908E9DD /* DemoView.swift */,
+				2F0ACED4958B16C6659B21CD /* DetectionView.swift */,
+				79E59D5E06F5866BA93B2D8A /* OverlayView.swift */,
+				D33AD01815C50D7A5A0A9EAB /* ResultView.swift */,
+				F265AA267220CC6CEE2B9C1A /* SettingsView.swift */,
+				3404B1CF882FCC096CCD11B4 /* WelcomeView.swift */,
+				86C6DDE282247133736E4A87 /* Components */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		529BA234DA7F582FBBFDDD7B /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				7D8B3F088E7994F950CBAA6B /* AccessibilityTarget.swift */,
+				28B15AA0918B5B487EAD25BC /* GestureClassifier.swift */,
+				0BD747C9F6DC171899EA02CC /* GlobalTouchHandler.swift */,
+				18CF154D12272E6CFC5DC7EB /* KnobAlgorithm.swift */,
+				C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */,
+				88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */,
+				14058306126BA0F12A966584 /* OverlayController.swift */,
+				BB013A64BA258E0802863E95 /* ScaleResolver.swift */,
+				54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */,
+				DBFB470A7453374CC4862FD7 /* TargetDetector.swift */,
+				960F46D34B7016779EFC648E /* TouchpadDetector.swift */,
+				165D5400DF747E8DCDF6022A /* TouchpadEngine.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		5F82035CB1C4DA47D2E6AB9A /* Control */ = {
+			isa = PBXGroup;
+			children = (
+				8D76A85C86CFA1CEFA58915D /* ArrowKeyTranslator.swift */,
+				899D86B28252691F994F0E31 /* AXWriteTranslator.swift */,
+				EBFBC93A9CF84BA475F758FD /* ControlTarget.swift */,
+				B83D8874A40287B9C9842B36 /* DemoSliderTarget.swift */,
+				A8EDB94410F54B36050C406F /* GenericControlTarget.swift */,
+				C955EF152C23C292A17B7F8A /* InputTranslator.swift */,
+				16E9AB06D406D93054769DF3 /* ScrollWheelTranslator.swift */,
+			);
+			path = Control;
+			sourceTree = "<group>";
+		};
+		86C6DDE282247133736E4A87 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				73263D014AF58E4418641B4A /* KnobCircleView.swift */,
+				D2B499ACF164A9451B0AAD1C /* TouchpadView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		8A988B8E36DBB3B840565482 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				4FF4456DBACA3DF475E343C7 /* DetectionCache.swift */,
+				322C04438C22BB8A78D9F208 /* RuleLibrary.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		AFAF9EF867E7D3062576C0B8 = {
+			isa = PBXGroup;
+			children = (
+				BFF80AEE2BF2168C727111D1 /* App */,
+				5F82035CB1C4DA47D2E6AB9A /* Control */,
+				B16FFC6517192B8002656370 /* Model */,
+				F050F9EC56C943F0627BF3B7 /* PhantomKnobTests */,
+				529BA234DA7F582FBBFDDD7B /* Service */,
+				8A988B8E36DBB3B840565482 /* Storage */,
+				50110A052D3D411FDB492928 /* View */,
+				4653D3D3CA63B50686ABDAA5 /* ViewModel */,
+				3C9E425469C6BD831E85F72C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B16FFC6517192B8002656370 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5FE64900D039A90EF7F38282 /* AppSettings.swift */,
+				7824393D26BE2CFB97C3AED7 /* ControlRule.swift */,
+				12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */,
+				5C109FD66257B97887BB03E7 /* DetectionResult.swift */,
+				8776E7B99B66A818472F3AD2 /* InputTranslation.swift */,
+				CF3EA0C61599821948945AC9 /* KnobCore.swift */,
+				E8C4C81CBF98264E7686C45B /* KnobGlobalState.swift */,
+				0279BBA53DE238B7A49EE6A6 /* KnobState.swift */,
+				DEE2E4031E90F1B450E1D5CD /* RotationDirection.swift */,
+				27B2E400E0342B8F7F55FC01 /* SensitivityConfig.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		BFF80AEE2BF2168C727111D1 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */,
+				3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F050F9EC56C943F0627BF3B7 /* PhantomKnobTests */ = {
+			isa = PBXGroup;
+			children = (
+				E2BD32B64AEEADC3B93F1335 /* AccessibilityTargetTests.swift */,
+				7276B847C3350CE8E5BEE90C /* AppSettingsTests.swift */,
+				1B109ECB0852202921BB4627 /* ControlTests.swift */,
+				C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */,
+				78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */,
+				0704C959B2850EE4DF5B9648 /* GestureConflictTests.swift */,
+				3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */,
+				B2DD05C13BC59773FD98055F /* JSONCParserTests.swift */,
+				F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */,
+				1F1EC8639129B1EA4015970A /* KnobGlobalStateTests.swift */,
+				F09176C4330342A99B8E6D12 /* ModelTests.swift */,
+				1AE54ECD0C705E6ED8E5CCA5 /* OverlayControllerTests.swift */,
+				D91C125C7972A950C35E9F3E /* RuleLibraryTests.swift */,
+				D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */,
+				FF51B47DC27F97A4D1FB480E /* ScaleResolverTests.swift */,
+				24BD249E7CFB5B5F78FC45EB /* SensitivityConfigTests.swift */,
+				3CE26673E7C32FBA94B3CDDA /* StorageTests.swift */,
+				7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */,
+			);
+			path = PhantomKnobTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5DF3D51875CFB9A3EE8A2377 /* PhantomKnobTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B39020FF9204EA0567472917 /* Build configuration list for PBXNativeTarget "PhantomKnobTests" */;
+			buildPhases = (
+				943943C4A140AB65F3A689CA /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B646EBF24733D12D6A50D59 /* PBXTargetDependency */,
+			);
+			name = PhantomKnobTests;
+			packageProductDependencies = (
+			);
+			productName = PhantomKnobTests;
+			productReference = AF56817E9D1B61DD9BB426A4 /* PhantomKnobTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		609BE1C03A51F470FDB98841 /* PhantomKnob */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9D339C24648C25841BE63A9 /* Build configuration list for PBXNativeTarget "PhantomKnob" */;
+			buildPhases = (
+				F8E1368AE5DCEA9E76CEC2A7 /* Sources */,
+				638C54D6C1BE974AABAE0D37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PhantomKnob;
+			packageProductDependencies = (
+			);
+			productName = PhantomKnob;
+			productReference = DA6C8F511A5273CBF2A8094B /* PhantomKnob.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B10F9B6433F5F844F0C50F0F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					5DF3D51875CFB9A3EE8A2377 = {
+						ProvisioningStyle = Automatic;
+					};
+					609BE1C03A51F470FDB98841 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 46D7BEE75368A239D31CEA83 /* Build configuration list for PBXProject "PhantomKnob" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = AFAF9EF867E7D3062576C0B8;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3C9E425469C6BD831E85F72C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				609BE1C03A51F470FDB98841 /* PhantomKnob */,
+				5DF3D51875CFB9A3EE8A2377 /* PhantomKnobTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		638C54D6C1BE974AABAE0D37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7EC546E05D400231F6C5E287 /* bundled-rules.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		943943C4A140AB65F3A689CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC52F5E3D8B52D106443D731 /* AccessibilityTargetTests.swift in Sources */,
+				9E21ED3BDDB126A6A6905E2C /* AppSettingsTests.swift in Sources */,
+				621563693C5385127863B1C9 /* ControlTests.swift in Sources */,
+				D9AA75CFB01B353867490AC0 /* CustomMultiplierTests.swift in Sources */,
+				BF29018F2C89BA7835834BC7 /* GestureClassifierTests.swift in Sources */,
+				C9F6F3BCA2F7399BE23BDD76 /* GestureConflictTests.swift in Sources */,
+				782BBECA7771215D3AC55E1D /* InputTranslationTests.swift in Sources */,
+				89CC4DDB76C47724BEEF1BC0 /* JSONCParserTests.swift in Sources */,
+				37B5CCF456D3EE1E46375088 /* KnobAlgorithmTests.swift in Sources */,
+				63E525A54A0379329A2409D4 /* KnobGlobalStateTests.swift in Sources */,
+				FCD6CEE952DDCB62D6405CA0 /* ModelTests.swift in Sources */,
+				27EED49ED490800EA0FC1A6E /* OverlayControllerTests.swift in Sources */,
+				5D875172E63F00839967981A /* RuleLibraryTests.swift in Sources */,
+				7E88A5B26CC52AA53A804A1D /* ScaleConfigCompatibilityTests.swift in Sources */,
+				F11E3F872A077A8F3BE8ABFE /* ScaleResolverTests.swift in Sources */,
+				0C92020E5937FF28D75398DA /* SensitivityConfigTests.swift in Sources */,
+				F98DA7426A0EACB5865365D4 /* StorageTests.swift in Sources */,
+				81C54DE6F0BD0486FBBF80CA /* TargetDetectorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8E1368AE5DCEA9E76CEC2A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F4C5719CF0BE0C6FFA610B6 /* AXWriteTranslator.swift in Sources */,
+				393E036246B7D2A4184280D8 /* AccessibilityTarget.swift in Sources */,
+				467E33FB2518EA0F2030ECD0 /* AppSettings.swift in Sources */,
+				BF4938502FA65592B733B49E /* AppViewModel.swift in Sources */,
+				01A6D704DC3678F59BEE0232 /* ArrowKeyTranslator.swift in Sources */,
+				6E745EF097F35F553CEA425A /* ControlRule.swift in Sources */,
+				E1E6D32A585B80562D9AC88F /* ControlTarget.swift in Sources */,
+				7BFFB745C067E91F8395B361 /* DemoSliderTarget.swift in Sources */,
+				536CF28CE80EAC23CBFB3C6B /* DemoView.swift in Sources */,
+				9517D0F648E2CE11D3436865 /* DemoViewModel.swift in Sources */,
+				82BBAB63D2E9D62FDE90805C /* DetectedTarget.swift in Sources */,
+				2EB6D26926C635E725560A6E /* DetectionCache.swift in Sources */,
+				5151B5E0C1F387D41985B145 /* DetectionResult.swift in Sources */,
+				980F61BEBC4E13990EDB9CF9 /* DetectionView.swift in Sources */,
+				54E2FA22B48C99A111A24420 /* DetectionViewModel.swift in Sources */,
+				7F3E3AE0423173C20098D763 /* GenericControlTarget.swift in Sources */,
+				C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */,
+				EF138900E1C6F71B57127BE9 /* GlobalTouchHandler.swift in Sources */,
+				D8EDE11220DF5C7F6A758198 /* InputTranslation.swift in Sources */,
+				33971F76665F69DB98FCFF5C /* InputTranslator.swift in Sources */,
+				7E3E2D338ACCE6980F6E380A /* KnobAlgorithm.swift in Sources */,
+				08725A37A3171E8C9E1D442D /* KnobCircleView.swift in Sources */,
+				7D7BA2ED5031E27BCAF0FDBA /* KnobCore.swift in Sources */,
+				2E1279868AA8F928C0F4538A /* KnobGlobalState.swift in Sources */,
+				D61FAFC54E4662475B43B82E /* KnobState.swift in Sources */,
+				C38EB6989296E836A2B30500 /* KnobStateManager.swift in Sources */,
+				5B0159A542CFECBEC84D42F7 /* MultitouchManager.swift in Sources */,
+				2C9B5146B062FB1B035278C0 /* OverlayController.swift in Sources */,
+				DA239AC64B92C952567FFAC8 /* OverlayView.swift in Sources */,
+				420339FEBDE051C4655DC2FE /* PhantomKnobApp.swift in Sources */,
+				CD89F7BED76AAC7E84CCB3A0 /* ResultView.swift in Sources */,
+				73535C7231C6DCFB956DBB0F /* RotationDirection.swift in Sources */,
+				E20AAAAD9FA748A54342DF1F /* RuleLibrary.swift in Sources */,
+				19EAA3A782F956431C311D9F /* ScaleResolver.swift in Sources */,
+				86B5FBD17C12E7D00F0BC8AE /* ScrollWheelTranslator.swift in Sources */,
+				25D87235AD562FC280186E55 /* SensitivityConfig.swift in Sources */,
+				55F5DCD9ECDD28004DFEA03A /* SettingsView.swift in Sources */,
+				6D99BA3F54A87A56FC3699DF /* StatusBarController.swift in Sources */,
+				367F55A8914856016C59C71D /* TargetDetector.swift in Sources */,
+				9CD064A910A69A1B74089CA5 /* TouchpadDetector.swift in Sources */,
+				B94BA13F948C499CB5120913 /* TouchpadEngine.swift in Sources */,
+				9D43C46E67005EC6776B824E /* TouchpadView.swift in Sources */,
+				D52F23DBE99A803318F93ABE /* WelcomeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3B646EBF24733D12D6A50D59 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 609BE1C03A51F470FDB98841 /* PhantomKnob */;
+			targetProxy = 9D8579449157F7428A93A146 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1A07255CE7C2A4D7261FD6D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnobTests;
+				PRODUCT_NAME = PhantomKnobTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomKnob.app/Contents/MacOS/PhantomKnob";
+			};
+			name = Release;
+		};
+		715E3B3634A8832E8A378130 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnob;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		7CEB8C7843679F70A6D4877F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = PhantomKnob;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		DC421557D7F8F7BDC1554880 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnobTests;
+				PRODUCT_NAME = PhantomKnobTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomKnob.app/Contents/MacOS/PhantomKnob";
+			};
+			name = Debug;
+		};
+		F07887C835155F000DC3FC39 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = PhantomKnob;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		F64E8DA0FB3B5EB953365C45 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.phantomknob.PhantomKnob;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		46D7BEE75368A239D31CEA83 /* Build configuration list for PBXProject "PhantomKnob" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7CEB8C7843679F70A6D4877F /* Debug */,
+				F07887C835155F000DC3FC39 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A9D339C24648C25841BE63A9 /* Build configuration list for PBXNativeTarget "PhantomKnob" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				715E3B3634A8832E8A378130 /* Debug */,
+				F64E8DA0FB3B5EB953365C45 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B39020FF9204EA0567472917 /* Build configuration list for PBXNativeTarget "PhantomKnobTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC421557D7F8F7BDC1554880 /* Debug */,
+				1A07255CE7C2A4D7261FD6D7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B10F9B6433F5F844F0C50F0F /* Project object */;
+}

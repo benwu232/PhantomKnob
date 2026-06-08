@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Model/AppSettings.swift
+// PhantomKnob/Model/AppSettings.swift
 import Foundation
 
 struct AppSettings: Codable {

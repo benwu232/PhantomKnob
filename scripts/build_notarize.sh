@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# PhantomKnobDetector - 一键构建、Developer ID 签名与 Apple 公证（Notarization）脚本
+# PhantomKnob - 一键构建、Developer ID 签名与 Apple 公证（Notarization）脚本
 # ==============================================================================
 # 
 # 准备工作：
@@ -14,9 +14,9 @@
 # ==============================================================================
 
 # 基础配置信息
-APP_NAME="PhantomKnobDetector"
-BUNDLE_ID="com.phantomknob.PhantomKnobDetector"
-PROJECT_DIR="$(pwd)/PhantomKnobDetector"
+APP_NAME="PhantomKnob"
+BUNDLE_ID="com.phantomknob.PhantomKnob"
+PROJECT_DIR="$(pwd)/PhantomKnob"
 BUILD_DIR="$(pwd)/build"
 DMG_DIR="$(pwd)/dist"
 

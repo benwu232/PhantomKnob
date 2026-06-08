@@ -1,6 +1,6 @@
-// PhantomKnobDetectorTests/ScaleConfigCompatibilityTests.swift
+// PhantomKnobTests/ScaleConfigCompatibilityTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class ScaleConfigCompatibilityTests: XCTestCase {
     func testDecodeLegacyFixedScale() throws {

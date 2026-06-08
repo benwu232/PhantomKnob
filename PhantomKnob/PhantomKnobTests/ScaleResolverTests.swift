@@ -1,6 +1,6 @@
-// PhantomKnobDetectorTests/ScaleResolverTests.swift
+// PhantomKnobTests/ScaleResolverTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class ScaleResolverTests: XCTestCase {
     func testHysteresisZonesAndDeadzone() {

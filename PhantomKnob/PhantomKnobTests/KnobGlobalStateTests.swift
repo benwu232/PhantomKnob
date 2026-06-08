@@ -1,6 +1,6 @@
-// PhantomKnobDetector/PhantomKnobDetectorTests/KnobGlobalStateTests.swift
+// PhantomKnob/PhantomKnobTests/KnobGlobalStateTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class KnobGlobalStateTests: XCTestCase {
 

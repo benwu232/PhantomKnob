@@ -31,7 +31,7 @@ class AppState: ObservableObject {
 
 #if !TESTING
 @main
-struct PhantomKnobDetectorApp: App {
+struct PhantomKnobApp: App {
     @StateObject private var appViewModel = AppViewModel(cache: DetectionCache())
     @StateObject private var appState = AppState()
     

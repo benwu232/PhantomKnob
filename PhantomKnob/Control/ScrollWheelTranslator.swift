@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Control/ScrollWheelTranslator.swift
+// PhantomKnob/Control/ScrollWheelTranslator.swift
 import Foundation
 import CoreGraphics
 

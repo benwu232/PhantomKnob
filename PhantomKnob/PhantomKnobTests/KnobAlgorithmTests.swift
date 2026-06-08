@@ -1,5 +1,5 @@
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class KnobAlgorithmTests: XCTestCase {
     

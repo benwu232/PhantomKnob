@@ -1,6 +1,6 @@
-// PhantomKnobDetector/PhantomKnobDetectorTests/TargetDetectorTests.swift
+// PhantomKnob/PhantomKnobTests/TargetDetectorTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class TargetDetectorTests: XCTestCase {
     

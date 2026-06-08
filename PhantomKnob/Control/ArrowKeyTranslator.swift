@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Control/ArrowKeyTranslator.swift
+// PhantomKnob/Control/ArrowKeyTranslator.swift
 import Foundation
 import CoreGraphics
 

@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Model/InputTranslation.swift
+// PhantomKnob/Model/InputTranslation.swift
 import Foundation
 
 /// 将旋转角度转化为系统输入事件的策略。描述"如何投递"，不感知目标控件。

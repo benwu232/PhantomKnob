@@ -1,6 +1,6 @@
-// PhantomKnobDetector/PhantomKnobDetectorTests/GestureConflictTests.swift
+// PhantomKnob/PhantomKnobTests/GestureConflictTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class GestureConflictTests: XCTestCase {
     

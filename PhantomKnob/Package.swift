@@ -2,22 +2,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "PhantomKnobDetector",
+    name: "PhantomKnob",
     platforms: [
         .macOS(.v12)
     ],
     products: [
         .library(
-            name: "PhantomKnobDetector",
-            targets: ["PhantomKnobDetector"]
+            name: "PhantomKnob",
+            targets: ["PhantomKnob"]
         )
     ],
     targets: [
         .target(
-            name: "PhantomKnobDetector",
+            name: "PhantomKnob",
             path: ".",
             sources: [
-                "App/PhantomKnobDetectorApp.swift",
+                "App/PhantomKnobApp.swift",
                 "Model/",
                 "ViewModel/",
                 "View/",
@@ -30,9 +30,9 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "PhantomKnobDetectorTests",
-            dependencies: ["PhantomKnobDetector"],
-            path: "PhantomKnobDetectorTests"
+            name: "PhantomKnobTests",
+            dependencies: ["PhantomKnob"],
+            path: "PhantomKnobTests"
         )
     ]
 )

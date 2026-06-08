@@ -1,6 +1,6 @@
-// PhantomKnobDetector/PhantomKnobDetectorTests/RuleLibraryTests.swift
+// PhantomKnob/PhantomKnobTests/RuleLibraryTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class RuleLibraryTests: XCTestCase {
 

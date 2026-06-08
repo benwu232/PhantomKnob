@@ -1,6 +1,6 @@
-// PhantomKnobDetectorTests/JSONCParserTests.swift
+// PhantomKnobTests/JSONCParserTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class JSONCParserTests: XCTestCase {
     func testStripComments() {

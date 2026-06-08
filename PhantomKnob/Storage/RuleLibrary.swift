@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Storage/RuleLibrary.swift
+// PhantomKnob/Storage/RuleLibrary.swift
 import Foundation
 
 /// 规则库：查找 ControlRule 的单一入口。

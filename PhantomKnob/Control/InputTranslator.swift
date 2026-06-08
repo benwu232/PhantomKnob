@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Control/InputTranslator.swift
+// PhantomKnob/Control/InputTranslator.swift
 import Foundation
 
 /// 执行旋钮控制的运行时对象。

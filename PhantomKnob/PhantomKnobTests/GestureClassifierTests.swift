@@ -1,5 +1,5 @@
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 import CoreGraphics
 
 final class GestureClassifierTests: XCTestCase {

@@ -1,6 +1,6 @@
-// PhantomKnobDetector/PhantomKnobDetectorTests/InputTranslationTests.swift
+// PhantomKnob/PhantomKnobTests/InputTranslationTests.swift
 import XCTest
-@testable import PhantomKnobDetector
+@testable import PhantomKnob
 
 final class InputTranslationTests: XCTestCase {
 

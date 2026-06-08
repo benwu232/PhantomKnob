@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Model/KnobGlobalState.swift
+// PhantomKnob/Model/KnobGlobalState.swift
 import Foundation
 import AppKit
 

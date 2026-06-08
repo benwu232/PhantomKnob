@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Control/AXWriteTranslator.swift
+// PhantomKnob/Control/AXWriteTranslator.swift
 import Foundation
 import ApplicationServices
 

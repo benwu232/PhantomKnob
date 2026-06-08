@@ -1,4 +1,4 @@
-# PhantomKnobDetector Context
+# PhantomKnob Context
 
 ## Glossary
 

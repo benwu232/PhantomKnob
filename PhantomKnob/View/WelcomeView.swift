@@ -7,7 +7,7 @@ struct WelcomeView: View {
         VStack(spacing: 30) {
             Spacer()
             
-            Text("PhantomKnobDetector")
+            Text("PhantomKnob")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             

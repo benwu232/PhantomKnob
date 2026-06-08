@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Model/ControlRule.swift
+// PhantomKnob/Model/ControlRule.swift
 import Foundation
 
 /// 规则库中唯一标识一条规则的 key。

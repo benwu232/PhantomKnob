@@ -1,4 +1,4 @@
-// PhantomKnobDetector/Model/DetectedTarget.swift
+// PhantomKnob/Model/DetectedTarget.swift
 import Foundation
 import ApplicationServices
 
