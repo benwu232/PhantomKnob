@@ -156,7 +156,7 @@ struct OverlayView: View {
                 // 4. 正中心倍数显示 (调整为更小、与整体透明度一致为 0.4)
                 if let scale = scale {
                     Text(String(format: "%.1fx", scale))
-                        .font(.system(size: 14, weight: .black, design: .monospaced))
+                        .font(.system(size: 24, weight: .black, design: .monospaced))
                         .foregroundColor(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4))
                         .shadow(color: Color.black.opacity(0.2), radius: 1, x: 0, y: 1)
                 }
