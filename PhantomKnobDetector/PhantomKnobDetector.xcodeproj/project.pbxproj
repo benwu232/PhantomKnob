@@ -57,6 +57,7 @@
 		D2B25917E0D5CFED64F315E9 /* DetectedTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6CF6C828BA0800340EA5B8 /* DetectedTarget.swift */; };
 		D906797BED0A61E3458A98F3 /* TouchpadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E720FE246909EA3842966A5 /* TouchpadEngine.swift */; };
 		DC1C8D08084D999B13A7AFC0 /* KnobCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08EC3945A4C7D1541B7914B1 /* KnobCircleView.swift */; };
+		E1865E732E07872BF222AF14 /* GestureConflictTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E113B8F5A87AB274E02B4CC /* GestureConflictTests.swift */; };
 		E3CFCB80F00084CC20E2C96E /* ScrollWheelTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8635EF77660AF4A566FFAE8F /* ScrollWheelTranslator.swift */; };
 		E461695570DA6381F0390C1B /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB0FF255FA2F86096619909 /* OverlayView.swift */; };
 		E4662CA73DF3BFFDFB9E5366 /* GenericControlTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C166CBBF147A9E21FF3CDC3 /* GenericControlTarget.swift */; };
@@ -85,6 +86,7 @@
 		055D7294BA7EDA1C6E9AF44C /* AXWriteTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXWriteTranslator.swift; sourceTree = "<group>"; };
 		08EC3945A4C7D1541B7914B1 /* KnobCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCircleView.swift; sourceTree = "<group>"; };
 		0C166CBBF147A9E21FF3CDC3 /* GenericControlTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericControlTarget.swift; sourceTree = "<group>"; };
+		0E113B8F5A87AB274E02B4CC /* GestureConflictTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureConflictTests.swift; sourceTree = "<group>"; };
 		125E1B51314278547D4F328C /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		1CD690D6413B5376C9D69F85 /* SensitivityConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityConfig.swift; sourceTree = "<group>"; };
 		1D4712482F62AEA70CC6E793 /* TargetDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetDetectorTests.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				CD8B97CB220881FCBC6E9993 /* ControlTests.swift */,
 				B07D3BA772507B56BD32FFF9 /* CustomMultiplierTests.swift */,
 				6268A4299177BA4DF15AF778 /* GestureClassifierTests.swift */,
+				0E113B8F5A87AB274E02B4CC /* GestureConflictTests.swift */,
 				C6EF5FF74E6C0C9F7A970AF9 /* InputTranslationTests.swift */,
 				2FFA632EF1B39CE01727AB9C /* JSONCParserTests.swift */,
 				428F89026CB6D1EBB0F60A6D /* KnobAlgorithmTests.swift */,
@@ -393,6 +396,7 @@
 				A4915B2B22AB0FA95425F2F8 /* ControlTests.swift in Sources */,
 				0CF1CFBB29884E5F92AA1388 /* CustomMultiplierTests.swift in Sources */,
 				F433D0C4FCEFBD47B753172E /* GestureClassifierTests.swift in Sources */,
+				E1865E732E07872BF222AF14 /* GestureConflictTests.swift in Sources */,
 				A841CF8D2E3938E0713FBDCF /* InputTranslationTests.swift in Sources */,
 				5A6F495E0C4C86B4A010117F /* JSONCParserTests.swift in Sources */,
 				06580DE356F87888CBB78347 /* KnobAlgorithmTests.swift in Sources */,
