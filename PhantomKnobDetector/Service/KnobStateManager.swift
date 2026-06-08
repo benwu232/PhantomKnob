@@ -31,6 +31,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private var currentRadius: Double = 0.0
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
+    var isInterceptingGestures = false
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -612,6 +613,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     // MARK: - Helper Methods
+    
+    func isAdjustable(target: DetectedTarget) -> Bool {
+        return false
+    }
     
     private func calculateRawAngle(points: [Int: CGPoint]) -> Double? {
         if points.count >= 2 {
