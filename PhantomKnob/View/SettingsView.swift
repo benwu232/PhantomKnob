@@ -48,7 +48,7 @@ struct GeneralSettingsView: View {
                 HStack {
                     Text("全局控制开关")
                     Spacer()
-                    Text("⌥L")
+                    Text("⌘⌥R")
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Color.gray.opacity(0.2))
