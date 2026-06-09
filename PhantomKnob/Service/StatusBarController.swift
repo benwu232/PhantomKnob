@@ -32,8 +32,9 @@ class StatusBarController: ObservableObject {
     private func setupLocalHotkey() {
         localHotkeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             NSLog("[StatusBarController] Local keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue)")
-            if event.modifierFlags.contains([.command, .shift]) && event.keyCode == 40 {
-                NSLog("[StatusBarController] Local hotkey Cmd+Shift+K detected")
+            let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if modifiers.contains(.option) && !modifiers.contains(.command) && !modifiers.contains(.control) && !modifiers.contains(.shift) && event.keyCode == 37 {
+                NSLog("[StatusBarController] Local hotkey Option+L detected")
                 self?.toggleMode()
                 return nil
             }
@@ -45,8 +46,9 @@ class StatusBarController: ObservableObject {
     private func setupGlobalHotkey() {
         globalHotkeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
             NSLog("[StatusBarController] Global keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue)")
-            if event.modifierFlags.contains([.command, .shift]) && event.keyCode == 40 {
-                NSLog("[StatusBarController] Global hotkey Cmd+Shift+K detected")
+            let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if modifiers.contains(.option) && !modifiers.contains(.command) && !modifiers.contains(.control) && !modifiers.contains(.shift) && event.keyCode == 37 {
+                NSLog("[StatusBarController] Global hotkey Option+L detected")
                 self?.toggleMode()
             }
         }
@@ -59,7 +61,7 @@ class StatusBarController: ObservableObject {
         if let button = statusItem?.button {
             button.image = createIcon(for: .inactive)
             button.image?.isTemplate = true
-            button.toolTip = "Knob 控制：未激活（按 ⌘⇧K 激活）"
+            button.toolTip = "Knob 控制：未激活（按 ⌥L 激活）"
             button.action = #selector(statusBarButtonClicked)
             button.target = self
         }
@@ -79,9 +81,9 @@ class StatusBarController: ObservableObject {
         let toggleItem = NSMenuItem(
             title: "切换控制模式",
             action: #selector(toggleMode),
-            keyEquivalent: "k"
+            keyEquivalent: "l"
         )
-        toggleItem.keyEquivalentModifierMask = [.command, .shift]
+        toggleItem.keyEquivalentModifierMask = [.option]
         toggleItem.target = self
         menu?.addItem(toggleItem)
         
@@ -174,7 +176,7 @@ class StatusBarController: ObservableObject {
     private func createTooltip(for state: KnobGlobalState, targetName: String?) -> String {
         switch state {
         case .inactive:
-            return "Knob 控制：未激活（按 ⌘⇧K 激活）"
+            return "Knob 控制：未激活（按 ⌥L 激活）"
         case .activated:
             return "Knob 控制：已激活，等待手势"
         case .knobing:

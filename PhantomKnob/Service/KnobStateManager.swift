@@ -91,7 +91,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     func toggleMode() {
         writeDebugLog("[KnobStateManager] toggleMode() called, current state: \(state)")
-        if case .inactive = state {
+        if isOptionHoldActive {
+            writeDebugLog("[KnobStateManager] Converting temporary Option Hold to persistent activated state")
+            isOptionHoldActive = false
+            if case .cooling = state {
+                transition(to: .activated)
+            }
+        } else if case .inactive = state {
             let isTrusted = AXIsProcessTrusted()
             guard isTrusted else {
                 let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
