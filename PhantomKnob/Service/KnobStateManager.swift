@@ -194,11 +194,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let detectedTarget = targetDetector.detectTargetAtMousePosition()
 
         // 2. 创建 DetectedTarget（无 AX 元素时用当前 app 信息填充）
+        let frontmostApp = NSWorkspace.shared.frontmostApplication
+        let appName = frontmostApp?.localizedName ?? ""
         let target = detectedTarget ?? DetectedTarget(
-            bundleID: NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "",
+            bundleID: frontmostApp?.bundleIdentifier ?? "",
             axRole: "unknown",
             identifier: nil,
-            displayName: "",
+            displayName: appName,
             element: nil
         )
 
@@ -747,6 +749,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private func makeTranslator(for target: DetectedTarget, rule: ControlRule?) -> InputTranslator {
         let translation = rule?.translation ?? autoDetectTranslation(for: target)
         let scale = rule?.scaleConfig.resolve() ?? 1.0
+        let isInverted = rule?.invert ?? false
 
         switch translation {
         case .axWrite:
@@ -755,15 +758,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                   let maxV = TargetDetector.getDouble(from: element, attribute: kAXMaxValueAttribute)
             else {
                 // AX 元素不可用，降级到滚轮
-                return ScrollWheelTranslator(axis: .vertical, scale: scale)
+                return ScrollWheelTranslator(axis: .vertical, scale: scale, invert: isInverted)
             }
             return AXWriteTranslator(element: element, minValue: minV, maxValue: maxV, scale: scale)
 
         case .scrollWheelVertical:
-            return ScrollWheelTranslator(axis: .vertical, scale: scale)
+            return ScrollWheelTranslator(axis: .vertical, scale: scale, invert: isInverted)
 
         case .scrollWheelHorizontal:
-            return ScrollWheelTranslator(axis: .horizontal, scale: scale)
+            return ScrollWheelTranslator(axis: .horizontal, scale: scale, invert: isInverted)
 
         case .arrowKeyUpDown:
             return ArrowKeyTranslator(axis: .upDown, scale: scale)
@@ -773,10 +776,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
         case .swipeVertical:
             // 使用滚轮模拟，直到专用 swipe 实现完成
-            return ScrollWheelTranslator(axis: .vertical, scale: scale)
+            return ScrollWheelTranslator(axis: .vertical, scale: scale, invert: isInverted)
 
         case .swipeHorizontal:
-            return ScrollWheelTranslator(axis: .horizontal, scale: scale)
+            return ScrollWheelTranslator(axis: .horizontal, scale: scale, invert: isInverted)
         }
     }
 

@@ -30,7 +30,12 @@ final class RuleLibrary {
         }
 
         // 2. 内置规则（随 App 分发）
-        if let bundledURL = Bundle.main.url(forResource: "bundled-rules", withExtension: "json"),
+        #if SWIFT_PACKAGE
+        let bundle = Bundle.module
+        #else
+        let bundle = Bundle.main
+        #endif
+        if let bundledURL = bundle.url(forResource: "bundled-rules", withExtension: "json"),
            let bundledRules = loadRules(from: bundledURL) {
             loaded.append(contentsOf: bundledRules)
         }
