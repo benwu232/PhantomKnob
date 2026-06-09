@@ -7,23 +7,40 @@ import CoreGraphics
 final class ScrollWheelTranslator: InputTranslator {
     private let axis: Axis
     var scale: Double
+    private let invert: Bool // 新增
     private var accumulator: Double = 0
+    
+    #if DEBUG
+    var testLastDeltaY: CGFloat = 0
+    var testLastDeltaX: CGFloat = 0
+    #endif
 
     enum Axis { case vertical, horizontal }
 
-    init(axis: Axis = .vertical, scale: Double = 1.0) {
+    init(axis: Axis = .vertical, scale: Double = 1.0, invert: Bool = false) {
         self.axis = axis
         self.scale = scale
+        self.invert = invert // 新增
     }
 
     func apply(units: Double, direction: RotationDirection) {
-        let delta = units * scale * (direction == .clockwise ? -1.0 : 1.0)
+        let isClockwise = direction == .clockwise
+        let effectiveClockwise = invert ? !isClockwise : isClockwise
+        let delta = units * scale * (effectiveClockwise ? -1.0 : 1.0)
         accumulator += delta
         
         let steps = Int(accumulator)
         guard steps != 0 else { return }
         
         accumulator -= Double(steps) // 扣除整数部分，保留余数
+
+        #if DEBUG
+        if axis == .vertical {
+            testLastDeltaY = CGFloat(steps)
+        } else {
+            testLastDeltaX = CGFloat(steps)
+        }
+        #endif
 
         switch axis {
         case .vertical:

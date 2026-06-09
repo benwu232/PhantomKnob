@@ -85,3 +85,21 @@ final class ArrowKeyTranslatorTests: XCTestCase {
     }
 }
 
+final class ScrollWheelTranslatorTests: XCTestCase {
+    func testScrollWheelTranslatorInversion() {
+        let normalTranslator = ScrollWheelTranslator(axis: .vertical, scale: 1.0, invert: false)
+        let invertedTranslator = ScrollWheelTranslator(axis: .vertical, scale: 1.0, invert: true)
+        
+        // 顺时针旋转
+        normalTranslator.apply(units: 10.0, direction: .clockwise)
+        invertedTranslator.apply(units: 10.0, direction: .clockwise)
+        
+        #if DEBUG
+        // 默认顺时针为负 delta（向下滚动）
+        XCTAssertTrue(normalTranslator.testLastDeltaY < 0, "Default clockwise scroll should be negative deltaY")
+        // 反转后顺时针为正 delta（向上滚动）
+        XCTAssertTrue(invertedTranslator.testLastDeltaY > 0, "Inverted clockwise scroll should be positive deltaY")
+        #endif
+    }
+}
+
