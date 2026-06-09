@@ -92,4 +92,25 @@ final class RuleLibraryTests: XCTestCase {
             XCTAssertEqual(match?.translation, .arrowKeyLeftRight)
         }
     }
+
+    func testInvertPropertyParsing() throws {
+        let jsonWithInvert = """
+        {"key":{"bundleID":"com.test.app","axRole":"AXSlider","identifier":null},
+          "translation":"scrollWheelVertical",
+          "scaleConfig":{"fixed":1.0},
+          "invert":true}
+        """.data(using: .utf8)!
+        
+        let jsonWithoutInvert = """
+        {"key":{"bundleID":"com.test.app2","axRole":"AXSlider","identifier":null},
+          "translation":"scrollWheelVertical",
+          "scaleConfig":{"fixed":1.0}}
+        """.data(using: .utf8)!
+        
+        let rule1 = try JSONDecoder().decode(ControlRule.self, from: jsonWithInvert)
+        XCTAssertEqual(rule1.invert, true)
+        
+        let rule2 = try JSONDecoder().decode(ControlRule.self, from: jsonWithoutInvert)
+        XCTAssertNil(rule2.invert) // 缺失时解析为 nil，调用方使用 ?? false 处理
+    }
 }

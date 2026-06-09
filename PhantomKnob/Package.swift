@@ -17,7 +17,6 @@ let package = Package(
             name: "PhantomKnob",
             path: ".",
             sources: [
-                "App/PhantomKnobApp.swift",
                 "Model/",
                 "ViewModel/",
                 "View/",

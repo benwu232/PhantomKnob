@@ -57,6 +57,7 @@ struct ControlRule: Codable {
     var themeColor: String?
     var overlayStyle: String?
     var rotationStyle: String?
+    var invert: Bool? // 新增
 
     init(key: RuleKey,
          translation: InputTranslation,
@@ -64,6 +65,7 @@ struct ControlRule: Codable {
          themeColor: String? = nil,
          overlayStyle: String? = nil,
          rotationStyle: String? = nil,
+         invert: Bool? = false, // 新增
          extra: [String: String]? = nil) {
         self.key = key
         self.translation = translation
@@ -71,6 +73,7 @@ struct ControlRule: Codable {
         self.themeColor = themeColor
         self.overlayStyle = overlayStyle
         self.rotationStyle = rotationStyle
+        self.invert = invert
         self.extra = extra
     }
 }
