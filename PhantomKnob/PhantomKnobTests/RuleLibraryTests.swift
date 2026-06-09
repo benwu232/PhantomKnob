@@ -113,4 +113,16 @@ final class RuleLibraryTests: XCTestCase {
         let rule2 = try JSONDecoder().decode(ControlRule.self, from: jsonWithoutInvert)
         XCTAssertNil(rule2.invert) // 缺失时解析为 nil，调用方使用 ?? false 处理
     }
+
+    func testDaVinciResolveRuleIsLoaded() {
+        let lib = RuleLibrary.shared
+        lib.reload()
+        
+        let key = RuleKey(bundleID: "com.blackmagic-design.DaVinciResolve", axRole: "unknown")
+        let rule = lib.lookup(for: key)
+        
+        XCTAssertNotNil(rule, "Resolve rule must exist")
+        XCTAssertEqual(rule?.translation, .scrollWheelVertical)
+        XCTAssertEqual(rule?.invert, true)
+    }
 }

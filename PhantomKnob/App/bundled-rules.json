@@ -56,10 +56,11 @@
       "axRole": "unknown",
       "identifier": null
     },
-    "translation": "arrowKeyLeftRight",
+    "translation": "scrollWheelVertical",
     "scaleConfig": {
       "fixed": 1.0
     },
+    "invert": true,
     "extra": null
   },
   {
