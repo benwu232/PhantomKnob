@@ -51,7 +51,7 @@ struct UserGuideView: View {
                             viewModel.hovered = isHover
                         }
                         
-                        if !viewModel.hovered {
+                        if !viewModel.hovered && !viewModel.isStep2Unlocked {
                             // 手指在旋钮周围浮动指引的动画
                             CursorGuideAnimationView()
                                 .offset(x: 40, y: -40)
