@@ -190,6 +190,40 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         coolingTimer?.invalidate()
         coolingTimer = nil
 
+        if KnobPanelWindowController.shared.isVisible {
+            let target = DetectedTarget(
+                bundleID: "com.phantomknob.controlpanel",
+                axRole: "ControlPanel",
+                identifier: nil,
+                displayName: "控制面板",
+                element: nil
+            )
+            currentTarget = target
+            currentTranslator = ScrollWheelTranslator()
+            
+            let mouseLoc = NSEvent.mouseLocation
+            initialTouchPosition = mouseLoc
+            let screenHeight = NSScreen.screens.first?.frame.height ?? 1080
+            initialTouchPositionCarbon = CGPoint(x: mouseLoc.x, y: screenHeight - mouseLoc.y)
+
+            let scaledPoints = scaleCoordinates(points)
+            let (knobCore, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
+            if knobCore.isValid {
+                self.fixedCenter = knobCore.center
+                self.fingerIdx1 = idx1
+                self.fingerIdx2 = idx2
+                self.previousAngle = knobCore.angle
+            }
+            
+            gestureClassifier.processTouchesBegan(points: points)
+            isInterceptingGestures = true
+            if let tap = eventTap {
+                CGEvent.tapEnable(tap: tap, enable: true)
+                writeDebugLog("[KnobStateManager] Enabled event tap on begin (ControlPanel mode)")
+            }
+            return
+        }
+
         // 1. 探测目标元素
         let detectedTarget = targetDetector.detectTargetAtMousePosition()
 
@@ -333,6 +367,26 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         if state.isKnobing {
             if let lockPos = initialTouchPositionCarbon {
                 CGWarpMouseCursorPosition(lockPos)
+            }
+
+            if let target = currentTarget, target.axRole == "ControlPanel" {
+                let knobState = KnobState(
+                    current: KnobCore(angle: currentAngle),
+                    previous: KnobCore(angle: previousAngle)
+                )
+                let delta = knobState.deltaAngle
+                
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("KnobPanelDidRotate"),
+                    object: nil,
+                    userInfo: ["delta": delta]
+                )
+                
+                ControlPanelViewModel.shared.receiveRotationDelta(delta)
+                
+                self.currentAngle = currentAngle
+                previousAngle = currentAngle
+                return
             }
 
             let radius = calculateRawRadius(points: scaledPoints)
@@ -638,6 +692,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     // MARK: - Helper Methods
     
     func isAdjustable(target: DetectedTarget) -> Bool {
+        if target.axRole == "ControlPanel" {
+            return true
+        }
+        
         // 1. 如果命中规则库中的任何规则，说明用户/内置规则已为此进行了特化，必然是可调节的
         if RuleLibrary.shared.lookup(for: target.ruleKey) != nil {
             return true

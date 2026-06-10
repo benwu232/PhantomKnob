@@ -32,6 +32,10 @@ class StatusBarController: ObservableObject {
     private func setupLocalHotkey() {
         localHotkeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             writeDebugLog("[StatusBarController] Local keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
+            if event.keyCode == 49 && event.modifierFlags.contains(.option) {
+                KnobPanelWindowController.shared.toggle()
+                return nil
+            }
             if event.keyCode == 15 {
                 let hasCmdOpt = event.modifierFlags.contains([.command, .option])
                 let hasCtrlOpt = event.modifierFlags.contains([.control, .option])
@@ -49,6 +53,10 @@ class StatusBarController: ObservableObject {
     private func setupGlobalHotkey() {
         globalHotkeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
             writeDebugLog("[StatusBarController] Global keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
+            if event.keyCode == 49 && event.modifierFlags.contains(.option) {
+                KnobPanelWindowController.shared.toggle()
+                return
+            }
             if event.keyCode == 15 {
                 let hasCmdOpt = event.modifierFlags.contains([.command, .option])
                 let hasCtrlOpt = event.modifierFlags.contains([.control, .option])
@@ -135,7 +143,11 @@ class StatusBarController: ObservableObject {
     }
     
     @objc private func statusBarButtonClicked() {
-        onToggleHotkey?()
+        if let event = NSApp.currentEvent, event.clickCount == 2 {
+            KnobPanelWindowController.shared.toggle()
+        } else {
+            onToggleHotkey?()
+        }
     }
     
     @objc private func toggleMode() {
