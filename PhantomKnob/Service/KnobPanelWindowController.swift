@@ -1,18 +1,6 @@
 import AppKit
 import SwiftUI
 
-// Temporary placeholders for Task 2 compilation. Will be replaced in Task 3.
-struct KnobPanelView: View {
-    var body: some View {
-        Text("Knob Panel View")
-            .foregroundColor(.white)
-            .padding()
-    }
-}
-
-class ControlPanelViewModel: ObservableObject {
-    static let shared = ControlPanelViewModel()
-}
 
 class KnobPanelWindow: NSWindow {
     override var canBecomeKey: Bool {
