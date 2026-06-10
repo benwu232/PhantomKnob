@@ -70,10 +70,10 @@ class UserGuideViewModel: ObservableObject {
             isStep2Unlocked = true
         }
         
-        // 播放 Tick 反馈嘀嗒音 (限制频率以防爆音，最高 20Hz/50ms 间隔)
+        // 播放 Tick 反馈嘀嗒音 (限制频率以防爆音，最高 10Hz/100ms 间隔)
         let ticks = updateTickAccumulationAndGetTicks(absDeg)
         let now = ProcessInfo.processInfo.systemUptime
-        if ticks > 0 && (now - lastPlayTime) >= 0.05 {
+        if ticks > 0 && (now - lastPlayTime) >= 0.1 {
             if systemSoundID != 0 {
                 AudioServicesPlaySystemSound(systemSoundID)
             } else {

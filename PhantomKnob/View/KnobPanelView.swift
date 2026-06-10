@@ -73,6 +73,17 @@ struct RadialKnobControlView: View {
     let angle: Double
     let isFocused: Bool
     let isGestureActive: Bool
+    let showPercentage: Bool
+    
+    init(title: String, icon: String, value: Float, angle: Double, isFocused: Bool, isGestureActive: Bool, showPercentage: Bool = true) {
+        self.title = title
+        self.icon = icon
+        self.value = value
+        self.angle = angle
+        self.isFocused = isFocused
+        self.isGestureActive = isGestureActive
+        self.showPercentage = showPercentage
+    }
     
     var body: some View {
         VStack(spacing: 12) {
@@ -122,9 +133,11 @@ struct RadialKnobControlView: View {
                 .font(.system(size: 13, weight: .bold))
                 .foregroundColor(.white.opacity(0.9))
             
-            Text(String(format: "%.0f%%", value * 100))
-                .font(.system(size: 11, design: .monospaced))
-                .foregroundColor(.white.opacity(0.6))
+            if showPercentage {
+                Text(String(format: "%.0f%%", value * 100))
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.6))
+            }
         }
         .scaleEffect(isFocused ? 1.15 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isFocused)

@@ -44,7 +44,8 @@ struct UserGuideView: View {
                             value: viewModel.volumeVal,
                             angle: viewModel.rotationAngle,
                             isFocused: viewModel.hovered,
-                            isGestureActive: viewModel.isGestureActive
+                            isGestureActive: viewModel.isGestureActive,
+                            showPercentage: false
                         )
                         .onHover { isHover in
                             viewModel.hovered = isHover
