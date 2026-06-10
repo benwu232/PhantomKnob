@@ -233,7 +233,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         coolingTimer?.invalidate()
         coolingTimer = nil
 
-        if KnobPanelWindowController.shared.isVisible {
+        if KnobPanelWindowController.shared.isVisible || UserGuideWindowController.shared.isVisible {
             let target = DetectedTarget(
                 bundleID: "com.phantomknob.controlpanel",
                 axRole: "ControlPanel",
