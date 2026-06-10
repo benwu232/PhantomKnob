@@ -16,6 +16,7 @@ class UserGuideViewModel: ObservableObject {
     private let audioService: AudioControlService
     private var cancellables = Set<AnyCancellable>()
     private var systemSoundID: SystemSoundID = 0
+    private var lastPlayTime: Double = 0
     
     init(audioService: AudioControlService = AudioControlService()) {
         self.audioService = audioService
@@ -68,14 +69,16 @@ class UserGuideViewModel: ObservableObject {
             isStep2Unlocked = true
         }
         
-        // 播放 Tick 反馈嘀嗒音
+        // 播放 Tick 反馈嘀嗒音 (限制频率以防爆音，最高 20Hz/50ms 间隔)
         let ticks = updateTickAccumulationAndGetTicks(absDeg)
-        for _ in 0..<ticks {
+        let now = ProcessInfo.processInfo.systemUptime
+        if ticks > 0 && (now - lastPlayTime) >= 0.05 {
             if systemSoundID != 0 {
                 AudioServicesPlaySystemSound(systemSoundID)
             } else {
                 AudioServicesPlaySystemSound(1104)
             }
+            lastPlayTime = now
         }
         
         // 实时更新并同步系统音量
