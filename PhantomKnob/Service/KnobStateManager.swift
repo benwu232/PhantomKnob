@@ -158,6 +158,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 writeDebugLog("[KnobStateManager] Disabled event tap for state: \(newState)")
             }
         }
+        
+        if case .knobing(let target) = newState, target.axRole == "ControlPanel" {
+            ControlPanelViewModel.shared.isGestureActive = true
+        } else {
+            ControlPanelViewModel.shared.isGestureActive = false
+        }
     }
 
     private func handleAppSwitch() {

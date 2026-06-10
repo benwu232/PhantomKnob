@@ -31,7 +31,8 @@ struct KnobPanelView: View {
                 icon: "speaker.wave.3.fill",
                 value: viewModel.volumeVal,
                 angle: viewModel.rotationAngles[.volume, default: 0.0],
-                isFocused: viewModel.focusedVariable == .volume
+                isFocused: viewModel.focusedVariable == .volume,
+                isGestureActive: viewModel.isGestureActive
             )
             .onHover { isHover in
                 viewModel.setHoverTarget(isHover ? .volume : nil)
@@ -42,7 +43,8 @@ struct KnobPanelView: View {
                 icon: "sun.max.fill",
                 value: viewModel.brightnessVal,
                 angle: viewModel.rotationAngles[.brightness, default: 0.0],
-                isFocused: viewModel.focusedVariable == .brightness
+                isFocused: viewModel.focusedVariable == .brightness,
+                isGestureActive: viewModel.isGestureActive
             )
             .onHover { isHover in
                 viewModel.setHoverTarget(isHover ? .brightness : nil)
@@ -53,7 +55,8 @@ struct KnobPanelView: View {
                 icon: "keyboard.fill",
                 value: viewModel.backlightVal,
                 angle: viewModel.rotationAngles[.keyboardBacklight, default: 0.0],
-                isFocused: viewModel.focusedVariable == .keyboardBacklight
+                isFocused: viewModel.focusedVariable == .keyboardBacklight,
+                isGestureActive: viewModel.isGestureActive
             )
             .onHover { isHover in
                 viewModel.setHoverTarget(isHover ? .keyboardBacklight : nil)
@@ -69,6 +72,7 @@ struct RadialKnobControlView: View {
     let value: Float
     let angle: Double
     let isFocused: Bool
+    let isGestureActive: Bool
     
     var body: some View {
         VStack(spacing: 12) {
@@ -100,11 +104,13 @@ struct RadialKnobControlView: View {
                     .shadow(radius: isFocused ? 8 : 2)
                 
                 // Indicator dot
-                Circle()
-                    .fill(Color.white.opacity(0.8))
-                    .frame(width: 6, height: 6)
-                    .offset(y: -38)
-                    .rotationEffect(Angle(degrees: angle))
+                if isFocused && isGestureActive {
+                    Circle()
+                        .fill(Color.white.opacity(0.8))
+                        .frame(width: 6, height: 6)
+                        .offset(y: -38)
+                        .rotationEffect(Angle(degrees: angle))
+                }
                 
                 // Icon
                 Image(systemName: icon)

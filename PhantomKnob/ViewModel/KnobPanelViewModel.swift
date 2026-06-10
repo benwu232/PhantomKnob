@@ -16,6 +16,7 @@ class ControlPanelViewModel: ObservableObject {
     @Published var backlightVal: Float = 0.3
     
     @Published var focusedVariable: ControllableVariable? = nil
+    @Published var isGestureActive = false
     @Published var rotationAngles: [ControllableVariable: Double] = [
         .volume: 0, .brightness: 0, .keyboardBacklight: 0
     ]
