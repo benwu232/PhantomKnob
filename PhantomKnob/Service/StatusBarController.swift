@@ -120,8 +120,6 @@ class StatusBarController: ObservableObject {
         )
         quitItem.target = self
         menu?.addItem(quitItem)
-        
-        statusItem?.menu = menu
     }
     
     func updateState(_ state: KnobGlobalState, targetName: String? = nil) {
@@ -142,11 +140,36 @@ class StatusBarController: ObservableObject {
         }
     }
     
-    @objc private func statusBarButtonClicked() {
-        if let event = NSApp.currentEvent, event.clickCount == 2 {
+    private var pendingMenuWorkItem: DispatchWorkItem?
+    
+    @objc func statusBarButtonClicked() {
+        handleStatusItemClick(event: NSApp.currentEvent)
+    }
+    
+    func handleStatusItemClick(event: NSEvent?) {
+        guard let ev = event else {
+            if let menu = menu {
+                statusItem?.popUpMenu(menu)
+            }
+            return
+        }
+        
+        if ev.clickCount == 2 {
+            pendingMenuWorkItem?.cancel()
+            pendingMenuWorkItem = nil
             KnobPanelWindowController.shared.toggle()
-        } else {
-            onToggleHotkey?()
+        } else if ev.clickCount == 1 {
+            pendingMenuWorkItem?.cancel()
+            
+            let workItem = DispatchWorkItem { [weak self] in
+                guard let self = self else { return }
+                if let menu = self.menu {
+                    self.statusItem?.popUpMenu(menu)
+                }
+                self.pendingMenuWorkItem = nil
+            }
+            pendingMenuWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: workItem)
         }
     }
     
