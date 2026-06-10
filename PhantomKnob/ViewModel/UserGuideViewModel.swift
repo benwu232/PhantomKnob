@@ -11,6 +11,7 @@ class UserGuideViewModel: ObservableObject {
     @Published var hovered: Bool = false
     @Published var rotationAngle: Double = 0.0
     @Published var isGestureActive: Bool = false
+    @Published var skipOnNextStartup: Bool = false
     
     private var tickAccumulator: Double = 0.0
     private let audioService: AudioControlService
@@ -105,6 +106,7 @@ class UserGuideViewModel: ObservableObject {
     }
     
     func completeGuide() {
+        UserDefaults.standard.set(skipOnNextStartup, forKey: "skipUserGuideOnStartup")
         UserDefaults.standard.set(true, forKey: "firstRunUserGuideCompleted")
         UserGuideWindowController.shared.hide()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {

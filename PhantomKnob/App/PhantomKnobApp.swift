@@ -43,8 +43,8 @@ struct PhantomKnobApp: App {
             .onAppear {
                 appState.knobStateManager.start()
                 
-                let guideCompleted = UserDefaults.standard.bool(forKey: "firstRunUserGuideCompleted")
-                if !guideCompleted {
+                let skipGuide = UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup")
+                if !skipGuide {
                     UserGuideWindowController.shared.show()
                 } else {
                     let tutorialCompleted = UserDefaults.standard.bool(forKey: "firstRunTutorialCompleted")

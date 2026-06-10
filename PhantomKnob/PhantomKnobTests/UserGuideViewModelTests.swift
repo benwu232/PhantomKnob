@@ -64,4 +64,29 @@ class UserGuideViewModelTests: XCTestCase {
         }
         wait(for: [expectation2], timeout: 1.0)
     }
+    
+    func testSkipOnNextStartupDefaultsToFalse() {
+        let vm = UserGuideViewModel(audioService: AudioControlService())
+        XCTAssertFalse(vm.skipOnNextStartup)
+    }
+    
+    func testCompleteGuideSavesSkipPreference() {
+        let vm = UserGuideViewModel(audioService: AudioControlService())
+        
+        // 1. Test when skipOnNextStartup is true
+        vm.skipOnNextStartup = true
+        vm.completeGuide()
+        XCTAssertTrue(UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup"))
+        
+        // Reset
+        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
+        
+        // 2. Test when skipOnNextStartup is false
+        vm.skipOnNextStartup = false
+        vm.completeGuide()
+        XCTAssertFalse(UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup"))
+        
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
+    }
 }

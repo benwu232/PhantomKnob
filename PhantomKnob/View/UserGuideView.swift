@@ -59,15 +59,7 @@ struct UserGuideView: View {
                     }
                     .frame(height: 170)
                     
-                    VStack(spacing: 4) {
-                        ProgressView(value: min(viewModel.accumulatedRotation, 100.0), total: 100.0)
-                            .progressViewStyle(.linear)
-                            .frame(width: 200)
-                        
-                        Text("已旋转: \(Int(min(viewModel.accumulatedRotation, 100.0)))° / 100°")
-                            .font(.system(size: 12, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.6))
-                    }
+
                     
                     Button(action: {
                         viewModel.nextStep()
@@ -110,6 +102,11 @@ struct UserGuideView: View {
                         .foregroundColor(.blue)
                     }
                     .padding(.horizontal, 30)
+                    
+                    Toggle("下次启动不再显示", isOn: $viewModel.skipOnNextStartup)
+                        .toggleStyle(.checkbox)
+                        .foregroundColor(.white.opacity(0.85))
+                        .font(.system(size: 13))
                     
                     Button(action: {
                         viewModel.completeGuide()
