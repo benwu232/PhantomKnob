@@ -1,0 +1,125 @@
+import AppKit
+import SwiftUI
+
+// Temporary placeholders for Task 2 compilation. Will be replaced in Task 3.
+struct KnobPanelView: View {
+    var body: some View {
+        Text("Knob Panel View")
+            .foregroundColor(.white)
+            .padding()
+    }
+}
+
+class ControlPanelViewModel: ObservableObject {
+    static let shared = ControlPanelViewModel()
+}
+
+class KnobPanelWindow: NSWindow {
+    override var canBecomeKey: Bool {
+        return true
+    }
+}
+
+class KnobPanelWindowController: NSObject, NSWindowDelegate {
+    static let shared = KnobPanelWindowController()
+    
+    private var window: KnobPanelWindow?
+    private var localClickMonitor: Any?
+    
+    var isVisible: Bool {
+        return window?.isVisible ?? false
+    }
+    
+    func show() {
+        if window == nil {
+            createWindow()
+        }
+        
+        window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        setupClickMonitor()
+    }
+    
+    func hide() {
+        window?.orderOut(nil)
+        removeClickMonitor()
+    }
+    
+    func toggle() {
+        if isVisible {
+            hide()
+        } else {
+            show()
+        }
+    }
+    
+    private func createWindow() {
+        let width: CGFloat = 640
+        let height: CGFloat = 320
+        let screenFrame = NSScreen.main?.visibleFrame ?? .zero
+        let originX = screenFrame.origin.x + (screenFrame.width - width) / 2
+        let originY = screenFrame.origin.y + (screenFrame.height - height) / 2
+        
+        let contentRect = NSRect(x: originX, y: originY, width: width, height: height)
+        let win = KnobPanelWindow(
+            contentRect: contentRect,
+            styleMask: [.borderless],
+            backing: .buffered,
+            defer: false
+        )
+        
+        win.backgroundColor = .clear
+        win.isOpaque = false
+        win.level = .floating
+        win.hidesOnDeactivate = true
+        win.delegate = self
+        
+        // 毛玻璃特效
+        let visualEffectView = NSVisualEffectView(frame: NSRect(origin: .zero, size: contentRect.size))
+        visualEffectView.material = .hudWindow
+        visualEffectView.blendingMode = .behindWindow
+        visualEffectView.state = .active
+        visualEffectView.autoresizingMask = [.width, .height]
+        
+        visualEffectView.wantsLayer = true
+        visualEffectView.layer?.cornerRadius = 20
+        visualEffectView.layer?.masksToBounds = true
+        
+        win.contentView = visualEffectView
+        
+        // 嵌入 SwiftUI 视图
+        let hostingView = NSHostingView(rootView: KnobPanelView().environmentObject(ControlPanelViewModel.shared))
+        hostingView.frame = visualEffectView.bounds
+        hostingView.autoresizingMask = [.width, .height]
+        visualEffectView.addSubview(hostingView)
+        
+        self.window = win
+    }
+    
+    private func setupClickMonitor() {
+        removeClickMonitor()
+        localClickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            guard let self = self, let win = self.window else { return event }
+            
+            let clickLocation = NSEvent.mouseLocation
+            let windowFrame = win.frame
+            if !NSPointInRect(clickLocation, windowFrame) {
+                DispatchQueue.main.async {
+                    self.hide()
+                }
+            }
+            return event
+        }
+    }
+    
+    private func removeClickMonitor() {
+        if let monitor = localClickMonitor {
+            NSEvent.removeMonitor(monitor)
+            localClickMonitor = nil
+        }
+    }
+    
+    func windowDidResignKey(_ notification: Notification) {
+        hide()
+    }
+}
