@@ -2,8 +2,29 @@ import SwiftUI
 
 struct KnobPanelView: View {
     @EnvironmentObject var viewModel: ControlPanelViewModel
+    @AppStorage("firstRunTutorialCompleted") private var firstRunTutorialCompleted = false
     
     var body: some View {
+        VStack(spacing: 12) {
+            if !firstRunTutorialCompleted {
+                VStack(spacing: 8) {
+                    TutorialView()
+                        .frame(height: 140)
+                    
+                    Divider()
+                        .background(Color.white.opacity(0.15))
+                    
+                    mainControlLayout
+                }
+            } else {
+                mainControlLayout
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.vertical, 16)
+    }
+    
+    private var mainControlLayout: some View {
         HStack(spacing: 40) {
             RadialKnobControlView(
                 title: "系统音量",
@@ -38,7 +59,6 @@ struct KnobPanelView: View {
                 viewModel.setHoverTarget(isHover ? .keyboardBacklight : nil)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 40)
     }
 }
