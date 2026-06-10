@@ -39,4 +39,29 @@ class UserGuideViewModelTests: XCTestCase {
         XCTAssertEqual(ticksPlayed2, 2)
         XCTAssertEqual(vm.getTickAccumulator(), 0.20, accuracy: 0.01)
     }
+    
+    func testGestureActiveBinding() {
+        let vm = UserGuideViewModel(audioService: AudioControlService())
+        XCTAssertFalse(vm.isGestureActive)
+        
+        // Simulating gesture activate
+        ControlPanelViewModel.shared.isGestureActive = true
+        
+        let expectation = XCTestExpectation(description: "Wait for published value update")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(vm.isGestureActive)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+        
+        // Simulating gesture deactivate
+        ControlPanelViewModel.shared.isGestureActive = false
+        
+        let expectation2 = XCTestExpectation(description: "Wait for published value update 2")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertFalse(vm.isGestureActive)
+            expectation2.fulfill()
+        }
+        wait(for: [expectation2], timeout: 1.0)
+    }
 }

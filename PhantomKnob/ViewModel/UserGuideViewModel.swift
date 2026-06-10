@@ -10,15 +10,26 @@ class UserGuideViewModel: ObservableObject {
     @Published var volumeVal: Float = 0.5
     @Published var hovered: Bool = false
     @Published var rotationAngle: Double = 0.0
+    @Published var isGestureActive: Bool = false
     
     private var tickAccumulator: Double = 0.0
     private let audioService: AudioControlService
     private var cancellables = Set<AnyCancellable>()
+    private var systemSoundID: SystemSoundID = 0
     
     init(audioService: AudioControlService = AudioControlService()) {
         self.audioService = audioService
         self.volumeVal = audioService.getVolume() ?? 0.5
         setupBindings()
+        
+        let soundURL = URL(fileURLWithPath: "/System/Library/Sounds/Tink.aiff")
+        AudioServicesCreateSystemSoundID(soundURL as CFURL, &systemSoundID)
+    }
+    
+    deinit {
+        if systemSoundID != 0 {
+            AudioServicesDisposeSystemSoundID(systemSoundID)
+        }
     }
     
     private func setupBindings() {
@@ -28,6 +39,13 @@ class UserGuideViewModel: ObservableObject {
                 if let delta = notification.userInfo?["delta"] as? Double {
                     self.registerRotation(delta)
                 }
+            }
+            .store(in: &cancellables)
+            
+        ControlPanelViewModel.shared.$isGestureActive
+            .receive(on: RunLoop.main)
+            .sink { [weak self] active in
+                self?.isGestureActive = active
             }
             .store(in: &cancellables)
     }
@@ -53,7 +71,11 @@ class UserGuideViewModel: ObservableObject {
         // 播放 Tick 反馈嘀嗒音
         let ticks = updateTickAccumulationAndGetTicks(absDeg)
         for _ in 0..<ticks {
-            AudioServicesPlaySystemSound(1104)
+            if systemSoundID != 0 {
+                AudioServicesPlaySystemSound(systemSoundID)
+            } else {
+                AudioServicesPlaySystemSound(1104)
+            }
         }
         
         // 实时更新并同步系统音量
