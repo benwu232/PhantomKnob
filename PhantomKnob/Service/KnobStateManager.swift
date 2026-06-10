@@ -389,14 +389,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 transition(to: .knobing(target: target))
                 let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
                 if let mouseLoc = initialTouchPosition {
-                    overlayController.show(
-                        at: mouseLoc,
-                        targetName: target.displayName.isEmpty ? nil : target.displayName,
-                        scale: self.lastResolvedBaseScale,
-                        themeColor: rule?.themeColor,
-                        overlayStyle: rule?.overlayStyle,
-                        rotationStyle: rule?.rotationStyle
-                    )
+                    if target.axRole != "ControlPanel" {
+                        overlayController.show(
+                            at: mouseLoc,
+                            targetName: target.displayName.isEmpty ? nil : target.displayName,
+                            scale: self.lastResolvedBaseScale,
+                            themeColor: rule?.themeColor,
+                            overlayStyle: rule?.overlayStyle,
+                            rotationStyle: rule?.rotationStyle
+                        )
+                    }
                 }
             }
         }
@@ -532,8 +534,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
         if state.isKnobing, let target = currentTarget {
             transition(to: .cooling(target: target))
-            overlayController.fadeOut { [weak self] in
-                self?.startCoolingTimer()
+            if target.axRole != "ControlPanel" {
+                overlayController.fadeOut { [weak self] in
+                    self?.startCoolingTimer()
+                }
+            } else {
+                startCoolingTimer()
             }
         } else {
             // 🌟 若手指抬起前从未触发过旋钮手势，静默归位激活状态并清除临时变量

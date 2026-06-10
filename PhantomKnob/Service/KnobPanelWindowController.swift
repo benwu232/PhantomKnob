@@ -44,8 +44,8 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
     }
     
     private func createWindow() {
-        let width: CGFloat = 640
-        let height: CGFloat = 320
+        let width: CGFloat = 720
+        let height: CGFloat = 420
         let screenFrame = NSScreen.main?.visibleFrame ?? .zero
         let originX = screenFrame.origin.x + (screenFrame.width - width) / 2
         let originY = screenFrame.origin.y + (screenFrame.height - height) / 2
