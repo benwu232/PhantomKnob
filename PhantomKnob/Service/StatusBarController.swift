@@ -90,6 +90,10 @@ class StatusBarController: ObservableObject {
         statusMenuItem.isEnabled = false
         menu?.addItem(statusMenuItem)
         
+        let guideMenuItem = NSMenuItem(title: "使用引导...", action: #selector(openGuide), keyEquivalent: "")
+        guideMenuItem.target = self
+        menu?.addItem(guideMenuItem)
+        
         menu?.addItem(NSMenuItem.separator())
         
         let toggleItem = NSMenuItem(
@@ -184,6 +188,10 @@ class StatusBarController: ObservableObject {
     
     @objc private func quitApp() {
         NSApp.terminate(nil)
+    }
+    
+    @objc private func openGuide() {
+        UserGuideWindowController.shared.show()
     }
     
     private func createIcon(for state: KnobGlobalState) -> NSImage? {

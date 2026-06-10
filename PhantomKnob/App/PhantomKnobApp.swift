@@ -43,9 +43,14 @@ struct PhantomKnobApp: App {
             .onAppear {
                 appState.knobStateManager.start()
                 
-                let tutorialCompleted = UserDefaults.standard.bool(forKey: "firstRunTutorialCompleted")
-                if !tutorialCompleted {
-                    KnobPanelWindowController.shared.show()
+                let guideCompleted = UserDefaults.standard.bool(forKey: "firstRunUserGuideCompleted")
+                if !guideCompleted {
+                    UserGuideWindowController.shared.show()
+                } else {
+                    let tutorialCompleted = UserDefaults.standard.bool(forKey: "firstRunTutorialCompleted")
+                    if !tutorialCompleted {
+                        KnobPanelWindowController.shared.show()
+                    }
                 }
             }
             .toolbar {
