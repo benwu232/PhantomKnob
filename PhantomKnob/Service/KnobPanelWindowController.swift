@@ -26,11 +26,13 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         setupClickMonitor()
+        NotificationCenter.default.post(name: NSNotification.Name("KnobPanelDidShow"), object: nil)
     }
     
     func hide() {
         window?.orderOut(nil)
         removeClickMonitor()
+        NotificationCenter.default.post(name: NSNotification.Name("KnobPanelDidHide"), object: nil)
     }
     
     func toggle() {

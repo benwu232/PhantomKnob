@@ -32,6 +32,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     var isInterceptingGestures = false
+    private var wasInactiveBeforePanelShow = false
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -71,6 +72,22 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         )
         .sink { [weak self] _ in
             self?.handleAppSwitch()
+        }
+        .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(
+            for: NSNotification.Name("KnobPanelDidShow")
+        )
+        .sink { [weak self] _ in
+            self?.handleKnobPanelDidShow()
+        }
+        .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(
+            for: NSNotification.Name("KnobPanelDidHide")
+        )
+        .sink { [weak self] _ in
+            self?.handleKnobPanelDidHide()
         }
         .store(in: &cancellables)
     }
@@ -150,6 +167,26 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         currentTranslator = nil
         overlayController.hide()
         targetDetector.clearCache()
+    }
+
+    private func handleKnobPanelDidShow() {
+        writeDebugLog("[KnobStateManager] handleKnobPanelDidShow() called, current state: \(state)")
+        if case .inactive = state {
+            wasInactiveBeforePanelShow = true
+            toggleMode()
+        } else {
+            wasInactiveBeforePanelShow = false
+        }
+    }
+
+    private func handleKnobPanelDidHide() {
+        writeDebugLog("[KnobStateManager] handleKnobPanelDidHide() called, current state: \(state), wasInactiveBeforePanelShow: \(wasInactiveBeforePanelShow)")
+        if wasInactiveBeforePanelShow {
+            if state != .inactive {
+                toggleMode()
+            }
+            wasInactiveBeforePanelShow = false
+        }
     }
 
     // MARK: - GlobalTouchDelegate
