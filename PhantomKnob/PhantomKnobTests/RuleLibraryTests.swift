@@ -70,7 +70,7 @@ final class RuleLibraryTests: XCTestCase {
           "scaleConfig":{"fixed":8.0}}]
         """.data(using: .utf8)!
         let rules = try JSONDecoder().decode([ControlRule].self, from: json)
-        XCTAssertEqual(rules.first?.scaleConfig.resolve(), 8.0)
+        XCTAssertEqual(rules.first?.scaleConfig?.resolve(), 8.0)
     }
 
     func testCapCutRulesAreBundled() {

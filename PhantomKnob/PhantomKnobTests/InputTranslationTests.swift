@@ -37,7 +37,7 @@ final class InputTranslationTests: XCTestCase {
             key: RuleKey(bundleID: "x", axRole: "AXSlider", identifier: nil),
             translation: .axWrite
         )
-        XCTAssertEqual(rule.scaleConfig.resolve(), 1.0)
+        XCTAssertEqual(rule.scaleConfig?.resolve(), 1.0)
     }
 
     // MARK: - DetectedTarget ruleKey

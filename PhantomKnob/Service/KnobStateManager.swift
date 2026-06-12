@@ -855,7 +855,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     private func makeTranslator(for target: DetectedTarget, rule: ControlRule?) -> InputTranslator {
         let translation = rule?.translation ?? autoDetectTranslation(for: target)
-        let scale = rule?.scaleConfig.resolve() ?? 1.0
+        let scale = rule?.scaleConfig?.resolve() ?? 1.0
         let isInverted = rule?.invert ?? false
 
         switch translation {
