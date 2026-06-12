@@ -80,6 +80,45 @@ final class RuleLibrary {
         return nil
     }
 
+    func saveRule(_ rule: ControlRule) {
+        var loadedUserRules: [ControlRule] = []
+        
+        // 1. 先尝试读取本地 rules.json
+        if FileManager.default.fileExists(atPath: userRulesURL.path) {
+            if let data = try? Data(contentsOf: userRulesURL),
+               let existing = try? JSONDecoder().decode([ControlRule].self, from: data) {
+                loadedUserRules = existing
+            }
+        } else {
+            // 确保目录存在
+            let dir = userRulesURL.deletingLastPathComponent()
+            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+        
+        // 2. 合并或追加：如果在 userRules 里有相同 key 的规则，进行替换，否则追加
+        if let index = loadedUserRules.firstIndex(where: { $0.key.matches(rule.key) }) {
+            loadedUserRules[index] = rule
+        } else {
+            loadedUserRules.insert(rule, at: 0) // 高优先级追加
+        }
+        
+        // 3. 序列化写回本地
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        if let data = try? encoder.encode(loadedUserRules) {
+            try? data.write(to: userRulesURL)
+        }
+        
+        // 4. 重载内存规则并通知状态机更新
+        self.reload()
+        
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ControlRuleDidUpdate"),
+            object: nil,
+            userInfo: ["rule": rule]
+        )
+    }
+
     private func loadRules(from url: URL) -> [ControlRule]? {
         guard FileManager.default.fileExists(atPath: url.path),
               let data = try? Data(contentsOf: url) else { return nil }

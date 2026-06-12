@@ -205,11 +205,12 @@ struct ControlRule: Codable, Equatable {
             self.configType = .single
             let oldTrans = try container.decodeIfPresent(InputTranslation.self, forKey: .translation) ?? .scrollWheelVertical
             let oldScaleConfig = try container.decodeIfPresent(ScaleConfig.self, forKey: .scaleConfig) ?? .fixed(1.0)
-            let oldInvert = try container.decodeIfPresent(Bool.self, forKey: .invert) ?? false
+            let oldInvertOpt = try container.decodeIfPresent(Bool.self, forKey: .invert)
+            let oldInvert = oldInvertOpt ?? false
             
             self.translation = oldTrans
             self.scaleConfig = oldScaleConfig
-            self.invert = oldInvert
+            self.invert = oldInvertOpt
             
             var scaleValue = 1.0
             if case .fixed(let val) = oldScaleConfig {
