@@ -175,5 +175,34 @@ final class CustomKnobTests: XCTestCase {
         let decodedCompatible = try decoder.decode(VirtualKnobConfig.self, from: jsonWithoutColor)
         XCTAssertNil(decodedCompatible.themeColor)
     }
+    
+    func testKnobStateManagerResolvesZoneThemeColor() {
+        let key = RuleKey(bundleID: "test.zone.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
+        let inner = VirtualKnobConfig(minRadius: 5.0, maxRadius: 20.0, margin: 2.0, unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp", themeColor: "#30D158")
+        let outer = VirtualKnobConfig(minRadius: 22.0, maxRadius: 100.0, margin: 2.0, unitPerDegree: 2.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", themeColor: "#FF9F0A")
+        let rule = ControlRule(key: key, themeColor: "#0A84FF", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
+        
+        RuleLibrary.shared.saveRule(rule)
+        
+        let manager = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil)
+        
+        // 触发规则重载
+        NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
+        
+        // 验证在 inner zone (zoneIndex = 0) 时解析为绿色
+        let colorInner = manager.resolveThemeColor(for: rule, zoneIndex: 0)
+        XCTAssertEqual(colorInner, "#30D158")
+        
+        // 验证在 outer zone (zoneIndex = 1) 时解析为橙色
+        let colorOuter = manager.resolveThemeColor(for: rule, zoneIndex: 1)
+        XCTAssertEqual(colorOuter, "#FF9F0A")
+    }
 }
 

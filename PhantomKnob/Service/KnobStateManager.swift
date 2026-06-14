@@ -259,11 +259,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         
         // 3. 即时刷新 Overlay UI 配色与样式
         if isInterceptingGestures {
+            let color = resolveThemeColor(for: rule, zoneIndex: currentZoneIndex)
             overlayController.show(
                 at: initialTouchPosition ?? .zero,
                 targetName: target.displayName.isEmpty ? nil : target.displayName,
                 scale: lastResolvedBaseScale,
-                themeColor: rule.themeColor,
+                themeColor: color,
                 overlayStyle: rule.overlayStyle,
                 rotationStyle: rule.rotationStyle
             )
@@ -475,11 +476,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             transition(to: .knobing(target: target))
             gestureClassifier.forceKnob()
             if let mouseLoc = initialTouchPosition {
+                let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex) }
                 overlayController.show(
                     at: mouseLoc,
                     targetName: target.displayName.isEmpty ? nil : target.displayName,
                     scale: self.lastResolvedBaseScale,
-                    themeColor: rule?.themeColor,
+                    themeColor: color,
                     overlayStyle: rule?.overlayStyle,
                     rotationStyle: rule?.rotationStyle
                 )
@@ -522,11 +524,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
                 if let mouseLoc = initialTouchPosition {
                     if target.axRole != "ControlPanel" {
+                        let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex) }
                         overlayController.show(
                             at: mouseLoc,
                             targetName: target.displayName.isEmpty ? nil : target.displayName,
                             scale: self.lastResolvedBaseScale,
-                            themeColor: rule?.themeColor,
+                            themeColor: color,
                             overlayStyle: rule?.overlayStyle,
                             rotationStyle: rule?.rotationStyle
                         )
@@ -562,6 +565,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
             let radius = calculateRawRadius(points: scaledPoints)
             self.currentRadius = radius
+            let rule = currentTarget.flatMap { RuleLibrary.shared.lookup(for: $0.ruleKey) }
 
             // 1. Resolve default base scale dynamically from radius
             var baseScale: Double?
@@ -618,7 +622,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             // 2. 检查死区判定
             guard let activeBaseScale = baseScale else {
                 // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
-                overlayController.update(angle: currentAngle, radius: radius, isDeadzone: true, scale: self.lastResolvedBaseScale)
+                let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex) }
+                overlayController.update(angle: currentAngle, radius: radius, isDeadzone: true, scale: self.lastResolvedBaseScale, themeColor: color)
                 self.currentAngle = currentAngle
                 previousAngle = currentAngle
                 return
@@ -653,7 +658,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
             translator.apply(units: deltaAngle, direction: direction)
 
-            overlayController.update(angle: currentAngle, radius: radius, isDeadzone: false, scale: activeBaseScale)
+            let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex) }
+            overlayController.update(angle: currentAngle, radius: radius, isDeadzone: false, scale: activeBaseScale, themeColor: color)
 
             self.currentAngle = currentAngle
             previousAngle = currentAngle
@@ -698,6 +704,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             fingerIdx1 = nil
             fingerIdx2 = nil
         }
+    }
+
+    func resolveThemeColor(for rule: ControlRule, zoneIndex: Int) -> String? {
+        if rule.configType == .double, let doubleConfig = rule.doubleConfig {
+            if zoneIndex == 0 {
+                return doubleConfig.inner.themeColor ?? rule.themeColor
+            } else if zoneIndex == 1 {
+                return doubleConfig.outer.themeColor ?? rule.themeColor
+            }
+        }
+        return rule.themeColor
     }
 
     private func persistentKey(for target: DetectedTarget, zoneIndex: Int) -> String {
@@ -876,11 +893,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             }
             
             // Update Overlay UI immediately
+            let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
+            let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex) }
             overlayController.update(
                 angle: self.currentAngle,
                 radius: self.currentRadius,
                 isDeadzone: false,
-                scale: nextVal
+                scale: nextVal,
+                themeColor: color
             )
         }
     }
