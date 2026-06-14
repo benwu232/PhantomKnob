@@ -42,6 +42,17 @@ struct CustomizerHUDView: View {
     // 物理半径实时指示
     @State private var liveRadius: Double? = nil
     
+    // 双旋钮配色
+    @State private var doubleInnerThemeColor: String = "#30D158"
+    @State private var doubleOuterThemeColor: String = "#FF9F0A"
+    @State private var activeColorTarget: ColorTarget = .global
+    
+    enum ColorTarget {
+        case global
+        case doubleInner
+        case doubleOuter
+    }
+    
     let colors = [
         "#FF453A", "#FF9F0A", "#FFD60A", "#30D158",
         "#64D2FF", "#0A84FF", "#5E5CE6", "#BF5AF2",
@@ -102,73 +113,7 @@ struct CustomizerHUDView: View {
             
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    // 0. 控件定位元数据 (Uniquely Identifying Info)
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("控件定位唯一标识")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.gray)
-                        
-                        VStack(spacing: 4) {
-                            metadataRow(label: "应用 ID (Bundle ID)", value: target.bundleID)
-                            metadataRow(label: "元素角色 (AXRole)", value: target.axRole)
-                            metadataRow(label: "元素标识 (AXIdentifier)", value: target.identifier ?? "全局匹配 (匹配该 App 内所有此类控件)")
-                        }
-                        .padding(8)
-                        .background(Color.black.opacity(0.2))
-                        .cornerRadius(8)
-                    }
-                    
-                    // 1. 配色定制
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("主题颜色")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.gray)
-                        
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 8), spacing: 6) {
-                            ForEach(colors, id: \.self) { colorHex in
-                                Circle()
-                                    .fill(Color(hex: colorHex))
-                                    .frame(width: 18, height: 18)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.white, lineWidth: themeColor == colorHex ? 1.5 : 0)
-                                    )
-                                    .onTapGesture {
-                                        themeColor = colorHex
-                                        save()
-                                    }
-                            }
-                        }
-                        
-                        Button(action: {
-                            NSColorPanel.shared.color = NSColor(Color(hex: themeColor))
-                            NSColorPanel.shared.orderFront(nil)
-                        }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "paintpalette.fill")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(Color(hex: themeColor))
-                                Text("自定义颜色...")
-                                    .font(.system(size: 11))
-                                Spacer()
-                                Text(themeColor)
-                                    .font(.system(size: 10, design: .monospaced))
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.06))
-                            .cornerRadius(6)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                            )
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        .padding(.top, 4)
-                    }
-                    
-                    // 2. 模式选择
+                    // 1. 旋钮类型 (置于最顶)
                     VStack(alignment: .leading, spacing: 6) {
                         Text("旋钮类型")
                             .font(.system(size: 11, weight: .bold))
@@ -182,7 +127,7 @@ struct CustomizerHUDView: View {
                         .onChange(of: configType) { _ in save() }
                     }
                     
-                    // 3. 不同模式子表单
+                    // 2. 不同模式子表单 (内含配色)
                     switch configType {
                     case .single:
                         singleSubForm
@@ -190,6 +135,24 @@ struct CustomizerHUDView: View {
                         doubleSubForm
                     case .linear:
                         linearSubForm
+                    }
+                    
+                    Divider().background(Color.white.opacity(0.1))
+                    
+                    // 3. 控件定位元数据 (Uniquely Identifying Info)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("控件定位唯一标识")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.gray)
+                        
+                        VStack(spacing: 4) {
+                            metadataRow(label: "应用 ID (Bundle ID)", value: target.bundleID)
+                            metadataRow(label: "元素角色 (AXRole)", value: target.axRole)
+                            metadataRow(label: "元素标识 (AXIdentifier)", value: target.identifier ?? "全局匹配 (匹配该 App 内所有此类控件)")
+                        }
+                        .padding(8)
+                        .background(Color.black.opacity(0.2))
+                        .cornerRadius(8)
                     }
                 }
             }
@@ -211,7 +174,14 @@ struct CustomizerHUDView: View {
                 let color = panel.color
                 print("[CustomizerHUDView] panel color: \(color), hex: \(String(describing: color.toHex()))")
                 if let hex = color.toHex() {
-                    self.themeColor = hex
+                    switch activeColorTarget {
+                    case .global:
+                        self.themeColor = hex
+                    case .doubleInner:
+                        self.doubleInnerThemeColor = hex
+                    case .doubleOuter:
+                        self.doubleOuterThemeColor = hex
+                    }
                     save()
                 }
             }
@@ -222,6 +192,57 @@ struct CustomizerHUDView: View {
     
     private var singleSubForm: some View {
         VStack(alignment: .leading, spacing: 10) {
+            // 配色定制
+            VStack(alignment: .leading, spacing: 6) {
+                Text("主题颜色")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                HStack(spacing: 5) {
+                    ForEach(colors, id: \.self) { colorHex in
+                        Circle()
+                            .fill(Color(hex: colorHex))
+                            .frame(width: 16, height: 16)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: themeColor == colorHex ? 1.5 : 0)
+                            )
+                            .onTapGesture {
+                                themeColor = colorHex
+                                save()
+                            }
+                    }
+                }
+                
+                Button(action: {
+                    activeColorTarget = .global
+                    NSColorPanel.shared.color = NSColor(Color(hex: themeColor))
+                    NSColorPanel.shared.orderFront(nil)
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: themeColor))
+                        Text("自定义颜色...")
+                            .font(.system(size: 11))
+                        Spacer()
+                        Text(themeColor)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            .padding(.bottom, 6)
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text("输出映射方式")
                     .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
@@ -277,10 +298,191 @@ struct CustomizerHUDView: View {
     
     private var doubleSubForm: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // 内圈
+            // 外圈旋钮 (粗调) 配置卡片
+            VStack(alignment: .leading, spacing: 8) {
+                Text("🟠 外圈旋钮 (粗调)")
+                    .font(.system(size: 12, weight: .bold)).foregroundColor(.orange)
+                
+                // 外圈配色
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("主题颜色")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.gray)
+                    
+                    HStack(spacing: 5) {
+                        ForEach(colors, id: \.self) { colorHex in
+                            Circle()
+                                .fill(Color(hex: colorHex))
+                                .frame(width: 16, height: 16)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white, lineWidth: doubleOuterThemeColor == colorHex ? 1.5 : 0)
+                                )
+                                .onTapGesture {
+                                    doubleOuterThemeColor = colorHex
+                                    save()
+                                }
+                        }
+                    }
+                    
+                    Button(action: {
+                        activeColorTarget = .doubleOuter
+                        NSColorPanel.shared.color = NSColor(Color(hex: doubleOuterThemeColor))
+                        NSColorPanel.shared.orderFront(nil)
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: doubleOuterThemeColor))
+                            Text("自定义颜色...")
+                                .font(.system(size: 11))
+                            Spacer()
+                            Text(doubleOuterThemeColor)
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.06))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .padding(.bottom, 4)
+                
+                HStack {
+                    Text("响应半径").font(.system(size: 11))
+                    Spacer()
+                    Text("\(Int(doubleOuterRadiusMin)) mm ~ 100 mm")
+                        .font(.system(size: 11, design: .monospaced))
+                }
+                
+                Picker("输出映射", selection: $doubleOuterTranslation) {
+                    ForEach(InputTranslation.allCases, id: \.self) { trans in
+                        Text(transDescription(trans)).tag(trans)
+                    }
+                }
+                .onChange(of: doubleOuterTranslation) { next in
+                    doubleOuterCWAction = defaultAction(for: next)
+                    save()
+                }
+                
+                Picker("顺时针触发", selection: $doubleOuterCWAction) {
+                    ForEach(directionOptions(for: doubleOuterTranslation), id: \.self) { opt in
+                        Text(actionDescription(opt)).tag(opt)
+                    }
+                }
+                .onChange(of: doubleOuterCWAction) { _ in save() }
+                
+                HStack {
+                    Text("每度变化量")
+                        .font(.system(size: 11)).foregroundColor(.white)
+                    Spacer()
+                    TextField("", text: $doubleOuterScaleText)
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.black.opacity(0.3))
+                        .cornerRadius(4)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        )
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundColor(.orange)
+                        .frame(width: 80)
+                        .multilineTextAlignment(.trailing)
+                        .onChange(of: doubleOuterScaleText) { next in
+                            if let val = Double(next) {
+                                doubleOuterScale = val
+                                save()
+                            }
+                        }
+                }
+            }
+            .padding(8)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(8)
+            
+            // 保护带宽度
+            VStack(alignment: .leading, spacing: 8) {
+                Text("⚙️ 保护带宽度 (Margin)")
+                    .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
+                HStack {
+                    Text("宽度: \(Int(doubleMargin)) mm")
+                    Spacer()
+                    Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
+                        .frame(width: 150)
+                        .onChange(of: doubleMargin) { next in
+                            doubleOuterRadiusMin = doubleInnerRadiusMax + next
+                            save()
+                        }
+                }
+            }
+            .padding(8)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(8)
+            
+            // 内圈旋钮 (微调) 配置卡片
             VStack(alignment: .leading, spacing: 8) {
                 Text("🟢 内圈旋钮 (微调)")
                     .font(.system(size: 12, weight: .bold)).foregroundColor(.green)
+                
+                // 内圈配色
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("主题颜色")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.gray)
+                    
+                    HStack(spacing: 5) {
+                        ForEach(colors, id: \.self) { colorHex in
+                            Circle()
+                                .fill(Color(hex: colorHex))
+                                .frame(width: 16, height: 16)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white, lineWidth: doubleInnerThemeColor == colorHex ? 1.5 : 0)
+                                )
+                                .onTapGesture {
+                                    doubleInnerThemeColor = colorHex
+                                    save()
+                                }
+                        }
+                    }
+                    
+                    Button(action: {
+                        activeColorTarget = .doubleInner
+                        NSColorPanel.shared.color = NSColor(Color(hex: doubleInnerThemeColor))
+                        NSColorPanel.shared.orderFront(nil)
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: doubleInnerThemeColor))
+                            Text("自定义颜色...")
+                                .font(.system(size: 11))
+                            Spacer()
+                            Text(doubleInnerThemeColor)
+                                .font(.system(size: 10, design: .monospaced))
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.white.opacity(0.06))
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .padding(.bottom, 4)
+                
                 HStack {
                     Text("响应半径").font(.system(size: 11))
                     Spacer()
@@ -339,88 +541,62 @@ struct CustomizerHUDView: View {
             .padding(8)
             .background(Color.white.opacity(0.05))
             .cornerRadius(8)
-            
-            // 保护带宽度
-            VStack(alignment: .leading, spacing: 8) {
-                Text("⚙️ 保护带宽度 (Margin)")
-                    .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
-                HStack {
-                    Text("宽度: \(Int(doubleMargin)) mm")
-                    Spacer()
-                    Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
-                        .frame(width: 150)
-                        .onChange(of: doubleMargin) { next in
-                            doubleOuterRadiusMin = doubleInnerRadiusMax + next
-                            save()
-                        }
-                }
-            }
-            .padding(8)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
-            
-            // 外圈
-            VStack(alignment: .leading, spacing: 8) {
-                Text("🟠 外圈旋钮 (粗调)")
-                    .font(.system(size: 12, weight: .bold)).foregroundColor(.orange)
-                HStack {
-                    Text("响应半径").font(.system(size: 11))
-                    Spacer()
-                    Text("\(Int(doubleOuterRadiusMin)) mm ~ 100 mm")
-                        .font(.system(size: 11, design: .monospaced))
-                }
-                
-                Picker("输出映射", selection: $doubleOuterTranslation) {
-                    ForEach(InputTranslation.allCases, id: \.self) { trans in
-                        Text(transDescription(trans)).tag(trans)
-                    }
-                }
-                .onChange(of: doubleOuterTranslation) { next in
-                    doubleOuterCWAction = defaultAction(for: next)
-                    save()
-                }
-                
-                Picker("顺时针触发", selection: $doubleOuterCWAction) {
-                    ForEach(directionOptions(for: doubleOuterTranslation), id: \.self) { opt in
-                        Text(actionDescription(opt)).tag(opt)
-                    }
-                }
-                .onChange(of: doubleOuterCWAction) { _ in save() }
-                
-                HStack {
-                    Text("每度变化量")
-                        .font(.system(size: 11)).foregroundColor(.white)
-                    Spacer()
-                    TextField("", text: $doubleOuterScaleText)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.orange)
-                        .frame(width: 80)
-                        .multilineTextAlignment(.trailing)
-                        .onChange(of: doubleOuterScaleText) { next in
-                            if let val = Double(next) {
-                                doubleOuterScale = val
-                                save()
-                            }
-                        }
-                }
-            }
-            .padding(8)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
         }
     }
     
     private var linearSubForm: some View {
         VStack(alignment: .leading, spacing: 10) {
+            // 配色定制
+            VStack(alignment: .leading, spacing: 6) {
+                Text("主题颜色")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                HStack(spacing: 5) {
+                    ForEach(colors, id: \.self) { colorHex in
+                        Circle()
+                            .fill(Color(hex: colorHex))
+                            .frame(width: 16, height: 16)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: themeColor == colorHex ? 1.5 : 0)
+                            )
+                            .onTapGesture {
+                                themeColor = colorHex
+                                save()
+                            }
+                    }
+                }
+                
+                Button(action: {
+                    activeColorTarget = .global
+                    NSColorPanel.shared.color = NSColor(Color(hex: themeColor))
+                    NSColorPanel.shared.orderFront(nil)
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: themeColor))
+                        Text("自定义颜色...")
+                            .font(.system(size: 11))
+                        Spacer()
+                        Text(themeColor)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            .padding(.bottom, 6)
+            
             Picker("输出映射", selection: $linearTranslation) {
                 ForEach(InputTranslation.allCases, id: \.self) { trans in
                     Text(transDescription(trans)).tag(trans)
@@ -531,6 +707,7 @@ struct CustomizerHUDView: View {
                 self.doubleInnerScaleText = String(format: "%.4g", d.inner.unitPerDegree)
                 self.doubleInnerTranslation = d.inner.translation
                 self.doubleInnerCWAction = d.inner.clockwiseAction
+                self.doubleInnerThemeColor = d.inner.themeColor ?? "#30D158"
                 
                 self.doubleMargin = d.inner.margin
                 
@@ -540,6 +717,7 @@ struct CustomizerHUDView: View {
                 self.doubleOuterScaleText = String(format: "%.4g", d.outer.unitPerDegree)
                 self.doubleOuterTranslation = d.outer.translation
                 self.doubleOuterCWAction = d.outer.clockwiseAction
+                self.doubleOuterThemeColor = d.outer.themeColor ?? "#FF9F0A"
             }
             if let l = existing.linearConfig {
                 self.linearMinRadius = l.minRadius
@@ -566,8 +744,8 @@ struct CustomizerHUDView: View {
             )
         case .double:
             rule.doubleConfig = DoubleKnobConfig(
-                inner: VirtualKnobConfig(minRadius: 5.0, maxRadius: doubleInnerRadiusMax, margin: doubleMargin, unitPerDegree: doubleInnerScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction),
-                outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax + doubleMargin, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleOuterTranslation, clockwiseAction: doubleOuterCWAction)
+                inner: VirtualKnobConfig(minRadius: 5.0, maxRadius: doubleInnerRadiusMax, margin: doubleMargin, unitPerDegree: doubleInnerScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleInnerThemeColor),
+                outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax + doubleMargin, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleOuterTranslation, clockwiseAction: doubleOuterCWAction, themeColor: doubleOuterThemeColor)
             )
         case .linear:
             rule.linearConfig = LinearKnobConfig(
