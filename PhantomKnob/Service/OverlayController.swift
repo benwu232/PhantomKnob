@@ -92,10 +92,13 @@ class OverlayController: ObservableObject {
         isVisible = true
     }
 
-    func update(angle: Double, radius: Double, isDeadzone: Bool = false, scale: Double? = nil) {
+    func update(angle: Double, radius: Double, isDeadzone: Bool = false, scale: Double? = nil, themeColor: String? = nil) {
         self.angle = angle
         self.isDeadzone = isDeadzone
         self.scale = scale
+        if let themeColor = themeColor {
+            self.themeColor = themeColor
+        }
         self.diameter = Self.calculateDiameter(for: radius)
         
         updatePanelFrame()

@@ -63,4 +63,13 @@ class OverlayControllerTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(frame3.origin.x, 0)
         XCTAssertGreaterThanOrEqual(frame3.origin.y, 0)
     }
+    
+    func testOverlayUpdateThemeColor() {
+        let controller = OverlayController()
+        controller.show(at: .zero, targetName: "Test", scale: 1.0, themeColor: "#000000")
+        XCTAssertEqual(controller.themeColor, "#000000")
+        
+        controller.update(angle: 90.0, radius: 20.0, isDeadzone: false, scale: 1.2, themeColor: "#FF9F0A")
+        XCTAssertEqual(controller.themeColor, "#FF9F0A")
+    }
 }
