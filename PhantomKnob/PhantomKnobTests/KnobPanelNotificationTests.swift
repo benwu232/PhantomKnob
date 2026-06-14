@@ -12,6 +12,7 @@ final class KnobPanelNotificationTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
+        manager.isProcessTrusted = { true }
         
         // Initially, the state should be inactive
         XCTAssertEqual(manager.state, .inactive)
@@ -37,6 +38,7 @@ final class KnobPanelNotificationTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
+        manager.isProcessTrusted = { true }
         
         // Manually activate
         manager.toggleMode()

@@ -10,16 +10,20 @@ final class AXWriteTranslator: InputTranslator {
     private let maxValue: Double
     var scale: Double   // 从 ScaleConfig 解析好后传入
 
-    init(element: AXUIElement, minValue: Double, maxValue: Double, scale: Double = 1.0) {
+    private let invert: Bool
+
+    init(element: AXUIElement, minValue: Double, maxValue: Double, scale: Double = 1.0, invert: Bool = false) {
         self.element = element
         self.minValue = minValue
         self.maxValue = maxValue
         self.scale = scale
+        self.invert = invert
         _ = AXUIElementSetMessagingTimeout(element, 0.1)
     }
 
     func apply(units: Double, direction: RotationDirection) {
-        let delta = units * scale * (direction == .clockwise ? 1.0 : -1.0)
+        let isCW = invert ? (direction != .clockwise) : (direction == .clockwise)
+        let delta = units * scale * (isCW ? 1.0 : -1.0)
         let current = readValue() ?? (minValue + maxValue) / 2
         let newValue = (current + delta).clamped(to: minValue...maxValue)
         writeValue(newValue)

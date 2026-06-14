@@ -7,19 +7,21 @@ enum KnobGlobalState: Equatable {
     case activated
     case knobing(target: DetectedTarget)
     case cooling(target: DetectedTarget)
+    case customizing
 
     var iconColor: NSColor {
         switch self {
         case .inactive:           return .gray
         case .activated:          return .systemBlue
         case .knobing, .cooling:  return .systemOrange
+        case .customizing:        return .systemPurple
         }
     }
 
     var currentTarget: DetectedTarget? {
         switch self {
-        case .inactive, .activated:             return nil
-        case .knobing(let t), .cooling(let t):  return t
+        case .inactive, .activated, .customizing: return nil
+        case .knobing(let t), .cooling(let t):    return t
         }
     }
 
@@ -32,6 +34,7 @@ enum KnobGlobalState: Equatable {
         case (.activated, .activated): return true
         case (.knobing, .knobing): return true
         case (.cooling, .cooling): return true
+        case (.customizing, .customizing): return true
         default: return false
         }
     }

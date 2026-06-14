@@ -3,7 +3,7 @@ import XCTest
 
 class KnobPanelWindowControllerTests: XCTestCase {
     func testWindowToggle() {
-        let controller = KnobPanelWindowController.shared
+        let controller = KnobPanelWindowController()
         XCTAssertFalse(controller.isVisible)
         
         let expectation = XCTestExpectation(description: "Show and hide window")

@@ -16,13 +16,17 @@ final class ArrowKeyTranslator: InputTranslator {
     private static let keyLeft:  CGKeyCode = 123
     private static let keyRight: CGKeyCode = 124
 
-    init(axis: Axis = .upDown, scale: Double = 1.0) {
+    private let invert: Bool
+
+    init(axis: Axis = .upDown, scale: Double = 1.0, invert: Bool = false) {
         self.axis = axis
         self.scale = scale
+        self.invert = invert
     }
 
     func apply(units: Double, direction: RotationDirection) {
-        let signed = units * scale * (direction == .clockwise ? 1.0 : -1.0)
+        let isCW = invert ? (direction != .clockwise) : (direction == .clockwise)
+        let signed = units * scale * (isCW ? 1.0 : -1.0)
         accumulator += signed
         let presses = Int(accumulator)           // 整数部分：要发送的次数
         accumulator -= Double(presses)           // 保留余数

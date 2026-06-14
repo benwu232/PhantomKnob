@@ -33,6 +33,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private var runLoopSource: CFRunLoopSource?
     var isInterceptingGestures = false
     private var wasInactiveBeforePanelShow = false
+    
+    // Mockable accessibility check for unit testing
+    var isProcessTrusted: () -> Bool = { AXIsProcessTrusted() }
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -90,6 +93,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self?.handleKnobPanelDidHide()
         }
         .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(
+            for: NSNotification.Name("ControlRuleDidUpdate")
+        )
+        .sink { [weak self] notification in
+            guard let self = self,
+                  let updatedRule = notification.userInfo?["rule"] as? ControlRule else { return }
+            self.handleRuleHotReload(updatedRule)
+        }
+        .store(in: &cancellables)
     }
 
     func start() {
@@ -115,7 +128,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 transition(to: .activated)
             }
         } else if case .inactive = state {
-            let isTrusted = AXIsProcessTrusted()
+            let isTrusted = isProcessTrusted()
             guard isTrusted else {
                 let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
                 _ = AXIsProcessTrustedWithOptions(options)
@@ -150,7 +163,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
         
         if let tap = eventTap {
-            if case .knobing = newState {
+            if newState != .inactive {
                 CGEvent.tapEnable(tap: tap, enable: true)
                 writeDebugLog("[KnobStateManager] Enabled event tap for state: \(newState)")
             } else {
@@ -187,11 +200,73 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     private func handleKnobPanelDidHide() {
         writeDebugLog("[KnobStateManager] handleKnobPanelDidHide() called, current state: \(state), wasInactiveBeforePanelShow: \(wasInactiveBeforePanelShow)")
+        if state == .customizing {
+            transition(to: wasInactiveBeforePanelShow ? .inactive : .activated)
+            wasInactiveBeforePanelShow = false
+            return
+        }
         if wasInactiveBeforePanelShow {
             if state != .inactive {
                 toggleMode()
             }
             wasInactiveBeforePanelShow = false
+        }
+    }
+
+    private func enterCustomization() {
+        guard state != .inactive, let target = currentTarget else { return }
+        
+        // 结束旋转中的手势行为与 Overlay 样式
+        isInterceptingGestures = false
+        gestureClassifier.processTouchesEnded()
+        initialTouchPositionCarbon = nil
+        overlayController.hide()
+        
+        transition(to: .customizing)
+        
+        // 弹出定制悬浮面板
+        CustomizerHUDWindowController.shared.show(for: target)
+    }
+
+    private func handleRuleHotReload(_ rule: ControlRule) {
+        guard let target = currentTarget, target.ruleKey == rule.key else { return }
+        
+        // 1. 重新实例化当前 Translator
+        let newTranslator = makeTranslator(for: target, rule: rule, radius: self.currentRadius)
+        
+        // 保留当前已经累积的步长信息防止跳跃
+        newTranslator.scale = currentTranslator?.scale ?? 1.0
+        self.currentTranslator = newTranslator
+        
+        // 2. 重新解析 ScaleConfig
+        switch rule.configType {
+        case .single:
+            if let single = rule.singleConfig {
+                self.activeScaleConfig = .fixed(single.unitPerDegree)
+            }
+        case .double:
+            if let double = rule.doubleConfig {
+                self.activeScaleConfig = .zones([
+                    RadiusZone(minRadius: double.inner.minRadius, maxRadius: double.inner.maxRadius, margin: double.inner.margin, scale: double.inner.unitPerDegree),
+                    RadiusZone(minRadius: double.outer.minRadius, maxRadius: double.outer.maxRadius, margin: double.outer.margin, scale: double.outer.unitPerDegree)
+                ])
+            }
+        case .linear:
+            if let linear = rule.linearConfig {
+                self.activeScaleConfig = .linear(ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale))
+            }
+        }
+        
+        // 3. 即时刷新 Overlay UI 配色与样式
+        if isInterceptingGestures {
+            overlayController.show(
+                at: initialTouchPosition ?? .zero,
+                targetName: target.displayName.isEmpty ? nil : target.displayName,
+                scale: lastResolvedBaseScale,
+                themeColor: rule.themeColor,
+                overlayStyle: rule.overlayStyle,
+                rotationStyle: rule.rotationStyle
+            )
         }
     }
 
@@ -228,6 +303,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     func onMultitouchBegan(points: [Int: CGPoint]) {
         writeDebugLog("[KnobStateManager] onMultitouchBegan: points count = \(points.count), state = \(state)")
         guard state != .inactive else { return }
+        
+        if state == .customizing {
+            let scaledPoints = scaleCoordinates(points)
+            let radius = calculateRawRadius(points: scaledPoints)
+            NotificationCenter.default.post(
+                name: NSNotification.Name("CustomizerRadiusDidUpdate"),
+                object: nil,
+                userInfo: ["radius": radius]
+            )
+            return
+        }
         
         // 立即清除并废止冷却倒计时，防止在检测期间状态突变
         coolingTimer?.invalidate()
@@ -307,11 +393,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             isInterceptingGestures = false
         }
 
+        // Calculate scaled points and initial radius early to resolve correct translator
+        let scaledPoints = scaleCoordinates(points)
+        let initialRadius = calculateRawRadius(points: scaledPoints)
+
         // 3. 查规则库（未命中则自动探测）
         let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
 
         // 4. 创建 InputTranslator
-        let translator = makeTranslator(for: target, rule: rule)
+        let translator = makeTranslator(for: target, rule: rule, radius: initialRadius)
         currentTranslator = translator
  
         // 解析并缓存 ScaleConfig 与状态变量重置
@@ -330,9 +420,35 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 resolvedScaleConfig = ruleScaleConfig
             }
         } else {
-            resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
-                ? .linear(AppSettings.shared.linear)
-                : .zones(AppSettings.shared.fixed.zones)
+            if let r = rule {
+                switch r.configType {
+                case .single:
+                    if let single = r.singleConfig {
+                        resolvedScaleConfig = .fixed(single.unitPerDegree)
+                    } else {
+                        resolvedScaleConfig = .fixed(1.0)
+                    }
+                case .double:
+                    if let d = r.doubleConfig {
+                        resolvedScaleConfig = .zones([
+                            RadiusZone(minRadius: d.inner.minRadius, maxRadius: d.inner.maxRadius, margin: d.inner.margin, scale: d.inner.unitPerDegree),
+                            RadiusZone(minRadius: d.outer.minRadius, maxRadius: d.outer.maxRadius, margin: d.outer.margin, scale: d.outer.unitPerDegree)
+                        ])
+                    } else {
+                        resolvedScaleConfig = .zones(AppSettings.shared.fixed.zones)
+                    }
+                case .linear:
+                    if let l = r.linearConfig {
+                        resolvedScaleConfig = .linear(ScaleConfigLinear(minRadius: l.minRadius, maxRadius: l.maxRadius, minScale: l.minScale, maxScale: l.maxScale))
+                    } else {
+                        resolvedScaleConfig = .linear(AppSettings.shared.linear)
+                    }
+                }
+            } else {
+                resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
+                    ? .linear(AppSettings.shared.linear)
+                    : .zones(AppSettings.shared.fixed.zones)
+            }
         }
         self.activeScaleConfig = resolvedScaleConfig
         
@@ -347,7 +463,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let screenHeight = NSScreen.screens.first?.frame.height ?? 1080
         initialTouchPositionCarbon = CGPoint(x: mouseLoc.x, y: screenHeight - mouseLoc.y)
 
-        let scaledPoints = scaleCoordinates(points)
         let (knobCore, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
         if knobCore.isValid {
             self.fixedCenter = knobCore.center
@@ -375,7 +490,18 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     func onMultitouchMoved(points: [Int: CGPoint]) {
-        guard state != .inactive, let translator = currentTranslator else { return }
+        if state == .customizing {
+            let scaledPoints = scaleCoordinates(points)
+            let radius = calculateRawRadius(points: scaledPoints)
+            NotificationCenter.default.post(
+                name: NSNotification.Name("CustomizerRadiusDidUpdate"),
+                object: nil,
+                userInfo: ["radius": radius]
+            )
+            return
+        }
+        
+        guard state != .inactive, var translator = currentTranslator else { return }
 
         let scaledPoints = scaleCoordinates(points)
         guard let currentAngle = calculateRawAngle(points: scaledPoints) else { return }
@@ -456,6 +582,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 
                 if resolvedZoneIndex != currentZoneIndex {
                     currentZoneIndex = resolvedZoneIndex
+                    if let target = currentTarget,
+                       let rule = RuleLibrary.shared.lookup(for: target.ruleKey),
+                       rule.configType == .double {
+                        let newTranslator = makeTranslator(for: target, rule: rule, radius: radius)
+                        self.currentTranslator = newTranslator
+                        translator = newTranslator
+                    }
                 }
                 
                 // Apply override if available
@@ -531,6 +664,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     func onMultitouchEnded() {
         guard state != .inactive else { return }
+        
+        if state == .customizing {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("CustomizerRadiusDidUpdate"),
+                object: nil,
+                userInfo: ["radius": nil]
+            )
+            return
+        }
         isInterceptingGestures = false
         if let tap = eventTap {
             CGEvent.tapEnable(tap: tap, enable: false)
@@ -622,18 +764,38 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     private func handleEventTap(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Bool {
-        guard state.isKnobing || isInterceptingGestures else { return false }
-        
         // Skip events posted by our own translators
         let sourceUserData = event.getIntegerValueField(.eventSourceUserData)
         guard sourceUserData != 0xDEADC0DE else { return false }
         
+        // Check key events for customization trigger first
+        if type == .keyDown || type == .keyUp {
+            let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
+            if keyCode == 8 && type == .keyDown { // 'C' keycode
+                if state.isKnobing || state.isCooling {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.enterCustomization()
+                    }
+                    return true
+                }
+            }
+        }
+        
+        if state == .customizing {
+            // Let all keyboard events pass through to Customizer window
+            return false
+        }
+        
         // Block zoom (magnify), rotate, and general gestures during knobing/interception
         let typeVal = type.rawValue
         if typeVal == 29 || typeVal == 19 || typeVal == 18 {
-            writeDebugLog("[KnobStateManager] Swallowed gesture event of type: \(typeVal) (knobing: \(state.isKnobing), intercepting: \(isInterceptingGestures))")
-            return true
+            if state.isKnobing || isInterceptingGestures {
+                writeDebugLog("[KnobStateManager] Swallowed gesture event of type: \(typeVal) (knobing: \(state.isKnobing), intercepting: \(isInterceptingGestures))")
+                return true
+            }
         }
+        
+        guard state.isKnobing || isInterceptingGestures else { return false }
         
         guard type == .keyDown || type == .keyUp else { return false }
         
@@ -853,10 +1015,38 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     // MARK: - Translator Factory
 
-    private func makeTranslator(for target: DetectedTarget, rule: ControlRule?) -> InputTranslator {
-        let translation = rule?.translation ?? autoDetectTranslation(for: target)
-        let scale = rule?.scaleConfig?.resolve() ?? 1.0
-        let isInverted = rule?.invert ?? false
+    private func makeTranslator(for target: DetectedTarget, rule: ControlRule?, radius: Double = 0.0) -> InputTranslator {
+        var translation = rule?.translation ?? autoDetectTranslation(for: target)
+        var scale = rule?.scaleConfig?.resolve() ?? 1.0
+        var isInverted = rule?.invert ?? false
+
+        if let rule = rule {
+            switch rule.configType {
+            case .single:
+                if let single = rule.singleConfig {
+                    translation = single.translation
+                    scale = single.unitPerDegree
+                    let isDefaultCW = (single.clockwiseAction == "arrowUp" || single.clockwiseAction == "arrowRight" || single.clockwiseAction == "scrollUp" || single.clockwiseAction == "swipeUp" || single.clockwiseAction == "swipeRight" || single.clockwiseAction == "increase")
+                    isInverted = !isDefaultCW
+                }
+            case .double:
+                if let double = rule.doubleConfig {
+                    let isOuter = radius > (double.inner.maxRadius + double.inner.margin)
+                    let activeKnob = isOuter ? double.outer : double.inner
+                    translation = activeKnob.translation
+                    scale = activeKnob.unitPerDegree
+                    let isDefaultCW = (activeKnob.clockwiseAction == "arrowUp" || activeKnob.clockwiseAction == "arrowRight" || activeKnob.clockwiseAction == "scrollUp" || activeKnob.clockwiseAction == "swipeUp" || activeKnob.clockwiseAction == "swipeRight" || activeKnob.clockwiseAction == "increase")
+                    isInverted = !isDefaultCW
+                }
+            case .linear:
+                if let linear = rule.linearConfig {
+                    translation = linear.translation
+                    scale = ScaleResolver.resolveLinear(radius: radius, config: ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale)) ?? linear.minScale
+                    let isDefaultCW = (linear.clockwiseAction == "arrowUp" || linear.clockwiseAction == "arrowRight" || linear.clockwiseAction == "scrollUp" || linear.clockwiseAction == "swipeUp" || linear.clockwiseAction == "swipeRight" || linear.clockwiseAction == "increase")
+                    isInverted = !isDefaultCW
+                }
+            }
+        }
 
         switch translation {
         case .axWrite:
@@ -867,7 +1057,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 // AX 元素不可用，降级到滚轮
                 return ScrollWheelTranslator(axis: .vertical, scale: scale, invert: isInverted)
             }
-            return AXWriteTranslator(element: element, minValue: minV, maxValue: maxV, scale: scale)
+            return AXWriteTranslator(element: element, minValue: minV, maxValue: maxV, scale: scale, invert: isInverted)
 
         case .scrollWheelVertical:
             return ScrollWheelTranslator(axis: .vertical, scale: scale, invert: isInverted)
@@ -876,10 +1066,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             return ScrollWheelTranslator(axis: .horizontal, scale: scale, invert: isInverted)
 
         case .arrowKeyUpDown:
-            return ArrowKeyTranslator(axis: .upDown, scale: scale)
+            return ArrowKeyTranslator(axis: .upDown, scale: scale, invert: isInverted)
 
         case .arrowKeyLeftRight:
-            return ArrowKeyTranslator(axis: .leftRight, scale: scale)
+            return ArrowKeyTranslator(axis: .leftRight, scale: scale, invert: isInverted)
 
         case .swipeVertical:
             // 使用滚轮模拟，直到专用 swipe 实现完成

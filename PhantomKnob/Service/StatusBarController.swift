@@ -201,6 +201,7 @@ class StatusBarController: ObservableObject {
         case .inactive: symbolName = "circle"
         case .activated: symbolName = "circle.fill"
         case .knobing, .cooling: symbolName = "circle.lefthalf.fill"
+        case .customizing: symbolName = "circle.dashed"
         }
         
         if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil) {
@@ -238,6 +239,8 @@ class StatusBarController: ObservableObject {
                 return "Knob 控制：冷却中 (\(name))"
             }
             return "Knob 控制：冷却中"
+        case .customizing:
+            return "Knob 控制：定制中"
         }
     }
     
@@ -251,6 +254,7 @@ class StatusBarController: ObservableObject {
         case .cooling:
             if let name = targetName { return "冷却中 - \(name)" }
             return "冷却中"
+        case .customizing: return "定制中"
         }
     }
 }
