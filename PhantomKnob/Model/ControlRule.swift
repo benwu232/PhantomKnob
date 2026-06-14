@@ -204,7 +204,6 @@ struct ControlRule: Codable, Equatable {
             self.invert = try container.decodeIfPresent(Bool.self, forKey: .invert)
         } else {
             // 后向兼容解析
-            self.configType = .single
             let oldTrans = try container.decodeIfPresent(InputTranslation.self, forKey: .translation) ?? .scrollWheelVertical
             let oldScaleConfig = try container.decodeIfPresent(ScaleConfig.self, forKey: .scaleConfig) ?? .fixed(1.0)
             let oldInvertOpt = try container.decodeIfPresent(Bool.self, forKey: .invert)
@@ -213,11 +212,6 @@ struct ControlRule: Codable, Equatable {
             self.translation = oldTrans
             self.scaleConfig = oldScaleConfig
             self.invert = oldInvertOpt
-            
-            var scaleValue = 1.0
-            if case .fixed(let val) = oldScaleConfig {
-                scaleValue = val
-            }
             
             let defaultCWAction: String
             switch oldTrans {
@@ -230,11 +224,22 @@ struct ControlRule: Codable, Equatable {
             case .axWrite: defaultCWAction = oldInvert ? "decrease" : "increase"
             }
             
-            self.singleConfig = SingleKnobConfig(
-                unitPerDegree: scaleValue,
-                translation: oldTrans,
-                clockwiseAction: defaultCWAction
-            )
+            switch oldScaleConfig {
+            case .zones(let zones):
+                self.configType = .double
+                let innerZone = zones.count > 0 ? zones[0] : RadiusZone(minRadius: 5.0, maxRadius: 25.0, margin: 2.0, scale: 1.0)
+                let outerZone = zones.count > 1 ? zones[1] : RadiusZone(minRadius: 27.0, maxRadius: 100.0, margin: 2.0, scale: 1.0)
+                self.doubleConfig = DoubleKnobConfig(
+                    inner: VirtualKnobConfig(minRadius: innerZone.minRadius, maxRadius: innerZone.maxRadius, margin: innerZone.margin, unitPerDegree: innerZone.scale, translation: oldTrans, clockwiseAction: defaultCWAction),
+                    outer: VirtualKnobConfig(minRadius: outerZone.minRadius, maxRadius: outerZone.maxRadius, margin: outerZone.margin, unitPerDegree: outerZone.scale, translation: oldTrans, clockwiseAction: defaultCWAction)
+                )
+            case .linear(let config):
+                self.configType = .linear
+                self.linearConfig = LinearKnobConfig(minRadius: config.minRadius, maxRadius: config.maxRadius, minScale: config.minScale, maxScale: config.maxScale, translation: oldTrans, clockwiseAction: defaultCWAction)
+            case .fixed(let val):
+                self.configType = .single
+                self.singleConfig = SingleKnobConfig(unitPerDegree: val, translation: oldTrans, clockwiseAction: defaultCWAction)
+            }
         }
     }
 }

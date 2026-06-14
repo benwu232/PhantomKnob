@@ -1,0 +1,42 @@
+<h2>旋钮方向映射设计 (Clockwise Direction Mapping)</h2>
+<p class="subtitle">头脑风暴：如何直观配置“顺时针旋转”所触发的具体动作？</p>
+
+<div class="options">
+  <div class="option" data-choice="explicit" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>方案 A: 显式声明顺时针动作 (Explicit Action - 推荐)</h3>
+      <p>为每种翻译映射提供下拉选择，直接指定<b>顺时针 (Clockwise)</b> 对应的按键或滚轮方向，逆时针则自动绑定其镜像相反值。</p>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 11px; margin-top: 10px;">
+        • <b>映射类型</b>: <code>ArrowKeyUpDown</code> (上下键)<br>
+        • <b>顺时针旋转时触发</b>: 
+        <select style="background:#222; border:1px solid #444; color:#fff; padding:2px; font-size:11px;">
+          <option selected>上方向键 (Arrow Up)</option>
+          <option>下方向键 (Arrow Down)</option>
+        </select>
+        <span style="color: #30D158; display:block; margin-top:4px;">➔ 自动锁定：逆时针旋转时将触发<b>下方向键 (Arrow Down)</b>。</span>
+      </div>
+      <p style="font-size: 12px; color: #aaa; margin-top: 8px;">
+        <b>优点：</b> 极其直观，符合“顺时针旋转1度对应值的变化（上键，下键...）”这一思考方式，免去用户在大脑中做 `Invert` 逻辑反推。
+      </p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="invert_checkbox" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>方案 B: 默认方向 + “反向调节”勾选框 (Invert Checkbox)</h3>
+      <p>每种映射都有系统固定的默认规则（如：顺时针 = 向上/向右/音量增加）。用户只需勾选“反向手势方向 (Invert direction)”即可反转。</p>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 11px; margin-top: 10px;">
+        <label><input type="checkbox" checked> 反向手势方向 (Invert direction)</label>
+        <span style="color: #888; display:block; margin-top:4px;">当前：顺时针 = 下方向键；逆时针 = 上方向键。</span>
+      </div>
+      <p style="font-size: 12px; color: #aaa; margin-top: 8px;">
+        <b>优点：</b> 界面布局极简，占用空间小。<br>
+        <b>缺点：</b> 用户需要查阅文档或脑补才知道“默认方向”是什么。
+      </p>
+    </div>
+  </div>
+</div>

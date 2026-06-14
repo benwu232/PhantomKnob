@@ -1,0 +1,99 @@
+<h2>旋钮定制面板设计 (Customize Panel UI Mockup)</h2>
+<p class="subtitle">按下 C 键后，HUD 浮窗平滑展开为以下迷你设置面板：</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">交互预览：悬浮定制面板 (Glassmorphism HUD)</div>
+    <div class="mockup-body" style="background: rgba(10,10,10,0.85); color: #fff; padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+      
+      <!-- Target Info -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px;">
+        <span style="font-size: 13px; font-weight: bold; color: #0A84FF;">📌 QuickTime Player • 音量条</span>
+        <span style="font-size: 10px; color: #888; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">User Rule</span>
+      </div>
+
+      <!-- 1. Translation Mapping -->
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">1. 输入映射 (Translation)</label>
+        <select style="width: 100%; background: #222; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 5px; border-radius: 4px; font-size: 12px;">
+          <option>自动检测 (Auto-detect fallback)</option>
+          <option selected>模拟鼠标滚轮 (Scroll Wheel Vertical)</option>
+          <option>模拟水平滚轮 (Scroll Wheel Horizontal)</option>
+          <option>模拟上下方向键 (Arrow Key Up/Down)</option>
+          <option>模拟左右方向键 (Arrow Key Left/Right)</option>
+          <option>双指上下滑动 (Swipe Vertical)</option>
+          <option>双指左右滑动 (Swipe Horizontal)</option>
+          <option>无障碍直接写入 (AX Write)</option>
+        </select>
+      </div>
+
+      <!-- 2. Type Selector -->
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">2. 旋钮类型与灵敏度 (Type & Sensitivity)</label>
+        <div style="display: flex; gap: 5px; margin-bottom: 8px;">
+          <button style="flex: 1; padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #0A84FF; background: rgba(10,132,255,0.15); color: #0A84FF; font-weight: bold;">单旋钮 (Fixed)</button>
+          <button style="flex: 1; padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: #222; color: #ccc;">双旋钮 (Coarse/Fine)</button>
+          <button style="flex: 1; padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: #222; color: #ccc;">线性半径 (Linear)</button>
+        </div>
+        
+        <!-- Fixed Sensitivity Slider -->
+        <div style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: #ccc; margin-bottom: 4px;">
+            <span>缩放倍率 (Scale multiplier):</span>
+            <span style="color: #0A84FF; font-weight: bold;">1.5x</span>
+          </div>
+          <input type="range" min="0.1" max="5.0" step="0.1" value="1.5" style="width: 100%; accent-color: #0A84FF;">
+        </div>
+      </div>
+
+      <!-- 3. Visuals & Feedback -->
+      <div style="margin-bottom: 15px;">
+        <label style="font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">3. 主题色与反馈 (Visuals & Haptics)</label>
+        <!-- Color Picker -->
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 11px; color: #ccc; width: 50px;">主题颜色:</span>
+          <span style="width: 18px; height: 18px; border-radius: 50%; background: #0A84FF; border: 2px solid #fff; cursor: pointer;"></span>
+          <span style="width: 18px; height: 18px; border-radius: 50%; background: #FF9F0A; cursor: pointer;"></span>
+          <span style="width: 18px; height: 18px; border-radius: 50%; background: #30D158; cursor: pointer;"></span>
+          <span style="width: 18px; height: 18px; border-radius: 50%; background: #BF5AF2; cursor: pointer;"></span>
+          <span style="width: 18px; height: 18px; border-radius: 50%; background: #FF453A; cursor: pointer;"></span>
+        </div>
+        <!-- Feedback Toggles -->
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #ccc; margin-bottom: 5px;">
+          <span>反转手势方向 (Invert gesture)</span>
+          <input type="checkbox" style="accent-color: #0A84FF;">
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #ccc;">
+          <span>开启物理段落嘀嗒音 (Sound Feedback)</span>
+          <input type="checkbox" checked style="accent-color: #0A84FF;">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 8px; margin-top: 15px;">
+        <button style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; font-size: 12px; cursor: pointer;">取消</button>
+        <button style="flex: 2; padding: 6px; border-radius: 4px; border: none; background: #0A84FF; color: #fff; font-size: 12px; font-weight: bold; cursor: pointer;">保存配置 (Save)</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">交互规范说明</div>
+    <div class="mockup-body" style="font-size: 13px; line-height: 1.5;">
+      <h3>选项详细设计</h3>
+      <ul>
+        <li><b>主题色</b>：支持配置 `themeColor`，当旋钮激活时，HUD 背景发光与圆盘刻度线同步变为定制的色彩。</li>
+        <li><b>类型匹配</b>：
+          <ul>
+            <li><b>单旋钮 (Fixed)</b>：固定系数的旋转。</li>
+            <li><b>双旋钮 (Coarse/Fine)</b>：分内/外圈，例如半径小于 25pt 时是微调（系数 0.2），大于 25pt 时是粗调（系数 1.5）。</li>
+            <li><b>线性半径 (Linear)</b>：拉远半径时灵敏度连续递减/递增（适合做平滑剪辑调色）。</li>
+          </ul>
+        </li>
+        <li><b>物理音效</b>：借鉴引导页的清脆 Tick 声，每旋转 1.0° 发出一声滴答音，供用户在特定精密控件下开启。</li>
+        <li><b>数据持久化</b>：保存到用户独占的 `~/Library/Application Support/PhantomKnob/rules.json` 中，比 Bundled Rules 优先级高。</li>
+      </ul>
+    </div>
+  </div>
+</div>

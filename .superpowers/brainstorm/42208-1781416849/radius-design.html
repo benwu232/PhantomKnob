@@ -1,0 +1,84 @@
+<h2>旋钮半径与死区实心指示设计</h2>
+<p class="subtitle">针对半径范围自定义、双旋钮接缝以及死区实心视觉反馈进行头脑风暴与选择</p>
+
+<!-- 视觉对比区域 -->
+<div class="section">
+  <div class="label">视觉示意 (Mockups)</div>
+  <div class="split">
+    <!-- 正常旋转状态 -->
+    <div class="mockup">
+      <div class="mockup-header">正常活跃状态 (Active Rotation)</div>
+      <div class="mockup-body" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:180px; background:var(--bg-primary);">
+        <div style="position:relative; width:90px; height:90px; border-radius:50%; border:3px solid var(--accent); display:flex; align-items:center; justify-content:center;">
+          <!-- 旋转指针 -->
+          <div style="position:absolute; top:8px; width:3px; height:20px; background:var(--accent); border-radius:1.5px; transform-origin: 50% 37px; transform: rotate(45deg);"></div>
+          <!-- 中心圆 -->
+          <div style="width:8px; height:8px; border-radius:50%; background:var(--accent);"></div>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:1rem;">指示环呈空心线框，旋转刻度指针指示旋转角度</p>
+      </div>
+    </div>
+    
+    <!-- 死区状态 (半径 < Min) -->
+    <div class="mockup">
+      <div class="mockup-header">死区锁定状态 (Deadzone: Radius &lt; Min)</div>
+      <div class="mockup-body" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:180px; background:var(--bg-primary);">
+        <div style="position:relative; width:45px; height:45px; border-radius:50%; background:var(--text-tertiary); opacity:0.6; display:flex; align-items:center; justify-content:center;">
+          <!-- 无指针 -->
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:1.8rem; text-align:center;">
+          <strong>显示为实心圆</strong> (灰色/半透明)<br>
+          此时丢弃任何旋转输入，数值无法调节
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 设计选项列表 -->
+<div class="section">
+  <div class="label">方案选择</div>
+  <div class="options">
+    <div class="option" data-choice="a" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>方案 A：全面高度自定义 (Full Config)</h3>
+        <p>1. <strong>所有模式</strong>均在 HUD 中展示 Min 和 Max 半径设置 (单旋钮也加上，默认 5mm~100mm)。</p>
+        <p>2. 双旋钮去失 Margin 概念，<strong>内圈最大半径 = 外圈最小半径</strong>。修改内圈最大半径时，自动修改外圈最小半径（数据级强制相等）。</p>
+        <p>3. 半径 &lt; Min 时，HUD 自动缩为一个小型的半透明实心圆，不响应旋转动作。</p>
+      </div>
+    </div>
+    
+    <div class="option" data-choice="b" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>方案 B：智能隐式 defaults 与极简 UI (Recommended)</h3>
+        <p>1. <strong>仅在双旋钮/线性模式</strong>开放半径配置。单旋钮默认使用系统隐式边界 (5mm~100mm)，保持 HUD 配置页极度简洁。</p>
+        <p>2. 双旋钮中直接删除 Margin 滑块，在 UI 上表现为<strong>两圈半径接壤</strong> (内圈最大值即外圈最小值)。</p>
+        <p>3. 半径 &lt; Min 时，同样渲染为小实心圆锁死调节，且实心圆颜色与当前旋钮色相呼应。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 优缺点分析 -->
+<div class="section">
+  <div class="label">核心逻辑讨论 (半径接壤 & 死区实心化)</div>
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>半径接壤 & 死区实心化优势</h4>
+      <ul>
+        <li>去掉了保护带滑块，操作体验更顺畅，接壤无过渡硬断档。</li>
+        <li>实心化旋钮让“未激活死区”状态极其直观。</li>
+        <li>空心 (活跃/可调) 与实心 (失效/锁定) 的对比非常契合物理旋钮手感。</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>实现注意点 / 挑战</h4>
+      <ul>
+        <li>当内圈最大值等于外圈最小值时，用户手指刚好划过该半径界线时需使用 Hysteresis (滞后过滤) 以防两圈因微颤而频繁交叉闪烁。</li>
+        <li>实心指示器在小半径下圆心定位必须与用户两指中心完全重合。</li>
+      </ul>
+    </div>
+  </div>
+</div>

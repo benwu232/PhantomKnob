@@ -1,0 +1,96 @@
+<h2>控制面板 (Control Panel) 视觉与布局设计</h2>
+<p class="subtitle">对于控制面板的控制区，我们设计了两种高保真视觉方案。请对比并选择：</p>
+
+<div class="split" style="gap: 24px; margin-top: 20px;">
+  <!-- 方案 A: iOS 控制中心网格风格 -->
+  <div class="mockup" style="flex: 1; background: rgba(30, 30, 45, 0.9); border-radius: 16px; padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; min-height: 400px; display: flex; flex-direction: column;">
+    <div style="font-size: 11px; text-transform: uppercase; color: #0071e3; font-weight: bold; margin-bottom: 4px;">方案 A</div>
+    <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">iOS 经典胶囊网格</h3>
+    
+    <!-- 模拟 UI -->
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex: 1;">
+      <!-- 音量胶囊 -->
+      <div style="flex: 1; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; height: 180px;">
+        <div style="width: 24px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; position: relative;">
+          <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: #0071e3;"></div>
+        </div>
+        <div style="font-size: 20px; margin-top: 8px;">🔊</div>
+        <div style="font-size: 12px; font-weight: 500; margin-top: 4px;">系统音量</div>
+        <div style="font-size: 11px; color: #888;">70%</div>
+      </div>
+      
+      <!-- 亮度胶囊 -->
+      <div style="flex: 1; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; height: 180px;">
+        <div style="width: 24px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; position: relative;">
+          <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: #0071e3;"></div>
+        </div>
+        <div style="font-size: 20px; margin-top: 8px;">☀️</div>
+        <div style="font-size: 12px; font-weight: 500; margin-top: 4px;">屏幕亮度</div>
+        <div style="font-size: 11px; color: #888;">50%</div>
+      </div>
+
+      <!-- 键盘灯胶囊 -->
+      <div style="flex: 1; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; height: 180px;">
+        <div style="width: 24px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; position: relative;">
+          <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; background: #0071e3;"></div>
+        </div>
+        <div style="font-size: 20px; margin-top: 8px;">⌨️</div>
+        <div style="font-size: 12px; font-weight: 500; margin-top: 4px;">键盘背光</div>
+        <div style="font-size: 11px; color: #888;">30%</div>
+      </div>
+    </div>
+    
+    <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 10px; font-size: 12px; color: #aaa;">
+      💡 <strong>交互特性</strong>：界面直观，契合 macOS Control Center 规范，胶囊滑块的高度非常适合展示两指旋转时的线性增量反馈。
+    </div>
+  </div>
+
+  <!-- 方案 B: 科技圆盘旋钮风格 -->
+  <div class="mockup" style="flex: 1; background: rgba(30, 30, 45, 0.9); border-radius: 16px; padding: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #fff; min-height: 400px; display: flex; flex-direction: column;">
+    <div style="font-size: 11px; text-transform: uppercase; color: #0071e3; font-weight: bold; margin-bottom: 4px;">方案 B</div>
+    <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">科技拟物圆盘旋钮</h3>
+    
+    <!-- 模拟 UI -->
+    <div style="display: flex; justify-content: space-around; align-items: center; flex: 1; margin-bottom: 16px;">
+      <!-- 音量圆盘 -->
+      <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.1); border-top-color: #0071e3; display: flex; align-items: center; justify-content: center; transform: rotate(45deg); transition: transform 0.2s; position: relative;">
+          <div style="font-size: 20px; transform: rotate(-45deg);">🔊</div>
+          <div style="position: absolute; top: 4px; width: 6px; height: 6px; border-radius: 50%; background: #0071e3;"></div>
+        </div>
+        <div style="font-size: 12px; font-weight: 500; margin-top: 10px;">系统音量 (70%)</div>
+      </div>
+      
+      <!-- 亮度圆盘 -->
+      <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.1); border-top-color: #0071e3; display: flex; align-items: center; justify-content: center; transform: rotate(120deg); transition: transform 0.2s; position: relative;">
+          <div style="font-size: 20px; transform: rotate(-120deg);">☀️</div>
+          <div style="position: absolute; top: 4px; width: 6px; height: 6px; border-radius: 50%; background: #0071e3;"></div>
+        </div>
+        <div style="font-size: 12px; font-weight: 500; margin-top: 10px;">屏幕亮度 (50%)</div>
+      </div>
+    </div>
+    
+    <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 10px; font-size: 12px; color: #aaa;">
+      💡 <strong>交互特性</strong>：采用圆盘物理阻尼感界面，完美契合 “Phantom Knob” 旋钮主题，转动触控板时，屏幕上的圆环旋钮会同步旋转，代入感极强。
+    </div>
+  </div>
+</div>
+
+<div class="options" style="margin-top: 30px;">
+  <div class="option" data-choice="capsule_grid" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>方案 A：iOS 经典胶囊网格</h3>
+      <p>音量和亮度以竖向滑块胶囊呈现，类似 macOS 和 iOS 控制中心。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="radial_knob" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>方案 B：科技拟物圆盘旋钮</h3>
+      <p>音量和亮度以虚拟旋转圆盘呈现，手势转动时屏幕上的旋钮同步转动。</p>
+    </div>
+  </div>
+</div>

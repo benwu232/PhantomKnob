@@ -1,0 +1,371 @@
+<style>
+  .hud-preview {
+    background: #1e1e1e;
+    color: #e5e5e7;
+    border-radius: 16px;
+    padding: 1.25rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    max-width: 420px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  .hud-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 1rem;
+  }
+  
+  .hud-header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff9f0a;
+  }
+  .hud-header-sub {
+    font-size: 10px;
+    color: #8e8e93;
+  }
+  
+  .hud-tab-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 2px;
+    margin-bottom: 1.25rem;
+  }
+  .hud-tab {
+    text-align: center;
+    font-size: 11px;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #aeaeae;
+  }
+  .hud-tab.active {
+    background: #3a3a3c;
+    color: #fff;
+    font-weight: 500;
+  }
+  
+  .hud-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8e8e93;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  
+  .global-transition-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 1rem;
+  }
+  
+  .hud-slider-row {
+    margin-bottom: 8px;
+  }
+  .hud-slider-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+  .hud-slider-track {
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    position: relative;
+  }
+  .hud-slider-fill {
+    height: 100%;
+    background: #0a84ff;
+    border-radius: 2px;
+  }
+  .hud-slider-thumb {
+    position: absolute;
+    top: -4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+  
+  .knob-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .knob-card.outer {
+    border-left: 3px solid #ff9f0a;
+  }
+  .knob-card.inner {
+    border-left: 3px solid #30d158;
+  }
+  
+  .knob-card-header {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .color-preset-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  .color-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .color-dot.active {
+    box-shadow: 0 0 0 1.5px #fff;
+  }
+  
+  .hud-button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #e5e5e7;
+    border-radius: 6px;
+    font-size: 11px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .hud-select-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .hud-select-val {
+    background: rgba(255,255,255,0.08);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 11px;
+    color: #fff;
+  }
+  
+  .hud-input-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+  }
+  .hud-input-field {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #ff9f0a;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 11px;
+    font-family: monospace;
+    width: 70px;
+    text-align: right;
+  }
+  
+  .hud-meta {
+    font-size: 9px;
+    color: #8e8e93;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .hud-meta-row {
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+
+<h2>方案 1：双旋钮设置页面视觉预览</h2>
+<p class="subtitle">展示在 Hysteresis 迟滞机制下，完整的定制 HUD 面板设计方案。</p>
+
+<div class="hud-preview">
+  <!-- Metadata Header -->
+  <div class="hud-header">
+    <div style="width:32px; height:32px; border-radius:6px; background:#e0e0e0; display:flex; align-items:center; justify-content:center; color:#333; font-weight:bold; font-size:16px;">V</div>
+    <div style="flex:1;">
+      <div class="hud-header-title">音量调节 (AXSlider)</div>
+      <div class="hud-header-sub">System App · AXSlider</div>
+    </div>
+    <div style="font-size:10px; font-weight:bold; background:rgba(255,159,10,0.15); color:#ff9f0a; padding:2px 6px; border-radius:4px; border:1px solid rgba(255,159,10,0.3);">
+      18 mm
+    </div>
+  </div>
+
+  <!-- Segmented Tab Bar -->
+  <div class="hud-tab-bar">
+    <div class="hud-tab">单旋钮</div>
+    <div class="hud-tab active">双旋钮</div>
+    <div class="hud-tab">线性半径</div>
+  </div>
+
+  <!-- Global Transition Boundaries -->
+  <div class="hud-section-title">⚙️ 切换边界与迟滞范围</div>
+  <div class="global-transition-box">
+    <!-- Transition Boundary -->
+    <div class="hud-slider-row">
+      <div class="hud-slider-info">
+        <span>切换边界半径 (Boundary)</span>
+        <span style="font-family:monospace; color:#fff;">25 mm</span>
+      </div>
+      <div class="hud-slider-track">
+        <div class="hud-slider-fill" style="width: 50%;"></div>
+        <div class="hud-slider-thumb" style="left: 50%;"></div>
+      </div>
+    </div>
+
+    <!-- Hysteresis Margin -->
+    <div class="hud-slider-row" style="margin-bottom:0;">
+      <div class="hud-slider-info">
+        <span>迟滞半宽 (Margin)</span>
+        <span style="font-family:monospace; color:#fff;">2 mm</span>
+      </div>
+      <div class="hud-slider-track">
+        <div class="hud-slider-fill" style="width: 20%; background:#30d158;"></div>
+        <div class="hud-slider-thumb" style="left: 20%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Outer Knob Config Card -->
+  <div class="knob-card outer">
+    <div class="knob-card-header" style="color:#ff9f0a;">
+      <span>🟠 外圈旋钮 (粗调)</span>
+      <span style="font-size:10px; color:#8e8e93; font-weight:normal;">触发半径 &gt; 25mm ± Margin</span>
+    </div>
+    
+    <!-- Presets -->
+    <div class="color-preset-row">
+      <div class="color-dot" style="background:#FF453A;"></div>
+      <div class="color-dot active" style="background:#FF9F0A;"></div>
+      <div class="color-dot" style="background:#FFD60A;"></div>
+      <div class="color-dot" style="background:#30D158;"></div>
+      <div class="color-dot" style="background:#64D2FF;"></div>
+      <div class="color-dot" style="background:#0A84FF;"></div>
+      <div class="color-dot" style="background:#5E5CE6;"></div>
+      <div class="color-dot" style="background:#BF5AF2;"></div>
+      <div class="color-dot" style="background:#FF375F;"></div>
+      <div class="color-dot" style="background:#FF6482;"></div>
+      <div class="color-dot" style="background:#34C759;"></div>
+      <div class="color-dot" style="background:#00C7BE;"></div>
+      <div class="color-dot" style="background:#FF9500;"></div>
+      <div class="color-dot" style="background:#AF52DE;"></div>
+      <div class="color-dot" style="background:#555555;"></div>
+      <div class="color-dot" style="background:#FFFFFF;"></div>
+    </div>
+
+    <!-- Custom Button -->
+    <div class="hud-button">
+      <span style="color:#ff9f0a;">🎨</span>
+      <span>自定义外圈颜色...</span>
+      <span style="margin-left:auto; font-family:monospace; font-size:10px; color:#8e8e93;">#FF9F0A</span>
+    </div>
+
+    <!-- Output mapping select -->
+    <div class="hud-select-row">
+      <span>输出映射方式</span>
+      <div class="hud-select-val">垂直滚轮</div>
+    </div>
+    <div class="hud-select-row">
+      <span>顺时针方向动作</span>
+      <div class="hud-select-val">向上滚动</div>
+    </div>
+
+    <!-- Scale input -->
+    <div class="hud-input-row">
+      <span>每度变化量 (Scale)</span>
+      <input class="hud-input-field" value="1.5" disabled>
+    </div>
+  </div>
+
+  <!-- Inner Knob Config Card -->
+  <div class="knob-card inner">
+    <div class="knob-card-header" style="color:#30d158;">
+      <span>🟢 内圈旋钮 (微调)</span>
+      <span style="font-size:10px; color:#8e8e93; font-weight:normal;">触发半径 &lt; 25mm ± Margin</span>
+    </div>
+    
+    <!-- Presets -->
+    <div class="color-preset-row">
+      <div class="color-dot" style="background:#FF453A;"></div>
+      <div class="color-dot" style="background:#FF9F0A;"></div>
+      <div class="color-dot" style="background:#FFD60A;"></div>
+      <div class="color-dot active" style="background:#30D158;"></div>
+      <div class="color-dot" style="background:#64D2FF;"></div>
+      <div class="color-dot" style="background:#0A84FF;"></div>
+      <div class="color-dot" style="background:#5E5CE6;"></div>
+      <div class="color-dot" style="background:#BF5AF2;"></div>
+      <div class="color-dot" style="background:#FF375F;"></div>
+      <div class="color-dot" style="background:#FF6482;"></div>
+      <div class="color-dot" style="background:#34C759;"></div>
+      <div class="color-dot" style="background:#00C7BE;"></div>
+      <div class="color-dot" style="background:#FF9500;"></div>
+      <div class="color-dot" style="background:#AF52DE;"></div>
+      <div class="color-dot" style="background:#555555;"></div>
+      <div class="color-dot" style="background:#FFFFFF;"></div>
+    </div>
+
+    <!-- Custom Button -->
+    <div class="hud-button">
+      <span style="color:#30d158;">🎨</span>
+      <span>自定义内圈颜色...</span>
+      <span style="margin-left:auto; font-family:monospace; font-size:10px; color:#8e8e93;">#30D158</span>
+    </div>
+
+    <!-- Output mapping select -->
+    <div class="hud-select-row">
+      <span>输出映射方式</span>
+      <div class="hud-select-val">上下方向键</div>
+    </div>
+    <div class="hud-select-row">
+      <span>顺时针方向动作</span>
+      <div class="hud-select-val">向上按键</div>
+    </div>
+
+    <!-- Scale input -->
+    <div class="hud-input-row">
+      <span>每度变化量 (Scale)</span>
+      <input class="hud-input-field" style="color:#30d158;" value="0.2" disabled>
+    </div>
+  </div>
+
+  <!-- Metadata -->
+  <div class="hud-meta">
+    <div class="hud-meta-row">
+      <span>Bundle ID</span>
+      <span style="color:#fff;">com.apple.systemcontrol</span>
+    </div>
+    <div class="hud-meta-row">
+      <span>AXRole</span>
+      <span style="color:#fff;">AXSlider</span>
+    </div>
+  </div>
+</div>

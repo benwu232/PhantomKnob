@@ -7,6 +7,7 @@ struct CustomizerHUDView: View {
     
     @State private var themeColor: String = "#0A84FF"
     @State private var configType: KnobConfigType = .single
+    @State private var isLoadingConfig: Bool = false
     
     // 单旋钮
     @State private var singleScale: Double = 1.0
@@ -731,6 +732,7 @@ struct CustomizerHUDView: View {
     // MARK: - 模型逻辑适配与加载保存
     
     private func loadExisting() {
+        isLoadingConfig = true
         if let existing = RuleLibrary.shared.lookup(for: target.ruleKey) {
             self.themeColor = existing.themeColor ?? "#0A84FF"
             self.configType = existing.configType
@@ -812,9 +814,14 @@ struct CustomizerHUDView: View {
             self.activeColorTarget = .global
         }
         onLoadExisting?(self.configType, self.themeColor)
+        
+        DispatchQueue.main.async {
+            self.isLoadingConfig = false
+        }
     }
     
     private func save() {
+        guard !isLoadingConfig else { return }
         var rule = ControlRule(key: target.ruleKey, themeColor: themeColor, configType: configType)
         
         switch configType {

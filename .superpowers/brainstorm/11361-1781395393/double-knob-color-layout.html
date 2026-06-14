@@ -1,0 +1,242 @@
+<h2>双旋钮独立配色与配置设计方案</h2>
+<p class="subtitle">对于双旋钮（内圈/外圈）如何配置其独立的属性和颜色，我们设计了以下两种方案。请在浏览器中查看对比，并点击你倾向的方案。</p>
+
+<style>
+.hud-preview {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 16px;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    margin-top: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    pointer-events: none; /* 仅预览用，避免事件冲突 */
+}
+.hud-preview .card-header {
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+.hud-preview .card-title {
+    font-weight: bold;
+    color: #ff9500;
+    font-size: 13px;
+}
+.hud-preview .section-title {
+    color: #888;
+    font-weight: bold;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+.hud-preview .color-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+.hud-preview .color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #444;
+}
+.hud-preview .color-dot.selected {
+    border: 1.5px solid white;
+}
+.hud-preview .custom-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    color: #aaa;
+}
+.hud-preview .sub-section {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.hud-preview .sub-section.inner {
+    border-left: 3px solid #30D158;
+}
+.hud-preview .sub-section.outer {
+    border-left: 3px solid #FF9F0A;
+}
+.hud-preview .sub-section-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 11px;
+}
+.hud-preview .row-align {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.hud-preview .hud-input {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #ff9500;
+    width: 60px;
+    text-align: right;
+    font-family: monospace;
+}
+.hud-preview .hud-picker {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 3px 6px;
+    border-radius: 4px;
+    color: #fff;
+    width: 110px;
+}
+</style>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">方案 A：完全独立子卡片配置 (推荐)</div>
+    <div class="mockup-body">
+      <p style="font-size: 0.85rem; margin-bottom: 10px; color: var(--text-secondary);">
+        将颜色选择器与物理范围、映射方式一同归属到各自独立的内圈/外圈卡片中。上下文完全隔离，清晰明了。
+      </p>
+      
+      <!-- Option A Preview -->
+      <div class="hud-preview">
+        <div class="card-header">
+          <div class="card-title">音量 · AXSlider</div>
+        </div>
+        
+        <!-- Inner Knob Section -->
+        <div class="sub-section inner">
+          <div class="sub-section-title" style="color: #30D158;">🟢 内圈旋钮 (微调)</div>
+          
+          <div class="section-title">内圈颜色</div>
+          <div class="color-grid">
+            <div class="color-dot selected" style="background-color: #30D158;"></div>
+            <div class="color-dot" style="background-color: #0A84FF;"></div>
+            <div class="color-dot" style="background-color: #BF5AF2;"></div>
+            <div class="color-dot" style="background-color: #FF453A;"></div>
+            <div class="color-dot" style="background-color: #FFFFFF;"></div>
+          </div>
+          <div class="custom-btn"><span>🎨 自定义内圈颜色...</span><span>#30D158</span></div>
+          
+          <div class="row-align">
+            <span>输出映射</span>
+            <div class="hud-picker">上下方向键</div>
+          </div>
+          <div class="row-align">
+            <span>每度变化量</span>
+            <div class="hud-input">0.20</div>
+          </div>
+        </div>
+        
+        <!-- Outer Knob Section -->
+        <div class="sub-section outer">
+          <div class="sub-section-title" style="color: #FF9F0A;">🟠 外圈旋钮 (粗调)</div>
+          
+          <div class="section-title">外圈颜色</div>
+          <div class="color-grid">
+            <div class="color-dot" style="background-color: #30D158;"></div>
+            <div class="color-dot" style="background-color: #0A84FF;"></div>
+            <div class="color-dot" style="background-color: #BF5AF2;"></div>
+            <div class="color-dot selected" style="background-color: #FF9F0A;"></div>
+            <div class="color-dot" style="background-color: #FFFFFF;"></div>
+          </div>
+          <div class="custom-btn"><span>🎨 自定义外圈颜色...</span><span>#FF9F0A</span></div>
+          
+          <div class="row-align">
+            <span>输出映射</span>
+            <div class="hud-picker">垂直滚轮</div>
+          </div>
+          <div class="row-align">
+            <span>每度变化量</span>
+            <div class="hud-input">1.50</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">方案 B：主面板双配色 + 下方参数配置</div>
+    <div class="mockup-body">
+      <p style="font-size: 0.85rem; margin-bottom: 10px; color: var(--text-secondary);">
+        在 HUD 顶部集中配置两个圈的主题配色，下方再展示两段式的参数调节。调色逻辑集中在顶部。
+      </p>
+      
+      <!-- Option B Preview -->
+      <div class="hud-preview">
+        <div class="card-header">
+          <div class="card-title">音量 · AXSlider</div>
+        </div>
+        
+        <!-- Combined Theme Colors -->
+        <div class="sub-section" style="background: rgba(255,255,255,0.06);">
+          <div class="sub-section-title">🎨 配色方案</div>
+          
+          <div class="row-align" style="margin-bottom: 8px;">
+            <span>内圈颜色</span>
+            <div class="color-grid">
+              <div class="color-dot selected" style="background-color: #30D158;"></div>
+              <div class="color-dot" style="background-color: #0A84FF;"></div>
+              <div class="color-dot" style="background-color: #FF453A;"></div>
+            </div>
+          </div>
+          
+          <div class="row-align">
+            <span>外圈颜色</span>
+            <div class="color-grid">
+              <div class="color-dot" style="background-color: #30D158;"></div>
+              <div class="color-dot selected" style="background-color: #FF9F0A;"></div>
+              <div class="color-dot" style="background-color: #0A84FF;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Parameter settings below -->
+        <div class="sub-section inner">
+          <div class="sub-section-title" style="color: #30D158;">🟢 内圈旋钮 (微调)</div>
+          <div class="row-align">
+            <span>输出映射</span>
+            <div class="hud-picker">上下方向键</div>
+          </div>
+        </div>
+        
+        <div class="sub-section outer">
+          <div class="sub-section-title" style="color: #FF9F0A;">🟠 外圈旋钮 (粗调)</div>
+          <div class="row-align">
+            <span>输出映射</span>
+            <div class="hud-picker">垂直滚轮</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>方案 A：完全独立子卡片配置（推荐）</h3>
+      <p>将颜色选择器放入内圈/外圈独立的子区域内，设置更具针对性，界面更加模块化。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>方案 B：主面板双配色</h3>
+      <p>颜色设置全部集中在面板上部，下部仅负责功能映射和参数调节。</p>
+    </div>
+  </div>
+</div>

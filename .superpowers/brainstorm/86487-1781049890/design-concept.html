@@ -1,0 +1,67 @@
+<h2>唤起控制面板（Control Panel）的入口设计</h2>
+<p class="subtitle">第一运行会自动弹出作为 Tutorial。在日常使用中，如何让用户最方便、无冲突地唤起它？请在下方选择您的偏好，或在终端中与我探讨：</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>状态栏下拉菜单 + 首次自动弹出 [经典 macOS]</h3>
+      <p>第一次启动应用时自动弹窗进入 Tutorial；平时作为常驻后台工具，点击菜单栏右上角图标弹出控制面板。</p>
+      <div class="pros-cons" style="margin-top: 10px;">
+        <div class="pros">
+          <ul>
+            <li>符合苹果 HUI 设计规范，最安全、无侵入</li>
+            <li>易于用户寻找，认知成本低</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <ul>
+            <li>需要移动光标去右上角点击，不如手势直接</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>全局快捷手势（如：双击鼠标左键/触控板）[极速唤起]</h3>
+      <p>在任意屏幕区域快速双击左键或双击触控板直接在光标处呼出控制面板。</p>
+      <div class="pros-cons" style="margin-top: 10px;">
+        <div class="pros">
+          <ul>
+            <li>操作极其敏捷，随时随地呼出</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <ul>
+            <li><strong>严重冲突风险</strong>：会严重干扰网页双击选词、专业软件（如 DaVinci/FCP）双击重置、双击打开文件等原生系统操作</li>
+            <li>误触发率极高，不推荐</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>全局快捷键 + 首次自动弹出 [专业快捷]</h3>
+      <p>分配一个系统级热键（例如 ⌘⇧C 或双击 Option/Command 键）在光标位置弹出 HUD 控制面板。</p>
+      <div class="pros-cons" style="margin-top: 10px;">
+        <div class="pros">
+          <ul>
+            <li>无任何手势/双击冲突，100% 稳定可靠</li>
+            <li>单手键盘流操作效率极高</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <ul>
+            <li>用户需要记住一个额外的热键</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

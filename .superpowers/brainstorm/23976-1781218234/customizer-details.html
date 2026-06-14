@@ -1,0 +1,106 @@
+<h2>高级定制细节设计 (Advanced Customization Details)</h2>
+<p class="subtitle">头脑风暴：针对每种模式（单、双独立、线性）的精细参数设计</p>
+
+<div class="split">
+  <div class="mockup" style="flex: 1.2;">
+    <div class="mockup-header">模式 1: 单旋钮 (Single Knob)</div>
+    <div class="mockup-body" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; font-size: 12px;">
+      <div style="margin-bottom: 8px;">
+        <b>每 1° 对应的 delta 变化量：</b>
+        <input type="number" value="1.0" step="0.1" style="width: 70px; background:#222; border:1px solid #444; color:#fff; padding:3px; border-radius:3px;">
+      </div>
+      <div>
+        <b>顺时针旋转 1° 对应映射：</b>
+        <select style="background:#222; border:1px solid #444; color:#fff; padding:3px; border-radius:3px;">
+          <option>方向键 - 上 (Arrow Up)</option>
+          <option>方向键 - 右 (Arrow Right)</option>
+          <option selected>滚轮 - 向上滚动 (Scroll Up)</option>
+          <option>双指 - 向上滑 (Pan Up)</option>
+        </select>
+        <span style="color: #888; font-size: 11px; display: block; margin-top: 4px;">逆时针将自动匹配相反动作（例如滚轮向下）。</span>
+      </div>
+    </div>
+
+    <div class="mockup-header" style="margin-top: 15px;">模式 2: 双旋钮 (Double Independent Knobs)</div>
+    <div class="mockup-body" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; font-size: 12px;">
+      <p style="color: #0A84FF; font-weight: bold; margin-bottom: 8px;"> concentric concentric 双心圆嵌套，两个旋钮完全独立配置：</p>
+      
+      <!-- Knob 1: Inner -->
+      <div style="background: rgba(10,132,255,0.08); padding: 8px; border-radius: 6px; margin-bottom: 8px; border: 1px solid rgba(10,132,255,0.2);">
+        <b>🟢 内圈旋钮 (Inner Knob) — 适合微调</b>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 5px 0;">
+          <div>半径 min: <input type="number" value="5.0" style="width:100%; background:#222; border:1px solid #444; color:#fff;"></div>
+          <div>半径 max: <input type="number" value="25.0" style="width:100%; background:#222; border:1px solid #444; color:#fff;"></div>
+          <div>保护带 margin: <input type="number" value="2.0" style="width:100%; background:#222; border:1px solid #444; color:#fff;"></div>
+        </div>
+        <div>映射: <b>方向键左右 (Arrow Key Left/Right)</b>, delta=<b>0.2</b></div>
+      </div>
+
+      <!-- Knob 2: Outer -->
+      <div style="background: rgba(255,159,10,0.08); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,159,10,0.2);">
+        <b>🟠 外圈旋钮 (Outer Knob) — 适合粗调/快速滚动</b>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 5px 0;">
+          <div>半径 min: <input type="number" value="27.0" style="width:100%; background:#222; border:1px solid #444; color:#fff;"></div>
+          <div>半径 max: <input type="number" value="100.0" style="width:100%; background:#222; border:1px solid #444; color:#fff;"></div>
+          <div>保护带 margin: <input type="number" value="2.0" style="width:100%; background:#222; border:1px solid #444; color:#fff;"></div>
+        </div>
+        <div>映射: <b>垂直滚轮 (Scroll Wheel Vertical)</b>, delta=<b>1.5</b></div>
+      </div>
+    </div>
+
+    <div class="mockup-header" style="margin-top: 15px;">模式 3: 线性半径控制 (Linear Radius Control)</div>
+    <div class="mockup-body" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; font-size: 12px;">
+      <p style="color: #30D158; font-weight: bold; margin-bottom: 8px;">根据两指距离（半径）线性插值控制值的 delta 变化量：</p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div>
+          <span style="color: #aaa; font-size: 11px;">🔍 半径范围 (Radius Range)</span>
+          <div>最小半径 min: <input type="number" value="5.0" style="width:60px; background:#222; border:1px solid #444; color:#fff;"> pt</div>
+          <div style="margin-top:4px;">最大半径 max: <input type="number" value="60.0" style="width:60px; background:#222; border:1px solid #444; color:#fff;"> pt</div>
+        </div>
+        <div>
+          <span style="color: #aaa; font-size: 11px;">⚡️ 控制值映射范围 (Scale Range)</span>
+          <div>对应最小 delta: <input type="number" value="0.1" style="width:60px; background:#222; border:1px solid #444; color:#fff;"></div>
+          <div style="margin-top:4px;">对应最大 delta: <input type="number" value="3.0" style="width:60px; background:#222; border:1px solid #444; color:#fff;"></div>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: #888; margin-top: 8px;">
+        💡 例如：当双指紧贴 (5pt) 时，旋转 1° 变化 0.1；当双指拉开到极致 (60pt) 时，旋转 1° 变化 3.0。
+      </p>
+    </div>
+  </div>
+
+  <div class="mockup" style="flex: 0.8;">
+    <div class="mockup-header">数据模型方案 (JSON Schema)</div>
+    <div class="mockup-body" style="background: #111; color: #30D158; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 11px; line-height: 1.4; overflow-x: auto;">
+      <pre style="margin: 0;">{
+  "key": {
+    "bundleID": "com.apple.QuickTimePlayerX",
+    "axRole": "AXSlider"
+  },
+  "color": "#0A84FF",
+  "configType": "double", // single | double | linear
+  
+  // 双旋钮独立映射配置
+  "doubleConfig": {
+    "inner": {
+      "minRadius": 5.0,
+      "maxRadius": 25.0,
+      "margin": 2.0,
+      "unitPerDegree": 0.2,
+      "translation": "arrowKeyLeftRight",
+      "clockwiseAction": "right" 
+    },
+    "outer": {
+      "minRadius": 27.0,
+      "maxRadius": 100.0,
+      "margin": 2.0,
+      "unitPerDegree": 1.5,
+      "translation": "scrollWheelVertical",
+      "clockwiseAction": "up"
+    }
+  }
+}</pre>
+    </div>
+  </div>
+</div>

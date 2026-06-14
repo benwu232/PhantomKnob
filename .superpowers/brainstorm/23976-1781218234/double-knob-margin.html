@@ -1,0 +1,38 @@
+<h2>双旋钮过渡带 (Margin / Hysteresis) 交互设计</h2>
+<p class="subtitle">头脑风暴：当手指拉伸跨越内外圈边界时，如何防止数值抖动与意外跳变？</p>
+
+<div class="options">
+  <div class="option" data-choice="hysteresis" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>方案 A: 迟滞环锁定模式 (Hysteresis Lock - 推荐)</h3>
+      <p>只要未完全跨越“保护带(Margin)”，就锁定在当前旋钮状态。只有当半径彻底超出对方边界时才发生切换。</p>
+      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 11px; margin-top: 10px;">
+        • <b>当前在内圈(微调)</b>：手指外拉进入 Margin，<b>维持微调</b>，直到半径 > (内圈最大值 + Margin) 才切换到外圈。<br>
+        • <b>当前在外圈(粗调)</b>：手指内捏进入 Margin，<b>维持粗调</b>，直到半径 < (外圈最小值 - Margin) 才切换到内圈。
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="deadzone" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>方案 B: 死区静音模式 (Deadzone / Mute)</h3>
+      <p>当半径处于 Margin 保护带内时，不响应任何旋转事件（悬浮窗变灰，表示处于过渡盲区）。</p>
+      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 11px; margin-top: 10px;">
+        • <b>防误触性好</b>，但手指在此区间划过时会有短暂“卡顿感”。
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="immediate" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>方案 C: 绝对临界切换模式 (Immediate Switch)</h3>
+      <p>忽略 Margin，以固定半径直接做分水岭切割（例如 30pt）。大于 30pt 为外圈，小于 30pt 为内圈。</p>
+      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 11px; margin-top: 10px;">
+        • <b>实现最简单</b>，但如果用户手指恰好在 30pt 附近抖动，会造成粗调与微调极频繁的突变，体验极差。
+      </div>
+    </div>
+  </div>
+</div>

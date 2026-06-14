@@ -1,0 +1,49 @@
+<h2>Knob 手势新手引导 (Tutorial) 设计</h2>
+<p class="subtitle">第一次启动应用时自动进入。我们将采用 3 步卡片式引导，教用户从激活到旋转控制：</p>
+
+<div class="mockup" style="max-width: 600px; margin: 0 auto; background: rgba(30, 30, 40, 0.9); border-radius: 12px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #0071e3; font-weight: bold;">Step 1 of 3</span>
+    <h3 style="margin-top: 8px; font-size: 20px; font-weight: 600;">按下快捷键或双击菜单栏激活</h3>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin: 20px 0;">
+    <!-- 模拟的视觉示意图 -->
+    <div style="width: 100%; height: 160px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; border: 1px dashed rgba(255,255,255,0.2);">
+      <div style="font-size: 48px; filter: drop-shadow(0 0 8px rgba(0,113,227,0.5));">⌥ + Space</div>
+      <div style="position: absolute; bottom: 12px; font-size: 13px; color: #aaa;">或者双击右上角菜单栏的 PhantomKnob 圆圈图标</div>
+    </div>
+    
+    <p style="font-size: 14px; line-height: 1.6; text-align: center; color: #ccc; max-width: 480px;">
+      PhantomKnob 在后台静默运行。当你想调节音量或亮度时，按下快捷键（或双击右上角图标），圆圈图标会从<strong>空心圆圈 (未激活)</strong> 变为<strong>实心圆圈 (已激活)</strong>，表示已准备好接收手势。
+    </p>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
+    <button style="background: transparent; border: none; color: #888; cursor: pointer; font-size: 14px;">跳过引导</button>
+    <div style="display: flex; gap: 6px;">
+      <span style="width: 8px; height: 8px; border-radius: 50%; background: #0071e3;"></span>
+      <span style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2);"></span>
+      <span style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2);"></span>
+    </div>
+    <button style="background: #0071e3; border: none; padding: 8px 16px; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; font-size: 14px;">下一步</button>
+  </div>
+</div>
+
+<div class="options" style="margin-top: 30px;">
+  <div class="option" data-choice="tutorial_flow_ok" onclick="toggleSelect(this)">
+    <div class="letter">👍</div>
+    <div class="content">
+      <h3>这个引导流程很好</h3>
+      <p>步骤清晰，简单易学，UI 设计符合整体黑暗极简美学。</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="need_interactive_feedback" onclick="toggleSelect(this)">
+    <div class="letter">💡</div>
+    <div class="content">
+      <h3>需要加入交互式实时反馈</h3>
+      <p>在 Step 2 练习手势时，让用户实际在触控板上转动，当引导页检测到旋转并画出 HUD 后才允许进入 Step 3（实时交互教学模式）。</p>
+    </div>
+  </div>
+</div>

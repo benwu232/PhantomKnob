@@ -373,5 +373,74 @@ final class CustomKnobTests: XCTestCase {
         
         RuleLibrary.shared.reload()
     }
+    
+    func testQuickTimeCustomizationToggleBug() {
+        let timelineKey = RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "timeline")
+        let volumeKey = RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "volume")
+        
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let rulesURL = appSupport.appendingPathComponent("PhantomKnob/rules.json")
+        let backupURL = appSupport.appendingPathComponent("PhantomKnob/rules.json.bak")
+        
+        if FileManager.default.fileExists(atPath: rulesURL.path) {
+            try? FileManager.default.removeItem(at: backupURL)
+            try? FileManager.default.copyItem(at: rulesURL, to: backupURL)
+            try? FileManager.default.removeItem(at: rulesURL)
+        }
+        
+        defer {
+            if FileManager.default.fileExists(atPath: backupURL.path) {
+                try? FileManager.default.removeItem(at: rulesURL)
+                try? FileManager.default.copyItem(at: backupURL, to: rulesURL)
+                try? FileManager.default.removeItem(at: backupURL)
+            }
+            RuleLibrary.shared.reload()
+        }
+        
+        RuleLibrary.shared.reload()
+        
+        let timelineTarget = DetectedTarget(bundleID: timelineKey.bundleID, axRole: timelineKey.axRole, identifier: nil, displayName: "timeline", element: nil)
+        
+        let timelineView = CustomizerHUDView(target: timelineTarget)
+        let hostingController = NSHostingController(rootView: timelineView)
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 400, height: 400), styleMask: [.borderless], backing: .buffered, defer: false)
+        window.contentView = hostingController.view
+        window.orderFront(nil)
+        
+        let exp1 = self.expectation(description: "timeline save")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let found = RuleLibrary.shared.lookup(for: timelineKey)
+            XCTAssertNotNil(found)
+            XCTAssertEqual(found?.configType, .double)
+            exp1.fulfill()
+        }
+        waitForExpectations(timeout: 2.0, handler: nil)
+        
+        let volumeTarget = DetectedTarget(bundleID: volumeKey.bundleID, axRole: volumeKey.axRole, identifier: nil, displayName: "volume", element: nil)
+        hostingController.rootView = CustomizerHUDView(target: volumeTarget)
+        
+        let exp2 = self.expectation(description: "volume save")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let found = RuleLibrary.shared.lookup(for: volumeKey)
+            XCTAssertNotNil(found)
+            XCTAssertEqual(found?.configType, .single)
+            exp2.fulfill()
+        }
+        waitForExpectations(timeout: 2.0, handler: nil)
+        
+        let timelineRuleAfterVolumeSave = RuleLibrary.shared.lookup(for: timelineKey)
+        XCTAssertEqual(timelineRuleAfterVolumeSave?.configType, .double)
+        
+        hostingController.rootView = CustomizerHUDView(target: timelineTarget)
+        
+        let exp3 = self.expectation(description: "timeline reload")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let found = RuleLibrary.shared.lookup(for: timelineKey)
+            XCTAssertNotNil(found)
+            XCTAssertEqual(found?.configType, .double)
+            exp3.fulfill()
+        }
+        waitForExpectations(timeout: 2.0, handler: nil)
+    }
 }
 

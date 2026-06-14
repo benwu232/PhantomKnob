@@ -1,0 +1,72 @@
+<h2>如何激活定制？(V2 改进方案)</h2>
+<p class="subtitle">解决“不遮挡使用”且“对用户直观无需强制培训”的痛点</p>
+
+<div class="options">
+  <div class="option" data-choice="cooling_hint" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>方案 1：冷却期 (Cooling State) 浮现快捷提示 (推荐)</h3>
+      <p>旋转结束、手指抬起后，HUD 会进入 1 秒的冷却期（防止连续微调中断）。我们在冷却期的 HUD 底部显示一个极精简提示：“按 S 定制”。</p>
+      
+      <div class="mockup" style="margin-top: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); margin-left: auto; margin-right: auto; text-align: center;">
+        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">🔊 正在调节系统音量</div>
+        <div style="font-size: 32px; font-weight: bold; color: #0A84FF; margin: 10px 0;">65%</div>
+        <div style="font-size: 11px; background: rgba(10,132,255,0.15); color: #0A84FF; padding: 4px 8px; border-radius: 4px; display: inline-block;">
+          松手后冷却中... (按 S 键定制)
+        </div>
+      </div>
+      
+      <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
+        <b>优点：</b> 绝对不阻碍旋转手势；完全自解释（用户松手时能看到提示，自然学会）；冷却时间可延长至 1.5s 便于按键。
+      </p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="gesture_deadzone" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>方案 2：捏合死区 (Pinch & Deadzone) 手势触发 + 视觉呼吸引导</h3>
+      <p>两指捏紧（半径小于 `minRadius` 保护阈值）时，系统处于死区（此时停止调节数值）。若在此死区停留超过 1 秒，HUD 变成发光定制态并滑出定制面板。</p>
+      
+      <div class="mockup" style="margin-top: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); margin-left: auto; margin-right: auto; text-align: center;">
+        <div style="font-size: 12px; color: #aaa;">🤏 两指捏合死区 (半径极小)</div>
+        <div style="font-size: 14px; font-weight: bold; color: #FF9F0A; margin: 12px 0; animation: pulse 1.5s infinite;">
+          ● 保持捏合以定制... (1.0s)
+        </div>
+        <div style="width: 60px; height: 60px; border: 3px dashed #FF9F0A; border-radius: 50%; display: inline-block;"></div>
+      </div>
+      
+      <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
+        <b>优化点：</b> 为解决“不直观”问题，当进入死区时，HUD 会立即从蓝色变为橙色虚线圈，并展示“保持捏合以定制...”的环形进度条或呼吸文案。
+      </p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="force_touch" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>方案 3：Mac 触控板重压 (Force Touch) 唤起</h3>
+      <p>在旋转过程中，若用户对触控板进行重压（Force Click / Deep Press，带硬件震动反馈），直接唤起本旋钮的定制菜单。</p>
+      
+      <div class="mockup" style="margin-top: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center;">
+        <div style="font-size: 13px; font-weight: bold;">⚡️ 硬件重压反馈 (Force Click)</div>
+        <div style="margin-top: 5px; font-size: 11px; color: #bbb;">
+          类似 macOS 系统的“用力点按查找”。无 Force Touch 的触控板则通过 Option + 旋转来降级触发。
+        </div>
+      </div>
+      
+      <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
+        <b>优点：</b> 极度原生，手指无需抬起或按键盘，一步到位。<br>
+        <b>缺点：</b> 对非 Force Touch 硬件（如老款 Mac 或部分第三方触控板）不兼容，需要降级方案。
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+</style>

@@ -1,0 +1,64 @@
+<h2>如何激活旋钮定制？(How to Activate Customization)</h2>
+<p class="subtitle">头脑风暴：选择最适合的用户交互入口</p>
+
+<div class="options">
+  <div class="option" data-choice="overlay" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>HUD 悬浮窗直接激活 (推荐)</h3>
+      <p>在旋转手势激活、显示悬浮 HUD 时，提供交互直接进入定制。</p>
+      <div class="mockup" style="margin-top: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span>🔊 音量滑块下悬浮圈</span>
+          <span style="background: #0A84FF; padding: 2px 6px; border-radius: 4px; font-size: 11px;">右键 / 快捷键 ⌘E</span>
+        </div>
+        <div style="margin-top: 5px; border-left: 2px solid #0A84FF; padding-left: 5px; font-size: 12px; color: #aaa;">
+          直接在光标处弹出迷你设置面板，定制本控件的颜色、映射等。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="panel" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>控制面板 (KnobPanel) 集中配置</h3>
+      <p>在控制面板（双击状态栏或 ⌥Space 唤起）中新增“自定义规则”配置项。</p>
+      <div class="mockup" style="margin-top: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+        <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">KnobPanel 控制面板 -> 规则列表</div>
+        <div style="font-size: 11px; color: #888;">
+          • QuickTime Player - 进度条 [编辑]<br>
+          • 剪映 - 时间轴 [编辑]<br>
+          • [+ 新增自定义规则] (需在屏幕上手动点选或录入)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="statusbar" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>状态栏菜单快捷触发</h3>
+      <p>在 macOS 顶部状态栏下拉菜单中，添加一个侦测并创建规则的选项。</p>
+      <div class="mockup" style="margin-top: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+        <div style="font-size: 12px; border: 1px solid rgba(255,255,255,0.2); padding: 4px; border-radius: 4px; text-align: center;">
+          顶部状态栏 ◉ -> <b>为当前光标下控件创建规则...</b>
+        </div>
+        <div style="margin-top: 5px; font-size: 11px; color: #aaa; text-align: center;">
+          点击后自动捕捉鼠标下的 AX 控件，弹出独立配置窗口。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top: 20px;">
+  <div class="pros">
+    <h4>对比与分析</h4>
+    <ul>
+      <li><b>方案 A (HUD 直接激活)</b>：最符合直觉。在使用手势时，发现不好用或想改颜色，直接右击或 ⌘E 即可在原地定制，上下文不丢失。</li>
+      <li><b>方案 B (集中配置)</b>：适合全局管理与导出。但新建规则时，用户需要手动选择 App 甚至抓取 UI，流程较繁琐。</li>
+      <li><b>方案 C (状态栏菜单)</b>：实现简单，但使用时需要先将鼠标悬停到目标控件，再移动手势去顶部状态栏点击，容易偏离目标。</li>
+    </ul>
+  </div>
+</div>

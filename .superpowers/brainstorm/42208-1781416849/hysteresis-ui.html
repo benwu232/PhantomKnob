@@ -1,0 +1,104 @@
+<h2>双旋钮切换边界与迟滞（Margin）配置界面设计</h2>
+<p class="subtitle">讨论迟滞滞后窗口下，双旋钮模式的 UI 调节滑块如何排布</p>
+
+<div class="section">
+  <div class="label">UI 线框图对比 (UI Mockup Comparison)</div>
+  <div class="split">
+    <!-- 选项 1 -->
+    <div class="mockup">
+      <div class="mockup-header">方案 1：单边界滑块 (Single Boundary Slider - 推荐)</div>
+      <div class="mockup-body" style="background:var(--bg-primary); padding:1rem; min-height:200px;">
+        <div style="background:var(--bg-secondary); border:1px solid var(--border); padding:1rem; border-radius:8px; display:flex; flex-direction:column; gap:0.75rem;">
+          <h4 style="font-size:0.85rem; color:var(--warning);">⚙️ 双旋钮全局过渡设置</h4>
+          
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+              <span>切换边界半径 (Boundary)</span>
+              <strong>25 mm</strong>
+            </div>
+            <div style="width:100%; height:4px; background:var(--border); border-radius:2px; position:relative;">
+              <div style="position:absolute; left:50%; top:-4px; width:12px; height:12px; border-radius:50%; background:var(--accent);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+              <span>迟滞过渡半宽 (Margin)</span>
+              <strong>2 mm</strong>
+            </div>
+            <div style="width:100%; height:4px; background:var(--border); border-radius:2px; position:relative;">
+              <div style="position:absolute; left:20%; top:-4px; width:12px; height:12px; border-radius:50%; background:var(--accent);"></div>
+            </div>
+          </div>
+          
+          <div style="font-size:0.7rem; color:var(--text-secondary); background:var(--bg-primary); padding:6px; border-radius:4px; margin-top:4px;">
+            ℹ️ 物理效果：<br>
+            • 收缩时：外圈 ➔ 内圈 (低于 23 mm 触发)<br>
+            • 扩张时：内圈 ➔ 外圈 (高于 27 mm 触发)
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 选项 2 -->
+    <div class="mockup">
+      <div class="mockup-header">方案 2：双滑块自动联动 (Linked Dual Sliders)</div>
+      <div class="mockup-body" style="background:var(--bg-primary); padding:1rem; min-height:200px;">
+        <div style="background:var(--bg-secondary); border:1px solid var(--border); padding:1rem; border-radius:8px; display:flex; flex-direction:column; gap:0.75rem;">
+          <h4 style="font-size:0.85rem; color:var(--success);">🟢 内圈设置 (微调)</h4>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+              <span>内圈最大半径</span>
+              <strong>25 mm (自动联动)</strong>
+            </div>
+            <div style="width:100%; height:4px; background:var(--border); border-radius:2px; position:relative;">
+              <div style="position:absolute; left:50%; top:-4px; width:12px; height:12px; border-radius:50%; background:var(--accent);"></div>
+            </div>
+          </div>
+
+          <h4 style="font-size:0.85rem; color:var(--warning);">🟠 外圈设置 (粗调)</h4>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+              <span>外圈最小半径</span>
+              <strong>25 mm (自动联动)</strong>
+            </div>
+            <div style="width:100%; height:4px; background:var(--border); border-radius:2px; position:relative;">
+              <div style="position:absolute; left:50%; top:-4px; width:12px; height:12px; border-radius:50%; background:var(--accent);"></div>
+            </div>
+          </div>
+          
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+              <span>迟滞区间宽度 (Margin)</span>
+              <strong>2 mm</strong>
+            </div>
+            <div style="width:100%; height:4px; background:var(--border); border-radius:2px; position:relative;">
+              <div style="position:absolute; left:20%; top:-4px; width:12px; height:12px; border-radius:50%; background:var(--accent);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="label">方案选择</div>
+  <div class="options">
+    <div class="option" data-choice="1" onclick="toggleSelect(this)">
+      <div class="letter">1</div>
+      <div class="content">
+        <h3>方案 1：单边界滑块 (极其推荐)</h3>
+        <p>提供单独的过渡控制滑块（1个边界 + 1个迟滞）。界面干净无冗余，用户不需要理解为什么内圈 max 与外圈 min 强行联动相等的逻辑，体验更清晰。</p>
+      </div>
+    </div>
+    
+    <div class="option" data-choice="2" onclick="toggleSelect(this)">
+      <div class="letter">2</div>
+      <div class="content">
+        <h3>方案 2：双滑块联动</h3>
+        <p>分别在内圈卡片和外圈卡片保留各自的半径滑块，但两个滑块强制联动。UI 结构和以前一致，但冗余滑块较多。</p>
+      </div>
+    </div>
+  </div>
+</div>
