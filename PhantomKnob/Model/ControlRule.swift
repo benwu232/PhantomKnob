@@ -57,6 +57,7 @@ struct SingleKnobConfig: Codable, Equatable {
     var unitPerDegree: Double
     var translation: InputTranslation
     var clockwiseAction: String
+    var minRadius: Double? // 新增：单旋钮最小响应半径
 }
 
 struct VirtualKnobConfig: Codable, Equatable {

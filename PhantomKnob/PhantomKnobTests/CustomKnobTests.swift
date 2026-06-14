@@ -4,7 +4,7 @@ import SwiftUI
 
 final class CustomKnobTests: XCTestCase {
     func testControlRuleJSONSerializationSingle() throws {
-        let single = SingleKnobConfig(unitPerDegree: 1.2, translation: .axWrite, clockwiseAction: "increase")
+        let single = SingleKnobConfig(unitPerDegree: 1.2, translation: .axWrite, clockwiseAction: "increase", minRadius: 12.0)
         let rule = ControlRule(
             key: RuleKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
             themeColor: "#BF5AF2",
@@ -22,8 +22,22 @@ final class CustomKnobTests: XCTestCase {
         XCTAssertEqual(decoded.themeColor, "#BF5AF2")
         XCTAssertEqual(decoded.configType, .single)
         XCTAssertEqual(decoded.singleConfig, single)
+        XCTAssertEqual(decoded.singleConfig?.minRadius, 12.0)
         XCTAssertNil(decoded.doubleConfig)
         XCTAssertNil(decoded.linearConfig)
+    }
+    
+    func testSingleKnobConfigBackwardCompatibility() throws {
+        let jsonWithoutMinRadius = """
+        {
+            "unitPerDegree": 1.2,
+            "translation": "axWrite",
+            "clockwiseAction": "increase"
+        }
+        """.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(SingleKnobConfig.self, from: jsonWithoutMinRadius)
+        XCTAssertNil(decoded.minRadius)
     }
     
     func testControlRuleJSONSerializationDouble() throws {
@@ -328,6 +342,34 @@ final class CustomKnobTests: XCTestCase {
         scale = ScaleResolver.resolveHysteresis(radius: 22.5, zones: zones, currentZoneIndex: &zoneIndex)
         XCTAssertEqual(zoneIndex, 0)
         XCTAssertEqual(scale, 0.5)
+        
+        RuleLibrary.shared.reload()
+    }
+    
+    func testSingleKnobConfigMinRadiusEnforcement() {
+        let key = RuleKey(bundleID: "test.single.min.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
+        let single = SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", minRadius: 12.0)
+        let rule = ControlRule(key: key, themeColor: "#0A84FF", configType: .single, singleConfig: single)
+        
+        RuleLibrary.shared.saveRule(rule)
+        
+        let manager = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil)
+        
+        NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
+        
+        switch manager.activeScaleConfig {
+        case .fixed(let val):
+            XCTAssertEqual(val, 1.0)
+        default:
+            XCTFail("Should resolve to fixed scale")
+        }
         
         RuleLibrary.shared.reload()
     }

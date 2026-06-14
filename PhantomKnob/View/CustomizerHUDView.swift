@@ -13,6 +13,7 @@ struct CustomizerHUDView: View {
     @State private var singleScaleText: String = "1.0"
     @State private var singleTranslation: InputTranslation = .scrollWheelVertical
     @State private var singleCWAction: String = "scrollUp"
+    @State private var singleMinRadius: Double = 10.0
     
     // 双旋钮
     @State private var doubleInnerRadiusMax: Double = 25.0
@@ -20,6 +21,7 @@ struct CustomizerHUDView: View {
     @State private var doubleInnerScaleText: String = "0.2"
     @State private var doubleInnerTranslation: InputTranslation = .arrowKeyUpDown
     @State private var doubleInnerCWAction: String = "arrowUp"
+    @State private var doubleInnerMinRadius: Double = 10.0
     
     @State private var doubleMargin: Double = 2.0
     
@@ -247,6 +249,20 @@ struct CustomizerHUDView: View {
             }
             .padding(.bottom, 6)
             
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("最小响应半径").font(.system(size: 11)).foregroundColor(.gray)
+                    Spacer()
+                    Text("\(Int(singleMinRadius)) mm")
+                        .font(.system(size: 11, design: .monospaced))
+                }
+                Slider(value: $singleMinRadius, in: 5.0...15.0, step: 1.0)
+                    .onChange(of: singleMinRadius) { _ in
+                        save()
+                    }
+            }
+            .padding(.bottom, 6)
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text("输出映射方式")
                     .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
@@ -322,7 +338,7 @@ struct CustomizerHUDView: View {
                         }
                     
                     HStack {
-                        Text("迟滞半宽 (Margin)").font(.system(size: 11))
+                        Text("迟滞带宽度 (Margin)").font(.system(size: 11))
                         Spacer()
                         Text("\(Int(doubleMargin)) mm")
                             .font(.system(size: 11, design: .monospaced))
@@ -510,9 +526,14 @@ struct CustomizerHUDView: View {
                 HStack {
                     Text("响应半径").font(.system(size: 11))
                     Spacer()
-                    Text("5.0 mm ~ \(Int(doubleInnerRadiusMax)) mm")
+                    Text("\(Int(doubleInnerMinRadius)) mm ~ \(Int(doubleInnerRadiusMax)) mm")
                         .font(.system(size: 11, design: .monospaced))
                 }
+                
+                Slider(value: $doubleInnerMinRadius, in: 5.0...15.0, step: 1.0)
+                    .onChange(of: doubleInnerMinRadius) { _ in
+                        save()
+                    }
                 
                 Picker("输出映射", selection: $doubleInnerTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
@@ -719,6 +740,7 @@ struct CustomizerHUDView: View {
                 self.singleScaleText = String(format: "%.4g", single.unitPerDegree)
                 self.singleTranslation = single.translation
                 self.singleCWAction = single.clockwiseAction
+                self.singleMinRadius = single.minRadius ?? 10.0
             }
             if let d = existing.doubleConfig {
                 self.doubleInnerRadiusMax = d.inner.maxRadius
@@ -727,6 +749,7 @@ struct CustomizerHUDView: View {
                 self.doubleInnerTranslation = d.inner.translation
                 self.doubleInnerCWAction = d.inner.clockwiseAction
                 self.doubleInnerThemeColor = d.inner.themeColor ?? "#30D158"
+                self.doubleInnerMinRadius = d.inner.minRadius
                 
                 self.doubleMargin = d.inner.margin
                 
@@ -757,6 +780,7 @@ struct CustomizerHUDView: View {
             self.singleScaleText = "1.0"
             self.singleTranslation = .scrollWheelVertical
             self.singleCWAction = "scrollUp"
+            self.singleMinRadius = 10.0
             
             self.doubleInnerRadiusMax = 25.0
             self.doubleInnerScale = 0.2
@@ -764,6 +788,7 @@ struct CustomizerHUDView: View {
             self.doubleInnerTranslation = .arrowKeyUpDown
             self.doubleInnerCWAction = "arrowUp"
             self.doubleInnerThemeColor = "#30D158"
+            self.doubleInnerMinRadius = 10.0
             
             self.doubleMargin = 2.0
             
@@ -797,11 +822,12 @@ struct CustomizerHUDView: View {
             rule.singleConfig = SingleKnobConfig(
                 unitPerDegree: singleScale,
                 translation: singleTranslation,
-                clockwiseAction: singleCWAction
+                clockwiseAction: singleCWAction,
+                minRadius: singleMinRadius
             )
         case .double:
             rule.doubleConfig = DoubleKnobConfig(
-                inner: VirtualKnobConfig(minRadius: 5.0, maxRadius: doubleInnerRadiusMax, margin: doubleMargin, unitPerDegree: doubleInnerScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleInnerThemeColor),
+                inner: VirtualKnobConfig(minRadius: doubleInnerMinRadius, maxRadius: doubleInnerRadiusMax, margin: doubleMargin, unitPerDegree: doubleInnerScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleInnerThemeColor),
                 outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleOuterTranslation, clockwiseAction: doubleOuterCWAction, themeColor: doubleOuterThemeColor)
             )
         case .linear:

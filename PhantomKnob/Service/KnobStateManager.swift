@@ -26,7 +26,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var fingerIdx2: Int?
     
     var currentZoneIndex: Int = 0
-    private var activeScaleConfig: ScaleConfig = .fixed(1.0)
+    var activeScaleConfig: ScaleConfig = .fixed(1.0)
     var lastResolvedBaseScale: Double = 1.0
     private var currentRadius: Double = 0.0
     private var eventTap: CFMachPort?
@@ -575,7 +575,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 
                 switch activeScaleConfig {
                 case .fixed(let val):
-                    defaultBaseScale = val
+                    var minR = 10.0
+                    if let single = rule?.singleConfig {
+                        minR = single.minRadius ?? 10.0
+                    }
+                    if radius < minR {
+                        defaultBaseScale = nil
+                    } else {
+                        defaultBaseScale = val
+                    }
                     resolvedZoneIndex = 0
                 case .zones(let zones):
                     defaultBaseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &resolvedZoneIndex)
