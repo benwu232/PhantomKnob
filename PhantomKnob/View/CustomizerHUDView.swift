@@ -302,9 +302,48 @@ struct CustomizerHUDView: View {
     
     private var doubleSubForm: some View {
         VStack(alignment: .leading, spacing: 12) {
+            // ⚙️ 切换边界与迟滞范围
+            VStack(alignment: .leading, spacing: 10) {
+                Text("⚙️ 切换边界与迟滞范围")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("切换边界半径 (Boundary)").font(.system(size: 11))
+                        Spacer()
+                        Text("\(Int(doubleInnerRadiusMax)) mm")
+                            .font(.system(size: 11, design: .monospaced))
+                    }
+                    Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
+                        .onChange(of: doubleInnerRadiusMax) { next in
+                            doubleOuterRadiusMin = next
+                            save()
+                        }
+                    
+                    HStack {
+                        Text("迟滞半宽 (Margin)").font(.system(size: 11))
+                        Spacer()
+                        Text("\(Int(doubleMargin)) mm")
+                            .font(.system(size: 11, design: .monospaced))
+                    }
+                    Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
+                        .onChange(of: doubleMargin) { next in
+                            save()
+                        }
+                }
+                .padding(10)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                )
+            }
+            
             // 外圈旋钮 (粗调) 配置卡片
             VStack(alignment: .leading, spacing: 8) {
-                Text("🟠 外圈旋钮 (粗调)")
+                Text("🟠 外圈旋钮")
                     .font(.system(size: 12, weight: .bold)).foregroundColor(.orange)
                 
                 // 外圈配色
@@ -338,7 +377,7 @@ struct CustomizerHUDView: View {
                             Image(systemName: "paintpalette.fill")
                                 .font(.system(size: 11))
                                 .foregroundColor(Color(hex: doubleOuterThemeColor))
-                            Text("自定义颜色...")
+                            Text("自定义外圈颜色...")
                                 .font(.system(size: 11))
                             Spacer()
                             Text(doubleOuterThemeColor)
@@ -361,7 +400,7 @@ struct CustomizerHUDView: View {
                 HStack {
                     Text("响应半径").font(.system(size: 11))
                     Spacer()
-                    Text("\(Int(doubleOuterRadiusMin)) mm ~ 100 mm")
+                    Text("> \(Int(doubleInnerRadiusMax)) mm")
                         .font(.system(size: 11, design: .monospaced))
                 }
                 
@@ -412,28 +451,9 @@ struct CustomizerHUDView: View {
             .background(Color.white.opacity(0.05))
             .cornerRadius(8)
             
-            // 保护带宽度
-            VStack(alignment: .leading, spacing: 8) {
-                Text("⚙️ 保护带宽度 (Margin)")
-                    .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
-                HStack {
-                    Text("宽度: \(Int(doubleMargin)) mm")
-                    Spacer()
-                    Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
-                        .frame(width: 150)
-                        .onChange(of: doubleMargin) { next in
-                            doubleOuterRadiusMin = doubleInnerRadiusMax + next
-                            save()
-                        }
-                }
-            }
-            .padding(8)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
-            
             // 内圈旋钮 (微调) 配置卡片
             VStack(alignment: .leading, spacing: 8) {
-                Text("🟢 内圈旋钮 (微调)")
+                Text("🟢 内圈旋钮")
                     .font(.system(size: 12, weight: .bold)).foregroundColor(.green)
                 
                 // 内圈配色
@@ -467,7 +487,7 @@ struct CustomizerHUDView: View {
                             Image(systemName: "paintpalette.fill")
                                 .font(.system(size: 11))
                                 .foregroundColor(Color(hex: doubleInnerThemeColor))
-                            Text("自定义颜色...")
+                            Text("自定义内圈颜色...")
                                 .font(.system(size: 11))
                             Spacer()
                             Text(doubleInnerThemeColor)
@@ -493,11 +513,6 @@ struct CustomizerHUDView: View {
                     Text("5.0 mm ~ \(Int(doubleInnerRadiusMax)) mm")
                         .font(.system(size: 11, design: .monospaced))
                 }
-                Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
-                    .onChange(of: doubleInnerRadiusMax) { next in
-                        doubleOuterRadiusMin = next + doubleMargin
-                        save()
-                    }
                 
                 Picker("输出映射", selection: $doubleInnerTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
@@ -715,7 +730,7 @@ struct CustomizerHUDView: View {
                 
                 self.doubleMargin = d.inner.margin
                 
-                self.doubleOuterRadiusMin = d.outer.minRadius
+                self.doubleOuterRadiusMin = d.inner.maxRadius
                 self.doubleOuterRadiusMax = d.outer.maxRadius
                 self.doubleOuterScale = d.outer.unitPerDegree
                 self.doubleOuterScaleText = String(format: "%.4g", d.outer.unitPerDegree)
@@ -752,7 +767,7 @@ struct CustomizerHUDView: View {
             
             self.doubleMargin = 2.0
             
-            self.doubleOuterRadiusMin = 27.0
+            self.doubleOuterRadiusMin = 25.0
             self.doubleOuterRadiusMax = 100.0
             self.doubleOuterScale = 1.5
             self.doubleOuterScaleText = "1.5"
@@ -787,7 +802,7 @@ struct CustomizerHUDView: View {
         case .double:
             rule.doubleConfig = DoubleKnobConfig(
                 inner: VirtualKnobConfig(minRadius: 5.0, maxRadius: doubleInnerRadiusMax, margin: doubleMargin, unitPerDegree: doubleInnerScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleInnerThemeColor),
-                outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax + doubleMargin, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleOuterTranslation, clockwiseAction: doubleOuterCWAction, themeColor: doubleOuterThemeColor)
+                outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleOuterTranslation, clockwiseAction: doubleOuterCWAction, themeColor: doubleOuterThemeColor)
             )
         case .linear:
             rule.linearConfig = LinearKnobConfig(

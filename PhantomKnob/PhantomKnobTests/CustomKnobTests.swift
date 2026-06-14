@@ -279,5 +279,57 @@ final class CustomKnobTests: XCTestCase {
         
         RuleLibrary.shared.reload()
     }
+    
+    func testDoubleKnobConfigHysteresisRadiusAlignment() {
+        let key = RuleKey(bundleID: "test.align.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
+        let inner = VirtualKnobConfig(minRadius: 5.0, maxRadius: 25.0, margin: 2.0, unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp", themeColor: "#30D158")
+        let outer = VirtualKnobConfig(minRadius: 25.0, maxRadius: 100.0, margin: 2.0, unitPerDegree: 2.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", themeColor: "#FF9F0A")
+        let rule = ControlRule(key: key, themeColor: "#0A84FF", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
+        
+        RuleLibrary.shared.saveRule(rule)
+        
+        let manager = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil)
+        
+        // Load target and rule scale config
+        NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
+        
+        // 模拟 Multitouch Began
+        manager.currentZoneIndex = 0
+        let zones = [
+            RadiusZone(minRadius: 5.0, maxRadius: 25.0, margin: 2.0, scale: 0.5),
+            RadiusZone(minRadius: 25.0, maxRadius: 100.0, margin: 2.0, scale: 2.0)
+        ]
+        
+        // 1. 在 Zone 0 时向外移动，小于 27.0 时应该保持在 Zone 0
+        var zoneIndex = 0
+        var scale = ScaleResolver.resolveHysteresis(radius: 26.5, zones: zones, currentZoneIndex: &zoneIndex)
+        XCTAssertEqual(zoneIndex, 0)
+        XCTAssertEqual(scale, 0.5)
+        
+        // 大于 27.0 时应该切换至 Zone 1
+        scale = ScaleResolver.resolveHysteresis(radius: 27.5, zones: zones, currentZoneIndex: &zoneIndex)
+        XCTAssertEqual(zoneIndex, 1)
+        XCTAssertEqual(scale, 2.0)
+        
+        // 2. 在 Zone 1 时向内移动，大于 23.0 时应该保持在 Zone 1
+        zoneIndex = 1
+        scale = ScaleResolver.resolveHysteresis(radius: 23.5, zones: zones, currentZoneIndex: &zoneIndex)
+        XCTAssertEqual(zoneIndex, 1)
+        XCTAssertEqual(scale, 2.0)
+        
+        // 小于 23.0 时应该切换至 Zone 0
+        scale = ScaleResolver.resolveHysteresis(radius: 22.5, zones: zones, currentZoneIndex: &zoneIndex)
+        XCTAssertEqual(zoneIndex, 0)
+        XCTAssertEqual(scale, 0.5)
+        
+        RuleLibrary.shared.reload()
+    }
 }
 
