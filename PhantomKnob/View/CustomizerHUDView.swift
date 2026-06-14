@@ -3,6 +3,7 @@ import AppKit
 
 struct CustomizerHUDView: View {
     let target: DetectedTarget
+    var onLoadExisting: ((KnobConfigType, String) -> Void)? = nil
     
     @State private var themeColor: String = "#0A84FF"
     @State private var configType: KnobConfigType = .single
@@ -185,6 +186,9 @@ struct CustomizerHUDView: View {
                     save()
                 }
             }
+        }
+        .onChange(of: target.ruleKey) { _ in
+            loadExisting()
         }
     }
     
@@ -729,7 +733,45 @@ struct CustomizerHUDView: View {
                 self.linearTranslation = l.translation
                 self.linearCWAction = l.clockwiseAction
             }
+        } else {
+            // 没有保存该旋钮的设置，显示默认的单旋钮设置
+            self.themeColor = "#0A84FF"
+            self.configType = .single
+            
+            self.singleScale = 1.0
+            self.singleScaleText = "1.0"
+            self.singleTranslation = .scrollWheelVertical
+            self.singleCWAction = "scrollUp"
+            
+            self.doubleInnerRadiusMax = 25.0
+            self.doubleInnerScale = 0.2
+            self.doubleInnerScaleText = "0.2"
+            self.doubleInnerTranslation = .arrowKeyUpDown
+            self.doubleInnerCWAction = "arrowUp"
+            self.doubleInnerThemeColor = "#30D158"
+            
+            self.doubleMargin = 2.0
+            
+            self.doubleOuterRadiusMin = 27.0
+            self.doubleOuterRadiusMax = 100.0
+            self.doubleOuterScale = 1.5
+            self.doubleOuterScaleText = "1.5"
+            self.doubleOuterTranslation = .scrollWheelVertical
+            self.doubleOuterCWAction = "scrollUp"
+            self.doubleOuterThemeColor = "#FF9F0A"
+            
+            self.linearMinRadius = 5.0
+            self.linearMaxRadius = 60.0
+            self.linearMinScale = 0.1
+            self.linearMinScaleText = "0.1"
+            self.linearMaxScale = 3.0
+            self.linearMaxScaleText = "3.0"
+            self.linearTranslation = .scrollWheelVertical
+            self.linearCWAction = "scrollUp"
+            
+            self.activeColorTarget = .global
         }
+        onLoadExisting?(self.configType, self.themeColor)
     }
     
     private func save() {

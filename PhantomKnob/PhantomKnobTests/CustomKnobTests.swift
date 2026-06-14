@@ -204,5 +204,80 @@ final class CustomKnobTests: XCTestCase {
         let colorOuter = manager.resolveThemeColor(for: rule, zoneIndex: 1)
         XCTAssertEqual(colorOuter, "#FF9F0A")
     }
+    
+    func testCustomizerHUDViewLoadsDefaultOrSavedSettings() {
+        let key = RuleKey(bundleID: "test.load.app", axRole: "test.role", identifier: "test.id", displayName: "test.display")
+        let target = DetectedTarget(
+            bundleID: key.bundleID,
+            axRole: key.axRole,
+            identifier: key.identifier,
+            displayName: key.displayName ?? "",
+            element: nil
+        )
+        
+        // 1. 无保存设置时加载：默认值应为单旋钮
+        RuleLibrary.shared.injectRulesForTesting([])
+        
+        var resolvedConfigType1: KnobConfigType? = nil
+        var resolvedThemeColor1: String? = nil
+        let expectation1 = self.expectation(description: "Load default settings")
+        
+        let view1 = CustomizerHUDView(target: target) { configType, themeColor in
+            resolvedConfigType1 = configType
+            resolvedThemeColor1 = themeColor
+            expectation1.fulfill()
+        }
+        
+        let hostingController1 = NSHostingController(rootView: view1)
+        let window1 = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 400),
+            styleMask: [.borderless],
+            backing: .buffered,
+            defer: false
+        )
+        window1.contentView = hostingController1.view
+        window1.orderFront(nil)
+        
+        waitForExpectations(timeout: 1.0, handler: nil)
+        window1.orderOut(nil)
+        
+        XCTAssertEqual(resolvedConfigType1, .single)
+        XCTAssertEqual(resolvedThemeColor1, "#0A84FF")
+        
+        // 2. 有保存设置时加载：验证能够正确读取并显示已保存的设置
+        let inner = VirtualKnobConfig(minRadius: 5.0, maxRadius: 20.0, margin: 2.0, unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp", themeColor: "#30D158")
+        let outer = VirtualKnobConfig(minRadius: 22.0, maxRadius: 100.0, margin: 2.0, unitPerDegree: 2.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", themeColor: "#FF9F0A")
+        let savedRule = ControlRule(key: key, themeColor: "#BF5AF2", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
+        
+        RuleLibrary.shared.injectRulesForTesting([savedRule])
+        
+        var resolvedConfigType2: KnobConfigType? = nil
+        var resolvedThemeColor2: String? = nil
+        let expectation2 = self.expectation(description: "Load saved settings")
+        
+        let view2 = CustomizerHUDView(target: target) { configType, themeColor in
+            resolvedConfigType2 = configType
+            resolvedThemeColor2 = themeColor
+            expectation2.fulfill()
+        }
+        
+        let hostingController2 = NSHostingController(rootView: view2)
+        let window2 = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 400),
+            styleMask: [.borderless],
+            backing: .buffered,
+            defer: false
+        )
+        window2.contentView = hostingController2.view
+        window2.orderFront(nil)
+        
+        waitForExpectations(timeout: 1.0, handler: nil)
+        window2.orderOut(nil)
+        
+        XCTAssertEqual(resolvedConfigType2, .double)
+        XCTAssertEqual(resolvedThemeColor2, "#BF5AF2")
+        
+        RuleLibrary.shared.reload()
+    }
 }
 
