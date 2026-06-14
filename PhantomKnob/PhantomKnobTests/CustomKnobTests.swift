@@ -147,5 +147,33 @@ final class CustomKnobTests: XCTestCase {
         let updatedRule = RuleLibrary.shared.lookup(for: key)
         XCTAssertEqual(updatedRule?.themeColor, "#FF0000")
     }
+    
+    func testVirtualKnobConfigThemeColorCodable() throws {
+        // 1. 测试能正确编码和解码 themeColor
+        let configWithColor = VirtualKnobConfig(
+            minRadius: 5.0, maxRadius: 25.0, margin: 2.0,
+            unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp",
+            themeColor: "#30D158"
+        )
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+        let data = try encoder.encode(configWithColor)
+        let decoded = try decoder.decode(VirtualKnobConfig.self, from: data)
+        XCTAssertEqual(decoded.themeColor, "#30D158")
+        
+        // 2. 测试后向兼容性：缺少 themeColor 字段时能成功解码为 nil
+        let jsonWithoutColor = """
+        {
+            "minRadius": 5.0,
+            "maxRadius": 25.0,
+            "margin": 2.0,
+            "unitPerDegree": 0.5,
+            "translation": "arrowKeyUpDown",
+            "clockwiseAction": "arrowUp"
+        }
+        """.data(using: .utf8)!
+        let decodedCompatible = try decoder.decode(VirtualKnobConfig.self, from: jsonWithoutColor)
+        XCTAssertNil(decodedCompatible.themeColor)
+    }
 }
 

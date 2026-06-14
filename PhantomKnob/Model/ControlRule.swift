@@ -66,6 +66,7 @@ struct VirtualKnobConfig: Codable, Equatable {
     var unitPerDegree: Double
     var translation: InputTranslation
     var clockwiseAction: String
+    var themeColor: String? // 支持独立配色
 }
 
 struct DoubleKnobConfig: Codable, Equatable {
