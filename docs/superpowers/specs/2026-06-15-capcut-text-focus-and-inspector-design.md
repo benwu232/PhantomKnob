@@ -12,11 +12,19 @@
 ### 1. 独立诊断工具（通用）
 
 #### [NEW] [inspect_ax_tool.swift](file:///Users/wb/work/phantom_knob_mac/scripts/inspect_ax_tool.swift)
-一个通用的命令行诊断工具，每秒检测一次鼠标指针下方的应用和 Accessibility (AX) 元素链条，并输出详细属性以帮助后续的规则配置：
-- 获取鼠标下方的窗口和运行应用。
-- 向上遍历 AX 父节点链条（深度为 0 到 10）。
-- 打印出各层级节点的 Role（角色）、Subrole（子角色）、Title（标题）、Identifier（标识符）、Description（描述）、可写入属性、可用 Actions（如 `AXIncrement`、`AXPress`）以及当前的 Value（数值）。
-- 自动推荐适用于 PhantomKnob 的规则配置模板。
+一个通用的、交互式的命令行诊断工具。用户启动工具后可切换到目标应用，将鼠标移动到想要控制的元素上，通过触发事件来进行精确检测，并将结果实时打印并持久化保存：
+- **触发机制**：支持以下两种全局触发方式：
+  1. **鼠标点击触发**：当用户在目标应用中点击某个元素时（捕获全局 `leftMouseUp` 事件），自动对其进行检测。
+  2. **全局热键触发**：按下指定热键（默认为 `Control + Shift + D`），自动检测当前鼠标悬停的元素。
+- **检测逻辑**：
+  - 获取触发瞬间鼠标指针下方的窗口和运行应用。
+  - 向上遍历其 Accessibility (AX) 父节点链条（深度最大为 10）。
+  - 提取并打印各层级节点的详细属性（Role、Subrole、Title、Identifier、Description、可写入属性、可用 Actions、Value/MinValue/MaxValue）。
+- **结果输出**：
+  - 实时在终端中以清晰的树状结构打印检测到的节点信息。
+  - 自动向当前目录下的 `inspect_results.txt` 文件追加保存该次检测结果。
+  - 给出推荐的 PhantomKnob 规则配置（JSON 格式）。
+- **退出机制**：终端按下 `Control + C` 退出工具。
 
 ### 2. PhantomKnob 应用核心
 
