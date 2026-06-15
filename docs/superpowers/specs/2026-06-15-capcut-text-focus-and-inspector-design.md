@@ -1,53 +1,53 @@
-# CapCut Text Focus & Generic AX Diagnostics Design Spec
+# 剪映文本框聚焦与通用 AX 诊断工具设计规格说明
 
-Introduce support for adjusting parameter text boxes in CapCut/剪映 by simulating a click to focus followed by arrow keys, and create a generic AX diagnostics command-line tool.
+为剪映（CapCut）的参数文本框（`AXStaticText` 或 `AXTextField`）引入“点击聚焦 + 方向键调节”的自动控制支持，并编写一个通用的独立辅助诊断工具。
 
-## User Review Required
+## 用户审查点
 
 > [!NOTE]
-> We will bypass the `AXMinValue`/`AXMaxValue` requirement in `TargetDetector` ONLY for `AXTextField` and `AXStaticText` roles, and ONLY consider them controllable if a matching rule exists in the RuleLibrary. This avoids accidental mouse click triggers in other apps that do not have custom rules for labels or static text.
+> 为了安全起见，我们在 `TargetDetector` 中放宽 `AXMinValue`/`AXMaxValue` 限制时，仅针对 `AXTextField` 和 `AXStaticText` 两个角色，且只有在规则库（RuleLibrary）中已显式配置对应规则时，才视其为“可调节”控件。这可以完全避免在其他未适配的应用中因误判导致乱点鼠标的问题。
 
-## Proposed Changes
+## 提议的变更
 
-### 1. Diagnostics Tool (Generic)
+### 1. 独立诊断工具（通用）
 
 #### [NEW] [inspect_ax_tool.swift](file:///Users/wb/work/phantom_knob_mac/scripts/inspect_ax_tool.swift)
-A standalone, generic command-line utility. Every 1 second, it inspects the application and AX element hierarchy under the mouse cursor, dumping detailed properties to help users configure rules.
-- Retrieves window and application under cursor.
-- Traverses the accessibility parent hierarchy (depth 0 to 10).
-- Prints roles, subroles, titles, identifiers, descriptions, settable attributes, available actions, and current values.
-- Recommends rule configurations for PhantomKnob.
+一个通用的命令行诊断工具，每秒检测一次鼠标指针下方的应用和 Accessibility (AX) 元素链条，并输出详细属性以帮助后续的规则配置：
+- 获取鼠标下方的窗口和运行应用。
+- 向上遍历 AX 父节点链条（深度为 0 到 10）。
+- 打印出各层级节点的 Role（角色）、Subrole（子角色）、Title（标题）、Identifier（标识符）、Description（描述）、可写入属性、可用 Actions（如 `AXIncrement`、`AXPress`）以及当前的 Value（数值）。
+- 自动推荐适用于 PhantomKnob 的规则配置模板。
 
-### 2. PhantomKnob Application Core
+### 2. PhantomKnob 应用核心
 
 #### [MODIFY] [TargetDetector.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Service/TargetDetector.swift)
-Modify `tryBuildTarget` to relax constraints:
-- By default, elements must have `AXMinValue` and `AXMaxValue`.
-- Exception: If the element's role is `AXTextField` or `AXStaticText`, return it as a valid `DetectedTarget` even without min/max attributes.
+修改 `tryBuildTarget` 方法以放宽限制条件：
+- 默认情况下，元素依然要求具备 `AXMinValue` 和 `AXMaxValue` 属性。
+- **特例**：如果元素的 Role 为 `AXTextField` 或 `AXStaticText`，即便没有 Min/Max 属性，也允许返回有效的 `DetectedTarget`。
 
 #### [MODIFY] [KnobStateManager.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Service/KnobStateManager.swift)
-Integrate auto-focus simulation:
-- When transitioning to `.knobing(target:)`:
-  - If `target.axRole` is `"AXTextField"` or `"AXStaticText"`:
-    - Post a mouse click (`leftMouseDown` and `leftMouseUp` at `initialTouchPosition`) to focus the text box.
-- Ensure click events are sent with the source identifier `0xDEADC0DE` or from the main HID tap to prevent self-interception loop.
+集成自动点击聚焦逻辑：
+- 当状态机向 `.knobing(target:)` 状态转移的瞬间：
+  - 若 `target.axRole` 为 `"AXTextField"` 或 `"AXStaticText"`：
+    - 在当前鼠标位置 `initialTouchPosition` 注入一次鼠标左键点击事件（`leftMouseDown` 后紧跟 `leftMouseUp`）以使文本框获得焦点。
+- 确保点击事件带上特殊的 `eventSource` 标识符 `0xDEADC0DE` 或使用 HID tap 发送，避免被我们自身的手势监听器重新拦截导致死循环。
 
 #### [MODIFY] [bundled-rules.json](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/App/bundled-rules.json)
-Add rules for CapCut / 剪映 text boxes to translate rotation into `arrowKeyUpDown`:
-- Applications: `com.lemon.jianying`, `com.lemon.jianyingpro`, `com.lemon.lv`, `com.lemon.lvoverseas`
-- Roles: `AXStaticText`, `AXTextField`
-- Translation: `arrowKeyUpDown`
-- Scale: `fixed(1.0)`
+增加剪映文本框的映射规则，将旋转翻译为 `arrowKeyUpDown`（上下键）：
+- 目标应用：`com.lemon.jianying`、`com.lemon.jianyingpro`、`com.lemon.lv`、`com.lemon.lvoverseas`
+- 角色：`AXStaticText`、`AXTextField`
+- 翻译策略：`arrowKeyUpDown`
+- 灵敏度配置：`fixed(1.0)`
 
 ---
 
-## Verification Plan
+## 验证计划
 
-### Automated Tests
-- Build and run `PhantomKnobTests` to verify no regressions in rule matching.
+### 自动化测试
+- 运行 `PhantomKnobTests` 确保对已有应用规则的解析和匹配逻辑没有发生退化（Regression）。
 
-### Manual Verification
-1. Run `swift scripts/inspect_ax_tool.swift` and hover over CapCut's adjustment text boxes to verify they are detected as `AXStaticText` or `AXTextField`.
-2. Run PhantomKnob, hover over a text box in CapCut's Adjustment tab, start rotating on the trackpad.
-3. Verify that the text box receives focus (blinking cursor appears) and its value changes incrementally.
-4. Verify that timeline scrubbing still works as expected using `arrowKeyLeftRight`.
+### 手动验证步骤
+1. 在终端运行 `swift scripts/inspect_ax_tool.swift`，将鼠标移动到剪映的参数文本框上，确认其被精准识别为 `AXStaticText` 且输出对应的分级层级信息。
+2. 启动 PhantomKnob，将鼠标悬停在剪映“调节”面板的任一参数输入框（例如“对比度”的数值文本框）上方，在触控板上做双指旋转手势。
+3. 验证文本框是否被自动点击并出现输入光标（即获得焦点），且数值随着旋转方向上下递增或递减。
+4. 验证在时间轴面板上旋转时，依然正常执行 `arrowKeyLeftRight` 的逐帧穿梭控制，未被误触发为点击。
