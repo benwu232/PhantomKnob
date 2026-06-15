@@ -30,7 +30,7 @@ final class ScaleResolverTests: XCTestCase {
     }
 
     func testLinearInterpolationAndDeadzone() {
-        let config = ScaleConfigLinear(minRadius: 5.0, maxRadius: 20.0, minScale: 1.0, maxScale: 0.2)
+        let config = ScaleConfigLinear(minRadius: 5.0, maxRadius: 20.0, minScale: 0.2, maxScale: 1.0)
         
         XCTAssertNil(ScaleResolver.resolveLinear(radius: 4.5, config: config))
         XCTAssertEqual(ScaleResolver.resolveLinear(radius: 5.0, config: config), 1.0)

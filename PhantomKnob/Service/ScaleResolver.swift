@@ -42,8 +42,8 @@ struct ScaleResolver {
 
     static func resolveLinear(radius: Double, config: ScaleConfigLinear) -> Double? {
         if radius < config.minRadius { return nil }
-        if radius >= config.maxRadius { return config.maxScale }
+        if radius >= config.maxRadius { return config.minScale }
         let ratio = (radius - config.minRadius) / (config.maxRadius - config.minRadius)
-        return config.minScale + ratio * (config.maxScale - config.minScale)
+        return config.maxScale + ratio * (config.minScale - config.maxScale)
     }
 }

@@ -34,8 +34,8 @@ struct CustomizerHUDView: View {
     @State private var doubleOuterCWAction: String = "scrollUp"
     
     // 线性
-    @State private var linearMinRadius: Double = 5.0
-    @State private var linearMaxRadius: Double = 60.0
+    @State private var linearMinRadius: Double = 10.0
+    @State private var linearMaxRadius: Double = 35.0
     @State private var linearMinScale: Double = 0.1
     @State private var linearMinScaleText: String = "0.1"
     @State private var linearMaxScale: Double = 3.0
@@ -278,9 +278,20 @@ struct CustomizerHUDView: View {
                 }
             }
             
+            VStack(alignment: .leading, spacing: 4) {
+                Text("顺时针旋转时触发")
+                    .font(.system(size: 11))
+                Picker("", selection: $singleCWAction) {
+                    ForEach(directionOptions(for: singleTranslation), id: \.self) { opt in
+                        Text(actionDescription(opt)).tag(opt)
+                    }
+                }
+                .onChange(of: singleCWAction) { _ in save() }
+            }
+            
             HStack {
-                Text("每度变化量")
-                    .font(.system(size: 11)).foregroundColor(.white)
+                Text("步长(每度旋转对应的输出变化量)")
+                    .font(.system(size: 11))
                 Spacer()
                 TextField("", text: $singleScaleText)
                     .textFieldStyle(PlainTextFieldStyle())
@@ -293,7 +304,7 @@ struct CustomizerHUDView: View {
                             .stroke(Color.white.opacity(0.1), lineWidth: 1)
                     )
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.orange)
+                    .foregroundColor(.white)
                     .frame(width: 80)
                     .multilineTextAlignment(.trailing)
                     .onChange(of: singleScaleText) { next in
@@ -302,17 +313,6 @@ struct CustomizerHUDView: View {
                             save()
                         }
                     }
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("顺时针旋转时触发")
-                    .font(.system(size: 11)).foregroundColor(.white)
-                Picker("", selection: $singleCWAction) {
-                    ForEach(directionOptions(for: singleTranslation), id: \.self) { opt in
-                        Text(actionDescription(opt)).tag(opt)
-                    }
-                }
-                .onChange(of: singleCWAction) { _ in save() }
             }
         }
     }
@@ -439,8 +439,8 @@ struct CustomizerHUDView: View {
                 .onChange(of: doubleOuterCWAction) { _ in save() }
                 
                 HStack {
-                    Text("每度变化量")
-                        .font(.system(size: 11)).foregroundColor(.white)
+                    Text("步长(每度旋转对应的输出变化量)")
+                        .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $doubleOuterScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -453,7 +453,7 @@ struct CustomizerHUDView: View {
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.orange)
+                        .foregroundColor(.white)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: doubleOuterScaleText) { next in
@@ -554,8 +554,8 @@ struct CustomizerHUDView: View {
                 .onChange(of: doubleInnerCWAction) { _ in save() }
                 
                 HStack {
-                    Text("每度变化量")
-                        .font(.system(size: 11)).foregroundColor(.white)
+                    Text("步长(每度旋转对应的输出变化量)")
+                        .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $doubleInnerScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -568,7 +568,7 @@ struct CustomizerHUDView: View {
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.orange)
+                        .foregroundColor(.white)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: doubleInnerScaleText) { next in
@@ -660,24 +660,24 @@ struct CustomizerHUDView: View {
                 HStack {
                     Text("最小半径: \(Int(linearMinRadius)) mm")
                     Spacer()
-                    Slider(value: $linearMinRadius, in: 5.0...30.0, step: 1.0)
+                    Slider(value: $linearMinRadius, in: 5.0...20.0, step: 1.0)
                         .frame(width: 180)
                         .onChange(of: linearMinRadius) { _ in save() }
                 }
                 HStack {
                     Text("最大半径: \(Int(linearMaxRadius)) mm")
                     Spacer()
-                    Slider(value: $linearMaxRadius, in: 35.0...100.0, step: 1.0)
+                    Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
                         .frame(width: 180)
                         .onChange(of: linearMaxRadius) { _ in save() }
                 }
             }
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("每度变化量范围").font(.system(size: 11, weight: .semibold))
+                Text("步长(每度旋转对应的输出变化量)范围").font(.system(size: 11, weight: .semibold))
                 HStack {
                     Text("最小变化量:")
-                        .font(.system(size: 11)).foregroundColor(.white)
+                        .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMinScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -690,7 +690,7 @@ struct CustomizerHUDView: View {
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.orange)
+                        .foregroundColor(.white)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: linearMinScaleText) { next in
@@ -702,7 +702,7 @@ struct CustomizerHUDView: View {
                 }
                 HStack {
                     Text("最大变化量:")
-                        .font(.system(size: 11)).foregroundColor(.white)
+                        .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMaxScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -715,7 +715,7 @@ struct CustomizerHUDView: View {
                                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.orange)
+                        .foregroundColor(.white)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: linearMaxScaleText) { next in
@@ -731,8 +731,50 @@ struct CustomizerHUDView: View {
     
     // MARK: - 模型逻辑适配与加载保存
     
+    private func resetToDefaults() {
+        self.themeColor = "#0A84FF"
+        self.configType = .single
+        
+        self.singleScale = 1.0
+        self.singleScaleText = "1.0"
+        self.singleTranslation = .scrollWheelVertical
+        self.singleCWAction = "scrollUp"
+        self.singleMinRadius = 10.0
+        
+        self.doubleInnerRadiusMax = 25.0
+        self.doubleInnerScale = 0.2
+        self.doubleInnerScaleText = "0.2"
+        self.doubleInnerTranslation = .arrowKeyUpDown
+        self.doubleInnerCWAction = "arrowUp"
+        self.doubleInnerThemeColor = "#30D158"
+        self.doubleInnerMinRadius = 10.0
+        
+        self.doubleMargin = 2.0
+        
+        self.doubleOuterRadiusMin = 25.0
+        self.doubleOuterRadiusMax = 100.0
+        self.doubleOuterScale = 1.5
+        self.doubleOuterScaleText = "1.5"
+        self.doubleOuterTranslation = .scrollWheelVertical
+        self.doubleOuterCWAction = "scrollUp"
+        self.doubleOuterThemeColor = "#FF9F0A"
+        
+        self.linearMinRadius = 10.0
+        self.linearMaxRadius = 35.0
+        self.linearMinScale = 0.1
+        self.linearMinScaleText = "0.1"
+        self.linearMaxScale = 3.0
+        self.linearMaxScaleText = "3.0"
+        self.linearTranslation = .scrollWheelVertical
+        self.linearCWAction = "scrollUp"
+        
+        self.activeColorTarget = .global
+    }
+
     private func loadExisting() {
         isLoadingConfig = true
+        resetToDefaults()
+        
         if let existing = RuleLibrary.shared.lookup(for: target.ruleKey) {
             self.themeColor = existing.themeColor ?? "#0A84FF"
             self.configType = existing.configType
@@ -773,45 +815,6 @@ struct CustomizerHUDView: View {
                 self.linearTranslation = l.translation
                 self.linearCWAction = l.clockwiseAction
             }
-        } else {
-            // 没有保存该旋钮的设置，显示默认的单旋钮设置
-            self.themeColor = "#0A84FF"
-            self.configType = .single
-            
-            self.singleScale = 1.0
-            self.singleScaleText = "1.0"
-            self.singleTranslation = .scrollWheelVertical
-            self.singleCWAction = "scrollUp"
-            self.singleMinRadius = 10.0
-            
-            self.doubleInnerRadiusMax = 25.0
-            self.doubleInnerScale = 0.2
-            self.doubleInnerScaleText = "0.2"
-            self.doubleInnerTranslation = .arrowKeyUpDown
-            self.doubleInnerCWAction = "arrowUp"
-            self.doubleInnerThemeColor = "#30D158"
-            self.doubleInnerMinRadius = 10.0
-            
-            self.doubleMargin = 2.0
-            
-            self.doubleOuterRadiusMin = 25.0
-            self.doubleOuterRadiusMax = 100.0
-            self.doubleOuterScale = 1.5
-            self.doubleOuterScaleText = "1.5"
-            self.doubleOuterTranslation = .scrollWheelVertical
-            self.doubleOuterCWAction = "scrollUp"
-            self.doubleOuterThemeColor = "#FF9F0A"
-            
-            self.linearMinRadius = 5.0
-            self.linearMaxRadius = 60.0
-            self.linearMinScale = 0.1
-            self.linearMinScaleText = "0.1"
-            self.linearMaxScale = 3.0
-            self.linearMaxScaleText = "3.0"
-            self.linearTranslation = .scrollWheelVertical
-            self.linearCWAction = "scrollUp"
-            
-            self.activeColorTarget = .global
         }
         onLoadExisting?(self.configType, self.themeColor)
         

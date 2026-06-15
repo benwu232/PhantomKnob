@@ -21,10 +21,10 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
         if window == nil {
             createWindow(for: target)
         } else {
-            // 动态更新 SwiftUI RootView 的 target
+            // 动态更新 SwiftUI RootView 的 target，并用 UUID() 强制刷新其 State 与视图周期
             if let visualView = window?.contentView as? NSVisualEffectView,
-               let hostingView = visualView.subviews.first(where: { $0 is NSHostingView<CustomizerHUDView> }) as? NSHostingView<CustomizerHUDView> {
-                hostingView.rootView = CustomizerHUDView(target: target)
+               let hostingView = visualView.subviews.first(where: { $0 is NSHostingView<AnyView> }) as? NSHostingView<AnyView> {
+                hostingView.rootView = AnyView(CustomizerHUDView(target: target).id(UUID()))
             }
             
             // 动态更新窗口位置到最新的光标处并做边界约束
@@ -122,7 +122,7 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
         
         win.contentView = visualEffectView
         
-        let hostingView = NSHostingView(rootView: CustomizerHUDView(target: target))
+        let hostingView = NSHostingView(rootView: AnyView(CustomizerHUDView(target: target).id(UUID())))
         hostingView.frame = visualEffectView.bounds
         hostingView.autoresizingMask = [.width, .height]
         visualEffectView.addSubview(hostingView)
