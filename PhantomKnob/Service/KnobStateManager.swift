@@ -172,8 +172,18 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             }
         }
         
-        if case .knobing(let target) = newState, target.axRole == "ControlPanel" {
-            ControlPanelViewModel.shared.isGestureActive = true
+        if case .knobing(let target) = newState {
+            if target.axRole == "ControlPanel" {
+                ControlPanelViewModel.shared.isGestureActive = true
+            } else {
+                ControlPanelViewModel.shared.isGestureActive = false
+            }
+            // 针对文本输入与静态文本输入，自动注入一次鼠标点击以聚焦
+            if target.axRole == "AXTextField" || target.axRole == "AXStaticText" {
+                if let touchPos = initialTouchPosition {
+                    simulateClick(at: touchPos)
+                }
+            }
         } else {
             ControlPanelViewModel.shared.isGestureActive = false
         }
@@ -1113,6 +1123,28 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private func autoDetectTranslation(for target: DetectedTarget) -> InputTranslation {
         guard let element = target.element else { return .scrollWheelVertical }
         return TargetDetector.autoDetectTranslation(for: element)
+    }
+
+    private func simulateClick(at point: CGPoint) {
+        writeDebugLog("[KnobStateManager] Simulating click to focus: \(point)")
+        let source = CGEventSource(stateID: .privateState)
+        source?.userData = 0xDEADC0DE // 携带特殊标记防自身 tap 拦截死循环
+        
+        let clickPoint: CGPoint
+        if let carbonPos = initialTouchPositionCarbon {
+            clickPoint = carbonPos
+        } else {
+            let screenHeight = NSScreen.screens.first?.frame.height ?? 1080
+            clickPoint = CGPoint(x: point.x, y: screenHeight - point.y)
+        }
+        
+        guard let mouseDown = CGEvent(mouseEventSource: source, mouseType: .leftMouseDown, mouseCursorPosition: clickPoint, mouseButton: .left),
+              let mouseUp = CGEvent(mouseEventSource: source, mouseType: .leftMouseUp, mouseCursorPosition: clickPoint, mouseButton: .left) else {
+            return
+        }
+        
+        mouseDown.post(tap: .cghidEventTap)
+        mouseUp.post(tap: .cghidEventTap)
     }
 }
 
