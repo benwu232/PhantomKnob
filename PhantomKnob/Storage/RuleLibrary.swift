@@ -44,9 +44,20 @@ final class RuleLibrary {
     }
 
     /// 按优先级顺序查找匹配 ruleKey 的第一条规则。
-    /// 精度：(bundleID + axRole + identifier) > (bundleID + axRole + displayName) > (bundleID + axRole) > (axRole only)
+    /// 精度：(parentChain constraint match) > (bundleID + axRole + identifier) > (bundleID + axRole + displayName) > (bundleID + axRole) > (axRole only)
     func lookup(for ruleKey: RuleKey) -> ControlRule? {
-        // 1. 精确 ID 匹配
+        // 1. 最高优先级：携带 parentChain 且满足父链结构校验的专有规则
+        if let targetChain = ruleKey.parentChain, !targetChain.isEmpty {
+            let matched = rules.first(where: { rule in
+                guard let ruleChain = rule.key.parentChain, !ruleChain.isEmpty else { return false }
+                return rule.key.bundleID == ruleKey.bundleID &&
+                       rule.key.axRole == ruleKey.axRole &&
+                       Self.matchParentChain(ruleChain: ruleChain, targetChain: targetChain)
+            })
+            if let match = matched { return match }
+        }
+
+        // 2. 精确 ID 匹配
         if let exact = rules.first(where: {
             $0.key.bundleID == ruleKey.bundleID &&
             $0.key.axRole == ruleKey.axRole &&
@@ -54,7 +65,7 @@ final class RuleLibrary {
             $0.key.identifier == ruleKey.identifier
         }) { return exact }
 
-        // 2. DisplayName 匹配
+        // 3. DisplayName 匹配
         if let byDisplayName = rules.first(where: {
             $0.key.bundleID == ruleKey.bundleID &&
             $0.key.axRole == ruleKey.axRole &&
@@ -63,21 +74,41 @@ final class RuleLibrary {
             $0.key.displayName == ruleKey.displayName
         }) { return byDisplayName }
 
-        // 3. 宽泛匹配（同 app 同 role，identifier/displayName 均为 nil）
+        // 4. 宽泛匹配（同 app 同 role，identifier/displayName/parentChain 均为 nil 或空）
         if let broad = rules.first(where: {
             $0.key.bundleID == ruleKey.bundleID &&
             $0.key.axRole == ruleKey.axRole &&
             $0.key.identifier == nil &&
-            $0.key.displayName == nil
+            $0.key.displayName == nil &&
+            ($0.key.parentChain == nil || $0.key.parentChain?.isEmpty == true)
         }) { return broad }
 
-        // 4. 跨 app 匹配（只匹配 role）
+        // 5. 跨 app 匹配（只匹配 role）
         if let byRole = rules.first(where: {
             $0.key.bundleID.isEmpty &&
             $0.key.axRole == ruleKey.axRole
         }) { return byRole }
 
         return nil
+    }
+
+    /// 校验规则父链约束是否是鼠标实际控件父链的子集序列（从叶到根匹配）
+    static func matchParentChain(ruleChain: [ParentNodeInfo], targetChain: [ParentNodeInfo]) -> Bool {
+        var targetIdx = 0
+        for ruleNode in ruleChain {
+            var found = false
+            while targetIdx < targetChain.count {
+                let targetNode = targetChain[targetIdx]
+                targetIdx += 1
+                if targetNode.axRole == ruleNode.axRole &&
+                   (ruleNode.displayName == nil || targetNode.displayName == ruleNode.displayName) {
+                    found = true
+                    break
+                }
+            }
+            if !found { return false }
+        }
+        return true
     }
 
     func saveRule(_ rule: ControlRule) {
