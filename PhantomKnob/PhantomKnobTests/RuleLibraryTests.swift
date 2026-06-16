@@ -125,4 +125,55 @@ final class RuleLibraryTests: XCTestCase {
         XCTAssertEqual(rule?.translation, .scrollWheelVertical)
         XCTAssertEqual(rule?.invert, true)
     }
+
+    func testParentChainSubsequenceMatching() {
+        let ruleChain = [
+            ParentNodeInfo(axRole: "AXGroup", displayName: "对比度"),
+            ParentNodeInfo(axRole: "AXGroup", displayName: "调节")
+        ]
+        
+        let targetChain1 = [
+            ParentNodeInfo(axRole: "AXGroup", displayName: "对比度"),
+            ParentNodeInfo(axRole: "AXGroup", displayName: "调节"),
+            ParentNodeInfo(axRole: "AXWindow", displayName: nil)
+        ]
+        
+        let targetChain2 = [
+            ParentNodeInfo(axRole: "AXGroup", displayName: "饱和度"),
+            ParentNodeInfo(axRole: "AXGroup", displayName: "调节"),
+            ParentNodeInfo(axRole: "AXWindow", displayName: nil)
+        ]
+        
+        XCTAssertTrue(RuleLibrary.matchParentChain(ruleChain: ruleChain, targetChain: targetChain1))
+        XCTAssertFalse(RuleLibrary.matchParentChain(ruleChain: ruleChain, targetChain: targetChain2))
+    }
+    
+    func testLookupPrioritizesParentChainConstraints() {
+        let specRule = ControlRule(
+            key: RuleKey(bundleID: "com.test.app", axRole: "AXStaticText", parentChain: [ParentNodeInfo(axRole: "AXGroup", displayName: "对比度")]),
+            translation: .arrowKeyUpDown
+        )
+        
+        let broadRule = ControlRule(
+            key: RuleKey(bundleID: "com.test.app", axRole: "AXStaticText"),
+            translation: .scrollWheelVertical
+        )
+        
+        let lib = makeLibrary(rules: [specRule, broadRule])
+        
+        let keyWithMatchingParent = RuleKey(
+            bundleID: "com.test.app",
+            axRole: "AXStaticText",
+            parentChain: [ParentNodeInfo(axRole: "AXGroup", displayName: "对比度"), ParentNodeInfo(axRole: "AXWindow", displayName: nil)]
+        )
+        
+        let keyWithNonMatchingParent = RuleKey(
+            bundleID: "com.test.app",
+            axRole: "AXStaticText",
+            parentChain: [ParentNodeInfo(axRole: "AXGroup", displayName: "饱和度")]
+        )
+        
+        XCTAssertEqual(lib.lookup(for: keyWithMatchingParent)?.translation, .arrowKeyUpDown)
+        XCTAssertEqual(lib.lookup(for: keyWithNonMatchingParent)?.translation, .scrollWheelVertical)
+    }
 }

@@ -120,7 +120,8 @@ final class CustomKnobTests: XCTestCase {
             axRole: key.axRole,
             identifier: key.identifier,
             displayName: key.displayName ?? "",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         
         let initialRule = ControlRule(
@@ -205,7 +206,7 @@ final class CustomKnobTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
-        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil)
+        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil, parentChain: [])
         
         // 触发规则重载
         NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
@@ -226,7 +227,8 @@ final class CustomKnobTests: XCTestCase {
             axRole: key.axRole,
             identifier: key.identifier,
             displayName: key.displayName ?? "",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         
         // 1. 无保存设置时加载：默认值应为单旋钮
@@ -309,7 +311,7 @@ final class CustomKnobTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
-        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil)
+        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil, parentChain: [])
         
         // Load target and rule scale config
         NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
@@ -360,7 +362,7 @@ final class CustomKnobTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
-        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil)
+        manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil, parentChain: [])
         
         NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
         
@@ -399,7 +401,7 @@ final class CustomKnobTests: XCTestCase {
         
         RuleLibrary.shared.reload()
         
-        let timelineTarget = DetectedTarget(bundleID: timelineKey.bundleID, axRole: timelineKey.axRole, identifier: nil, displayName: "timeline", element: nil)
+        let timelineTarget = DetectedTarget(bundleID: timelineKey.bundleID, axRole: timelineKey.axRole, identifier: nil, displayName: "timeline", element: nil, parentChain: [])
         
         let timelineView = CustomizerHUDView(target: timelineTarget)
         let hostingController = NSHostingController(rootView: timelineView)
@@ -416,7 +418,7 @@ final class CustomKnobTests: XCTestCase {
         }
         waitForExpectations(timeout: 2.0, handler: nil)
         
-        let volumeTarget = DetectedTarget(bundleID: volumeKey.bundleID, axRole: volumeKey.axRole, identifier: nil, displayName: "volume", element: nil)
+        let volumeTarget = DetectedTarget(bundleID: volumeKey.bundleID, axRole: volumeKey.axRole, identifier: nil, displayName: "volume", element: nil, parentChain: [])
         hostingController.rootView = CustomizerHUDView(target: volumeTarget)
         
         let exp2 = self.expectation(description: "volume save")

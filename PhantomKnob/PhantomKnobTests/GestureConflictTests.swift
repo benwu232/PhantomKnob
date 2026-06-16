@@ -33,7 +33,8 @@ final class GestureConflictTests: XCTestCase {
             axRole: "unknown",
             identifier: nil,
             displayName: "Test",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         
         XCTAssertTrue(manager.isAdjustable(target: target))
@@ -55,7 +56,8 @@ final class GestureConflictTests: XCTestCase {
             axRole: "unknown",
             identifier: nil,
             displayName: "Test",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         
         XCTAssertFalse(manager.isAdjustable(target: target))

@@ -41,7 +41,8 @@ final class CustomMultiplierTests: XCTestCase {
             axRole: "AXSlider",
             identifier: "volume",
             displayName: "Volume",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         
         // We will mock target and check keys
@@ -81,7 +82,8 @@ final class CustomMultiplierTests: XCTestCase {
             axRole: "AXSlider",
             identifier: "volume",
             displayName: "Volume",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         
         manager.currentTarget = target
@@ -121,7 +123,8 @@ final class CustomMultiplierTests: XCTestCase {
             axRole: "AXSlider",
             identifier: "volume",
             displayName: "Volume",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         
         manager.currentTarget = target

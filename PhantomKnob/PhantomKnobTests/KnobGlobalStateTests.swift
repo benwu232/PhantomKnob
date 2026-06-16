@@ -7,7 +7,7 @@ final class KnobGlobalStateTests: XCTestCase {
     // 辅助函数
     private func mockTarget(identifier: String? = "mock") -> DetectedTarget {
         DetectedTarget(bundleID: "com.test.app", axRole: "AXSlider",
-                       identifier: identifier, displayName: "Test", element: nil)
+                       identifier: identifier, displayName: "Test", element: nil, parentChain: [])
     }
 
     func testInitialStateIsInactive() {

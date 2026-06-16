@@ -48,7 +48,8 @@ final class InputTranslationTests: XCTestCase {
             axRole: "AXSlider",
             identifier: "timeline",
             displayName: "Playhead",
-            element: nil
+            element: nil,
+            parentChain: []
         )
         XCTAssertEqual(target.ruleKey.bundleID, "com.apple.FinalCut")
         XCTAssertEqual(target.ruleKey.axRole, "AXSlider")
