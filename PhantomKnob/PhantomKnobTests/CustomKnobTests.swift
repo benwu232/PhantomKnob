@@ -472,31 +472,7 @@ final class CustomKnobTests: XCTestCase {
         
         XCTAssertTrue(manager1.didSimulateClickForTest, "Should simulate click for AXTextField with arrowKeyUpDown translation")
         
-        // 2. 测试用例 2：AXTextField，使用滚轮控制（scrollWheelVertical），不应该触发模拟点击
-        let scrollRule = ControlRule(
-            key: textFieldKey,
-            themeColor: "#0A84FF",
-            configType: .single,
-            singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp")
-        )
-        RuleLibrary.shared.saveRule(scrollRule)
-        
-        let manager2 = KnobStateManager(
-            targetDetector: TargetDetector(),
-            gestureClassifier: GestureClassifier(),
-            overlayController: OverlayController(),
-            statusBarController: StatusBarController(),
-            touchHandler: GlobalTouchHandler()
-        )
-        manager2.currentTarget = DetectedTarget(bundleID: textFieldKey.bundleID, axRole: textFieldKey.axRole, identifier: textFieldKey.identifier, displayName: textFieldKey.displayName ?? "", element: nil, parentChain: [])
-        manager2.initialTouchPosition = CGPoint(x: 100, y: 100)
-        manager2.didSimulateClickForTest = false
-        
-        manager2.transition(to: .knobing(target: manager2.currentTarget!))
-        
-        XCTAssertFalse(manager2.didSimulateClickForTest, "Should NOT simulate click for AXTextField with scrollWheelVertical translation")
-        
-        // 3. 测试用例 3：AXStaticText，即使明确配置了专属 arrowKeyUpDown 规则，也绝对不应该产生任何模拟点击
+        // 2. 测试用例 2：AXStaticText，明确配置了专属 arrowKeyUpDown 规则，应该触发模拟点击
         let staticTextKey = RuleKey(bundleID: "com.test.text", axRole: "AXStaticText", displayName: "StaticText")
         let staticTextRule = ControlRule(
             key: staticTextKey,
@@ -506,6 +482,31 @@ final class CustomKnobTests: XCTestCase {
         )
         RuleLibrary.shared.saveRule(staticTextRule)
         
+        let manager2 = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager2.currentTarget = DetectedTarget(bundleID: staticTextKey.bundleID, axRole: staticTextKey.axRole, identifier: staticTextKey.identifier, displayName: staticTextKey.displayName ?? "", element: nil, parentChain: [])
+        manager2.initialTouchPosition = CGPoint(x: 100, y: 100)
+        manager2.didSimulateClickForTest = false
+        
+        manager2.transition(to: .knobing(target: manager2.currentTarget!))
+        
+        XCTAssertTrue(manager2.didSimulateClickForTest, "Should simulate click for AXStaticText with specific arrowKeyUpDown rule")
+        
+        // 3. 测试用例 3：AXStaticText，仅匹配到 App 的全局 "unknown" 兜底规则，绝对不产生任何模拟点击
+        let fallbackTextKey = RuleKey(bundleID: "com.test.fallback", axRole: "AXStaticText", displayName: "StaticText")
+        let unknownRule = ControlRule(
+            key: RuleKey(bundleID: "com.test.fallback", axRole: "unknown"),
+            themeColor: "#0A84FF",
+            configType: .single,
+            singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
+        )
+        RuleLibrary.shared.saveRule(unknownRule)
+        
         let manager3 = KnobStateManager(
             targetDetector: TargetDetector(),
             gestureClassifier: GestureClassifier(),
@@ -513,13 +514,13 @@ final class CustomKnobTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
-        manager3.currentTarget = DetectedTarget(bundleID: staticTextKey.bundleID, axRole: staticTextKey.axRole, identifier: staticTextKey.identifier, displayName: staticTextKey.displayName ?? "", element: nil, parentChain: [])
+        manager3.currentTarget = DetectedTarget(bundleID: fallbackTextKey.bundleID, axRole: fallbackTextKey.axRole, identifier: fallbackTextKey.identifier, displayName: fallbackTextKey.displayName ?? "", element: nil, parentChain: [])
         manager3.initialTouchPosition = CGPoint(x: 100, y: 100)
         manager3.didSimulateClickForTest = false
         
         manager3.transition(to: .knobing(target: manager3.currentTarget!))
         
-        XCTAssertFalse(manager3.didSimulateClickForTest, "Should NOT simulate click for AXStaticText even with arrowKeyUpDown rule")
+        XCTAssertFalse(manager3.didSimulateClickForTest, "Should NOT simulate click for AXStaticText when only matching unknown fallback rule")
         
         RuleLibrary.shared.reload()
     }

@@ -89,6 +89,17 @@ final class RuleLibrary {
             $0.key.axRole == ruleKey.axRole
         }) { return byRole }
 
+        // 6. App 级别未知角色兜底（若当前 app 存在 axRole == "unknown" 的兜底规则）
+        if !ruleKey.bundleID.isEmpty && ruleKey.axRole != "unknown" {
+            if let appFallback = rules.first(where: {
+                $0.key.bundleID == ruleKey.bundleID &&
+                $0.key.axRole == "unknown" &&
+                $0.key.identifier == nil &&
+                $0.key.displayName == nil &&
+                ($0.key.parentChain == nil || $0.key.parentChain?.isEmpty == true)
+            }) { return appFallback }
+        }
+
         return nil
     }
 

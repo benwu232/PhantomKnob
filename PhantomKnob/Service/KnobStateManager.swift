@@ -181,16 +181,23 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             } else {
                 ControlPanelViewModel.shared.isGestureActive = false
             }
-            // 只有检测到需要文本输入的控件（AXTextField），且翻译模式为键盘上下键微调（arrowKeyUpDown）时，才模拟点击以聚焦
-            if target.axRole == "AXTextField" {
+            // 针对文本输入与静态文本输入，且只有在需要模拟键盘事件时，才自动注入一次鼠标点击以聚焦
+            if target.axRole == "AXTextField" || target.axRole == "AXStaticText" {
                 let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
-                let translation = determineTranslation(for: target, rule: rule, radius: self.currentRadius)
                 
-                // 仅在微调数值的键盘上下键模式（arrowKeyUpDown）下才进行点击聚焦
-                // 左右方向键模式（arrowKeyLeftRight）常用于时间轴左右逐帧移动，在此模式下绝对不产生点击，防止重新定位时间轴
-                if translation == .arrowKeyUpDown {
-                    if let touchPos = initialTouchPosition {
-                        simulateClick(at: touchPos)
+                // 静态文本通常为只读 Label，只有在其被显式配置了专属规则时，才允许进行模拟点击聚焦以接收键盘输入
+                // 注意：如果 rule 的 axRole 是 "unknown"，说明它仅匹配到了 App 的全局兜底规则，不算作专门为该静态文本配置的专属规则
+                let isStaticText = (target.axRole == "AXStaticText")
+                let hasSpecificRule = (rule != nil && rule?.key.axRole != "unknown")
+                
+                if !isStaticText || hasSpecificRule {
+                    let translation = determineTranslation(for: target, rule: rule, radius: self.currentRadius)
+                    // 仅在微调数值的键盘上下键模式（arrowKeyUpDown）下才进行点击聚焦
+                    // 左右方向键模式（arrowKeyLeftRight）常用于时间轴左右逐帧移动，在此模式下绝对不产生点击，防止重新定位时间轴
+                    if translation == .arrowKeyUpDown {
+                        if let touchPos = initialTouchPosition {
+                            simulateClick(at: touchPos)
+                        }
                     }
                 }
             }
