@@ -446,11 +446,11 @@ final class CustomKnobTests: XCTestCase {
     }
 
     func testSelectiveFocusClickForKeyboardRequiredTranslation() {
-        let textKey = RuleKey(bundleID: "com.test.text", axRole: "AXStaticText", displayName: "TextLabel")
+        let textFieldKey = RuleKey(bundleID: "com.test.text", axRole: "AXTextField", displayName: "TextField")
         
-        // 1. 测试用例 1：使用键盘控制（arrowKeyUpDown），应该触发模拟点击
+        // 1. 测试用例 1：AXTextField，使用键盘控制（arrowKeyUpDown），应该触发模拟点击
         let keyboardRule = ControlRule(
-            key: textKey,
+            key: textFieldKey,
             themeColor: "#0A84FF",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
@@ -464,17 +464,17 @@ final class CustomKnobTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
-        manager1.currentTarget = DetectedTarget(bundleID: textKey.bundleID, axRole: textKey.axRole, identifier: textKey.identifier, displayName: textKey.displayName ?? "", element: nil, parentChain: [])
+        manager1.currentTarget = DetectedTarget(bundleID: textFieldKey.bundleID, axRole: textFieldKey.axRole, identifier: textFieldKey.identifier, displayName: textFieldKey.displayName ?? "", element: nil, parentChain: [])
         manager1.initialTouchPosition = CGPoint(x: 100, y: 100)
         manager1.didSimulateClickForTest = false
         
         manager1.transition(to: .knobing(target: manager1.currentTarget!))
         
-        XCTAssertTrue(manager1.didSimulateClickForTest, "Should simulate click for AXStaticText with arrowKeyUpDown translation")
+        XCTAssertTrue(manager1.didSimulateClickForTest, "Should simulate click for AXTextField with arrowKeyUpDown translation")
         
-        // 2. 测试用例 2：使用滚轮控制（scrollWheelVertical），不应该触发模拟点击
+        // 2. 测试用例 2：AXTextField，使用滚轮控制（scrollWheelVertical），不应该触发模拟点击
         let scrollRule = ControlRule(
-            key: textKey,
+            key: textFieldKey,
             themeColor: "#0A84FF",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp")
@@ -488,16 +488,23 @@ final class CustomKnobTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
-        manager2.currentTarget = DetectedTarget(bundleID: textKey.bundleID, axRole: textKey.axRole, identifier: textKey.identifier, displayName: textKey.displayName ?? "", element: nil, parentChain: [])
+        manager2.currentTarget = DetectedTarget(bundleID: textFieldKey.bundleID, axRole: textFieldKey.axRole, identifier: textFieldKey.identifier, displayName: textFieldKey.displayName ?? "", element: nil, parentChain: [])
         manager2.initialTouchPosition = CGPoint(x: 100, y: 100)
         manager2.didSimulateClickForTest = false
         
         manager2.transition(to: .knobing(target: manager2.currentTarget!))
         
-        XCTAssertFalse(manager2.didSimulateClickForTest, "Should NOT simulate click for AXStaticText with scrollWheelVertical translation")
+        XCTAssertFalse(manager2.didSimulateClickForTest, "Should NOT simulate click for AXTextField with scrollWheelVertical translation")
         
-        // 3. 测试用例 3：AXStaticText，即使没有专属控制规则，也绝对不应该产生任何模拟点击（即使默认需要键盘）
-        RuleLibrary.shared.injectRulesForTesting([])
+        // 3. 测试用例 3：AXStaticText，即使明确配置了专属 arrowKeyUpDown 规则，也绝对不应该产生任何模拟点击
+        let staticTextKey = RuleKey(bundleID: "com.test.text", axRole: "AXStaticText", displayName: "StaticText")
+        let staticTextRule = ControlRule(
+            key: staticTextKey,
+            themeColor: "#0A84FF",
+            configType: .single,
+            singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
+        )
+        RuleLibrary.shared.saveRule(staticTextRule)
         
         let manager3 = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -506,13 +513,13 @@ final class CustomKnobTests: XCTestCase {
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
-        manager3.currentTarget = DetectedTarget(bundleID: textKey.bundleID, axRole: textKey.axRole, identifier: textKey.identifier, displayName: textKey.displayName ?? "", element: nil, parentChain: [])
+        manager3.currentTarget = DetectedTarget(bundleID: staticTextKey.bundleID, axRole: staticTextKey.axRole, identifier: staticTextKey.identifier, displayName: staticTextKey.displayName ?? "", element: nil, parentChain: [])
         manager3.initialTouchPosition = CGPoint(x: 100, y: 100)
         manager3.didSimulateClickForTest = false
         
         manager3.transition(to: .knobing(target: manager3.currentTarget!))
         
-        XCTAssertFalse(manager3.didSimulateClickForTest, "Should NOT simulate click for AXStaticText when no specific rule exists")
+        XCTAssertFalse(manager3.didSimulateClickForTest, "Should NOT simulate click for AXStaticText even with arrowKeyUpDown rule")
         
         RuleLibrary.shared.reload()
     }
