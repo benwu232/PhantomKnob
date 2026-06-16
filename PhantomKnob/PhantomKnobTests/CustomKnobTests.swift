@@ -444,5 +444,59 @@ final class CustomKnobTests: XCTestCase {
         }
         waitForExpectations(timeout: 2.0, handler: nil)
     }
+
+    func testSelectiveFocusClickForKeyboardRequiredTranslation() {
+        let textKey = RuleKey(bundleID: "com.test.text", axRole: "AXStaticText", displayName: "TextLabel")
+        
+        // 1. 测试用例 1：使用键盘控制（arrowKeyUpDown），应该触发模拟点击
+        let keyboardRule = ControlRule(
+            key: textKey,
+            themeColor: "#0A84FF",
+            configType: .single,
+            singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
+        )
+        RuleLibrary.shared.saveRule(keyboardRule)
+        
+        let manager1 = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager1.currentTarget = DetectedTarget(bundleID: textKey.bundleID, axRole: textKey.axRole, identifier: textKey.identifier, displayName: textKey.displayName ?? "", element: nil, parentChain: [])
+        manager1.initialTouchPosition = CGPoint(x: 100, y: 100)
+        manager1.didSimulateClickForTest = false
+        
+        manager1.transition(to: .knobing(target: manager1.currentTarget!))
+        
+        XCTAssertTrue(manager1.didSimulateClickForTest, "Should simulate click for AXStaticText with arrowKeyUpDown translation")
+        
+        // 2. 测试用例 2：使用滚轮控制（scrollWheelVertical），不应该触发模拟点击
+        let scrollRule = ControlRule(
+            key: textKey,
+            themeColor: "#0A84FF",
+            configType: .single,
+            singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp")
+        )
+        RuleLibrary.shared.saveRule(scrollRule)
+        
+        let manager2 = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager2.currentTarget = DetectedTarget(bundleID: textKey.bundleID, axRole: textKey.axRole, identifier: textKey.identifier, displayName: textKey.displayName ?? "", element: nil, parentChain: [])
+        manager2.initialTouchPosition = CGPoint(x: 100, y: 100)
+        manager2.didSimulateClickForTest = false
+        
+        manager2.transition(to: .knobing(target: manager2.currentTarget!))
+        
+        XCTAssertFalse(manager2.didSimulateClickForTest, "Should NOT simulate click for AXStaticText with scrollWheelVertical translation")
+        
+        RuleLibrary.shared.reload()
+    }
 }
 

@@ -16,8 +16,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private let touchHandler: GlobalTouchHandler
     var currentTarget: DetectedTarget?
     private var currentTranslator: InputTranslator?
-    private var initialTouchPosition: CGPoint?
-    private var initialTouchPositionCarbon: CGPoint? // 锁定鼠标 of Carbon coordinate (top-left origin)
+    var initialTouchPosition: CGPoint?
+    var initialTouchPositionCarbon: CGPoint? // 锁定鼠标 of Carbon coordinate (top-left origin)
     private var previousAngle: Double = 0
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
@@ -34,6 +34,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var isInterceptingGestures = false
     private var wasInactiveBeforePanelShow = false
     
+    // For unit testing click simulation verification
+    var didSimulateClickForTest = false
+
     // Mockable accessibility check for unit testing
     var isProcessTrusted: () -> Bool = { AXIsProcessTrusted() }
 
@@ -178,10 +181,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             } else {
                 ControlPanelViewModel.shared.isGestureActive = false
             }
-            // 针对文本输入与静态文本输入，自动注入一次鼠标点击以聚焦
+            // 针对文本输入与静态文本输入，且只有在需要模拟键盘事件时，才自动注入一次鼠标点击以聚焦
             if target.axRole == "AXTextField" || target.axRole == "AXStaticText" {
-                if let touchPos = initialTouchPosition {
-                    simulateClick(at: touchPos)
+                let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
+                let translation = determineTranslation(for: target, rule: rule, radius: self.currentRadius)
+                if translation == .arrowKeyUpDown || translation == .arrowKeyLeftRight {
+                    if let touchPos = initialTouchPosition {
+                        simulateClick(at: touchPos)
+                    }
                 }
             }
         } else {
@@ -1125,7 +1132,31 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         return TargetDetector.autoDetectTranslation(for: element)
     }
 
+    private func determineTranslation(for target: DetectedTarget, rule: ControlRule?, radius: Double) -> InputTranslation {
+        var translation = rule?.translation ?? autoDetectTranslation(for: target)
+        if let rule = rule {
+            switch rule.configType {
+            case .single:
+                if let single = rule.singleConfig {
+                    translation = single.translation
+                }
+            case .double:
+                if let double = rule.doubleConfig {
+                    let isOuter = radius > (double.inner.maxRadius + double.inner.margin)
+                    let activeKnob = isOuter ? double.outer : double.inner
+                    translation = activeKnob.translation
+                }
+            case .linear:
+                if let linear = rule.linearConfig {
+                    translation = linear.translation
+                }
+            }
+        }
+        return translation
+    }
+
     private func simulateClick(at point: CGPoint) {
+        didSimulateClickForTest = true
         writeDebugLog("[KnobStateManager] Simulating click to focus: \(point)")
         let source = CGEventSource(stateID: .privateState)
         source?.userData = 0xDEADC0DE // 携带特殊标记防自身 tap 拦截死循环
