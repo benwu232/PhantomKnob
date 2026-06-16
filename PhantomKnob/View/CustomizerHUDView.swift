@@ -8,6 +8,25 @@ struct CustomizerHUDView: View {
     @State private var themeColor: String = "#0A84FF"
     @State private var configType: KnobConfigType = .single
     @State private var isLoadingConfig: Bool = false
+
+    // 冲突与分叉锁定状态
+    @State private var hasConflict: Bool = false
+    @State private var selectedParents: Set<Int> = [] // 选中的 parentChain 索引集合
+    @State private var lockedDiffIndex: Int? = nil    // 自动锁定的分叉点索引
+    @State private var isFirstLoad: Bool = true
+
+    private var currentRuleKey: RuleKey {
+        let chain = target.parentChain.enumerated().filter {
+            selectedParents.contains($0.offset)
+        }.map { $0.element }
+        return RuleKey(
+            bundleID: target.bundleID,
+            axRole: target.axRole,
+            identifier: target.identifier,
+            displayName: target.displayName,
+            parentChain: chain.isEmpty ? nil : chain
+        )
+    }
     
     // 单旋钮
     @State private var singleScale: Double = 1.0
@@ -157,6 +176,53 @@ struct CustomizerHUDView: View {
                         .padding(8)
                         .background(Color.black.opacity(0.2))
                         .cornerRadius(8)
+                    }
+
+                    if !target.parentChain.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(hasConflict ? "⚠️ 控件标识冲突 (已自动启用层级定位匹配)" : "层级定位特征 (可勾选以进行深度精确定位)")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(hasConflict ? .yellow : .gray)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                ForEach(0..<target.parentChain.count, id: \.self) { idx in
+                                    let parent = target.parentChain[idx]
+                                    HStack(spacing: 6) {
+                                        Toggle("", isOn: Binding(
+                                            get: { self.selectedParents.contains(idx) },
+                                            set: { isCheck in
+                                                if idx == lockedDiffIndex { return } // 强制锁定的分叉点禁止取消
+                                                if isCheck {
+                                                    self.selectedParents.insert(idx)
+                                                } else {
+                                                    self.selectedParents.remove(idx)
+                                                }
+                                                loadExisting()
+                                            }
+                                        ))
+                                        .toggleStyle(.checkbox)
+                                        .disabled(idx == lockedDiffIndex)
+                                        
+                                        Text("\(parent.displayName ?? "未命名容器") (\(parent.axRole))")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(idx == lockedDiffIndex ? .green : .white)
+                                        
+                                        if idx == lockedDiffIndex {
+                                            Text("💡 分叉区分点")
+                                                .font(.system(size: 8))
+                                                .foregroundColor(.green)
+                                                .padding(.horizontal, 4)
+                                                .background(Color.green.opacity(0.1))
+                                                .cornerRadius(4)
+                                        }
+                                    }
+                                    .padding(.vertical, 2)
+                                }
+                            }
+                            .padding(8)
+                            .background(Color.black.opacity(0.2))
+                            .cornerRadius(8)
+                        }
                     }
                 }
             }
@@ -775,7 +841,13 @@ struct CustomizerHUDView: View {
         isLoadingConfig = true
         resetToDefaults()
         
-        if let existing = RuleLibrary.shared.lookup(for: target.ruleKey) {
+        // 首次加载时进行冲突比对，并自动计算分叉点
+        if isFirstLoad {
+            isFirstLoad = false
+            detectConflictAndDiff()
+        }
+        
+        if let existing = RuleLibrary.shared.lookup(for: currentRuleKey) {
             self.themeColor = existing.themeColor ?? "#0A84FF"
             self.configType = existing.configType
             
@@ -825,7 +897,7 @@ struct CustomizerHUDView: View {
     
     private func save() {
         guard !isLoadingConfig else { return }
-        var rule = ControlRule(key: target.ruleKey, themeColor: themeColor, configType: configType)
+        var rule = ControlRule(key: currentRuleKey, themeColor: themeColor, configType: configType)
         
         switch configType {
         case .single:
@@ -852,6 +924,40 @@ struct CustomizerHUDView: View {
         }
         
         RuleLibrary.shared.saveRule(rule)
+    }
+
+    private func detectConflictAndDiff() {
+        // 检查是否有匹配相同基础 Key 的规则存在
+        let lookupKey = RuleKey(bundleID: target.bundleID, axRole: target.axRole, identifier: target.identifier, displayName: target.displayName)
+        if let existing = RuleLibrary.shared.lookup(for: lookupKey) {
+            self.hasConflict = true
+            
+            // 自动比对两条 parentChain，找出第一个发生变动的层级作为强制绑定的“分叉点”
+            let existingChain = existing.key.parentChain ?? []
+            var foundDiff = false
+            
+            for i in 0..<min(existingChain.count, target.parentChain.count) {
+                if existingChain[i].axRole != target.parentChain[i].axRole ||
+                   existingChain[i].displayName != target.parentChain[i].displayName {
+                    self.lockedDiffIndex = i
+                    self.selectedParents.insert(i) // 强制勾选分叉点
+                    foundDiff = true
+                    break
+                }
+            }
+            
+            // 若链条长度前缀完全相同，以最近一个有命名的节点作为差异点
+            if !foundDiff {
+                if let nameIdx = target.parentChain.firstIndex(where: { $0.displayName != nil }) {
+                    self.lockedDiffIndex = nameIdx
+                    self.selectedParents.insert(nameIdx)
+                }
+            }
+        } else {
+            self.hasConflict = false
+            self.selectedParents.removeAll()
+            self.lockedDiffIndex = nil
+        }
     }
     
     // MARK: - 辅助文本解析
