@@ -1,27 +1,35 @@
 // PhantomKnob/Model/ControlRule.swift
 import Foundation
 
+/// 父级层级单个节点的信息
+struct ParentNodeInfo: Codable, Hashable, Equatable {
+    let axRole: String          // 节点角色，如 "AXGroup", "AXScrollArea"
+    let displayName: String?    // 节点静态显示名称，如 "对比度", "色彩"
+}
+
 /// 规则库中唯一标识一条规则的 key。
-/// 结构：bundleID · axRole · identifier?
 struct RuleKey: Codable, Hashable {
     let bundleID: String    // "com.apple.QuickTimePlayerX"
     let axRole: String      // "AXSlider"
     let identifier: String? // AXIdentifier，nil 表示匹配该 app 下所有同类控件
     let displayName: String? // AXTitle 或 AXDescription，可为 nil
+    let parentChain: [ParentNodeInfo]? // 新增：父节点层级链条路径约束
 
-    init(bundleID: String, axRole: String, identifier: String? = nil, displayName: String? = nil) {
+    init(bundleID: String, axRole: String, identifier: String? = nil, displayName: String? = nil, parentChain: [ParentNodeInfo]? = nil) {
         self.bundleID = bundleID
         self.axRole = axRole
         self.identifier = identifier
         self.displayName = displayName
+        self.parentChain = parentChain
     }
 
-    // 精确匹配（bundleID + axRole + identifier 全部相等）
+    // 精确匹配
     func matches(_ other: RuleKey) -> Bool {
         bundleID == other.bundleID &&
         axRole == other.axRole &&
         (identifier == nil || identifier == other.identifier) &&
-        (displayName == nil || displayName == other.displayName)
+        (displayName == nil || displayName == other.displayName) &&
+        (parentChain == other.parentChain)
     }
 }
 

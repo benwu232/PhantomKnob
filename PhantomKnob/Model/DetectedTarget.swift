@@ -9,9 +9,10 @@ struct DetectedTarget {
     let identifier: String?     // AXIdentifier（开发者设置，可为 nil）
     let displayName: String     // 来自 AXTitle 或 AXDescription，用于 overlay 显示
     let element: AXUIElement?   // AX 元素引用；无 AX 元素时为 nil（如 Canvas 区域）
+    let parentChain: [ParentNodeInfo] // 新增：从叶子控件向上延伸的完整层级树链条
 
     /// 用于规则库查找和状态机 identity 比较。
     var ruleKey: RuleKey {
-        RuleKey(bundleID: bundleID, axRole: axRole, identifier: identifier, displayName: displayName)
+        RuleKey(bundleID: bundleID, axRole: axRole, identifier: identifier, displayName: displayName, parentChain: parentChain)
     }
 }

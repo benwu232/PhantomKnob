@@ -63,11 +63,17 @@ class TargetDetector {
     }
 
     private func tryBuildTarget(from element: AXUIElement) -> DetectedTarget? {
-        // 元素必须有 AXMinValue + AXMaxValue 才视为可调节
-        guard Self.getDouble(from: element, attribute: kAXMinValueAttribute) != nil,
-              Self.getDouble(from: element, attribute: kAXMaxValueAttribute) != nil else { return nil }
+        let role = Self.getString(from: element, attribute: kAXRoleAttribute) ?? "AXUnknown"
+        
+        // 特例：如果是文本输入框或静态文本（对于自定义非原生应用），即使没有 Min/Max 限制也允许返回
+        let isTextField = (role == "AXTextField" || role == "AXStaticText")
+        
+        if !isTextField {
+            // 普通元素必须有 AXMinValue + AXMaxValue 才视为可调节
+            guard Self.getDouble(from: element, attribute: kAXMinValueAttribute) != nil,
+                  Self.getDouble(from: element, attribute: kAXMaxValueAttribute) != nil else { return nil }
+        }
 
-        let role        = Self.getString(from: element, attribute: kAXRoleAttribute) ?? "AXUnknown"
         let identifier  = Self.getString(from: element, attribute: kAXIdentifierAttribute)
         let displayName = Self.getString(from: element, attribute: kAXTitleAttribute)
                        ?? Self.getString(from: element, attribute: kAXDescriptionAttribute)
@@ -80,13 +86,44 @@ class TargetDetector {
             bundleID = bid
         }
 
+        let parentChain = Self.buildParentChain(from: element)
+
         return DetectedTarget(
             bundleID: bundleID,
             axRole: role,
             identifier: identifier,
             displayName: displayName,
-            element: element
+            element: element,
+            parentChain: parentChain
         )
+    }
+
+    /// 提取排除动态名称后的父节点层级链
+    static func buildParentChain(from element: AXUIElement) -> [ParentNodeInfo] {
+        var chain: [ParentNodeInfo] = []
+        var current = element
+        var depth = 0
+        
+        while depth < 10 {
+            var parent: CFTypeRef?
+            guard AXUIElementCopyAttributeValue(current, kAXParentAttribute as CFString, &parent) == .success,
+                  let parentRef = parent else { break }
+            let parentElement = unsafeBitCast(parentRef, to: AXUIElement.self)
+            
+            let role = getString(from: parentElement, attribute: kAXRoleAttribute) ?? "AXUnknown"
+            var name = getString(from: parentElement, attribute: kAXTitleAttribute)
+                    ?? getString(from: parentElement, attribute: kAXDescriptionAttribute)
+            
+            // 过滤忽略 Window / Application 级的动态 Title 文本
+            if role == "AXWindow" || role == "AXApplication" {
+                name = nil
+            }
+            
+            chain.append(ParentNodeInfo(axRole: role, displayName: name))
+            current = parentElement
+            depth += 1
+        }
+        return chain
     }
 
     // MARK: - AX attribute helpers

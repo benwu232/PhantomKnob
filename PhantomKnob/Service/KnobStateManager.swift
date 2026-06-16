@@ -326,7 +326,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 axRole: "ControlPanel",
                 identifier: nil,
                 displayName: "控制面板",
-                element: nil
+                element: nil,
+                parentChain: []
             )
             currentTarget = target
             currentTranslator = ScrollWheelTranslator()
@@ -365,7 +366,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             axRole: "unknown",
             identifier: nil,
             displayName: appName,
-            element: nil
+            element: nil,
+            parentChain: []
         )
 
         // 检查是否是从冷却状态恢复（如果目标相同，则跳过 5° 的激活阈值）
