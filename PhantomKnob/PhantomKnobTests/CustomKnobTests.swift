@@ -496,6 +496,24 @@ final class CustomKnobTests: XCTestCase {
         
         XCTAssertFalse(manager2.didSimulateClickForTest, "Should NOT simulate click for AXStaticText with scrollWheelVertical translation")
         
+        // 3. 测试用例 3：AXStaticText，即使没有专属控制规则，也绝对不应该产生任何模拟点击（即使默认需要键盘）
+        RuleLibrary.shared.injectRulesForTesting([])
+        
+        let manager3 = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager3.currentTarget = DetectedTarget(bundleID: textKey.bundleID, axRole: textKey.axRole, identifier: textKey.identifier, displayName: textKey.displayName ?? "", element: nil, parentChain: [])
+        manager3.initialTouchPosition = CGPoint(x: 100, y: 100)
+        manager3.didSimulateClickForTest = false
+        
+        manager3.transition(to: .knobing(target: manager3.currentTarget!))
+        
+        XCTAssertFalse(manager3.didSimulateClickForTest, "Should NOT simulate click for AXStaticText when no specific rule exists")
+        
         RuleLibrary.shared.reload()
     }
 }

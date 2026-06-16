@@ -184,10 +184,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             // 针对文本输入与静态文本输入，且只有在需要模拟键盘事件时，才自动注入一次鼠标点击以聚焦
             if target.axRole == "AXTextField" || target.axRole == "AXStaticText" {
                 let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
-                let translation = determineTranslation(for: target, rule: rule, radius: self.currentRadius)
-                if translation == .arrowKeyUpDown || translation == .arrowKeyLeftRight {
-                    if let touchPos = initialTouchPosition {
-                        simulateClick(at: touchPos)
+                
+                // 静态文本通常为只读 Label，只有在其被显式配置了专属规则时，才允许进行模拟点击聚焦以接收键盘输入
+                let isStaticText = (target.axRole == "AXStaticText")
+                let hasSpecificRule = (rule != nil)
+                
+                if !isStaticText || hasSpecificRule {
+                    let translation = determineTranslation(for: target, rule: rule, radius: self.currentRadius)
+                    if translation == .arrowKeyUpDown || translation == .arrowKeyLeftRight {
+                        if let touchPos = initialTouchPosition {
+                            simulateClick(at: touchPos)
+                        }
                     }
                 }
             }

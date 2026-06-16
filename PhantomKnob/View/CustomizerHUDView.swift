@@ -808,8 +808,8 @@ struct CustomizerHUDView: View {
         self.singleMinRadius = 10.0
         
         self.doubleInnerRadiusMax = 25.0
-        self.doubleInnerScale = 0.2
-        self.doubleInnerScaleText = "0.2"
+        self.doubleInnerScale = 5.0
+        self.doubleInnerScaleText = "5.0"
         self.doubleInnerTranslation = .arrowKeyUpDown
         self.doubleInnerCWAction = "arrowUp"
         self.doubleInnerThemeColor = "#30D158"
@@ -819,18 +819,18 @@ struct CustomizerHUDView: View {
         
         self.doubleOuterRadiusMin = 25.0
         self.doubleOuterRadiusMax = 100.0
-        self.doubleOuterScale = 1.5
-        self.doubleOuterScaleText = "1.5"
+        self.doubleOuterScale = 1.0
+        self.doubleOuterScaleText = "1.0"
         self.doubleOuterTranslation = .scrollWheelVertical
         self.doubleOuterCWAction = "scrollUp"
         self.doubleOuterThemeColor = "#FF9F0A"
         
         self.linearMinRadius = 10.0
         self.linearMaxRadius = 35.0
-        self.linearMinScale = 0.1
-        self.linearMinScaleText = "0.1"
-        self.linearMaxScale = 3.0
-        self.linearMaxScaleText = "3.0"
+        self.linearMinScale = 1.0
+        self.linearMinScaleText = "1.0"
+        self.linearMaxScale = 30.0
+        self.linearMaxScaleText = "30.0"
         self.linearTranslation = .scrollWheelVertical
         self.linearCWAction = "scrollUp"
         
