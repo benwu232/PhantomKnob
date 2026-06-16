@@ -1,61 +1,85 @@
-# 剪映文本框聚焦与通用 AX 诊断工具设计规格说明
+# 剪映控件深度定制与父链层级定位匹配设计规格说明
 
-为剪映（CapCut）的参数文本框（`AXStaticText` 或 `AXTextField`）引入“点击聚焦 + 方向键调节”的自动控制支持，并编写一个通用的独立辅助诊断工具。
+为 PhantomKnob 引入通用的“控件层级链条定位匹配”与“点击聚焦”机制，重点适配剪映（CapCut）的参数文本框（`AXStaticText` 或 `AXTextField`）。同时，在 Customizer HUD 定制面板中支持“完整控件链层级展示”与“层级分叉比对自动区分冲突”的交互。
 
 ## 用户审查点
 
-> [!NOTE]
-> 为了安全起见，我们在 `TargetDetector` 中放宽 `AXMinValue`/`AXMaxValue` 限制时，仅针对 `AXTextField` 和 `AXStaticText` 两个角色，且只有在规则库（RuleLibrary）中已显式配置对应规则时，才视其为“可调节”控件。这可以完全避免在其他未适配的应用中因误判导致乱点鼠标的问题。
+> [!IMPORTANT]
+> 1. **父级层级匹配**：新增 `parentChain` 属性对 `RuleKey` 进行扩展。当多个控件的 Bundle ID + AXRole 发生冲突（如都是 `AXStaticText` 且无 ID）时，通过遍历父级树的角色和显示名称来唯一标识每个旋钮规则。
+2. **动态过滤**：在构建和比对父链时，系统将**自动忽略 `AXWindow` 和 `AXApplication` 层级的 Title**，避免因动态项目名（如“剪映 - 项目A.draft”）导致换项目后规则失效。
+3. **分叉点自动锁定**：另存为独立新旋钮时，系统自动 diff 当前控件与已有冲突规则的父链，锁定第一个相异层级节点（分叉点）并在定制面板中强制勾选，确保两套规则永不冲突。
+
+---
 
 ## 提议的变更
 
-### 1. 独立诊断工具（通用）
+### 1. 核心模型与匹配逻辑变更
 
-#### [NEW] [inspect_ax_tool.swift](file:///Users/wb/work/phantom_knob_mac/scripts/inspect_ax_tool.swift)
-一个通用的、交互式的命令行诊断工具。用户启动工具后可切换到目标应用，将鼠标移动到想要控制的元素上，通过触发事件来进行精确检测，并将结果实时打印并持久化保存：
-- **触发机制**：支持以下两种全局触发方式：
-  1. **鼠标点击触发**：当用户在目标应用中点击某个元素时（捕获全局 `leftMouseUp` 事件），自动对其进行检测。
-  2. **全局热键触发**：按下指定热键（默认为 `Control + Shift + D`），自动检测当前鼠标悬停的元素。
-- **检测逻辑**：
-  - 获取触发瞬间鼠标指针下方的窗口和运行应用。
-  - 向上遍历其 Accessibility (AX) 父节点链条（深度最大为 10）。
-  - 提取并打印各层级节点的详细属性（Role、Subrole、Title、Identifier、Description、可写入属性、可用 Actions、Value/MinValue/MaxValue）。
-- **结果输出**：
-  - 实时在终端中以清晰的树状结构打印检测到的节点信息。
-  - 自动向当前目录下的 `inspect_results.txt` 文件追加保存该次检测结果。
-  - 给出推荐的 PhantomKnob 规则配置（JSON 格式）。
-- **退出机制**：终端按下 `Control + C` 退出工具。
+#### [NEW] [ParentNodeInfo.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Model/ParentNodeInfo.swift) (或合并入 [ControlRule.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Model/ControlRule.swift))
+定义父级层级单个节点的信息：
+```swift
+struct ParentNodeInfo: Codable, Hashable {
+    let axRole: String          // 节点角色，如 "AXGroup", "AXScrollArea"
+    let displayName: String?    // 节点静态标题，如 "对比度", "色彩"
+}
+```
 
-### 2. PhantomKnob 应用核心
+#### [MODIFY] [ControlRule.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Model/ControlRule.swift)
+扩展 `RuleKey` 结构以支持多层级校验：
+- 新增 `parentChain: [ParentNodeInfo]?` 可选属性。
+- 升级 `matches(_ other: RuleKey) -> Bool` 逻辑，在 `parentChain` 存在时强比对父节点链的 Role 与 Name。
+
+#### [MODIFY] [DetectedTarget.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Model/DetectedTarget.swift)
+- 扩展 `DetectedTarget` 属性，添加 `parentChain: [ParentNodeInfo]` 链。
+- 升级 `ruleKey` 计算属性，使其携带当前捕获的父链特征。
 
 #### [MODIFY] [TargetDetector.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Service/TargetDetector.swift)
-修改 `tryBuildTarget` 方法以放宽限制条件：
-- 默认情况下，元素依然要求具备 `AXMinValue` 和 `AXMaxValue` 属性。
-- **特例**：如果元素的 Role 为 `AXTextField` 或 `AXStaticText`，即便没有 Min/Max 属性，也允许返回有效的 `DetectedTarget`。
+- 放宽检测限制：允许 `AXTextField` 与 `AXStaticText` 在没有 Min/Max 属性时也被捕获为可调节目标。
+- 在 `tryBuildTarget(from:)` 中，一旦捕获到合法元素，立即**向上遍历 10 层父级**：
+  - 提取各级父节点的 `AXRole` 和 `AXTitle` / `AXDescription`。
+  - 过滤/忽略 `AXWindow` 和 `AXApplication` 的 Title。
+  - 组装成 `parentChain` 注入 `DetectedTarget`。
+
+#### [MODIFY] [RuleLibrary.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Storage/RuleLibrary.swift)
+- 升级 `lookup(for:)` 路由匹配策略，引入**具体性匹配优先**原则：
+  1. *携带 parentChain 且完全符合链条校验* 的规则拥有最高优先级。
+  2. 其次是精确 `identifier` 匹配的规则。
+  3. 再次是 `displayName` 匹配。
+  4. 最终退回到宽泛的 `bundleID + axRole` 规则。
+
+---
+
+### 2. 状态机与自动点击聚焦
 
 #### [MODIFY] [KnobStateManager.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Service/KnobStateManager.swift)
-集成自动点击聚焦逻辑：
-- 当状态机向 `.knobing(target:)` 状态转移的瞬间：
-  - 若 `target.axRole` 为 `"AXTextField"` 或 `"AXStaticText"`：
-    - 在当前鼠标位置 `initialTouchPosition` 注入一次鼠标左键点击事件（`leftMouseDown` 后紧跟 `leftMouseUp`）以使文本框获得焦点。
-- 确保点击事件带上特殊的 `eventSource` 标识符 `0xDEADC0DE` 或使用 HID tap 发送，避免被我们自身的手势监听器重新拦截导致死循环。
+- 当状态机确认激活进入 `.knobing(target:)` 时，如果 `target.axRole` 为 `AXTextField` 或 `AXStaticText`：
+  - 调用 `simulateClick(at: initialTouchPosition)` 自动投递鼠标左键按起事件完成对焦。
+- 点击事件使用特殊的 `eventSource` 标识符 `0xDEADC0DE` 发送，以防被拦截逻辑自身过滤。
 
-#### [MODIFY] [bundled-rules.json](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/App/bundled-rules.json)
-增加剪映文本框的映射规则，将旋转翻译为 `arrowKeyUpDown`（上下键）：
-- 目标应用：`com.lemon.jianying`、`com.lemon.jianyingpro`、`com.lemon.lv`、`com.lemon.lvoverseas`
-- 角色：`AXStaticText`、`AXTextField`
-- 翻译策略：`arrowKeyUpDown`
-- 灵敏度配置：`fixed(1.0)`
+---
+
+### 3. 定制悬浮面板交互变更
+
+#### [MODIFY] [CustomizerHUDView.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/View/CustomizerHUDView.swift)
+- **层级树列表渲染**：
+  在面板底部的定位信息卡片中，渲染出完整的 `parentChain` 控件链（排除叶子节点本身），每层显示角色及静态文本，且前置复选框供手动定制。
+- **另存为新旋钮与冲突自动比对（核心机制）**：
+  - 当按下 `C` 键唤起的控件已在用户/系统规则库里存在时，UI 显示：*“当前位置已匹配规则：[规则名]。修改将同步影响所有同类控件。”* 并暴露 **“另存为独立新旋钮”** 按钮。
+  - 点击按钮时，自动运行 `parentChain` 比对：
+    - 比对两个控件的层级链，找到第一个不同的节点（分叉点，例如“对比度”与“亮度”）。
+    - 自动强制勾选该分叉节点并在 UI 上高亮显示（💡 特殊标识），禁止用户取消。
+    - 重新实例化一条带有专属 `parentChain` 约束的规则并写回 `rules.json` 进行热重载。
 
 ---
 
 ## 验证计划
 
 ### 自动化测试
-- 运行 `PhantomKnobTests` 确保对已有应用规则的解析和匹配逻辑没有发生退化（Regression）。
+- 在 `RuleLibraryTests` 中编写包含多条 `parentChain` 相互冲突规则的查找逻辑，确认优先级与比对能够精确回退。
+- 测试 `ParentNodeInfo` 及 `RuleKey` 的 JSON 序列化与反序列化，防止因新字段造成旧规则文件破损崩溃。
 
-### 手动验证步骤
-1. 在终端运行 `swift scripts/inspect_ax_tool.swift`，将鼠标移动到剪映的参数文本框上，确认其被精准识别为 `AXStaticText` 且输出对应的分级层级信息。
-2. 启动 PhantomKnob，将鼠标悬停在剪映“调节”面板的任一参数输入框（例如“对比度”的数值文本框）上方，在触控板上做双指旋转手势。
-3. 验证文本框是否被自动点击并出现输入光标（即获得焦点），且数值随着旋转方向上下递增或递减。
-4. 验证在时间轴面板上旋转时，依然正常执行 `arrowKeyLeftRight` 的逐帧穿梭控制，未被误触发为点击。
+### 手动验证
+1. 打开剪映，鼠标悬停于“对比度”输入框，做旋钮手势激活后按下 `C` 键，设置并保存单圈微调（`arrowKeyUpDown` 样式）。
+2. 将鼠标悬停到相邻的“亮度”输入框，同样激活后按下 `C` 键。面板提示发现冲突，点击“另存为独立新旋钮”。
+3. 检查 HUD 上是否展示了层级链并自动高亮锁定了“亮度”与“对比度”的分叉层级。
+4. 确认保存后，两个旋钮能够根据鼠标悬停位置各自独立响应，互不干扰，换项目或拖拽面板后也保持稳定。
