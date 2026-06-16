@@ -114,9 +114,13 @@ class TargetDetector {
             var name = getString(from: parentElement, attribute: kAXTitleAttribute)
                     ?? getString(from: parentElement, attribute: kAXDescriptionAttribute)
             
-            // 过滤忽略 Window / Application 级的动态 Title 文本
+            // 过滤忽略 Window / Application 级的动态 Title 文本，但对于达芬奇提取其页面模式
             if role == "AXWindow" || role == "AXApplication" {
-                name = nil
+                if let title = name, let pageMode = TargetDetector.extractResolvePageMode(from: title) {
+                    name = pageMode
+                } else {
+                    name = nil
+                }
             }
             
             chain.append(ParentNodeInfo(axRole: role, displayName: name))
@@ -140,5 +144,19 @@ class TargetDetector {
         guard AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success,
               let string = value as? String else { return nil }
         return string
+    }
+
+    /// 从 DaVinci Resolve 窗口标题中提取页面模式（如 Cut、Color 等）
+    static func extractResolvePageMode(from windowTitle: String) -> String? {
+        guard windowTitle.hasPrefix("DaVinci Resolve") else { return nil }
+        let validPages = ["Media", "Cut", "Edit", "Fusion", "Color", "Fairlight", "Deliver"]
+        let components = windowTitle.components(separatedBy: " - ")
+        for component in components.reversed() {
+            let trimmed = component.trimmingCharacters(in: .whitespacesAndNewlines)
+            if validPages.contains(trimmed) {
+                return trimmed
+            }
+        }
+        return nil
     }
 }

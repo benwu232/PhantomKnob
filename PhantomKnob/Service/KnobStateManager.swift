@@ -378,13 +378,24 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         // 2. 创建 DetectedTarget（无 AX 元素时用当前 app 信息填充）
         let frontmostApp = NSWorkspace.shared.frontmostApplication
         let appName = frontmostApp?.localizedName ?? ""
+        let bundleID = frontmostApp?.bundleIdentifier ?? ""
+        
+        var parentChain: [ParentNodeInfo] = []
+        if detectedTarget == nil {
+            if let pageMode = KnobStateManager.getActiveWindowPageMode(for: bundleID) {
+                parentChain = [ParentNodeInfo(axRole: "AXWindow", displayName: pageMode)]
+            }
+        } else if let detected = detectedTarget {
+            parentChain = detected.parentChain
+        }
+
         let target = detectedTarget ?? DetectedTarget(
-            bundleID: frontmostApp?.bundleIdentifier ?? "",
+            bundleID: bundleID,
             axRole: "unknown",
             identifier: nil,
             displayName: appName,
             element: nil,
-            parentChain: []
+            parentChain: parentChain
         )
 
         // 检查是否是从冷却状态恢复（如果目标相同，则跳过 5° 的激活阈值）
@@ -1176,6 +1187,25 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         
         mouseDown.post(tap: .cghidEventTap)
         mouseUp.post(tap: .cghidEventTap)
+    }
+
+    static func getActiveWindowPageMode(for bundleID: String) -> String? {
+        guard bundleID == "com.blackmagic-design.DaVinciResolve" else { return nil }
+        
+        let apps = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+        guard let app = apps.first else { return nil }
+        
+        let appElement = AXUIElementCreateApplication(app.processIdentifier)
+        var windowVal: AnyObject?
+        guard AXUIElementCopyAttributeValue(appElement, kAXMainWindowAttribute as CFString, &windowVal) == .success,
+              let windowElement = windowVal else { return nil }
+              
+        let axWindow = unsafeBitCast(windowElement, to: AXUIElement.self)
+        var titleVal: AnyObject?
+        guard AXUIElementCopyAttributeValue(axWindow, kAXTitleAttribute as CFString, &titleVal) == .success,
+              let title = titleVal as? String else { return nil }
+              
+        return TargetDetector.extractResolvePageMode(from: title)
     }
 }
 

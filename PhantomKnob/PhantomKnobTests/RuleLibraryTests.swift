@@ -176,4 +176,43 @@ final class RuleLibraryTests: XCTestCase {
         XCTAssertEqual(lib.lookup(for: keyWithMatchingParent)?.translation, .arrowKeyUpDown)
         XCTAssertEqual(lib.lookup(for: keyWithNonMatchingParent)?.translation, .scrollWheelVertical)
     }
+    
+    func testDaVinciResolveWindowModeExtraction() {
+        // 1. 验证模式提取
+        XCTAssertEqual(TargetDetector.extractResolvePageMode(from: "DaVinci Resolve - MyProject - Color"), "Color")
+        XCTAssertEqual(TargetDetector.extractResolvePageMode(from: "DaVinci Resolve - MyProject - Cut"), "Cut")
+        XCTAssertEqual(TargetDetector.extractResolvePageMode(from: "DaVinci Resolve - MyProject - Edit"), "Edit")
+        XCTAssertNil(TargetDetector.extractResolvePageMode(from: "DaVinci Resolve - MyProject"))
+        XCTAssertNil(TargetDetector.extractResolvePageMode(from: "Safari - DaVinci Resolve - Color"))
+        
+        // 2. 验证根据 parentChain 分流匹配
+        let colorRule = ControlRule(
+            key: RuleKey(bundleID: "com.blackmagic-design.DaVinciResolve", axRole: "unknown", parentChain: [ParentNodeInfo(axRole: "AXWindow", displayName: "Color")]),
+            translation: .scrollWheelVertical,
+            invert: true
+        )
+        let cutRule = ControlRule(
+            key: RuleKey(bundleID: "com.blackmagic-design.DaVinciResolve", axRole: "unknown", parentChain: [ParentNodeInfo(axRole: "AXWindow", displayName: "Cut")]),
+            translation: .scrollWheelHorizontal,
+            invert: false
+        )
+        let genericRule = ControlRule(
+            key: RuleKey(bundleID: "com.blackmagic-design.DaVinciResolve", axRole: "unknown"),
+            translation: .swipeVertical
+        )
+        
+        let lib = makeLibrary(rules: [colorRule, cutRule, genericRule])
+        
+        let colorKey = RuleKey(bundleID: "com.blackmagic-design.DaVinciResolve", axRole: "unknown", parentChain: [ParentNodeInfo(axRole: "AXWindow", displayName: "Color")])
+        let cutKey = RuleKey(bundleID: "com.blackmagic-design.DaVinciResolve", axRole: "unknown", parentChain: [ParentNodeInfo(axRole: "AXWindow", displayName: "Cut")])
+        let otherKey = RuleKey(bundleID: "com.blackmagic-design.DaVinciResolve", axRole: "unknown", parentChain: [ParentNodeInfo(axRole: "AXWindow", displayName: "Fusion")])
+        
+        XCTAssertEqual(lib.lookup(for: colorKey)?.translation, .scrollWheelVertical)
+        XCTAssertEqual(lib.lookup(for: colorKey)?.invert, true)
+        
+        XCTAssertEqual(lib.lookup(for: cutKey)?.translation, .scrollWheelHorizontal)
+        XCTAssertEqual(lib.lookup(for: cutKey)?.invert, false)
+        
+        XCTAssertEqual(lib.lookup(for: otherKey)?.translation, .swipeVertical)
+    }
 }
