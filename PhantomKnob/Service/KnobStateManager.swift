@@ -36,6 +36,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     
     // For unit testing click simulation verification
     var didSimulateClickForTest = false
+    var didSimulateReturnForTest = false
     private var didFocusCurrentTextField = false
 
     // Mockable accessibility check for unit testing
@@ -203,6 +204,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     }
                 }
             }
+        } else if case .cooling = newState {
+            if self.didFocusCurrentTextField {
+                self.simulateReturnKey()
+                self.didFocusCurrentTextField = false
+            }
+            ControlPanelViewModel.shared.isGestureActive = false
         } else {
             self.didFocusCurrentTextField = false
             ControlPanelViewModel.shared.isGestureActive = false
@@ -1200,6 +1207,23 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         
         mouseDown.post(tap: .cghidEventTap)
         mouseUp.post(tap: .cghidEventTap)
+    }
+
+    private func simulateReturnKey() {
+        didSimulateReturnForTest = true
+        writeDebugLog("[KnobStateManager] Simulating Return key to release text focus")
+        let source = CGEventSource(stateID: .privateState)
+        source?.userData = 0xDEADC0DE
+        
+        let returnKeyCode: CGKeyCode = 36 // Return key
+        
+        guard let keyDown = CGEvent(keyboardEventSource: source, virtualKey: returnKeyCode, keyDown: true),
+              let keyUp = CGEvent(keyboardEventSource: source, virtualKey: returnKeyCode, keyDown: false) else {
+            return
+        }
+        
+        keyDown.post(tap: .cghidEventTap)
+        keyUp.post(tap: .cghidEventTap)
     }
 
     static func getActiveWindowPageMode(for bundleID: String) -> String? {
