@@ -36,6 +36,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     
     // For unit testing click simulation verification
     var didSimulateClickForTest = false
+    private var didFocusCurrentTextField = false
 
     // Mockable accessibility check for unit testing
     var isProcessTrusted: () -> Bool = { AXIsProcessTrusted() }
@@ -197,11 +198,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     if translation == .arrowKeyUpDown {
                         if let touchPos = initialTouchPosition {
                             simulateClick(at: touchPos)
+                            self.didFocusCurrentTextField = true
                         }
                     }
                 }
             }
         } else {
+            self.didFocusCurrentTextField = false
             ControlPanelViewModel.shared.isGestureActive = false
         }
     }
