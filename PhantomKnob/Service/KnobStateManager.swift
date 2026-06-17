@@ -38,6 +38,11 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var didSimulateClickForTest = false
     var didSimulateReturnForTest = false
     private var didFocusCurrentTextField = false
+    private var isOptionHoldInactive = false
+
+    // Mockable multitouch control for unit testing
+    var startMultitouch: () -> Void = { MultitouchManager.shared.start() }
+    var stopMultitouch: () -> Void = { MultitouchManager.shared.stop() }
 
     // Mockable accessibility check for unit testing
     var isProcessTrusted: () -> Bool = { AXIsProcessTrusted() }
@@ -120,7 +125,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     func stop() {
         touchHandler.stopMonitoring()
-        MultitouchManager.shared.stop()
+        stopMultitouch()
         overlayController.hide()
     }
 
@@ -132,6 +137,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             if case .cooling = state {
                 transition(to: .activated)
             }
+        } else if isOptionHoldInactive {
+            writeDebugLog("[KnobStateManager] Converting temporary Option Inactive to persistent inactive state")
+            isOptionHoldInactive = false
         } else if case .inactive = state {
             let isTrusted = isProcessTrusted()
             guard isTrusted else {
@@ -143,13 +151,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             transition(to: .activated)
 
             // 启动后台多点触控捕获
-            MultitouchManager.shared.start()
+            startMultitouch()
         } else {
             writeDebugLog("[KnobStateManager] Transitioning to inactive")
             transition(to: .inactive)
 
             // 停止后台多点触控捕获
-            MultitouchManager.shared.stop()
+            stopMultitouch()
 
             currentTarget = nil
             currentTranslator = nil
@@ -313,21 +321,38 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     func onGlobalModifierOptionChanged(isPressed: Bool) {
         // Option Hold 模式支持
         if isPressed {
-            if !isOptionHoldActive && state == .inactive {
-                isOptionHoldActive = true
-                writeDebugLog("[KnobStateManager] Option key held, starting background multitouch capture")
-                transition(to: .activated)
-                MultitouchManager.shared.start()
+            if !isOptionHoldActive && !isOptionHoldInactive {
+                if state == .inactive {
+                    isOptionHoldActive = true
+                    writeDebugLog("[KnobStateManager] Option key held, starting background multitouch capture (temporary active)")
+                    transition(to: .activated)
+                    startMultitouch()
+                } else if state == .activated {
+                    isOptionHoldInactive = true
+                    writeDebugLog("[KnobStateManager] Option key held, stopping background multitouch capture (temporary inactive)")
+                    transition(to: .inactive)
+                    stopMultitouch()
+                    overlayController.hide()
+                    currentTarget = nil
+                    currentTranslator = nil
+                    targetDetector.clearCache()
+                }
             }
         } else {
             if isOptionHoldActive {
                 isOptionHoldActive = false
-                writeDebugLog("[KnobStateManager] Option key released, stopping background multitouch capture")
+                writeDebugLog("[KnobStateManager] Option key released, stopping background multitouch capture (restoring inactive)")
                 transition(to: .inactive)
-                MultitouchManager.shared.stop()
+                stopMultitouch()
                 overlayController.hide()
                 currentTarget = nil
                 currentTranslator = nil
+                targetDetector.clearCache()
+            } else if isOptionHoldInactive {
+                isOptionHoldInactive = false
+                writeDebugLog("[KnobStateManager] Option key released, restoring background multitouch capture (restoring active)")
+                transition(to: .activated)
+                startMultitouch()
             }
         }
     }

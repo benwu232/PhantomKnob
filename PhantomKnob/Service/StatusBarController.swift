@@ -27,6 +27,9 @@ class StatusBarController: ObservableObject {
         if let monitor = localHotkeyMonitor {
             NSEvent.removeMonitor(monitor)
         }
+        if let item = statusItem {
+            NSStatusBar.system.removeStatusItem(item)
+        }
     }
     
     private func setupLocalHotkey() {

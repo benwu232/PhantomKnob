@@ -558,5 +558,53 @@ final class CustomKnobTests: XCTestCase {
         
         RuleLibrary.shared.reload()
     }
+    
+    func testOptionHoldTemporaryToggle() {
+        let manager = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        // Mock start/stop to avoid C Private APIs that cause sandbox crashes
+        manager.startMultitouch = {}
+        manager.stopMultitouch = {}
+        
+        // 1. 验证初始状态是 inactive
+        XCTAssertEqual(manager.state, .inactive)
+        
+        // 2. 在 inactive 下按下 Option
+        manager.onGlobalModifierOptionChanged(isPressed: true)
+        XCTAssertEqual(manager.state, .activated)
+        
+        // 3. 在 Option 激活下松开 Option
+        manager.onGlobalModifierOptionChanged(isPressed: false)
+        XCTAssertEqual(manager.state, .inactive)
+        
+        // 4. 持久激活
+        manager.toggleMode()
+        XCTAssertEqual(manager.state, .activated)
+        
+        // 5. 在 activated 下按下 Option -> 临时进入 inactive
+        manager.onGlobalModifierOptionChanged(isPressed: true)
+        XCTAssertEqual(manager.state, .inactive)
+        
+        // 6. 松开 Option -> 恢复 activated
+        manager.onGlobalModifierOptionChanged(isPressed: false)
+        XCTAssertEqual(manager.state, .activated)
+        
+        // 7. 在 activated 下按下 Option -> 临时进入 inactive
+        manager.onGlobalModifierOptionChanged(isPressed: true)
+        XCTAssertEqual(manager.state, .inactive)
+        
+        // 8. 处于临时退出状态时按下热键 toggleMode -> 转化为持久 inactive
+        manager.toggleMode()
+        XCTAssertEqual(manager.state, .inactive)
+        
+        // 9. 松开 Option -> 应该保持为 inactive 状态，不再恢复 activated
+        manager.onGlobalModifierOptionChanged(isPressed: false)
+        XCTAssertEqual(manager.state, .inactive)
+    }
 }
 
