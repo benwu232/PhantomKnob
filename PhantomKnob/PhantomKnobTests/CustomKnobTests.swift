@@ -524,5 +524,39 @@ final class CustomKnobTests: XCTestCase {
         
         RuleLibrary.shared.reload()
     }
+    
+    func testSimulateReturnKeyOnFocusRelease() {
+        let textFieldKey = RuleKey(bundleID: "com.test.focusrelease", axRole: "AXTextField", displayName: "TextField")
+        let keyboardRule = ControlRule(
+            key: textFieldKey,
+            themeColor: "#0A84FF",
+            configType: .single,
+            singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
+        )
+        RuleLibrary.shared.saveRule(keyboardRule)
+        
+        let manager = KnobStateManager(
+            targetDetector: TargetDetector(),
+            gestureClassifier: GestureClassifier(),
+            overlayController: OverlayController(),
+            statusBarController: StatusBarController(),
+            touchHandler: GlobalTouchHandler()
+        )
+        manager.currentTarget = DetectedTarget(bundleID: textFieldKey.bundleID, axRole: textFieldKey.axRole, identifier: textFieldKey.identifier, displayName: textFieldKey.displayName ?? "", element: nil, parentChain: [])
+        manager.initialTouchPosition = CGPoint(x: 100, y: 100)
+        
+        // 初始断言
+        XCTAssertFalse(manager.didSimulateReturnForTest)
+        
+        // Transition to knobing -> Should click and set flag
+        manager.transition(to: .knobing(target: manager.currentTarget!))
+        XCTAssertTrue(manager.didSimulateClickForTest)
+        
+        // Transition to cooling -> Should simulate return and reset flag
+        manager.transition(to: .cooling(target: manager.currentTarget!))
+        XCTAssertTrue(manager.didSimulateReturnForTest)
+        
+        RuleLibrary.shared.reload()
+    }
 }
 
