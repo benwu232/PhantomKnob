@@ -1,6 +1,6 @@
 import Foundation
 
-class DemoSliderTarget: ControlTarget {
+class DemoSliderTarget {
     var value: Double = 50.0
     let minValue: Double = 0
     let maxValue: Double = 100

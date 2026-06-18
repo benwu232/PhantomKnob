@@ -12,7 +12,7 @@ class DemoViewModel: ObservableObject, TouchpadEventDelegate {
     
     private let touchpadEngine = TouchpadEngine()
     private let knobAlgorithm = KnobAlgorithm()
-    private var controlTarget: ControlTarget
+    private var controlTarget: DemoSliderTarget
     private var previousKnob: KnobCore = .invalid
     
     init() {

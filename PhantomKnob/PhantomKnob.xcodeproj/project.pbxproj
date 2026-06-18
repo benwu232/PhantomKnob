@@ -26,7 +26,6 @@
 		33971F76665F69DB98FCFF5C /* InputTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C955EF152C23C292A17B7F8A /* InputTranslator.swift */; };
 		367F55A8914856016C59C71D /* TargetDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB470A7453374CC4862FD7 /* TargetDetector.swift */; };
 		37B5CCF456D3EE1E46375088 /* KnobAlgorithmTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */; };
-		393E036246B7D2A4184280D8 /* AccessibilityTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8B3F088E7994F950CBAA6B /* AccessibilityTarget.swift */; };
 		420339FEBDE051C4655DC2FE /* PhantomKnobApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */; };
 		467E33FB2518EA0F2030ECD0 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE64900D039A90EF7F38282 /* AppSettings.swift */; };
 		46905D868F84074B17794338 /* CustomKnobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C9B369B5463055B638A95E6 /* CustomKnobTests.swift */; };
@@ -51,7 +50,6 @@
 		7E3E2D338ACCE6980F6E380A /* KnobAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CF154D12272E6CFC5DC7EB /* KnobAlgorithm.swift */; };
 		7E88A5B26CC52AA53A804A1D /* ScaleConfigCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */; };
 		7EC546E05D400231F6C5E287 /* bundled-rules.json in Resources */ = {isa = PBXBuildFile; fileRef = CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */; };
-		7F3E3AE0423173C20098D763 /* GenericControlTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EDB94410F54B36050C406F /* GenericControlTarget.swift */; };
 		81C54DE6F0BD0486FBBF80CA /* TargetDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */; };
 		82BBAB63D2E9D62FDE90805C /* DetectedTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */; };
 		86B5FBD17C12E7D00F0BC8AE /* ScrollWheelTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E9AB06D406D93054769DF3 /* ScrollWheelTranslator.swift */; };
@@ -67,7 +65,6 @@
 		9F4C5719CF0BE0C6FFA610B6 /* AXWriteTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 899D86B28252691F994F0E31 /* AXWriteTranslator.swift */; };
 		B68DF231AC772689CF2A5ACC /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77D21A367DF26814BDB1966 /* TutorialView.swift */; };
 		B94BA13F948C499CB5120913 /* TouchpadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165D5400DF747E8DCDF6022A /* TouchpadEngine.swift */; };
-		BC52F5E3D8B52D106443D731 /* AccessibilityTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BD32B64AEEADC3B93F1335 /* AccessibilityTargetTests.swift */; };
 		BF29018F2C89BA7835834BC7 /* GestureClassifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */; };
 		BF4938502FA65592B733B49E /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3DB025F61E6FD30C8D7D0E /* AppViewModel.swift */; };
 		C38EB6989296E836A2B30500 /* KnobStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */; };
@@ -80,7 +77,6 @@
 		D9AA75CFB01B353867490AC0 /* CustomMultiplierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */; };
 		DA239AC64B92C952567FFAC8 /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E59D5E06F5866BA93B2D8A /* OverlayView.swift */; };
 		E0F19BAF580103A3FF1CAF03 /* UserGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B82F5973F1273CE4101B2F /* UserGuideView.swift */; };
-		E1E6D32A585B80562D9AC88F /* ControlTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFBC93A9CF84BA475F758FD /* ControlTarget.swift */; };
 		E20AAAAD9FA748A54342DF1F /* RuleLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322C04438C22BB8A78D9F208 /* RuleLibrary.swift */; };
 		E24DD72C05AEA88624D595F4 /* KeyboardBacklightService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131BC13BA4105812935DB9AD /* KeyboardBacklightService.swift */; };
 		E3B301B86DE777C9EA25FA70 /* CustomizerHUDWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAD6E788B87835867469C3F /* CustomizerHUDWindowController.swift */; };
@@ -138,7 +134,6 @@
 		7824393D26BE2CFB97C3AED7 /* ControlRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlRule.swift; sourceTree = "<group>"; };
 		78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureClassifierTests.swift; sourceTree = "<group>"; };
 		79E59D5E06F5866BA93B2D8A /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
-		7D8B3F088E7994F950CBAA6B /* AccessibilityTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTarget.swift; sourceTree = "<group>"; };
 		7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetDetectorTests.swift; sourceTree = "<group>"; };
 		8776E7B99B66A818472F3AD2 /* InputTranslation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslation.swift; sourceTree = "<group>"; };
 		88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultitouchManager.swift; sourceTree = "<group>"; };
@@ -150,7 +145,6 @@
 		91C4863C27548F454AFB0D80 /* UserGuideViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGuideViewModelTests.swift; sourceTree = "<group>"; };
 		92F9A87164F5EE435A917D0A /* SystemServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemServicesTests.swift; sourceTree = "<group>"; };
 		960F46D34B7016779EFC648E /* TouchpadDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchpadDetector.swift; sourceTree = "<group>"; };
-		A8EDB94410F54B36050C406F /* GenericControlTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericControlTarget.swift; sourceTree = "<group>"; };
 		AB1E79FB5B05E4BFDD848CF1 /* TutorialViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViewModelTests.swift; sourceTree = "<group>"; };
 		AC69641B463FC61F6329B1B1 /* KnobPanelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobPanelViewModel.swift; sourceTree = "<group>"; };
 		AF56817E9D1B61DD9BB426A4 /* PhantomKnobTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomKnobTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,10 +171,8 @@
 		DEE2E4031E90F1B450E1D5CD /* RotationDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationDirection.swift; sourceTree = "<group>"; };
 		E0A1ECB7826EEE6AA49E8BF1 /* StatusBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarControllerTests.swift; sourceTree = "<group>"; };
 		E22B8A0EEE9ADDE36EBD680C /* KnobPanelViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobPanelViewModelTests.swift; sourceTree = "<group>"; };
-		E2BD32B64AEEADC3B93F1335 /* AccessibilityTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTargetTests.swift; sourceTree = "<group>"; };
 		E77D21A367DF26814BDB1966 /* TutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
 		E8C4C81CBF98264E7686C45B /* KnobGlobalState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobGlobalState.swift; sourceTree = "<group>"; };
-		EBFBC93A9CF84BA475F758FD /* ControlTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlTarget.swift; sourceTree = "<group>"; };
 		F09176C4330342A99B8E6D12 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		F265AA267220CC6CEE2B9C1A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobAlgorithmTests.swift; sourceTree = "<group>"; };
@@ -231,7 +223,6 @@
 		529BA234DA7F582FBBFDDD7B /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				7D8B3F088E7994F950CBAA6B /* AccessibilityTarget.swift */,
 				FC25D2DC3A258F173AB3BD8C /* AudioControlService.swift */,
 				8FAD6E788B87835867469C3F /* CustomizerHUDWindowController.swift */,
 				BC6423248EA5723E80A08AEA /* DisplayBrightnessService.swift */,
@@ -258,9 +249,7 @@
 			children = (
 				8D76A85C86CFA1CEFA58915D /* ArrowKeyTranslator.swift */,
 				899D86B28252691F994F0E31 /* AXWriteTranslator.swift */,
-				EBFBC93A9CF84BA475F758FD /* ControlTarget.swift */,
 				B83D8874A40287B9C9842B36 /* DemoSliderTarget.swift */,
-				A8EDB94410F54B36050C406F /* GenericControlTarget.swift */,
 				C955EF152C23C292A17B7F8A /* InputTranslator.swift */,
 				16E9AB06D406D93054769DF3 /* ScrollWheelTranslator.swift */,
 			);
@@ -329,7 +318,6 @@
 		F050F9EC56C943F0627BF3B7 /* PhantomKnobTests */ = {
 			isa = PBXGroup;
 			children = (
-				E2BD32B64AEEADC3B93F1335 /* AccessibilityTargetTests.swift */,
 				7276B847C3350CE8E5BEE90C /* AppSettingsTests.swift */,
 				1B109ECB0852202921BB4627 /* ControlTests.swift */,
 				8C9B369B5463055B638A95E6 /* CustomKnobTests.swift */,
@@ -411,7 +399,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					609BE1C03A51F470FDB98841 = {
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -451,7 +439,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC52F5E3D8B52D106443D731 /* AccessibilityTargetTests.swift in Sources */,
 				9E21ED3BDDB126A6A6905E2C /* AppSettingsTests.swift in Sources */,
 				621563693C5385127863B1C9 /* ControlTests.swift in Sources */,
 				46905D868F84074B17794338 /* CustomKnobTests.swift in Sources */,
@@ -485,13 +472,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F4C5719CF0BE0C6FFA610B6 /* AXWriteTranslator.swift in Sources */,
-				393E036246B7D2A4184280D8 /* AccessibilityTarget.swift in Sources */,
 				467E33FB2518EA0F2030ECD0 /* AppSettings.swift in Sources */,
 				BF4938502FA65592B733B49E /* AppViewModel.swift in Sources */,
 				01A6D704DC3678F59BEE0232 /* ArrowKeyTranslator.swift in Sources */,
 				7DB32B2238EE8013B37D1C8F /* AudioControlService.swift in Sources */,
 				6E745EF097F35F553CEA425A /* ControlRule.swift in Sources */,
-				E1E6D32A585B80562D9AC88F /* ControlTarget.swift in Sources */,
 				97D55EA78F60F8DEB1A95D4B /* CustomizerHUDView.swift in Sources */,
 				E3B301B86DE777C9EA25FA70 /* CustomizerHUDWindowController.swift in Sources */,
 				7BFFB745C067E91F8395B361 /* DemoSliderTarget.swift in Sources */,
@@ -503,7 +488,6 @@
 				980F61BEBC4E13990EDB9CF9 /* DetectionView.swift in Sources */,
 				54E2FA22B48C99A111A24420 /* DetectionViewModel.swift in Sources */,
 				2E5E69A3A010696CE124CDA8 /* DisplayBrightnessService.swift in Sources */,
-				7F3E3AE0423173C20098D763 /* GenericControlTarget.swift in Sources */,
 				C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */,
 				EF138900E1C6F71B57127BE9 /* GlobalTouchHandler.swift in Sources */,
 				D8EDE11220DF5C7F6A758198 /* InputTranslation.swift in Sources */,
@@ -578,11 +562,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
-				CODE_SIGN_IDENTITY = "PhantomKnob";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -743,10 +725,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
-				CODE_SIGN_IDENTITY = "PhantomKnob";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
