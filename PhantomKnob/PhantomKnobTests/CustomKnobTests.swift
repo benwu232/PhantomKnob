@@ -570,6 +570,7 @@ final class CustomKnobTests: XCTestCase {
         // Mock start/stop to avoid C Private APIs that cause sandbox crashes
         manager.startMultitouch = {}
         manager.stopMultitouch = {}
+        manager.isProcessTrusted = { true }
         
         // 1. 验证初始状态是 inactive
         XCTAssertEqual(manager.state, .inactive)
