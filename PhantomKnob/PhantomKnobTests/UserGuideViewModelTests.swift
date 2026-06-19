@@ -28,7 +28,7 @@ class UserGuideViewModelTests: XCTestCase {
         // Test Step 2 rotation
         vm.hoveredKnob = .doubleKnob
         vm.registerRotation(20.0)
-        XCTAssertEqual(vm.doubleKnobAngle, 20.0)
+        XCTAssertEqual(vm.doubleKnobAngle, -20.0)
         XCTAssertEqual(vm.doubleKnobVal, 60.0, accuracy: 0.01) // 50 + (20 * 0.5 * 1.0)
         
         vm.nextStep()
@@ -148,13 +148,13 @@ class UserGuideViewModelTests: XCTestCase {
         // Test Double Knob
         vm.hoveredKnob = .doubleKnob
         vm.registerRotation(10.0)
-        XCTAssertEqual(vm.doubleKnobAngle, 10.0)
+        XCTAssertEqual(vm.doubleKnobAngle, -10.0)
         XCTAssertEqual(vm.doubleKnobVal, 60.0, accuracy: 0.01) // 50.0 + (10.0 * 0.5 * 2.0)
         
         // Test Linear Knob
         vm.hoveredKnob = .linearKnob
         vm.registerRotation(-20.0)
-        XCTAssertEqual(vm.linearKnobAngle, -20.0)
+        XCTAssertEqual(vm.linearKnobAngle, 20.0)
         XCTAssertEqual(vm.linearKnobVal, 30.0, accuracy: 0.01) // 50.0 - (20.0 * 0.5 * 2.0)
     }
     
@@ -173,8 +173,9 @@ class UserGuideViewModelTests: XCTestCase {
             object: nil,
             userInfo: ["points": pointsInner]
         )
-        // Verify doubleKnobBaseMultiplier is set correctly (expect 0.1 because radius <= 65)
-        XCTAssertEqual(vm.doubleKnobBaseMultiplier, 0.1, accuracy: 0.01)
+        // Verify doubleKnobBaseMultiplier is set correctly (expect 1.0 because radius <= 65)
+        XCTAssertEqual(vm.doubleKnobBaseMultiplier, 1.0, accuracy: 0.01)
+        XCTAssertEqual(vm.doubleKnobDiameter, 97.14, accuracy: 0.05)
         
         // 模拟双环旋钮外圈半径 (例如 80mm)
         let pointsOuter = [
@@ -186,10 +187,11 @@ class UserGuideViewModelTests: XCTestCase {
             object: nil,
             userInfo: ["points": pointsOuter]
         )
-        XCTAssertEqual(vm.doubleKnobBaseMultiplier, 1.0, accuracy: 0.01)
+        XCTAssertEqual(vm.doubleKnobBaseMultiplier, 0.1, accuracy: 0.01)
+        XCTAssertEqual(vm.doubleKnobDiameter, 122.86, accuracy: 0.05)
         
-        // 模拟无极变速旋钮插值 (minR=30 -> 0.1, maxR=100 -> 5.0)
-        // 半径 = 65.0 (正好位于 30 和 100 正中间，插值结果为 0.1 + 0.5 * 4.9 = 2.55)
+        // 模拟无极变速旋钮插值 (minR=30 -> 5.0, maxR=100 -> 0.1)
+        // 半径 = 65.0 (正好位于 30 和 100 正中间，插值结果为 5.0 - 0.5 * 4.9 = 2.55)
         let pointsMid = [
             0: CGPoint(x: 100, y: 100),
             1: CGPoint(x: 230, y: 100) // 间距 130, 半径 = 65.0
@@ -201,6 +203,12 @@ class UserGuideViewModelTests: XCTestCase {
             userInfo: ["points": pointsMid]
         )
         XCTAssertEqual(vm.linearKnobBaseMultiplier, 2.55, accuracy: 0.05)
+        XCTAssertEqual(vm.linearKnobDiameter, 110.0, accuracy: 0.05)
+        
+        // Hover out resets diameter to 120
+        vm.hoveredKnob = .none
+        XCTAssertEqual(vm.doubleKnobDiameter, 120.0)
+        XCTAssertEqual(vm.linearKnobDiameter, 120.0)
     }
 }
 

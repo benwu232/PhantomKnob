@@ -29,6 +29,8 @@ class UserGuideViewModel: ObservableObject {
     @Published var currentMultiplier: Double = 1.0
     @Published var doubleKnobBaseMultiplier: Double = 1.0
     @Published var linearKnobBaseMultiplier: Double = 1.0
+    @Published var doubleKnobDiameter: CGFloat = 120.0
+    @Published var linearKnobDiameter: CGFloat = 120.0
     
     @Published var isGestureActive: Bool = false
     @Published var skipOnNextStartup: Bool = false
@@ -103,6 +105,19 @@ class UserGuideViewModel: ObservableObject {
             .receive(on: RunLoop.main)
             .sink { [weak self] active in
                 self?.isGestureActive = active
+                if !active {
+                    self?.doubleKnobDiameter = 120.0
+                    self?.linearKnobDiameter = 120.0
+                }
+            }
+            .store(in: &cancellables)
+            
+        $hoveredKnob
+            .sink { [weak self] type in
+                if type == .none {
+                    self?.doubleKnobDiameter = 120.0
+                    self?.linearKnobDiameter = 120.0
+                }
             }
             .store(in: &cancellables)
     }
@@ -133,13 +148,13 @@ class UserGuideViewModel: ObservableObject {
             playFeedbackSound(absDeg)
         } else if currentStep == 2 {
             if hoveredKnob == .doubleKnob {
-                doubleKnobAngle += degrees
+                doubleKnobAngle -= degrees
                 let sensitivity = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
                 let deltaValue = degrees * sensitivity
                 doubleKnobVal = max(0.0, min(100.0, doubleKnobVal + deltaValue))
                 playFeedbackSound(absDeg)
             } else if hoveredKnob == .linearKnob {
-                linearKnobAngle += degrees
+                linearKnobAngle -= degrees
                 let sensitivity = 0.5 * linearKnobBaseMultiplier * currentMultiplier
                 let deltaValue = degrees * sensitivity
                 linearKnobVal = max(0.0, min(100.0, linearKnobVal + deltaValue))
@@ -197,16 +212,22 @@ class UserGuideViewModel: ObservableObject {
         guard knobCore.isValid else { return }
         let radius = knobCore.radius
         
+        let minR = 30.0
+        let maxR = 100.0
+        let r = max(minR, min(maxR, radius))
+        let ratio = (r - minR) / (maxR - minR)
+        let diameter = 80.0 + ratio * (140.0 - 80.0)
+        
         if hoveredKnob == .doubleKnob {
-            // 双环物理阈值：外环为 > 65.0
-            doubleKnobBaseMultiplier = (radius > 65.0) ? 1.0 : 0.1
+            // 大半径对应0.1倍，小半径对应1.0倍
+            doubleKnobBaseMultiplier = (radius > 65.0) ? 0.1 : 1.0
+            doubleKnobDiameter = CGFloat(diameter)
+            linearKnobDiameter = 120.0
         } else if hoveredKnob == .linearKnob {
-            // 无极变速阈值插值：30.0 ~ 100.0 映射到 0.1 ~ 5.0
-            let minR = 30.0
-            let maxR = 100.0
-            let r = max(minR, min(maxR, radius))
-            let ratio = (r - minR) / (maxR - minR)
-            linearKnobBaseMultiplier = 0.1 + ratio * (5.0 - 0.1)
+            // 大半径对应小倍数，小半径对应大倍数
+            linearKnobBaseMultiplier = 5.0 - ratio * (5.0 - 0.1)
+            linearKnobDiameter = CGFloat(diameter)
+            doubleKnobDiameter = 120.0
         }
     }
 }

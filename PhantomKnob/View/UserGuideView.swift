@@ -220,7 +220,7 @@ struct UserGuideView: View {
                             themeColorHex: "#007AFF",
                             overlayStyle: "hud",
                             rotationStyle: "ticks",
-                            diameter: 120
+                            diameter: viewModel.doubleKnobDiameter
                         )
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .doubleKnob : .none
@@ -228,7 +228,7 @@ struct UserGuideView: View {
                     }
                     .frame(height: 140)
                     
-                    Text("双环（外环1.0倍，内环0.1倍）")
+                    Text("双环（外环0.1倍，内环1.0倍）")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.white.opacity(0.8))
                     Text("根据手指距离自动切换微调/粗调")
@@ -261,7 +261,7 @@ struct UserGuideView: View {
                             themeColorHex: "#34C759",
                             overlayStyle: "hud",
                             rotationStyle: "ticks",
-                            diameter: 120
+                            diameter: viewModel.linearKnobDiameter
                         )
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .linearKnob : .none
