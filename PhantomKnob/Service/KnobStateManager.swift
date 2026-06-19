@@ -367,6 +367,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         writeDebugLog("[KnobStateManager] onMultitouchBegan: points count = \(points.count), state = \(state)")
         guard state != .inactive else { return }
         
+        if points.count >= 2 {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("TouchpadCoordinatesValidated"),
+                object: nil,
+                userInfo: ["points": points]
+            )
+        }
+        
         if state == .customizing {
             let scaledPoints = scaleCoordinates(points)
             let radius = calculateRawRadius(points: scaledPoints)
@@ -579,6 +587,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
         
         guard state != .inactive, var translator = currentTranslator else { return }
+        
+        if points.count >= 2 {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("TouchpadCoordinatesValidated"),
+                object: nil,
+                userInfo: ["points": points]
+            )
+        }
 
         let scaledPoints = scaleCoordinates(points)
         guard let currentAngle = calculateRawAngle(points: scaledPoints) else { return }
@@ -959,6 +975,13 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         if let nextVal = updatedVal {
             UserDefaults.standard.set(nextVal, forKey: key)
             self.lastResolvedBaseScale = nextVal
+            
+            // Post notification for scale updates
+            NotificationCenter.default.post(
+                name: NSNotification.Name("KnobBaseScaleDidUpdate"),
+                object: nil,
+                userInfo: ["scale": nextVal]
+            )
             
             // Apply immediately to currentTranslator scale
             if let translator = currentTranslator {

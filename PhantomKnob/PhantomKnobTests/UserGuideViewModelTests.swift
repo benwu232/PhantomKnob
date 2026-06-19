@@ -5,21 +5,31 @@ class UserGuideViewModelTests: XCTestCase {
     func testUserGuideStepTransitionsAndRotationUnlock() {
         let vm = UserGuideViewModel(audioService: AudioControlService())
         XCTAssertEqual(vm.currentStep, 1)
+        XCTAssertFalse(vm.isTouchpadDetected)
         
+        // Step 1 nextStep is blocked without touchpad detection
+        vm.nextStep()
+        XCTAssertEqual(vm.currentStep, 1)
+        
+        // Simulate touchpad detection (3 notifications)
+        for _ in 1...3 {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("TouchpadCoordinatesValidated"),
+                object: nil,
+                userInfo: ["points": [0: CGPoint.zero]]
+            )
+        }
+        XCTAssertTrue(vm.isTouchpadDetected)
+        
+        // Now nextStep succeeds
         vm.nextStep()
         XCTAssertEqual(vm.currentStep, 2)
-        XCTAssertFalse(vm.isStep2Unlocked)
-        XCTAssertEqual(vm.accumulatedRotation, 0.0)
         
-        // 模拟旋转 60.5°
-        vm.registerRotation(60.5)
-        XCTAssertFalse(vm.isStep2Unlocked)
-        XCTAssertEqual(vm.accumulatedRotation, 60.5)
-        
-        // 模拟旋转 40.0° (累计 100.5°)
-        vm.registerRotation(40.0)
-        XCTAssertTrue(vm.isStep2Unlocked)
-        XCTAssertEqual(vm.accumulatedRotation, 100.5)
+        // Test Step 2 rotation
+        vm.hoveredKnob = .doubleKnob
+        vm.registerRotation(20.0)
+        XCTAssertEqual(vm.doubleKnobAngle, 20.0)
+        XCTAssertEqual(vm.doubleKnobVal, 60.0, accuracy: 0.01) // 50 + (20 * 0.5 * 1.0)
         
         vm.nextStep()
         XCTAssertEqual(vm.currentStep, 3)
@@ -89,4 +99,63 @@ class UserGuideViewModelTests: XCTestCase {
         // Clean up
         UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
     }
+    
+    func testTouchpadCoordinatesValidationCounting() {
+        let vm = UserGuideViewModel(audioService: AudioControlService())
+        XCTAssertEqual(vm.touchpadSamplesCount, 0)
+        XCTAssertFalse(vm.isTouchpadDetected)
+        
+        NotificationCenter.default.post(
+            name: NSNotification.Name("TouchpadCoordinatesValidated"),
+            object: nil,
+            userInfo: ["points": [0: CGPoint.zero]]
+        )
+        XCTAssertEqual(vm.touchpadSamplesCount, 1)
+        XCTAssertFalse(vm.isTouchpadDetected)
+        
+        NotificationCenter.default.post(
+            name: NSNotification.Name("TouchpadCoordinatesValidated"),
+            object: nil,
+            userInfo: ["points": [0: CGPoint.zero]]
+        )
+        NotificationCenter.default.post(
+            name: NSNotification.Name("TouchpadCoordinatesValidated"),
+            object: nil,
+            userInfo: ["points": [0: CGPoint.zero]]
+        )
+        XCTAssertEqual(vm.touchpadSamplesCount, 3)
+        XCTAssertTrue(vm.isTouchpadDetected)
+    }
+    
+    func testKeyboardMultiplierNotification() {
+        let vm = UserGuideViewModel(audioService: AudioControlService())
+        vm.currentStep = 2
+        vm.currentMultiplier = 1.0
+        
+        NotificationCenter.default.post(
+            name: NSNotification.Name("KnobBaseScaleDidUpdate"),
+            object: nil,
+            userInfo: ["scale": 2.5]
+        )
+        XCTAssertEqual(vm.currentMultiplier, 2.5)
+    }
+    
+    func testRotationUpdatesDoubleAndLinearKnobsWithMultiplier() {
+        let vm = UserGuideViewModel(audioService: AudioControlService())
+        vm.currentStep = 2
+        vm.currentMultiplier = 2.0
+        
+        // Test Double Knob
+        vm.hoveredKnob = .doubleKnob
+        vm.registerRotation(10.0)
+        XCTAssertEqual(vm.doubleKnobAngle, 10.0)
+        XCTAssertEqual(vm.doubleKnobVal, 60.0, accuracy: 0.01) // 50.0 + (10.0 * 0.5 * 2.0)
+        
+        // Test Linear Knob
+        vm.hoveredKnob = .linearKnob
+        vm.registerRotation(-20.0)
+        XCTAssertEqual(vm.linearKnobAngle, -20.0)
+        XCTAssertEqual(vm.linearKnobVal, 30.0, accuracy: 0.01) // 50.0 - (20.0 * 0.5 * 2.0)
+    }
 }
+

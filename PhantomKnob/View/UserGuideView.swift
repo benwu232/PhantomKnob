@@ -4,128 +4,414 @@ struct UserGuideView: View {
     @StateObject private var viewModel = UserGuideViewModel()
     
     var body: some View {
-        VStack(spacing: 20) {
-            if viewModel.currentStep == 1 {
-                VStack(spacing: 20) {
-                    Text("欢迎使用 PhantomKnob")
-                        .font(.system(size: 24, weight: .bold))
+        VStack(spacing: 0) {
+            // Header
+            VStack(spacing: 4) {
+                if viewModel.currentStep == 1 {
+                    Text("第一步：设备检测与基础旋转")
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    
-                    Text("PhantomKnob把旋钮手势引入触控板。")
-                        .font(.system(size: 14))
-                        .foregroundColor(.white.opacity(0.8))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 30)
-                    
+                    Text("检测触控板硬件支持并练习音量旋转手势")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                } else if viewModel.currentStep == 2 {
+                    Text("第二步：三种旋钮对比与深度定制")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                    Text("练习双环与无极变速旋钮的精细调节、键盘微调及 HUD 定制")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                } else {
+                    Text("第三步：开启全局旋钮控制")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                    Text("了解激活热键、快捷方式及适配软件列表")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+            }
+            .padding(.top, 24)
+            .padding(.bottom, 16)
+            
+            Divider()
+                .background(Color.white.opacity(0.15))
+            
+            // Content
+            Group {
+                if viewModel.currentStep == 1 {
+                    step1View
+                } else if viewModel.currentStep == 2 {
+                    step2View
+                } else {
+                    step3View
+                }
+            }
+            .frame(maxHeight: .infinity)
+            
+            Divider()
+                .background(Color.white.opacity(0.15))
+            
+            // Footer (Navigation)
+            HStack {
+                if viewModel.currentStep > 1 {
                     Button(action: {
-                        viewModel.nextStep()
+                        withAnimation {
+                            viewModel.currentStep -= 1
+                        }
                     }) {
-                        Text("开始练习")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 24)
+                        Text("上一步")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                            .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Color.blue)
+                            .background(Color.white.opacity(0.1))
                             .cornerRadius(8)
                     }
                     .buttonStyle(.plain)
                 }
-            } else if viewModel.currentStep == 2 {
-                VStack(spacing: 12) {
-                    Text(viewModel.hovered ? "非常棒！开始在触控板上双指旋转" : "请将光标移动到音量旋钮上")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.blue)
-                        .animation(.easeInOut, value: viewModel.hovered)
-                    
-                    ZStack {
-                        RadialKnobControlView(
-                            title: "音量调节练习",
-                            icon: "speaker.wave.3.fill",
-                            value: viewModel.volumeVal,
-                            angle: viewModel.rotationAngle,
-                            isFocused: viewModel.hovered,
-                            isGestureActive: viewModel.isGestureActive,
-                            showPercentage: false
+                
+                Spacer()
+                
+                if viewModel.currentStep < 3 {
+                    Button(action: {
+                        withAnimation {
+                            viewModel.nextStep()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Text("下一步")
+                            Image(systemName: "chevron.right")
+                        }
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                        .background(
+                            LinearGradient(
+                                colors: viewModel.currentStep == 1 && !viewModel.isTouchpadDetected
+                                    ? [Color(white: 1.0, opacity: 0.1), Color(white: 1.0, opacity: 0.1)]
+                                    : [Color.blue, Color.cyan],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
-                        .onHover { isHover in
-                            viewModel.hovered = isHover
-                        }
-                        
-                        if !viewModel.hovered && !viewModel.isStep2Unlocked {
-                            // 手指在旋钮周围浮动指引的动画
-                            CursorGuideAnimationView()
-                                .offset(x: 40, y: -40)
-                                .transition(.opacity)
-                        }
+                        .cornerRadius(8)
+                        .shadow(color: Color.blue.opacity(viewModel.currentStep == 1 && !viewModel.isTouchpadDetected ? 0 : 0.3), radius: 4, y: 2)
                     }
-                    .frame(height: 170)
-                    
-
-                    
-                    Button(action: {
-                        viewModel.nextStep()
-                    }) {
-                        Text("下一步")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 8)
-                            .background(viewModel.isStep2Unlocked ? Color.blue : Color.white.opacity(0.2))
-                            .cornerRadius(8)
-                    }
-                    .disabled(!viewModel.isStep2Unlocked)
+                    .disabled(viewModel.currentStep == 1 && !viewModel.isTouchpadDetected)
                     .buttonStyle(.plain)
-                }
-            } else {
-                VStack(spacing: 16) {
-                    Text("掌握成功！")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.green)
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("您可以通过快捷键 ⌘⌥R 或状态栏菜单的“切换控制模式”开启全局旋钮控制。激活后，把鼠标悬浮在任何滑块上并双指旋转即可调整。")
-                            .font(.system(size: 13))
-                            .foregroundColor(.white.opacity(0.85))
-                        
-                        Text("注意：适配后的应用程序可以获得最完美的旋转反馈体验。")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white)
-                        
-                        Text("适配列表包含：")
-                            .font(.system(size: 12))
-                            .foregroundColor(.white.opacity(0.7))
-                        
-                        HStack(spacing: 16) {
-                            Text("• CapCut (剪映)")
-                            Text("• QuickTime Player")
-                        }
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.blue)
-                    }
-                    .padding(.horizontal, 30)
-                    
-                    Toggle("下次启动不再显示", isOn: $viewModel.skipOnNextStartup)
-                        .toggleStyle(.checkbox)
-                        .foregroundColor(.white.opacity(0.85))
-                        .font(.system(size: 13))
-                    
+                } else {
                     Button(action: {
                         viewModel.completeGuide()
                     }) {
-                        Text("开启体验")
-                            .font(.system(size: 14, weight: .semibold))
+                        Text("开启全局控制")
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, 20)
                             .padding(.vertical, 8)
-                            .background(Color.green)
+                            .background(
+                                LinearGradient(
+                                    colors: [Color.green, Color.emerald],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
                             .cornerRadius(8)
+                            .shadow(color: Color.green.opacity(0.3), radius: 4, y: 2)
                     }
                     .buttonStyle(.plain)
                 }
             }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
         }
-        .padding(.vertical, 20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(width: 560, height: 400)
+    }
+    
+    // MARK: - Step 1: Device test & Volume practice
+    private var step1View: some View {
+        VStack(spacing: 16) {
+            Text("请在触控板上练习使用旋钮手势：\n将鼠标移动到音量旋钮上，然后在触控板上用两指做旋转的动作。")
+                .font(.system(size: 13))
+                .foregroundColor(.white.opacity(0.8))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+                .padding(.top, 16)
+            
+            ZStack {
+                RadialKnobControlView(
+                    title: "音量练习旋钮",
+                    icon: "speaker.wave.3.fill",
+                    value: viewModel.volumeVal,
+                    angle: viewModel.rotationAngle,
+                    isFocused: viewModel.hovered,
+                    isGestureActive: viewModel.isGestureActive,
+                    showPercentage: true
+                )
+                .onHover { isHover in
+                    viewModel.hovered = isHover
+                    viewModel.hoveredKnob = isHover ? .volumeKnob : .none
+                }
+                
+                if !viewModel.hovered && !viewModel.isTouchpadDetected {
+                    CursorGuideAnimationView()
+                        .offset(x: 70, y: -50)
+                        .transition(.opacity)
+                }
+            }
+            .frame(height: 140)
+            
+            HStack(spacing: 8) {
+                if viewModel.isTouchpadDetected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.system(size: 16))
+                    Text("✅ 触控板检测成功！您的设备完美支持。")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.green)
+                } else {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .scaleEffect(0.7)
+                    Text("正在等待两指旋转动作以检测设备 (信号样本: \(viewModel.touchpadSamplesCount)/3)...")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 6)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(20)
+            
+            Spacer()
+        }
+    }
+    
+    // MARK: - Step 2: Knob comparison, multipliers, HUD trigger
+    private var step2View: some View {
+        VStack(spacing: 8) {
+            // Live Status Header
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    if viewModel.hoveredKnob == .doubleKnob {
+                        Text("当前悬停：双环旋钮")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.blue)
+                        Text("数值: \(Int(viewModel.doubleKnobVal))")
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.7))
+                    } else if viewModel.hoveredKnob == .linearKnob {
+                        Text("当前悬停：无极变速旋钮")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.cyan)
+                        Text("数值: \(Int(viewModel.linearKnobVal))")
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.7))
+                    } else {
+                        Text("请把鼠标移动到下方任何一个旋钮上练习")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white.opacity(0.7))
+                        Text("双指在触控板上做旋转手势进行微调")
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
+                }
+                
+                Spacer()
+                
+                // Keyboard sensitivity multiplier display
+                HStack(spacing: 6) {
+                    Image(systemName: "gauge.with.needle.fill")
+                    Text("灵敏度倍率: \(String(format: "%.1fx", viewModel.currentMultiplier))")
+                }
+                .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                .foregroundColor(Color.amber)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(Color.amber.opacity(0.1))
+                .cornerRadius(6)
+            }
+            .padding(.horizontal, 32)
+            .padding(.top, 12)
+            
+            // Side-by-side self-drawn knobs
+            HStack(spacing: 50) {
+                // Double Ring Knob
+                VStack(spacing: 8) {
+                    ZStack {
+                        RadialKnobControlView(
+                            title: "双环旋钮",
+                            icon: "circle.grid.cross.fill",
+                            value: Float(viewModel.doubleKnobVal / 100.0),
+                            angle: viewModel.doubleKnobAngle,
+                            isFocused: viewModel.hoveredKnob == .doubleKnob,
+                            isGestureActive: viewModel.isGestureActive,
+                            showPercentage: false
+                        )
+                        .onHover { isHover in
+                            viewModel.hoveredKnob = isHover ? .doubleKnob : .none
+                        }
+                    }
+                    .frame(height: 110)
+                    
+                    Text("内圈微调/外圈粗调/单指接续")
+                        .font(.system(size: 10))
+                        .foregroundColor(.white.opacity(0.5))
+                        .multilineTextAlignment(.center)
+                    
+                    Button(action: {
+                        triggerCustomizer(for: "DoubleKnob")
+                    }) {
+                        Text("定制此旋钮")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(Color.blue.opacity(0.15))
+                            .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
+                }
+                
+                // Linear Knob
+                VStack(spacing: 8) {
+                    ZStack {
+                        RadialKnobControlView(
+                            title: "无极变速",
+                            icon: "arrow.up.and.down.and.sparkles",
+                            value: Float(viewModel.linearKnobVal / 100.0),
+                            angle: viewModel.linearKnobAngle,
+                            isFocused: viewModel.hoveredKnob == .linearKnob,
+                            isGestureActive: viewModel.isGestureActive,
+                            showPercentage: false
+                        )
+                        .onHover { isHover in
+                            viewModel.hoveredKnob = isHover ? .linearKnob : .none
+                        }
+                    }
+                    .frame(height: 110)
+                    
+                    Text("半径线性变速/灵敏度平滑")
+                        .font(.system(size: 10))
+                        .foregroundColor(.white.opacity(0.5))
+                        .multilineTextAlignment(.center)
+                    
+                    Button(action: {
+                        triggerCustomizer(for: "LinearKnob")
+                    }) {
+                        Text("定制此旋钮")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(.cyan)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(Color.cyan.opacity(0.15))
+                            .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.vertical, 10)
+            
+            // Instruction Box
+            VStack(alignment: .leading, spacing: 3) {
+                Text("💡 使用键盘方向键微调倍率")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.white)
+                Text("• 旋转中按 ↑/↓ 增减 1.0x，按 ←/→ 增减 0.1x，按数字键 2-9 直接相乘。")
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.7))
+                Text("• 在旋钮上旋转时，按下键盘“C”键可以直接呼出应用内置定制面板。")
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(8)
+            .padding(.horizontal, 24)
+            
+            Spacer()
+        }
+    }
+    
+    // MARK: - Step 3: Global intro & Confirm
+    private var step3View: some View {
+        VStack(spacing: 20) {
+            Text("Phantom Knob 已准备就绪！")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(.green)
+                .padding(.top, 20)
+            
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "command")
+                        .font(.system(size: 18))
+                        .foregroundColor(.blue)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("全局激活热键：⌘ ⌥ R (Command + Option + R)")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white)
+                        Text("在任何有滑动条、步进器或适配控件上，按下此快捷键或在菜单栏开启后，即可通过旋钮手势调节。")
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                }
+                
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "option")
+                        .font(.system(size: 18))
+                        .foregroundColor(.cyan)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("临时暂停手势：按住 Option 键")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white)
+                        Text("如果您只是想正常使用触控板原生滚动或捏合缩放，可以按住 Option 键临时忽略旋钮手势。")
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                }
+                
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "play.rectangle.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.purple)
+                        .frame(width: 24)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("深度支持的剪辑与多媒体软件")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white)
+                        Text("应用已经针对 CapCut (剪映)、QuickTime Player 等主流调色及剪辑软件的时间轴/音量/数值项进行了高保真适配。")
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                }
+            }
+            .padding(.horizontal, 32)
+            
+            Spacer()
+            
+            Toggle("下次启动不再显示使用引导", isOn: $viewModel.skipOnNextStartup)
+                .toggleStyle(.checkbox)
+                .foregroundColor(.white.opacity(0.85))
+                .font(.system(size: 12))
+            
+            Spacer()
+        }
+    }
+    
+    // MARK: - Customizer Trigger Helper
+    private func triggerCustomizer(for knobType: String) {
+        let target = DetectedTarget(
+            bundleID: "com.phantomknob.controlpanel",
+            axRole: "ControlPanel",
+            identifier: knobType,
+            displayName: knobType == "DoubleKnob" ? "双环旋钮" : "无极变速旋钮",
+            element: nil,
+            parentChain: []
+        )
+        CustomizerHUDWindowController.shared.show(for: target)
     }
 }
 
@@ -135,7 +421,7 @@ struct CursorGuideAnimationView: View {
     var body: some View {
         Image(systemName: "hand.draw.fill")
             .font(.system(size: 32))
-            .foregroundColor(.blue.opacity(0.8))
+            .foregroundColor(Color.blue.opacity(0.8))
             .scaleEffect(pulse ? 1.2 : 0.9)
             .offset(x: pulse ? -10 : 10, y: pulse ? 10 : -10)
             .onAppear {
@@ -144,4 +430,10 @@ struct CursorGuideAnimationView: View {
                 }
             }
     }
+}
+
+// Color asset helpers to avoid styling compilation errors
+extension Color {
+    static let emerald = Color(red: 16/255, green: 185/255, blue: 129/255)
+    static let amber = Color(red: 245/255, green: 158/255, blue: 11/255)
 }
