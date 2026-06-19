@@ -213,20 +213,21 @@ struct UserGuideView: View {
                 VStack(spacing: 8) {
                     ZStack {
                         OverlayView(
-                            targetName: String(format: "双环旋钮: %.1f", viewModel.doubleKnobVal),
+                            targetName: "双环旋钮",
+                            valueText: String(format: "%.1f", viewModel.doubleKnobVal),
                             angle: viewModel.doubleKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.doubleKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: "#007AFF",
-                            overlayStyle: "hud",
-                            rotationStyle: "ticks",
+                            themeColorHex: AppSettings.shared.defaultThemeColor,
+                            overlayStyle: AppSettings.shared.defaultOverlayStyle,
+                            rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.doubleKnobDiameter
                         )
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .doubleKnob : .none
                         }
                     }
-                    .frame(height: 140)
+                    .frame(height: 160)
                     
                     Text("双环（外环0.1倍，内环1.0倍）")
                         .font(.system(size: 11, weight: .medium))
@@ -254,20 +255,21 @@ struct UserGuideView: View {
                 VStack(spacing: 8) {
                     ZStack {
                         OverlayView(
-                            targetName: String(format: "无极变速旋钮: %.1f", viewModel.linearKnobVal),
+                            targetName: "无极变速旋钮",
+                            valueText: String(format: "%.1f", viewModel.linearKnobVal),
                             angle: viewModel.linearKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.linearKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: "#34C759",
-                            overlayStyle: "hud",
-                            rotationStyle: "ticks",
+                            themeColorHex: AppSettings.shared.defaultThemeColor,
+                            overlayStyle: AppSettings.shared.defaultOverlayStyle,
+                            rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.linearKnobDiameter
                         )
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .linearKnob : .none
                         }
                     }
-                    .frame(height: 140)
+                    .frame(height: 160)
                     
                     Text("无极变速（0.1 ~ 5.0倍）")
                         .font(.system(size: 11, weight: .medium))

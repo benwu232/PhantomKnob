@@ -48,6 +48,7 @@ extension Color {
 
 struct OverlayView: View {
     let targetName: String?
+    var valueText: String? = nil
     let angle: Double
     var isDeadzone: Bool = false
     var scale: Double? = nil
@@ -57,21 +58,50 @@ struct OverlayView: View {
     let rotationStyle: String
     let diameter: CGFloat
     
+    init(targetName: String?,
+         valueText: String? = nil,
+         angle: Double,
+         isDeadzone: Bool = false,
+         scale: Double? = nil,
+         themeColorHex: String,
+         overlayStyle: String,
+         rotationStyle: String,
+         diameter: CGFloat) {
+        self.targetName = targetName
+        self.valueText = valueText
+        self.angle = angle
+        self.isDeadzone = isDeadzone
+        self.scale = scale
+        self.themeColorHex = themeColorHex
+        self.overlayStyle = overlayStyle
+        self.rotationStyle = rotationStyle
+        self.diameter = diameter
+    }
+    
     var body: some View {
         let activeColor = Color(hex: themeColorHex)
         
         VStack(spacing: 4) {
-            // 1. 名字悬浮正上方
+            // 1. 名字及数值悬浮正上方
             let titleText: String = {
                 let name = (targetName == nil || targetName!.isEmpty) ? "Knob" : targetName!
                 return name
             }()
             
-            Text(titleText)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4))
-                .lineLimit(1)
-                .frame(height: 20)
+            VStack(spacing: 2) {
+                Text(titleText)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.4))
+                    .lineLimit(1)
+                
+                if let valueText = valueText {
+                    Text(valueText)
+                        .font(.system(size: 16, weight: .bold, design: .monospaced))
+                        .foregroundColor(isDeadzone ? Color.gray.opacity(0.2) : activeColor.opacity(0.6))
+                        .lineLimit(1)
+                }
+            }
+            .frame(height: valueText != nil ? 38 : 20)
             
             // 2. 圆形 Overlay 容器
             ZStack {
@@ -169,7 +199,7 @@ struct OverlayView: View {
             }
             .frame(width: diameter, height: diameter)
         }
-        .frame(width: diameter, height: diameter + 20)
+        .frame(width: diameter, height: diameter + (valueText != nil ? 38 : 20))
     }
 }
 
