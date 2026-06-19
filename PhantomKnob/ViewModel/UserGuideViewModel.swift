@@ -27,6 +27,8 @@ class UserGuideViewModel: ObservableObject {
     @Published var linearKnobAngle: Double = 0.0
     @Published var hoveredKnob: HoveredKnobType = .none
     @Published var currentMultiplier: Double = 1.0
+    @Published var doubleKnobBaseMultiplier: Double = 1.0
+    @Published var linearKnobBaseMultiplier: Double = 1.0
     
     @Published var isGestureActive: Bool = false
     @Published var skipOnNextStartup: Bool = false
@@ -62,11 +64,17 @@ class UserGuideViewModel: ObservableObject {
     private func setupBindings() {
         // Trackpad coordinate detection binding
         NotificationCenter.default.publisher(for: NSNotification.Name("TouchpadCoordinatesValidated"))
-            .sink { [weak self] _ in
-                guard let self = self, self.currentStep == 1 else { return }
-                self.touchpadSamplesCount += 1
-                if self.touchpadSamplesCount >= 3 {
-                    self.isTouchpadDetected = true
+            .sink { [weak self] notification in
+                guard let self = self else { return }
+                if self.currentStep == 1 {
+                    self.touchpadSamplesCount += 1
+                    if self.touchpadSamplesCount >= 3 {
+                        self.isTouchpadDetected = true
+                    }
+                } else if self.currentStep == 2 {
+                    if let points = notification.userInfo?["points"] as? [Int: CGPoint] {
+                        self.processTouchPoints(points)
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -124,15 +132,16 @@ class UserGuideViewModel: ObservableObject {
             
             playFeedbackSound(absDeg)
         } else if currentStep == 2 {
-            let sensitivity = 0.5 * currentMultiplier
-            let deltaValue = degrees * sensitivity
-            
             if hoveredKnob == .doubleKnob {
                 doubleKnobAngle += degrees
+                let sensitivity = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
+                let deltaValue = degrees * sensitivity
                 doubleKnobVal = max(0.0, min(100.0, doubleKnobVal + deltaValue))
                 playFeedbackSound(absDeg)
             } else if hoveredKnob == .linearKnob {
                 linearKnobAngle += degrees
+                let sensitivity = 0.5 * linearKnobBaseMultiplier * currentMultiplier
+                let deltaValue = degrees * sensitivity
                 linearKnobVal = max(0.0, min(100.0, linearKnobVal + deltaValue))
                 playFeedbackSound(absDeg)
             }
@@ -179,6 +188,25 @@ class UserGuideViewModel: ObservableObject {
         UserGuideWindowController.shared.hide()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             KnobPanelWindowController.shared.show()
+        }
+    }
+    
+    private func processTouchPoints(_ points: [Int: CGPoint]) {
+        guard points.count >= 2 else { return }
+        let (knobCore, _, _) = KnobAlgorithm().calKnob(points)
+        guard knobCore.isValid else { return }
+        let radius = knobCore.radius
+        
+        if hoveredKnob == .doubleKnob {
+            // 双环物理阈值：外环为 > 65.0
+            doubleKnobBaseMultiplier = (radius > 65.0) ? 1.0 : 0.1
+        } else if hoveredKnob == .linearKnob {
+            // 无极变速阈值插值：30.0 ~ 100.0 映射到 0.1 ~ 5.0
+            let minR = 30.0
+            let maxR = 100.0
+            let r = max(minR, min(maxR, radius))
+            let ratio = (r - minR) / (maxR - minR)
+            linearKnobBaseMultiplier = 0.1 + ratio * (5.0 - 0.1)
         }
     }
 }
