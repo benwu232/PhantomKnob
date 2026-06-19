@@ -190,39 +190,12 @@ struct UserGuideView: View {
     // MARK: - Step 2: Knob comparison, multipliers, HUD trigger
     private var step2View: some View {
         VStack(spacing: 8) {
-            // Live Status Header
+            // Keyboard multiplier display
             HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    if viewModel.hoveredKnob == .doubleKnob {
-                        Text("当前悬停：双环旋钮")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.blue)
-                        Text("数值: \(Int(viewModel.doubleKnobVal))")
-                            .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.7))
-                    } else if viewModel.hoveredKnob == .linearKnob {
-                        Text("当前悬停：无极变速旋钮")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.cyan)
-                        Text("数值: \(Int(viewModel.linearKnobVal))")
-                            .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.7))
-                    } else {
-                        Text("请把鼠标移动到下方任何一个旋钮上练习")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white.opacity(0.7))
-                        Text("双指在触控板上做旋转手势进行微调")
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.4))
-                    }
-                }
-                
                 Spacer()
-                
-                // Keyboard sensitivity multiplier display
                 HStack(spacing: 6) {
                     Image(systemName: "gauge.with.needle.fill")
-                    Text("灵敏度倍率: \(String(format: "%.1fx", viewModel.currentMultiplier))")
+                    Text("键盘倍率微调: \(String(format: "%.1fx", viewModel.currentMultiplier))")
                 }
                 .font(.system(size: 12, weight: .semibold, design: .monospaced))
                 .foregroundColor(Color.amber)
@@ -232,29 +205,33 @@ struct UserGuideView: View {
                 .cornerRadius(6)
             }
             .padding(.horizontal, 32)
-            .padding(.top, 12)
+            .padding(.top, 8)
             
             // Side-by-side self-drawn knobs
-            HStack(spacing: 50) {
+            HStack(spacing: 40) {
                 // Double Ring Knob
                 VStack(spacing: 8) {
                     ZStack {
-                        RadialKnobControlView(
-                            title: "双环旋钮",
-                            icon: "circle.grid.cross.fill",
-                            value: Float(viewModel.doubleKnobVal / 100.0),
+                        OverlayView(
+                            targetName: String(format: "双环旋钮: %.1f", viewModel.doubleKnobVal),
                             angle: viewModel.doubleKnobAngle,
-                            isFocused: viewModel.hoveredKnob == .doubleKnob,
-                            isGestureActive: viewModel.isGestureActive,
-                            showPercentage: false
+                            isDeadzone: false,
+                            scale: viewModel.doubleKnobBaseMultiplier * viewModel.currentMultiplier,
+                            themeColorHex: "#007AFF",
+                            overlayStyle: "hud",
+                            rotationStyle: "ticks",
+                            diameter: 120
                         )
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .doubleKnob : .none
                         }
                     }
-                    .frame(height: 110)
+                    .frame(height: 140)
                     
-                    Text("内圈微调/外圈粗调/单指接续")
+                    Text("双环（外环1.0倍，内环0.1倍）")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white.opacity(0.8))
+                    Text("根据手指距离自动切换微调/粗调")
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.5))
                         .multilineTextAlignment(.center)
@@ -276,22 +253,26 @@ struct UserGuideView: View {
                 // Linear Knob
                 VStack(spacing: 8) {
                     ZStack {
-                        RadialKnobControlView(
-                            title: "无极变速",
-                            icon: "arrow.up.and.down.and.sparkles",
-                            value: Float(viewModel.linearKnobVal / 100.0),
+                        OverlayView(
+                            targetName: String(format: "无极变速旋钮: %.1f", viewModel.linearKnobVal),
                             angle: viewModel.linearKnobAngle,
-                            isFocused: viewModel.hoveredKnob == .linearKnob,
-                            isGestureActive: viewModel.isGestureActive,
-                            showPercentage: false
+                            isDeadzone: false,
+                            scale: viewModel.linearKnobBaseMultiplier * viewModel.currentMultiplier,
+                            themeColorHex: "#34C759",
+                            overlayStyle: "hud",
+                            rotationStyle: "ticks",
+                            diameter: 120
                         )
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .linearKnob : .none
                         }
                     }
-                    .frame(height: 110)
+                    .frame(height: 140)
                     
-                    Text("半径线性变速/灵敏度平滑")
+                    Text("无极变速（0.1 ~ 5.0倍）")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white.opacity(0.8))
+                    Text("变速步长随手势物理半径无极缩放")
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.5))
                         .multilineTextAlignment(.center)
