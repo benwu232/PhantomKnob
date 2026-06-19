@@ -125,7 +125,7 @@ struct UserGuideView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
         }
-        .frame(width: 560, height: 400)
+        .frame(width: 580, height: 460)
     }
     
     // MARK: - Step 1: Device test & Volume practice
