@@ -68,3 +68,6 @@ fastlane/test_output
 .worktrees/
 debug.log
 
+# Brainstorming Visual Companion
+.superpowers/
+
