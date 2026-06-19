@@ -11,7 +11,7 @@ struct UserGuideView: View {
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.white)
                     
-                    Text("这是一个革命性的音量与亮度调节工具。只需将双指放置在触控板上轻轻旋转，即可优雅地掌控您的系统变量。")
+                    Text("PhantomKnob把旋钮手势引入触控板。")
                         .font(.system(size: 14))
                         .foregroundColor(.white.opacity(0.8))
                         .multilineTextAlignment(.center)

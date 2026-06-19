@@ -146,80 +146,23 @@ final class KnobStateTests: XCTestCase {
     }
 }
 
-final class DetectionResultTests: XCTestCase {
+final class ComparableExtensionTests: XCTestCase {
     
-    // MARK: - DetectionResult Tests
+    // MARK: - Comparable Extension Tests
     
-    func testDetectionResultInitialization() {
-        let details = DetectionResult.DetectionDetails(
-            normalizedPositionAvailable: true,
-            sampleCount: 3,
-            errorMessage: nil
-        )
-        let result = DetectionResult(
-            isSupported: true,
-            timestamp: Date(),
-            deviceModel: "MacBookPro18,3",
-            macOSVersion: "macOS 14.0",
-            details: details
-        )
-        
-        XCTAssertTrue(result.isSupported)
-        XCTAssertEqual(result.deviceModel, "MacBookPro18,3")
-        XCTAssertEqual(result.macOSVersion, "macOS 14.0")
-        XCTAssertTrue(result.details.normalizedPositionAvailable)
-        XCTAssertEqual(result.details.sampleCount, 3)
-        XCTAssertNil(result.details.errorMessage)
+    func testClampedWithinRange() {
+        XCTAssertEqual(5.clamped(to: 0...10), 5)
+        XCTAssertEqual(0.5.clamped(to: 0.0...1.0), 0.5)
     }
     
-    func testDetectionResultUnsupported() {
-        let details = DetectionResult.DetectionDetails(
-            normalizedPositionAvailable: false,
-            sampleCount: 0,
-            errorMessage: "无法获取触摸绝对坐标"
-        )
-        let result = DetectionResult(
-            isSupported: false,
-            timestamp: Date(),
-            deviceModel: "MacBookPro18,3",
-            macOSVersion: "macOS 14.0",
-            details: details
-        )
-        
-        XCTAssertFalse(result.isSupported)
-        XCTAssertFalse(result.details.normalizedPositionAvailable)
-        XCTAssertEqual(result.details.errorMessage, "无法获取触摸绝对坐标")
+    func testClampedBelowRange() {
+        XCTAssertEqual((-5).clamped(to: 0...10), 0)
+        XCTAssertEqual((-0.5).clamped(to: 0.0...1.0), 0.0)
     }
     
-    func testDetectionResultCodable() {
-        let details = DetectionResult.DetectionDetails(
-            normalizedPositionAvailable: true,
-            sampleCount: 3,
-            errorMessage: nil
-        )
-        let original = DetectionResult(
-            isSupported: true,
-            timestamp: Date(),
-            deviceModel: "MacBookPro18,3",
-            macOSVersion: "macOS 14.0",
-            details: details
-        )
-        
-        // 编码
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        let data = try! encoder.encode(original)
-        
-        // 解码
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let decoded = try! decoder.decode(DetectionResult.self, from: data)
-        
-        XCTAssertEqual(decoded.isSupported, original.isSupported)
-        XCTAssertEqual(decoded.deviceModel, original.deviceModel)
-        XCTAssertEqual(decoded.macOSVersion, original.macOSVersion)
-        XCTAssertEqual(decoded.details.normalizedPositionAvailable, original.details.normalizedPositionAvailable)
-        XCTAssertEqual(decoded.details.sampleCount, original.details.sampleCount)
+    func testClampedAboveRange() {
+        XCTAssertEqual(15.clamped(to: 0...10), 10)
+        XCTAssertEqual(1.5.clamped(to: 0.0...1.0), 1.0)
     }
 
     func testControlRuleCustomStyleDecoding() throws {
@@ -243,26 +186,5 @@ final class DetectionResultTests: XCTestCase {
         XCTAssertEqual(rule.themeColor, "#0A84FF")
         XCTAssertEqual(rule.overlayStyle, "minimal")
         XCTAssertEqual(rule.rotationStyle, "cleanArc")
-    }
-}
-
-
-final class ComparableExtensionTests: XCTestCase {
-    
-    // MARK: - Comparable Extension Tests
-    
-    func testClampedWithinRange() {
-        XCTAssertEqual(5.clamped(to: 0...10), 5)
-        XCTAssertEqual(0.5.clamped(to: 0.0...1.0), 0.5)
-    }
-    
-    func testClampedBelowRange() {
-        XCTAssertEqual((-5).clamped(to: 0...10), 0)
-        XCTAssertEqual((-0.5).clamped(to: 0.0...1.0), 0.0)
-    }
-    
-    func testClampedAboveRange() {
-        XCTAssertEqual(15.clamped(to: 0...10), 10)
-        XCTAssertEqual(1.5.clamped(to: 0.0...1.0), 1.0)
     }
 }

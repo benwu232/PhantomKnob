@@ -61,6 +61,7 @@ targets:
         NSHighResolutionCapable: true
         LSApplicationCategoryType: public.app-category.utilities
         NSHumanReadableCopyright: "Copyright © 2025 Ben Wu. All rights reserved."
+        LSUIElement: true
 
   PhantomKnobTests:
     type: bundle.unit-test
