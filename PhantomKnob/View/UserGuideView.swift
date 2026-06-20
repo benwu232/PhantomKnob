@@ -190,25 +190,8 @@ struct UserGuideView: View {
     // MARK: - Step 2: Knob comparison, multipliers, HUD trigger
     private var step2View: some View {
         VStack(spacing: 8) {
-            // Keyboard multiplier display
-            HStack {
-                Spacer()
-                HStack(spacing: 6) {
-                    Image(systemName: "gauge.with.needle.fill")
-                    Text("键盘倍率微调: \(String(format: "%.1fx", viewModel.currentMultiplier))")
-                }
-                .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                .foregroundColor(Color.amber)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(Color.amber.opacity(0.1))
-                .cornerRadius(6)
-            }
-            .padding(.horizontal, 32)
-            .padding(.top, 8)
-            
             // Side-by-side self-drawn knobs
-            HStack(spacing: 60) {
+            HStack(spacing: 80) {
                 // Double Ring Knob
                 VStack(spacing: 8) {
                     ZStack {
@@ -218,7 +201,7 @@ struct UserGuideView: View {
                             angle: viewModel.doubleKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.doubleKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: AppSettings.shared.defaultThemeColor,
+                            themeColorHex: "#FFFFFF",
                             overlayStyle: AppSettings.shared.defaultOverlayStyle,
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.doubleKnobDiameter
@@ -250,6 +233,7 @@ struct UserGuideView: View {
                     }
                     .buttonStyle(.plain)
                 }
+                .frame(width: 300)
                 
                 // Linear Knob
                 VStack(spacing: 8) {
@@ -260,7 +244,7 @@ struct UserGuideView: View {
                             angle: viewModel.linearKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.linearKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: AppSettings.shared.defaultThemeColor,
+                            themeColorHex: "#FFFFFF",
                             overlayStyle: AppSettings.shared.defaultOverlayStyle,
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.linearKnobDiameter
@@ -292,6 +276,7 @@ struct UserGuideView: View {
                     }
                     .buttonStyle(.plain)
                 }
+                .frame(width: 300)
             }
             .padding(.vertical, 10)
             
