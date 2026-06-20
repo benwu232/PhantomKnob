@@ -146,14 +146,14 @@
     "doubleConfig": {
       "inner": {
         "minRadius": 15.0,
-        "maxRadius": 25.0,
+        "maxRadius": 30.0,
         "margin": 2.0,
         "unitPerDegree": 1.0,
         "translation": "scrollWheelVertical",
         "clockwiseAction": "scrollUp"
       },
       "outer": {
-        "minRadius": 27.0,
+        "minRadius": 30.0,
         "maxRadius": 60.0,
         "margin": 2.0,
         "unitPerDegree": 0.1,
@@ -171,7 +171,7 @@
     "configType": "linear",
     "linearConfig": {
       "minRadius": 10.0,
-      "maxRadius": 30.0,
+      "maxRadius": 40.0,
       "minScale": 0.1,
       "maxScale": 5.0,
       "translation": "scrollWheelVertical",

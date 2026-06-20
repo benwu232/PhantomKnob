@@ -162,6 +162,14 @@ class UserGuideViewModelTests: XCTestCase {
         let vm = UserGuideViewModel(audioService: AudioControlService())
         vm.currentStep = 2
         
+        let doubleKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "DoubleKnob")
+        let doubleConfig = RuleLibrary.shared.lookup(for: doubleKey)?.doubleConfig
+        let maxInner = doubleConfig?.inner.maxRadius ?? 25.0
+        let minR_double = doubleConfig?.inner.minRadius ?? 15.0
+        let maxR_double = doubleConfig?.outer.maxRadius ?? 60.0
+        let scaleInner = doubleConfig?.inner.unitPerDegree ?? 1.0
+        let scaleOuter = doubleConfig?.outer.unitPerDegree ?? 0.1
+        
         // 模拟双环旋钮内圈半径 (例如 20mm)
         let pointsInner = [
             0: CGPoint(x: 100, y: 100),
@@ -173,9 +181,12 @@ class UserGuideViewModelTests: XCTestCase {
             object: nil,
             userInfo: ["points": pointsInner]
         )
-        // Verify doubleKnobBaseMultiplier is set correctly (expect 1.0 because radius <= 25)
-        XCTAssertEqual(vm.doubleKnobBaseMultiplier, 1.0, accuracy: 0.01)
-        XCTAssertEqual(vm.doubleKnobDiameter, 86.67, accuracy: 0.05)
+        
+        let expectedScaleInner = (20.0 > maxInner) ? scaleOuter : scaleInner
+        let ratioInner = (20.0 - minR_double) / (maxR_double - minR_double)
+        let expectedDiameterInner = 80.0 + ratioInner * 60.0
+        XCTAssertEqual(vm.doubleKnobBaseMultiplier, expectedScaleInner, accuracy: 0.01)
+        XCTAssertEqual(vm.doubleKnobDiameter, CGFloat(expectedDiameterInner), accuracy: 0.05)
         
         // 模拟双环旋钮外圈半径 (例如 80mm)
         let pointsOuter = [
@@ -187,11 +198,22 @@ class UserGuideViewModelTests: XCTestCase {
             object: nil,
             userInfo: ["points": pointsOuter]
         )
-        XCTAssertEqual(vm.doubleKnobBaseMultiplier, 0.1, accuracy: 0.01)
-        XCTAssertEqual(vm.doubleKnobDiameter, 140.0, accuracy: 0.05)
         
-        // 模拟无极变速旋钮插值 (minR=10 -> 5.0, maxR=30 -> 0.1)
-        // 半径 = 20.0 (正好位于 10 和 30 正中间，插值结果为 5.0 - 0.5 * 4.9 = 2.55)
+        let expectedScaleOuter = (80.0 > maxInner) ? scaleOuter : scaleInner
+        let clampedOuterRadius = max(minR_double, min(maxR_double, 80.0))
+        let ratioOuter = (clampedOuterRadius - minR_double) / (maxR_double - minR_double)
+        let expectedDiameterOuter = 80.0 + ratioOuter * 60.0
+        XCTAssertEqual(vm.doubleKnobBaseMultiplier, expectedScaleOuter, accuracy: 0.01)
+        XCTAssertEqual(vm.doubleKnobDiameter, CGFloat(expectedDiameterOuter), accuracy: 0.05)
+        
+        // 模拟无极变速旋钮插值
+        let linearKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "LinearKnob")
+        let linearConfig = RuleLibrary.shared.lookup(for: linearKey)?.linearConfig
+        let minR = linearConfig?.minRadius ?? 10.0
+        let maxR = linearConfig?.maxRadius ?? 30.0
+        let minScale = linearConfig?.minScale ?? 0.1
+        let maxScale = linearConfig?.maxScale ?? 5.0
+        
         let pointsMid = [
             0: CGPoint(x: 100, y: 100),
             1: CGPoint(x: 140, y: 100) // 间距 40, 半径 = 20.0
@@ -202,8 +224,13 @@ class UserGuideViewModelTests: XCTestCase {
             object: nil,
             userInfo: ["points": pointsMid]
         )
-        XCTAssertEqual(vm.linearKnobBaseMultiplier, 2.55, accuracy: 0.05)
-        XCTAssertEqual(vm.linearKnobDiameter, 110.0, accuracy: 0.05)
+        
+        let expectedRatio = (20.0 - minR) / (maxR - minR)
+        let expectedMultiplier = maxScale - expectedRatio * (maxScale - minScale)
+        let expectedDiameter = 80.0 + expectedRatio * (140.0 - 80.0)
+        
+        XCTAssertEqual(vm.linearKnobBaseMultiplier, expectedMultiplier, accuracy: 0.05)
+        XCTAssertEqual(vm.linearKnobDiameter, CGFloat(expectedDiameter), accuracy: 0.05)
         
         // Hover out resets diameter to 120
         vm.hoveredKnob = .none
