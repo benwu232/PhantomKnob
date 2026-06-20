@@ -183,10 +183,9 @@ class UserGuideViewModelTests: XCTestCase {
         )
         
         let expectedScaleInner = (20.0 > maxInner) ? scaleOuter : scaleInner
-        let ratioInner = (20.0 - minR_double) / (maxR_double - minR_double)
-        let expectedDiameterInner = 80.0 + ratioInner * 60.0
+        let expectedDiameterInner = OverlayController.calculateDiameter(for: 20.0)
         XCTAssertEqual(vm.doubleKnobBaseMultiplier, expectedScaleInner, accuracy: 0.01)
-        XCTAssertEqual(vm.doubleKnobDiameter, CGFloat(expectedDiameterInner), accuracy: 0.05)
+        XCTAssertEqual(vm.doubleKnobDiameter, expectedDiameterInner, accuracy: 0.05)
         
         // 模拟双环旋钮外圈半径 (例如 80mm)
         let pointsOuter = [
@@ -200,11 +199,9 @@ class UserGuideViewModelTests: XCTestCase {
         )
         
         let expectedScaleOuter = (80.0 > maxInner) ? scaleOuter : scaleInner
-        let clampedOuterRadius = max(minR_double, min(maxR_double, 80.0))
-        let ratioOuter = (clampedOuterRadius - minR_double) / (maxR_double - minR_double)
-        let expectedDiameterOuter = 80.0 + ratioOuter * 60.0
+        let expectedDiameterOuter = OverlayController.calculateDiameter(for: 80.0)
         XCTAssertEqual(vm.doubleKnobBaseMultiplier, expectedScaleOuter, accuracy: 0.01)
-        XCTAssertEqual(vm.doubleKnobDiameter, CGFloat(expectedDiameterOuter), accuracy: 0.05)
+        XCTAssertEqual(vm.doubleKnobDiameter, expectedDiameterOuter, accuracy: 0.05)
         
         // 模拟无极变速旋钮插值
         let linearKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "LinearKnob")
@@ -227,10 +224,10 @@ class UserGuideViewModelTests: XCTestCase {
         
         let expectedRatio = (20.0 - minR) / (maxR - minR)
         let expectedMultiplier = maxScale - expectedRatio * (maxScale - minScale)
-        let expectedDiameter = 80.0 + expectedRatio * (140.0 - 80.0)
+        let expectedDiameter = OverlayController.calculateDiameter(for: 20.0)
         
         XCTAssertEqual(vm.linearKnobBaseMultiplier, expectedMultiplier, accuracy: 0.05)
-        XCTAssertEqual(vm.linearKnobDiameter, CGFloat(expectedDiameter), accuracy: 0.05)
+        XCTAssertEqual(vm.linearKnobDiameter, expectedDiameter, accuracy: 0.05)
         
         // Hover out resets diameter to 120
         vm.hoveredKnob = .none

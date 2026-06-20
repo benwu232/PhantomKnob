@@ -228,11 +228,7 @@ class UserGuideViewModel: ObservableObject {
             // 双环：内环对应 scaleInner；外环对应 scaleOuter
             doubleKnobBaseMultiplier = (radius > maxInner) ? scaleOuter : scaleInner
             
-            let minR = doubleConfig?.inner.minRadius ?? 15.0
-            let maxR = doubleConfig?.outer.maxRadius ?? 60.0
-            let r = max(minR, min(maxR, radius))
-            let ratio = (r - minR) / (maxR - minR)
-            doubleKnobDiameter = CGFloat(80.0 + ratio * (140.0 - 80.0))
+            doubleKnobDiameter = OverlayController.calculateDiameter(for: radius)
             linearKnobDiameter = 120.0
         } else if hoveredKnob == .linearKnob {
             let linearKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "LinearKnob")
@@ -248,7 +244,7 @@ class UserGuideViewModel: ObservableObject {
             let ratio = (r - minR) / (maxR - minR)
             
             linearKnobBaseMultiplier = maxScale - ratio * (maxScale - minScale)
-            linearKnobDiameter = CGFloat(80.0 + ratio * (140.0 - 80.0))
+            linearKnobDiameter = OverlayController.calculateDiameter(for: radius)
             doubleKnobDiameter = 120.0
         }
     }

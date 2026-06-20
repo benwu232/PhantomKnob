@@ -39,8 +39,8 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
     }
     
     private func createWindow() {
-        let width: CGFloat = 580
-        let height: CGFloat = 460
+        let width: CGFloat = 725
+        let height: CGFloat = 575
         let screenFrame = NSScreen.main?.visibleFrame ?? .zero
         let originX = screenFrame.origin.x + (screenFrame.width - width) / 2
         let originY = screenFrame.origin.y + (screenFrame.height - height) / 2

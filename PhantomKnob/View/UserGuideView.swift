@@ -125,7 +125,7 @@ struct UserGuideView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
         }
-        .frame(width: 580, height: 460)
+        .frame(width: 725, height: 575)
     }
     
     // MARK: - Step 1: Device test & Volume practice
@@ -208,7 +208,7 @@ struct UserGuideView: View {
             .padding(.top, 8)
             
             // Side-by-side self-drawn knobs
-            HStack(spacing: 40) {
+            HStack(spacing: 60) {
                 // Double Ring Knob
                 VStack(spacing: 8) {
                     ZStack {
@@ -227,7 +227,7 @@ struct UserGuideView: View {
                             viewModel.hoveredKnob = isHover ? .doubleKnob : .none
                         }
                     }
-                    .frame(height: 160)
+                    .frame(height: 340)
                     
                     Text("双环（外环0.1倍，内环1.0倍）")
                         .font(.system(size: 11, weight: .medium))
@@ -269,7 +269,7 @@ struct UserGuideView: View {
                             viewModel.hoveredKnob = isHover ? .linearKnob : .none
                         }
                     }
-                    .frame(height: 160)
+                    .frame(height: 340)
                     
                     Text("无极变速（0.1 ~ 5.0倍）")
                         .font(.system(size: 11, weight: .medium))
