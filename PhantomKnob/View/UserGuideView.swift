@@ -201,7 +201,7 @@ struct UserGuideView: View {
                             angle: viewModel.doubleKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.doubleKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: "#FFFFFF",
+                            themeColorHex: "#F59E0B",
                             overlayStyle: AppSettings.shared.defaultOverlayStyle,
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.doubleKnobDiameter
@@ -244,7 +244,7 @@ struct UserGuideView: View {
                             angle: viewModel.linearKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.linearKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: "#FFFFFF",
+                            themeColorHex: "#F59E0B",
                             overlayStyle: AppSettings.shared.defaultOverlayStyle,
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.linearKnobDiameter
