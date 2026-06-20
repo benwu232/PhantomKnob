@@ -728,23 +728,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 return
             }
 
-            // 3. 读取系统面板灵敏度并合成最终步长倍率
-            let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 1.0
-            let settingsSensitivity: Double
-            if let target = currentTarget {
-                switch target.axRole {
-                case "AXSlider":
-                    settingsSensitivity = UserDefaults.standard.object(forKey: "sliderSensitivity") as? Double ?? globalSens
-                case "AXProgressIndicator":
-                    settingsSensitivity = UserDefaults.standard.object(forKey: "progressSensitivity") as? Double ?? globalSens
-                default:
-                    settingsSensitivity = globalSens
-                }
-            } else {
-                settingsSensitivity = globalSens
-            }
-
-            let finalScale = activeBaseScale * settingsSensitivity
+            // 3. Apply base scale
+            let finalScale = activeBaseScale
             translator.scale = finalScale
 
             // 4. 注入翻译事件
@@ -985,17 +970,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             
             // Apply immediately to currentTranslator scale
             if let translator = currentTranslator {
-                let globalSens = UserDefaults.standard.object(forKey: "globalSensitivity") as? Double ?? 1.0
-                let settingsSensitivity: Double
-                switch target.axRole {
-                case "AXSlider":
-                    settingsSensitivity = UserDefaults.standard.object(forKey: "sliderSensitivity") as? Double ?? globalSens
-                case "AXProgressIndicator":
-                    settingsSensitivity = UserDefaults.standard.object(forKey: "progressSensitivity") as? Double ?? globalSens
-                default:
-                    settingsSensitivity = globalSens
-                }
-                translator.scale = nextVal * settingsSensitivity
+                translator.scale = nextVal
             }
             
             // Update Overlay UI immediately
