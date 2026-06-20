@@ -1,23 +1,30 @@
 import AppKit
 import SwiftUI
+import Combine
 
 class StatusBarController: ObservableObject {
     private var statusItem: NSStatusItem?
     private var menu: NSMenu?
     private var globalHotkeyMonitor: Any?
     private var localHotkeyMonitor: Any?
+    private var toggleMenuItem: NSMenuItem?
+    private var hotkeyChangeObserver: AnyCancellable?
     
     @Published var currentState: KnobGlobalState = .inactive
     @Published var targetName: String?
     
     var onToggleHotkey: (() -> Void)?
-    var onOpenSettings: (() -> Void)?
     
     init() {
         NSLog("[StatusBarController] init() called")
         setupStatusBar()
         setupGlobalHotkey()
         setupLocalHotkey()
+        
+        // Reinstall hotkey monitors when the hotkey settings change
+        hotkeyChangeObserver = NotificationCenter.default
+            .publisher(for: .hotkeyDidChange)
+            .sink { [weak self] _ in self?.reinstallHotkeyMonitors() }
     }
     
     deinit {
@@ -32,6 +39,25 @@ class StatusBarController: ObservableObject {
         }
     }
     
+    private func reinstallHotkeyMonitors() {
+        if let m = globalHotkeyMonitor { NSEvent.removeMonitor(m); globalHotkeyMonitor = nil }
+        if let m = localHotkeyMonitor  { NSEvent.removeMonitor(m); localHotkeyMonitor = nil }
+        setupGlobalHotkey()
+        setupLocalHotkey()
+        
+        // Update menu item shortcut dynamically
+        updateMenuHotkey()
+        
+        // Refresh tooltip
+        updateState(currentState, targetName: targetName)
+    }
+    
+    private func updateMenuHotkey() {
+        let hs = HotkeySettings.shared
+        toggleMenuItem?.keyEquivalent = hs.keyEquivalent
+        toggleMenuItem?.keyEquivalentModifierMask = hs.modifiers
+    }
+
     private func setupLocalHotkey() {
         localHotkeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             writeDebugLog("[StatusBarController] Local keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
@@ -39,14 +65,12 @@ class StatusBarController: ObservableObject {
                 KnobPanelWindowController.shared.toggle()
                 return nil
             }
-            if event.keyCode == 15 {
-                let hasCmdOpt = event.modifierFlags.contains([.command, .option])
-                let hasCtrlOpt = event.modifierFlags.contains([.control, .option])
-                if hasCmdOpt || hasCtrlOpt {
-                    writeDebugLog("[StatusBarController] Local hotkey detected")
-                    self?.toggleMode()
-                    return nil
-                }
+            let hs = HotkeySettings.shared
+            let pressedMods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if event.keyCode == hs.keyCode && pressedMods == hs.modifiers {
+                writeDebugLog("[StatusBarController] Local hotkey detected")
+                self?.toggleMode()
+                return nil
             }
             return event
         }
@@ -60,13 +84,11 @@ class StatusBarController: ObservableObject {
                 KnobPanelWindowController.shared.toggle()
                 return
             }
-            if event.keyCode == 15 {
-                let hasCmdOpt = event.modifierFlags.contains([.command, .option])
-                let hasCtrlOpt = event.modifierFlags.contains([.control, .option])
-                if hasCmdOpt || hasCtrlOpt {
-                    writeDebugLog("[StatusBarController] Global hotkey detected")
-                    self?.toggleMode()
-                }
+            let hs = HotkeySettings.shared
+            let pressedMods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if event.keyCode == hs.keyCode && pressedMods == hs.modifiers {
+                writeDebugLog("[StatusBarController] Global hotkey detected")
+                self?.toggleMode()
             }
         }
         NSLog("[StatusBarController] Global hotkey monitor installed")
@@ -78,7 +100,7 @@ class StatusBarController: ObservableObject {
         if let button = statusItem?.button {
             button.image = createIcon(for: .inactive)
             button.image?.isTemplate = true
-            button.toolTip = "Knob 控制：未激活（按 ⌘⌥R 激活）"
+            button.toolTip = "Knob 控制：未激活（按 \(HotkeySettings.shared.displayString) 激活）"
             button.action = #selector(statusBarButtonClicked)
             button.target = self
         }
@@ -99,13 +121,15 @@ class StatusBarController: ObservableObject {
         
         menu?.addItem(NSMenuItem.separator())
         
+        let hs = HotkeySettings.shared
         let toggleItem = NSMenuItem(
             title: "切换控制模式",
             action: #selector(toggleMode),
-            keyEquivalent: "r"
+            keyEquivalent: hs.keyEquivalent
         )
-        toggleItem.keyEquivalentModifierMask = [.command, .option]
+        toggleItem.keyEquivalentModifierMask = hs.modifiers
         toggleItem.target = self
+        toggleMenuItem = toggleItem
         menu?.addItem(toggleItem)
         
         menu?.addItem(NSMenuItem.separator())
@@ -186,7 +210,12 @@ class StatusBarController: ObservableObject {
     }
     
     @objc private func openSettings() {
-        onOpenSettings?()
+        if #available(macOS 14, *) {
+            NSApp.sendAction(NSSelectorFromString("showSettingsWindow:"), to: nil, from: nil)
+        } else {
+            NSApp.sendAction(NSSelectorFromString("showPreferencesWindow:"), to: nil, from: nil)
+        }
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     @objc private func quitApp() {
@@ -229,7 +258,7 @@ class StatusBarController: ObservableObject {
     private func createTooltip(for state: KnobGlobalState, targetName: String?) -> String {
         switch state {
         case .inactive:
-            return "Knob 控制：未激活（按 ⌘⌥R 激活）"
+            return "Knob 控制：未激活（按 \(HotkeySettings.shared.displayString) 激活）"
         case .activated:
             return "Knob 控制：已激活，等待手势"
         case .knobing:
