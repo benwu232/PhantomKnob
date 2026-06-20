@@ -138,7 +138,11 @@ class UserGuideViewModel: ObservableObject {
             rotationAngle += degrees
             
             // Sync with system volume
-            let sensitivity: Float = 0.005
+            let volumeKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "VolumeKnob")
+            let rule = RuleLibrary.shared.lookup(for: volumeKey)
+            let scale = rule?.singleConfig?.unitPerDegree ?? 1.0
+            
+            let sensitivity: Float = Float(0.005 * scale)
             let deltaValue = Float(degrees) * sensitivity
             let newVal = max(0.0, min(1.0, volumeVal + deltaValue))
             if audioService.setVolume(newVal) {
@@ -213,24 +217,37 @@ class UserGuideViewModel: ObservableObject {
         let radius = knobCore.radius
         
         if hoveredKnob == .doubleKnob {
-            // 双环：内环（半径 <= 25）对应 1.0 倍；外环（半径 > 25）对应 0.1 倍
-            doubleKnobBaseMultiplier = (radius > 25.0) ? 0.1 : 1.0
+            let doubleKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "DoubleKnob")
+            let rule = RuleLibrary.shared.lookup(for: doubleKey)
+            let doubleConfig = rule?.doubleConfig
             
-            // 将双环半径（范围设计为 15 到 60）映射到直径 80 到 140
-            let minR = 15.0
-            let maxR = 60.0
+            let maxInner = doubleConfig?.inner.maxRadius ?? 25.0
+            let scaleInner = doubleConfig?.inner.unitPerDegree ?? 1.0
+            let scaleOuter = doubleConfig?.outer.unitPerDegree ?? 0.1
+            
+            // 双环：内环对应 scaleInner；外环对应 scaleOuter
+            doubleKnobBaseMultiplier = (radius > maxInner) ? scaleOuter : scaleInner
+            
+            let minR = doubleConfig?.inner.minRadius ?? 15.0
+            let maxR = doubleConfig?.outer.maxRadius ?? 60.0
             let r = max(minR, min(maxR, radius))
             let ratio = (r - minR) / (maxR - minR)
             doubleKnobDiameter = CGFloat(80.0 + ratio * (140.0 - 80.0))
             linearKnobDiameter = 120.0
         } else if hoveredKnob == .linearKnob {
-            // 无极变速：半径 10-30，倍数 5.0x - 0.1x
-            let minR = 10.0
-            let maxR = 30.0
+            let linearKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "LinearKnob")
+            let rule = RuleLibrary.shared.lookup(for: linearKey)
+            let linearConfig = rule?.linearConfig
+            
+            let minR = linearConfig?.minRadius ?? 10.0
+            let maxR = linearConfig?.maxRadius ?? 30.0
+            let minScale = linearConfig?.minScale ?? 0.1
+            let maxScale = linearConfig?.maxScale ?? 5.0
+            
             let r = max(minR, min(maxR, radius))
             let ratio = (r - minR) / (maxR - minR)
             
-            linearKnobBaseMultiplier = 5.0 - ratio * (5.0 - 0.1)
+            linearKnobBaseMultiplier = maxScale - ratio * (maxScale - minScale)
             linearKnobDiameter = CGFloat(80.0 + ratio * (140.0 - 80.0))
             doubleKnobDiameter = 120.0
         }
