@@ -1,155 +1,129 @@
 import SwiftUI
+import AppKit
+
+// MARK: - Root View
 
 struct SettingsView: View {
-    @AppStorage("globalSensitivity") private var globalSensitivity = 1.0
-    @AppStorage("sliderSensitivity") private var sliderSensitivity: Double?
-    @AppStorage("progressSensitivity") private var progressSensitivity: Double?
-    
-    @State private var hasAccessibilityPermission = false
-    
     var body: some View {
         TabView {
-            GeneralSettingsView(
-                globalSensitivity: $globalSensitivity,
-                hasAccessibilityPermission: $hasAccessibilityPermission
-            )
-            .tabItem {
-                Label("通用", systemImage: "gear")
-            }
-            
-            SensitivitySettingsView(
-                globalSensitivity: $globalSensitivity,
-                sliderSensitivity: $sliderSensitivity,
-                progressSensitivity: $progressSensitivity
-            )
-            .tabItem {
-                Label("灵敏度", systemImage: "slider.horizontal.3")
-            }
-            
+            GeneralSettingsView()
+                .tabItem { Label("通用", systemImage: "gear") }
             AboutView()
-                .tabItem {
-                    Label("关于", systemImage: "info.circle")
-                }
+                .tabItem { Label("关于", systemImage: "info.circle") }
         }
-        .frame(width: 500, height: 400)
-        .onAppear {
-            hasAccessibilityPermission = AXIsProcessTrusted()
-        }
+        .frame(width: 480, height: 320)
     }
 }
 
+// MARK: - General Tab
+
 struct GeneralSettingsView: View {
-    @Binding var globalSensitivity: Double
-    @Binding var hasAccessibilityPermission: Bool
-    
+    @State private var hasAccessibilityPermission = AXIsProcessTrusted()
+    @AppStorage("skipUserGuideOnStartup") private var skipUserGuideOnStartup = false
+
     var body: some View {
         Form {
-            Section("快捷键") {
+            // -- Hotkey --
+            Section(header: Text("热键")) {
                 HStack {
-                    Text("全局控制开关")
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("全局控制开关")
+                        Text("激活 / 关闭旋钮控制模式")
+                            .font(.caption).foregroundColor(.secondary)
+                    }
                     Spacer()
-                    Text("⌘⌥R")
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(4)
+                    HotkeyRecorderView()
                 }
             }
-            
-            Section("辅助功能权限") {
-                HStack {
-                    Image(systemName: hasAccessibilityPermission ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .foregroundColor(hasAccessibilityPermission ? .green : .red)
-                    
-                    Text(hasAccessibilityPermission ? "已授权" : "未授权")
-                    
-                    Spacer()
-                    
+
+            // -- Accessibility Permission --
+            Section(
+                header: Text("辅助功能权限"),
+                footer: Group {
                     if !hasAccessibilityPermission {
-                        Button("打开系统设置") {
-                            openAccessibilityPreferences()
-                        }
+                        Text("全局控制模式必须有辅助功能权限才能工作。")
+                            .foregroundColor(.secondary)
+                    }
+                }
+            ) {
+                HStack {
+                    Image(systemName: hasAccessibilityPermission
+                          ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundColor(hasAccessibilityPermission ? .green : .red)
+                    Text(hasAccessibilityPermission ? "已授权" : "未授权")
+                    Spacer()
+                    if !hasAccessibilityPermission {
+                        Button("打开系统设置") { openAccessibilityPreferences() }
                     }
                 }
             }
-            
-            Section("全局灵敏度") {
-                VStack(alignment: .leading) {
-                    Slider(value: $globalSensitivity, in: 0.1...2.0, step: 0.1)
-                    Text("每度旋转改变 \(globalSensitivity, specifier: "%.1f") 单位值")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+
+            // -- Startup --
+            Section(header: Text("启动")) {
+                Toggle("启动时显示使用引导", isOn: Binding(
+                    get: { !skipUserGuideOnStartup },
+                    set: { skipUserGuideOnStartup = !$0 }
+                ))
+            }
+
+            // -- Trackpad --
+            Section(header: Text("触控板")) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("重新检测触控板")
+                        Text("更换硬件后使用")
+                            .font(.caption).foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Button("重新检测…") { resetAndRedetect() }
                 }
             }
         }
         .padding()
+        .onAppear { hasAccessibilityPermission = AXIsProcessTrusted() }
     }
-    
+
     private func openAccessibilityPreferences() {
         let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
         NSWorkspace.shared.open(url)
     }
-}
 
-struct SensitivitySettingsView: View {
-    @Binding var globalSensitivity: Double
-    @Binding var sliderSensitivity: Double?
-    @Binding var progressSensitivity: Double?
-    
-    @State private var useCustomSliderSensitivity = false
-    @State private var useCustomProgressSensitivity = false
-    
-    var body: some View {
-        Form {
-            Section("按控件类型覆盖") {
-                Toggle("滑块控件", isOn: $useCustomSliderSensitivity)
-                
-                if useCustomSliderSensitivity {
-                    Slider(value: Binding(
-                        get: { sliderSensitivity ?? globalSensitivity },
-                        set: { sliderSensitivity = $0 }
-                    ), in: 0.1...2.0, step: 0.1)
-                }
-                
-                Toggle("进度条", isOn: $useCustomProgressSensitivity)
-                
-                if useCustomProgressSensitivity {
-                    Slider(value: Binding(
-                        get: { progressSensitivity ?? globalSensitivity },
-                        set: { progressSensitivity = $0 }
-                    ), in: 0.1...2.0, step: 0.1)
-                }
-            }
-        }
-        .padding()
+    private func resetAndRedetect() {
+        UserDefaults.standard.removeObject(forKey: "com.phantomknob.detectionResult")
+        UserGuideWindowController.shared.show()
     }
 }
+
+// MARK: - About Tab
 
 struct AboutView: View {
+    private var versionString: String {
+        let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
+        let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
+        return "版本 \(v) (\(b))"
+    }
+
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "circle.circle")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
-            
-            Text("Phantom Knob Detector")
-                .font(.title)
-            
-            Text("版本 1.0")
-                .foregroundColor(.secondary)
-            
-            Text("使用两指旋转手势控制任意应用中的滑块和进度条")
+        VStack(spacing: 16) {
+            Spacer()
+            if let icon = NSApp.applicationIconImage {
+                Image(nsImage: icon)
+                    .resizable().frame(width: 72, height: 72)
+                    .cornerRadius(16)
+            }
+            VStack(spacing: 4) {
+                Text("Phantom Knob").font(.title2).fontWeight(.bold)
+                Text(versionString).foregroundColor(.secondary).font(.subheadline)
+            }
+            Text("使用两指旋转手势，像拨动旋钮一样\n精确控制任意应用中的滑块和进度条")
                 .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-            
+                .foregroundColor(.secondary).font(.callout)
+            Button("使用引导") { UserGuideWindowController.shared.show() }
+                .buttonStyle(.link)
             Spacer()
         }
-        .padding()
+        .frame(maxWidth: .infinity).padding()
     }
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
-    }
-}
+#Preview { SettingsView() }
