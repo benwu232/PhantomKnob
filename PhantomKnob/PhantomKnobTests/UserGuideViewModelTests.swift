@@ -162,10 +162,10 @@ class UserGuideViewModelTests: XCTestCase {
         let vm = UserGuideViewModel(audioService: AudioControlService())
         vm.currentStep = 2
         
-        // 模拟双环旋钮内圈半径 (例如 50mm)
+        // 模拟双环旋钮内圈半径 (例如 20mm)
         let pointsInner = [
             0: CGPoint(x: 100, y: 100),
-            1: CGPoint(x: 200, y: 100) // 间距 100, 半径 = 50.0
+            1: CGPoint(x: 140, y: 100) // 间距 40, 半径 = 20.0
         ]
         vm.hoveredKnob = .doubleKnob
         NotificationCenter.default.post(
@@ -173,9 +173,9 @@ class UserGuideViewModelTests: XCTestCase {
             object: nil,
             userInfo: ["points": pointsInner]
         )
-        // Verify doubleKnobBaseMultiplier is set correctly (expect 1.0 because radius <= 65)
+        // Verify doubleKnobBaseMultiplier is set correctly (expect 1.0 because radius <= 25)
         XCTAssertEqual(vm.doubleKnobBaseMultiplier, 1.0, accuracy: 0.01)
-        XCTAssertEqual(vm.doubleKnobDiameter, 97.14, accuracy: 0.05)
+        XCTAssertEqual(vm.doubleKnobDiameter, 86.67, accuracy: 0.05)
         
         // 模拟双环旋钮外圈半径 (例如 80mm)
         let pointsOuter = [
@@ -188,13 +188,13 @@ class UserGuideViewModelTests: XCTestCase {
             userInfo: ["points": pointsOuter]
         )
         XCTAssertEqual(vm.doubleKnobBaseMultiplier, 0.1, accuracy: 0.01)
-        XCTAssertEqual(vm.doubleKnobDiameter, 122.86, accuracy: 0.05)
+        XCTAssertEqual(vm.doubleKnobDiameter, 140.0, accuracy: 0.05)
         
-        // 模拟无极变速旋钮插值 (minR=30 -> 5.0, maxR=100 -> 0.1)
-        // 半径 = 65.0 (正好位于 30 和 100 正中间，插值结果为 5.0 - 0.5 * 4.9 = 2.55)
+        // 模拟无极变速旋钮插值 (minR=10 -> 5.0, maxR=30 -> 0.1)
+        // 半径 = 20.0 (正好位于 10 和 30 正中间，插值结果为 5.0 - 0.5 * 4.9 = 2.55)
         let pointsMid = [
             0: CGPoint(x: 100, y: 100),
-            1: CGPoint(x: 230, y: 100) // 间距 130, 半径 = 65.0
+            1: CGPoint(x: 140, y: 100) // 间距 40, 半径 = 20.0
         ]
         vm.hoveredKnob = .linearKnob
         NotificationCenter.default.post(

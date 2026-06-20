@@ -212,21 +212,26 @@ class UserGuideViewModel: ObservableObject {
         guard knobCore.isValid else { return }
         let radius = knobCore.radius
         
-        let minR = 30.0
-        let maxR = 100.0
-        let r = max(minR, min(maxR, radius))
-        let ratio = (r - minR) / (maxR - minR)
-        let diameter = 80.0 + ratio * (140.0 - 80.0)
-        
         if hoveredKnob == .doubleKnob {
-            // 大半径对应0.1倍，小半径对应1.0倍
-            doubleKnobBaseMultiplier = (radius > 65.0) ? 0.1 : 1.0
-            doubleKnobDiameter = CGFloat(diameter)
+            // 双环：内环（半径 <= 25）对应 1.0 倍；外环（半径 > 25）对应 0.1 倍
+            doubleKnobBaseMultiplier = (radius > 25.0) ? 0.1 : 1.0
+            
+            // 将双环半径（范围设计为 15 到 60）映射到直径 80 到 140
+            let minR = 15.0
+            let maxR = 60.0
+            let r = max(minR, min(maxR, radius))
+            let ratio = (r - minR) / (maxR - minR)
+            doubleKnobDiameter = CGFloat(80.0 + ratio * (140.0 - 80.0))
             linearKnobDiameter = 120.0
         } else if hoveredKnob == .linearKnob {
-            // 大半径对应小倍数，小半径对应大倍数
+            // 无极变速：半径 10-30，倍数 5.0x - 0.1x
+            let minR = 10.0
+            let maxR = 30.0
+            let r = max(minR, min(maxR, radius))
+            let ratio = (r - minR) / (maxR - minR)
+            
             linearKnobBaseMultiplier = 5.0 - ratio * (5.0 - 0.1)
-            linearKnobDiameter = CGFloat(diameter)
+            linearKnobDiameter = CGFloat(80.0 + ratio * (140.0 - 80.0))
             doubleKnobDiameter = 120.0
         }
     }
