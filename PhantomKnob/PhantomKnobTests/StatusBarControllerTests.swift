@@ -71,4 +71,25 @@ final class StatusBarControllerTests: XCTestCase {
         
         wait(for: [expectation], timeout: 2.0)
     }
+    
+    func testOpenSettingsElevatesActivationPolicy() {
+        let controller = StatusBarController()
+        
+        // Setup initial policy
+        NSApp.setActivationPolicy(.accessory)
+        XCTAssertEqual(NSApp.activationPolicy(), .accessory)
+        
+        // Trigger opening of settings
+        controller.openSettings()
+        
+        // Verify policy changed to .regular and settings is visible
+        XCTAssertEqual(NSApp.activationPolicy(), .regular)
+        XCTAssertTrue(SettingsWindowController.shared.isVisible)
+        
+        // Clean up: hide the settings window which should restore activation policy to .accessory
+        SettingsWindowController.shared.hide()
+        
+        XCTAssertEqual(NSApp.activationPolicy(), .accessory)
+        XCTAssertFalse(SettingsWindowController.shared.isVisible)
+    }
 }

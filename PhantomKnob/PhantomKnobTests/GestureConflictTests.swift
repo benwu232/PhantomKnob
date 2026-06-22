@@ -64,18 +64,27 @@ final class GestureConflictTests: XCTestCase {
     }
     
     func testIsInterceptingGesturesBeganAndEnded() {
+        let mockDetector = MockTargetDetector()
+        let target = DetectedTarget(
+            bundleID: "com.test.intercepting",
+            axRole: "AXSlider",
+            identifier: nil,
+            displayName: "TestSlider",
+            element: nil,
+            parentChain: []
+        )
+        mockDetector.mockTarget = target
+        
         let manager = KnobStateManager(
-            targetDetector: TargetDetector(),
+            targetDetector: mockDetector,
             gestureClassifier: GestureClassifier(),
             overlayController: OverlayController(),
             statusBarController: StatusBarController(),
             touchHandler: GlobalTouchHandler()
         )
         
-        // 模拟当前前台 App Bundle ID 的规则命中
-        let frontmostID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "com.apple.dt.xctest.tool"
         let rule = ControlRule(
-            key: RuleKey(bundleID: frontmostID, axRole: "unknown", displayName: ""),
+            key: RuleKey(bundleID: "com.test.intercepting", axRole: "AXSlider", displayName: "TestSlider"),
             translation: .scrollWheelVertical
         )
         RuleLibrary.shared.injectRulesForTesting([rule])
@@ -90,5 +99,13 @@ final class GestureConflictTests: XCTestCase {
         // 2. 模拟触摸结束
         manager.onMultitouchEnded()
         XCTAssertFalse(manager.isInterceptingGestures)
+    }
+}
+
+class MockTargetDetector: TargetDetector {
+    var mockTarget: DetectedTarget?
+    
+    override func detectTargetAtMousePosition() -> DetectedTarget? {
+        return mockTarget
     }
 }

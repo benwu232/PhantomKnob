@@ -209,13 +209,9 @@ class StatusBarController: ObservableObject {
         onToggleHotkey?()
     }
     
-    @objc private func openSettings() {
-        if #available(macOS 14, *) {
-            NSApp.sendAction(NSSelectorFromString("showSettingsWindow:"), to: nil, from: nil)
-        } else {
-            NSApp.sendAction(NSSelectorFromString("showPreferencesWindow:"), to: nil, from: nil)
-        }
-        NSApp.activate(ignoringOtherApps: true)
+    @objc func openSettings() {
+        NSLog("[StatusBarController] openSettings() clicked, showing custom settings window")
+        SettingsWindowController.shared.show()
     }
     
     @objc private func quitApp() {
