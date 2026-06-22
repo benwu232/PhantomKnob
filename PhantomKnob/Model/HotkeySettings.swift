@@ -55,6 +55,11 @@ class HotkeySettings: ObservableObject {
         return parts
     }
 
+    /// The lowercase character to be used as a menu key equivalent.
+    var keyEquivalent: String {
+        return keyCodeToChar(keyCode)?.lowercased() ?? ""
+    }
+
     private func keyCodeToChar(_ code: UInt16) -> String? {
         let map: [UInt16: String] = [
             0:"A", 1:"S", 2:"D", 3:"F", 4:"H", 5:"G", 6:"Z", 7:"X", 8:"C", 9:"V",

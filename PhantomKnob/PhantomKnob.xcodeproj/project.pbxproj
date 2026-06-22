@@ -48,6 +48,7 @@
 		7EC546E05D400231F6C5E287 /* bundled-rules.json in Resources */ = {isa = PBXBuildFile; fileRef = CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */; };
 		81C54DE6F0BD0486FBBF80CA /* TargetDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */; };
 		82BBAB63D2E9D62FDE90805C /* DetectedTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */; };
+		85DCF281E08D26D7408AF5AB /* HotkeySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC77959DB4C1B4AC99F89BA /* HotkeySettings.swift */; };
 		86B5FBD17C12E7D00F0BC8AE /* ScrollWheelTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E9AB06D406D93054769DF3 /* ScrollWheelTranslator.swift */; };
 		89CC4DDB76C47724BEEF1BC0 /* JSONCParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DD05C13BC59773FD98055F /* JSONCParserTests.swift */; };
 		8CC5803134336AEC78F42B6E /* KnobPanelWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6409308252718581F95D9CD /* KnobPanelWindowController.swift */; };
@@ -57,6 +58,7 @@
 		9D43C46E67005EC6776B824E /* TouchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B499ACF164A9451B0AAD1C /* TouchpadView.swift */; };
 		9E21ED3BDDB126A6A6905E2C /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276B847C3350CE8E5BEE90C /* AppSettingsTests.swift */; };
 		9F4C5719CF0BE0C6FFA610B6 /* AXWriteTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 899D86B28252691F994F0E31 /* AXWriteTranslator.swift */; };
+		A488FB9A185767D4438E3149 /* HotkeyRecorderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */; };
 		B68DF231AC772689CF2A5ACC /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77D21A367DF26814BDB1966 /* TutorialView.swift */; };
 		B94BA13F948C499CB5120913 /* TouchpadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165D5400DF747E8DCDF6022A /* TouchpadEngine.swift */; };
 		BF29018F2C89BA7835834BC7 /* GestureClassifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */; };
@@ -104,10 +106,12 @@
 		24BD249E7CFB5B5F78FC45EB /* SensitivityConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityConfigTests.swift; sourceTree = "<group>"; };
 		27B2E400E0342B8F7F55FC01 /* SensitivityConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensitivityConfig.swift; sourceTree = "<group>"; };
 		28B15AA0918B5B487EAD25BC /* GestureClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureClassifier.swift; sourceTree = "<group>"; };
+		2CC77959DB4C1B4AC99F89BA /* HotkeySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeySettings.swift; sourceTree = "<group>"; };
 		3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomKnobApp.swift; sourceTree = "<group>"; };
 		322C04438C22BB8A78D9F208 /* RuleLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleLibrary.swift; sourceTree = "<group>"; };
 		33997C526CE3C79D79F6AC92 /* DemoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewModel.swift; sourceTree = "<group>"; };
 		3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslationTests.swift; sourceTree = "<group>"; };
+		3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderView.swift; sourceTree = "<group>"; };
 		43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizerHUDView.swift; sourceTree = "<group>"; };
 		54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		5FE64900D039A90EF7F38282 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -184,6 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */,
+				3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */,
 				DEAF87A6073EE6800820C8A8 /* KnobPanelView.swift */,
 				79E59D5E06F5866BA93B2D8A /* OverlayView.swift */,
 				F265AA267220CC6CEE2B9C1A /* SettingsView.swift */,
@@ -267,6 +272,7 @@
 				5FE64900D039A90EF7F38282 /* AppSettings.swift */,
 				7824393D26BE2CFB97C3AED7 /* ControlRule.swift */,
 				12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */,
+				2CC77959DB4C1B4AC99F89BA /* HotkeySettings.swift */,
 				8776E7B99B66A818472F3AD2 /* InputTranslation.swift */,
 				CF3EA0C61599821948945AC9 /* KnobCore.swift */,
 				E8C4C81CBF98264E7686C45B /* KnobGlobalState.swift */,
@@ -369,7 +375,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					609BE1C03A51F470FDB98841 = {
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -453,6 +459,8 @@
 				2E5E69A3A010696CE124CDA8 /* DisplayBrightnessService.swift in Sources */,
 				C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */,
 				EF138900E1C6F71B57127BE9 /* GlobalTouchHandler.swift in Sources */,
+				A488FB9A185767D4438E3149 /* HotkeyRecorderView.swift in Sources */,
+				85DCF281E08D26D7408AF5AB /* HotkeySettings.swift in Sources */,
 				D8EDE11220DF5C7F6A758198 /* InputTranslation.swift in Sources */,
 				33971F76665F69DB98FCFF5C /* InputTranslator.swift in Sources */,
 				E24DD72C05AEA88624D595F4 /* KeyboardBacklightService.swift in Sources */,
@@ -522,9 +530,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = PhantomKnob;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -685,9 +694,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = PhantomKnob;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
