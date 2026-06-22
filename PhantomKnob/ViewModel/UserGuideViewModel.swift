@@ -156,13 +156,11 @@ class UserGuideViewModel: ObservableObject {
                 let sensitivity = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
                 let deltaValue = degrees * sensitivity
                 doubleKnobVal = max(0.0, min(100.0, doubleKnobVal + deltaValue))
-                playFeedbackSound(absDeg)
             } else if hoveredKnob == .linearKnob {
                 linearKnobAngle -= degrees
                 let sensitivity = 0.5 * linearKnobBaseMultiplier * currentMultiplier
                 let deltaValue = degrees * sensitivity
                 linearKnobVal = max(0.0, min(100.0, linearKnobVal + deltaValue))
-                playFeedbackSound(absDeg)
             }
         }
     }
