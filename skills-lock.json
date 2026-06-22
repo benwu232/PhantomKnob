@@ -1,11 +1,41 @@
 {
   "version": 1,
   "skills": {
+    "brainstorming": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/brainstorming/SKILL.md",
+      "computedHash": "c3ef11264b2cb82317c3c6e2293f6d7f1d60884db0f4997d6fab833551f81062"
+    },
     "caveman": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/caveman/SKILL.md",
       "computedHash": "934433479903febc585bf6deb5f0cebc63137e3f86b7babe0aab1ecb94d6d7a4"
+    },
+    "chinese-code-review": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/chinese-code-review/SKILL.md",
+      "computedHash": "024761a666ca6191c7290013ba670d79e4a3bf5d1fee28f0278a741c9217d947"
+    },
+    "chinese-commit-conventions": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/chinese-commit-conventions/SKILL.md",
+      "computedHash": "e167b2ca82c670857d895a9f5bdd2dd67d494b06cf59a8af373a82164ce0610d"
+    },
+    "chinese-documentation": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/chinese-documentation/SKILL.md",
+      "computedHash": "912f018335769e4ca30f685377812dc4163e8c318ddcc820d5ca2d7b76eafc9a"
+    },
+    "chinese-git-workflow": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/chinese-git-workflow/SKILL.md",
+      "computedHash": "5deec4b39119c37fc2907694f3732383aeda041de840dcce76db0c3cdfdd94d7"
     },
     "diagnose": {
       "source": "mattpocock/skills",
@@ -13,71 +43,161 @@
       "skillPath": "skills/engineering/diagnose/SKILL.md",
       "computedHash": "15939a26f86edec2d4862042b8564e5a062cb81d04e047a0cea6305c8830b5f5"
     },
+    "dispatching-parallel-agents": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/dispatching-parallel-agents/SKILL.md",
+      "computedHash": "8e53cf7a64c1a6aa9fe3a227c04be13fb877ce0436aa7101a3c2193aa5cb7e8f"
+    },
+    "executing-plans": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/executing-plans/SKILL.md",
+      "computedHash": "ed71ac42b763f2e51d635082b2921c0ca49ecf4cec59fa358fa5fe91f4002fb1"
+    },
+    "finishing-a-development-branch": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/finishing-a-development-branch/SKILL.md",
+      "computedHash": "c81d12dd6daa0352a248984d7633e2cbd0eeef54690c2ef46b2834421fe73b2a"
+    },
     "grill-me": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/grill-me/SKILL.md",
-      "computedHash": "784f0dbb7403b0f00324bce9a112f715342777a0daee7bbb7385f9c6f0a170ea"
+      "computedHash": "f321507f77702a54af1db66549ec1685fc625390d06c57d7949cdcda8eb1b5c7"
     },
     "grill-with-docs": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
-      "computedHash": "31a5b1ae116558bf7d3f633f442835f54bd7645923d4f45c7823e52a97317666"
+      "computedHash": "e7ef25bbee50cda2eb7b3a8ef541db0a0396dad7d369f7d14fb610671dd1864b"
     },
     "handoff": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/handoff/SKILL.md",
-      "computedHash": "d543685cbfb0c64b7bc51a8dc3465975528da9b64f987f863765973b2f3867ab"
+      "computedHash": "5d0f81e38abe6b984e1feaa731927de5291d040982106ac513cf54ec240e00ec"
     },
     "improve-codebase-architecture": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
-      "computedHash": "c77b86b4332919499608f9af1880074e1fec65a59b95c70c27a9f39cd137865e"
+      "computedHash": "8bf292143ca93b00276a0de0fc5f84f2381f4690c5b0d32e99fa283a072f392f"
+    },
+    "mcp-builder": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/mcp-builder/SKILL.md",
+      "computedHash": "18c09ed6d5be468c388df225770a9a9b971b7c82e33f1954d59d65ec16819a64"
     },
     "prototype": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/prototype/SKILL.md",
-      "computedHash": "aa9d68879fb51af13d47247b5fb73474324e38985ead454e6ea85b64344b7485"
+      "computedHash": "40ff56e36bb13b5a9a16903efd6c78a02690ba430e10a8d1a65559100b77f475"
+    },
+    "receiving-code-review": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/receiving-code-review/SKILL.md",
+      "computedHash": "3df9f4569ae114d784fc95a669e3b901fc722cce019fd13e9faab35cb8ab7a2d"
+    },
+    "requesting-code-review": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/requesting-code-review/SKILL.md",
+      "computedHash": "e462855da57fa971875b69f13112ec56fb6022502328583f31d052c97f7de82a"
     },
     "setup-matt-pocock-skills": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
-      "computedHash": "0164a8b1ef998abca426056c6ed8a7716a9d4692fc6daa5378f68381a6dafd24"
+      "computedHash": "400da4521ed701c99e8824ae7b71c7859632ee91481b3715890036cf8aec6857"
+    },
+    "subagent-driven-development": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/subagent-driven-development/SKILL.md",
+      "computedHash": "ec2137a9c780473ffec52d08fa5836b01708a4a48b58efc83eac2eca5ece5140"
+    },
+    "systematic-debugging": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "computedHash": "68b1cb7419ea46bfcef621a63a994dacb1559e1878803461d6699a70dbcaef83"
     },
     "tdd": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/tdd/SKILL.md",
-      "computedHash": "15a7b5e36383ebadb2dec5e586679e55e9663d292da418926b8da6fc0ef27d84"
+      "computedHash": "d5ca5c8ae0615f343f1cfd71591f4a586046d77b1f36e8d67b8f643bad51043e"
+    },
+    "test-driven-development": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/test-driven-development/SKILL.md",
+      "computedHash": "a84d1b2269db78afcaedbc3c9d1646e9cc56d7f0651a4cffec5e97aae0951387"
     },
     "to-issues": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/to-issues/SKILL.md",
-      "computedHash": "47f648f3414848ccfc62cb41d2828b7e575fb5e7cbd6c4bdf630c063b5dc5e82"
+      "computedHash": "4e2a11d35f018490d42a79234432f779d7131b9920373ef24cfbc68229bfef6c"
     },
     "to-prd": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/to-prd/SKILL.md",
-      "computedHash": "6d741474efd4bc3db55fabc2722ed78ca9c374cabcb6212936d79d4fd4a30fcb"
+      "computedHash": "5a733e19d825f22e83de52e68b8840c9fd2fa7501282277a122c1aa28a922059"
     },
     "triage": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/triage/SKILL.md",
-      "computedHash": "2b6efb6da12d92551772fcc04acf331f4e0e6f7bd9d4cb23ce0b301e0b128feb"
+      "computedHash": "b77ea99c2e6e97815b373cc476ad4cc1835d3e736867b764602147be71f6c131"
+    },
+    "using-git-worktrees": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/using-git-worktrees/SKILL.md",
+      "computedHash": "4d7f8eb0059635a8a4bc2de65f39232b3ec33ef009513dc20b523552ef54f112"
+    },
+    "using-superpowers": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/using-superpowers/SKILL.md",
+      "computedHash": "ce2d06fde69d73b7edc19c5b8f77af92ee4b54199feddf070a688fd59e67a3c1"
+    },
+    "verification-before-completion": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/verification-before-completion/SKILL.md",
+      "computedHash": "492c8d82d52f70f87bf3d5fbedf3bb8baaad16d4fcae86e7ec2d90c8680f4f48"
+    },
+    "workflow-runner": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/workflow-runner/SKILL.md",
+      "computedHash": "939935bd2cac89c76a75bb9009edf1a0a8c3cd32660668db49145f377da7273a"
     },
     "write-a-skill": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "skillPath": "skills/productivity/write-a-skill/SKILL.md",
       "computedHash": "b44d8aab2ead83c716e01af4c9a24ccc4575ce70ad58ec4f1749fb88c9cc82ba"
+    },
+    "writing-plans": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/writing-plans/SKILL.md",
+      "computedHash": "43257b44a402a80382a3b662d4d97b0ae604beac623a6065ac06b3fb08508879"
+    },
+    "writing-skills": {
+      "source": "jnmetacode/superpowers-zh",
+      "sourceType": "github",
+      "skillPath": "skills/writing-skills/SKILL.md",
+      "computedHash": "a0289b33c9c7e9400327c22097ef95364e3eac7148d1157a7079ceaaa39dfa1c"
     },
     "zoom-out": {
       "source": "mattpocock/skills",

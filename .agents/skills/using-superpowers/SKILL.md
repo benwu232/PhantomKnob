@@ -1,6 +1,11 @@
 ---
 name: using-superpowers
 description: 在开始任何对话时使用——确立如何查找和使用技能，要求在任何响应（包括澄清性问题）之前调用 Skill 工具
+version: "1.0.0"
+license: MIT
+metadata:
+  hermes:
+    tags: [meta, getting-started]
 ---
 
 <SUBAGENT-STOP>
@@ -39,7 +44,7 @@ Superpowers 技能覆盖默认系统提示行为，但**用户指令始终具有
 
 ## 平台适配
 
-技能使用 Claude Code 的工具名称。非 CC 平台：查看 `references/copilot-tools.md`（Copilot CLI）、`references/hermes-tools.md`（Hermes Agent）、`references/codex-tools.md`（Codex）了解工具对应关系。Gemini CLI 用户通过 GEMINI.md 自动获得工具映射。
+技能使用 Claude Code 的工具名称。非 CC 平台：查看 `references/copilot-tools.md`（Copilot CLI）、`references/hermes-tools.md`（Hermes Agent）、`references/codex-tools.md`（Codex）、`references/qoder-tools.md`（Qoder）了解工具对应关系。Gemini CLI 用户通过 GEMINI.md 自动获得工具映射。
 
 # 使用技能
 
