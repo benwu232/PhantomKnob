@@ -381,8 +381,8 @@ final class CustomKnobTests: XCTestCase {
         let volumeKey = RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "volume")
         
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let rulesURL = appSupport.appendingPathComponent("PhantomKnob/rules.json")
-        let backupURL = appSupport.appendingPathComponent("PhantomKnob/rules.json.bak")
+        let rulesURL = appSupport.appendingPathComponent("PhantomKnob/my_knobs.json")
+        let backupURL = appSupport.appendingPathComponent("PhantomKnob/my_knobs.json.bak")
         
         if FileManager.default.fileExists(atPath: rulesURL.path) {
             try? FileManager.default.removeItem(at: backupURL)

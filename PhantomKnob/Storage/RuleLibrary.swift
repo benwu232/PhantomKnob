@@ -9,11 +9,11 @@ final class RuleLibrary {
 
     private var rules: [ControlRule] = []
 
-    private let userRulesURL: URL = {
+    internal let userRulesURL: URL = {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport
             .appendingPathComponent("PhantomKnob", isDirectory: true)
-            .appendingPathComponent("rules.json")
+            .appendingPathComponent("my_knobs.json")
     }()
 
     init() {
@@ -125,7 +125,7 @@ final class RuleLibrary {
     func saveRule(_ rule: ControlRule) {
         var loadedUserRules: [ControlRule] = []
         
-        // 1. 先尝试读取本地 rules.json
+        // 1. 先尝试读取本地 my_knobs.json
         if FileManager.default.fileExists(atPath: userRulesURL.path) {
             if let data = try? Data(contentsOf: userRulesURL),
                let existing = try? JSONDecoder().decode([ControlRule].self, from: data) {
