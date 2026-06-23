@@ -61,31 +61,88 @@ final class RuleLibrary {
             "configType": "double",
             "doubleConfig": {
               "inner": {
-                "minRadius": 5.0,
-                "maxRadius": 20.0,
-                "margin": 2.0,
-                "unitPerDegree": 10.0,
                 "translation": "arrowKeyLeftRight",
+                "minRadius": 10.0,
+                "themeColor": "#30D158",
+                "unitPerDegree": 10.0,
+                "margin": 2.0,
+                "maxRadius": 25.0,
                 "clockwiseAction": "arrowRight"
               },
               "outer": {
-                "minRadius": 20.0,
-                "maxRadius": 100.0,
-                "margin": 2.0,
-                "unitPerDegree": 1.0,
                 "translation": "arrowKeyLeftRight",
+                "minRadius": 25.0,
+                "themeColor": "#FF9F0A",
+                "unitPerDegree": 1.5,
+                "margin": 2.0,
+                "maxRadius": 100.0,
                 "clockwiseAction": "arrowRight"
               }
             },
-            "extra": {
-              "reason": "AXWrite causes integer truncation bug in QuickTime timeline"
-            }
+            "themeColor": "#64D2FF"
           },
           {
             "key": {
               "bundleID": "com.apple.FinalCut",
               "axRole": "AXSlider"
             },
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollUp"
+            }
+          },
+          {
+            "key": {
+              "displayName": "Timeline Zoom",
+              "axRole": "AXSlider",
+              "bundleID": "com.apple.FinalCut"
+            },
+            "themeColor": "#34C759",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 0.5,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollUp"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.blackmagic-design.DaVinciResolve",
+              "displayName": "DaVinci Resolve",
+              "axRole": "unknown"
+            },
+            "configType": "double",
+            "doubleConfig": {
+              "outer": {
+                "translation": "scrollWheelVertical",
+                "minRadius": 25.0,
+                "themeColor": "#FF9F0A",
+                "unitPerDegree": 1.0,
+                "margin": 2.0,
+                "maxRadius": 100.0,
+                "clockwiseAction": "scrollDown"
+              },
+              "inner": {
+                "margin": 2.0,
+                "unitPerDegree": 5.0,
+                "clockwiseAction": "scrollDown",
+                "themeColor": "#30D158",
+                "maxRadius": 25.0,
+                "minRadius": 10.0,
+                "translation": "scrollWheelVertical"
+              }
+            },
+            "themeColor": "#0A84FF"
+          },
+          {
+            "key": {
+              "displayName": "ColorWheel",
+              "axRole": "AXSlider",
+              "bundleID": "com.blackmagic-design.DaVinciResolve"
+            },
+            "themeColor": "#007AFF",
             "configType": "single",
             "singleConfig": {
               "unitPerDegree": 1.0,
@@ -109,143 +166,24 @@ final class RuleLibrary {
           {
             "key": {
               "bundleID": "com.lemon.lvoverseas",
-              "axRole": "unknown"
+              "axRole": "unknown",
+              "displayName": "CapCut"
             },
-            "themeColor": "#FF9500",
             "configType": "single",
+            "themeColor": "#0A84FF",
             "singleConfig": {
               "unitPerDegree": 1.0,
-              "translation": "arrowKeyLeftRight",
-              "clockwiseAction": "arrowRight"
-            }
-          },
-          {
-            "key": {
-              "bundleID": "com.lemon.lv",
-              "axRole": "unknown"
-            },
-            "themeColor": "#FF9500",
-            "configType": "single",
-            "singleConfig": {
-              "unitPerDegree": 1.0,
-              "translation": "arrowKeyLeftRight",
-              "clockwiseAction": "arrowRight"
-            }
-          },
-          {
-            "key": {
-              "bundleID": "com.lemon.lvediting",
-              "axRole": "unknown"
-            },
-            "themeColor": "#FF9500",
-            "configType": "single",
-            "singleConfig": {
-              "unitPerDegree": 1.0,
-              "translation": "arrowKeyLeftRight",
-              "clockwiseAction": "arrowRight"
-            }
-          },
-          {
-            "key": {
-              "bundleID": "com.lemon.jianying",
-              "axRole": "unknown"
-            },
-            "themeColor": "#FF9500",
-            "configType": "single",
-            "singleConfig": {
-              "unitPerDegree": 1.0,
-              "translation": "arrowKeyLeftRight",
-              "clockwiseAction": "arrowRight"
-            }
-          },
-          {
-            "key": {
-              "bundleID": "com.lemon.jianyingpro",
-              "axRole": "unknown"
-            },
-            "themeColor": "#FF9500",
-            "configType": "single",
-            "singleConfig": {
-              "unitPerDegree": 1.0,
-              "translation": "arrowKeyLeftRight",
-              "clockwiseAction": "arrowRight"
-            }
-          },
-          {
-            "key": {
-              "bundleID": "com.lemon.jianyingpro",
-              "axRole": "AXSlider",
-              "displayName": "Timeline"
-            },
-            "themeColor": "#FF5A5F",
-            "configType": "double",
-            "doubleConfig": {
-              "inner": {
-                "minRadius": 10.0,
-                "maxRadius": 30.0,
-                "margin": 2.0,
-                "unitPerDegree": 1.0,
-                "translation": "scrollWheelVertical",
-                "clockwiseAction": "scrollUp"
-              },
-              "outer": {
-                "minRadius": 30.0,
-                "maxRadius": 80.0,
-                "margin": 2.0,
-                "unitPerDegree": 1.0,
-                "translation": "arrowKeyLeftRight",
-                "clockwiseAction": "arrowRight"
-              }
-            }
-          },
-          {
-            "key": {
-              "bundleID": "com.lemon.jianyingpro",
-              "axRole": "AXTextField",
-              "displayName": "Parameter"
-            },
-            "themeColor": "#FF5A5F",
-            "configType": "single",
-            "singleConfig": {
-              "unitPerDegree": 1.0,
-              "translation": "arrowKeyLeftRight",
-              "clockwiseAction": "arrowRight"
+              "translation": "scrollWheelHorizontal",
+              "clockwiseAction": "scrollRight",
+              "minRadius": 10.0
             }
           },
           {
             "key": {
               "bundleID": "com.lemon.lvoverseas",
-              "axRole": "AXSlider",
-              "displayName": "Timeline"
+              "axRole": "unknown"
             },
-            "themeColor": "#FF5A5F",
-            "configType": "double",
-            "doubleConfig": {
-              "inner": {
-                "minRadius": 10.0,
-                "maxRadius": 30.0,
-                "margin": 2.0,
-                "unitPerDegree": 1.0,
-                "translation": "scrollWheelVertical",
-                "clockwiseAction": "scrollUp"
-              },
-              "outer": {
-                "minRadius": 30.0,
-                "maxRadius": 80.0,
-                "margin": 2.0,
-                "unitPerDegree": 1.0,
-                "translation": "arrowKeyLeftRight",
-                "clockwiseAction": "arrowRight"
-              }
-            }
-          },
-          {
-            "key": {
-              "bundleID": "com.lemon.lvoverseas",
-              "axRole": "AXTextField",
-              "displayName": "Parameter"
-            },
-            "themeColor": "#FF5A5F",
+            "themeColor": "#FF9500",
             "configType": "single",
             "singleConfig": {
               "unitPerDegree": 1.0,
@@ -255,30 +193,258 @@ final class RuleLibrary {
           },
           {
             "key": {
-              "bundleID": "com.blackmagic-design.DaVinciResolve",
-              "axRole": "AXSlider",
-              "displayName": "ColorWheel"
+              "axRole": "AXStaticText",
+              "displayName": "MainTimeLineRoot",
+              "bundleID": "com.lemon.lvoverseas"
             },
-            "themeColor": "#007AFF",
-            "configType": "single",
-            "singleConfig": {
-              "unitPerDegree": 1.0,
-              "translation": "scrollWheelVertical",
-              "clockwiseAction": "scrollUp"
+            "configType": "linear",
+            "themeColor": "#FFFFFF",
+            "linearConfig": {
+              "clockwiseAction": "arrowRight",
+              "minRadius": 10.0,
+              "minScale": 1.0,
+              "maxScale": 30.0,
+              "maxRadius": 35.0,
+              "translation": "arrowKeyLeftRight"
             }
           },
           {
             "key": {
-              "bundleID": "com.apple.FinalCut",
-              "axRole": "AXSlider",
-              "displayName": "Timeline Zoom"
+              "axRole": "AXStaticText",
+              "bundleID": "com.lemon.lvoverseas",
+              "displayName": "automationredValue"
             },
-            "themeColor": "#34C759",
+            "configType": "single",
+            "themeColor": "#0A84FF",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyUpDown",
+              "clockwiseAction": "arrowUp",
+              "minRadius": 10.0
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lvoverseas",
+              "axRole": "AXStaticText",
+              "displayName": "automationblueValue"
+            },
+            "configType": "single",
+            "themeColor": "#0A84FF",
+            "singleConfig": {
+              "minRadius": 10.0,
+              "clockwiseAction": "arrowUp",
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyUpDown"
+            }
+          },
+          {
+            "key": {
+              "axRole": "AXStaticText",
+              "bundleID": "com.lemon.lvoverseas",
+              "displayName": "automationgreenValue"
+            },
+            "configType": "single",
+            "themeColor": "#0A84FF",
+            "singleConfig": {
+              "clockwiseAction": "arrowUp",
+              "minRadius": 10.0,
+              "translation": "arrowKeyUpDown",
+              "unitPerDegree": 1.0
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lvoverseas",
+              "axRole": "AXStaticText",
+              "displayName": "automationcolorWheelsSettingGroup"
+            },
+            "configType": "single",
+            "themeColor": "#0A84FF",
+            "singleConfig": {
+              "translation": "arrowKeyUpDown",
+              "minRadius": 10.0,
+              "clockwiseAction": "arrowUp",
+              "unitPerDegree": 1.0
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lvoverseas",
+              "axRole": "AXStaticText",
+              "displayName": "automationpanelSettingGroup1"
+            },
+            "configType": "single",
+            "themeColor": "#0A84FF",
+            "singleConfig": {
+              "minRadius": 10.0,
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyUpDown",
+              "clockwiseAction": "arrowUp"
+            }
+          },
+          {
+            "key": {
+              "displayName": "",
+              "bundleID": "com.lemon.lvoverseas",
+              "axRole": "AXStaticText"
+            },
+            "configType": "single",
+            "themeColor": "#0A84FF",
+            "singleConfig": {
+              "minRadius": 10.0,
+              "clockwiseAction": "arrowUp",
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyUpDown"
+            }
+          },
+          {
+            "key": {
+              "axRole": "AXStaticText",
+              "displayName": "slider",
+              "bundleID": "com.lemon.lvoverseas"
+            },
+            "configType": "single",
+            "themeColor": "#0A84FF",
+            "singleConfig": {
+              "clockwiseAction": "scrollUp",
+              "minRadius": 10.0,
+              "translation": "scrollWheelVertical",
+              "unitPerDegree": 1.0
+            }
+          },
+          {
+            "key": {
+              "displayName": "Timeline",
+              "axRole": "AXSlider",
+              "bundleID": "com.lemon.jianyingpro"
+            },
+            "configType": "double",
+            "doubleConfig": {
+              "outer": {
+                "maxRadius": 80.0,
+                "translation": "arrowKeyLeftRight",
+                "minRadius": 30.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "clockwiseAction": "arrowRight"
+              },
+              "inner": {
+                "maxRadius": 30.0,
+                "translation": "scrollWheelVertical",
+                "minRadius": 10.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "clockwiseAction": "scrollUp"
+              }
+            },
+            "themeColor": "#FF5A5F"
+          },
+          {
+            "key": {
+              "displayName": "Parameter",
+              "axRole": "AXTextField",
+              "bundleID": "com.lemon.jianyingpro"
+            },
+            "configType": "single",
+            "themeColor": "#FF5A5F",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "displayName": "Timeline",
+              "axRole": "AXSlider",
+              "bundleID": "com.lemon.lvoverseas"
+            },
+            "configType": "double",
+            "doubleConfig": {
+              "outer": {
+                "maxRadius": 80.0,
+                "translation": "arrowKeyLeftRight",
+                "minRadius": 30.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "clockwiseAction": "arrowRight"
+              },
+              "inner": {
+                "maxRadius": 30.0,
+                "translation": "scrollWheelVertical",
+                "minRadius": 10.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "clockwiseAction": "scrollUp"
+              }
+            },
+            "themeColor": "#FF5A5F"
+          },
+          {
+            "key": {
+              "displayName": "Parameter",
+              "axRole": "AXTextField",
+              "bundleID": "com.lemon.lvoverseas"
+            },
+            "configType": "single",
+            "themeColor": "#FF5A5F",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "axRole": "unknown",
+              "bundleID": "com.lemon.lv"
+            },
+            "themeColor": "#FF9500",
             "configType": "single",
             "singleConfig": {
-              "unitPerDegree": 0.5,
-              "translation": "scrollWheelVertical",
-              "clockwiseAction": "scrollUp"
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "axRole": "unknown",
+              "bundleID": "com.lemon.lvediting"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "axRole": "unknown",
+              "bundleID": "com.lemon.jianying"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "axRole": "unknown",
+              "bundleID": "com.lemon.jianyingpro"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
             }
           },
           {
