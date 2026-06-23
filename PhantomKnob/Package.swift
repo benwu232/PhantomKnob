@@ -23,9 +23,6 @@ let package = Package(
                 "Service/",
                 "Control/",
                 "Storage/",
-            ],
-            resources: [
-                .process("App/bundled-rules.json")
             ]
         ),
         .testTarget(

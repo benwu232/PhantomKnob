@@ -20,11 +20,11 @@ final class RuleLibrary {
         reload()
     }
 
-    /// 重新从磁盘加载规则（bundled + user）。
+    /// 重新从磁盘加载规则。
     func reload() {
         var loaded: [ControlRule] = []
 
-        // 1. 用户规则（高优先级）
+        // 如果用户规则文件不存在，自动创建并写入预置规则
         if !FileManager.default.fileExists(atPath: userRulesURL.path) {
             setupDefaultUserRules()
         }
@@ -33,23 +33,144 @@ final class RuleLibrary {
             loaded.append(contentsOf: userRules)
         }
 
-        // 2. 内置规则（随 App 分发）
-        #if SWIFT_PACKAGE
-        let bundle = Bundle.module
-        #else
-        let bundle = Bundle.main
-        #endif
-        if let bundledURL = bundle.url(forResource: "bundled-rules", withExtension: "json"),
-           let bundledRules = loadRules(from: bundledURL) {
-            loaded.append(contentsOf: bundledRules)
-        }
-
         self.rules = loaded
     }
 
     private func setupDefaultUserRules() {
         let defaultRulesJSON = """
         [
+          {
+            "key": {
+              "bundleID": "com.apple.QuickTimePlayerX",
+              "axRole": "AXSlider",
+              "displayName": "volume"
+            },
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyUpDown",
+              "clockwiseAction": "arrowUp"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.apple.QuickTimePlayerX",
+              "axRole": "AXSlider",
+              "displayName": "timeline"
+            },
+            "configType": "double",
+            "doubleConfig": {
+              "inner": {
+                "minRadius": 5.0,
+                "maxRadius": 20.0,
+                "margin": 2.0,
+                "unitPerDegree": 10.0,
+                "translation": "arrowKeyLeftRight",
+                "clockwiseAction": "arrowRight"
+              },
+              "outer": {
+                "minRadius": 20.0,
+                "maxRadius": 100.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "translation": "arrowKeyLeftRight",
+                "clockwiseAction": "arrowRight"
+              }
+            },
+            "extra": {
+              "reason": "AXWrite causes integer truncation bug in QuickTime timeline"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.apple.FinalCut",
+              "axRole": "AXSlider"
+            },
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollUp"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.blackmagic-design.DaVinciResolve",
+              "axRole": "unknown"
+            },
+            "themeColor": "#007AFF",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollDown"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lvoverseas",
+              "axRole": "unknown"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lv",
+              "axRole": "unknown"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lvediting",
+              "axRole": "unknown"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.jianying",
+              "axRole": "unknown"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.jianyingpro",
+              "axRole": "unknown"
+            },
+            "themeColor": "#FF9500",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
           {
             "key": {
               "bundleID": "com.lemon.jianyingpro",
@@ -159,6 +280,61 @@ final class RuleLibrary {
               "translation": "scrollWheelVertical",
               "clockwiseAction": "scrollUp"
             }
+          },
+          {
+            "key": {
+              "bundleID": "com.phantomknob.controlpanel",
+              "axRole": "ControlPanel",
+              "identifier": "VolumeKnob"
+            },
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollUp"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.phantomknob.controlpanel",
+              "axRole": "ControlPanel",
+              "identifier": "DoubleKnob"
+            },
+            "configType": "double",
+            "doubleConfig": {
+              "inner": {
+                "minRadius": 15.0,
+                "maxRadius": 30.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "translation": "scrollWheelVertical",
+                "clockwiseAction": "scrollUp"
+              },
+              "outer": {
+                "minRadius": 30.0,
+                "maxRadius": 60.0,
+                "margin": 2.0,
+                "unitPerDegree": 0.1,
+                "translation": "scrollWheelVertical",
+                "clockwiseAction": "scrollUp"
+              }
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.phantomknob.controlpanel",
+              "axRole": "ControlPanel",
+              "identifier": "LinearKnob"
+            },
+            "configType": "linear",
+            "linearConfig": {
+              "minRadius": 10.0,
+              "maxRadius": 40.0,
+              "minScale": 0.1,
+              "maxScale": 5.0,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollUp"
+            }
           }
         ]
         """
@@ -171,7 +347,7 @@ final class RuleLibrary {
                 NSLog("[RuleLibrary] Successfully initialized default my_knobs.json rules.")
             }
         } catch {
-            NSLog("[RuleLibrary] Failed to initialize default my_knobs.json: \\(error)")
+            NSLog("[RuleLibrary] Failed to initialize default my_knobs.json: \(error)")
         }
     }
 

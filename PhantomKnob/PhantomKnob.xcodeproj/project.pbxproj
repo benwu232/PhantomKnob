@@ -45,7 +45,6 @@
 		7DB32B2238EE8013B37D1C8F /* AudioControlService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC25D2DC3A258F173AB3BD8C /* AudioControlService.swift */; };
 		7E3E2D338ACCE6980F6E380A /* KnobAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CF154D12272E6CFC5DC7EB /* KnobAlgorithm.swift */; };
 		7E88A5B26CC52AA53A804A1D /* ScaleConfigCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */; };
-		7EC546E05D400231F6C5E287 /* bundled-rules.json in Resources */ = {isa = PBXBuildFile; fileRef = CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */; };
 		81C54DE6F0BD0486FBBF80CA /* TargetDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */; };
 		82BBAB63D2E9D62FDE90805C /* DetectedTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */; };
 		85DCF281E08D26D7408AF5AB /* HotkeySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC77959DB4C1B4AC99F89BA /* HotkeySettings.swift */; };
@@ -149,7 +148,6 @@
 		C6409308252718581F95D9CD /* KnobPanelWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobPanelWindowController.swift; sourceTree = "<group>"; };
 		C955EF152C23C292A17B7F8A /* InputTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslator.swift; sourceTree = "<group>"; };
 		CAA6A832C57BD30CB7D46484 /* UserGuideWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGuideWindowController.swift; sourceTree = "<group>"; };
-		CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "bundled-rules.json"; sourceTree = "<group>"; };
 		CF3EA0C61599821948945AC9 /* KnobCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCore.swift; sourceTree = "<group>"; };
 		D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleConfigCompatibilityTests.swift; sourceTree = "<group>"; };
 		D2B499ACF164A9451B0AAD1C /* TouchpadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchpadView.swift; sourceTree = "<group>"; };
@@ -294,7 +292,6 @@
 		BFF80AEE2BF2168C727111D1 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				CB4131FC8E7F9A73C0BD539E /* bundled-rules.json */,
 				3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */,
 			);
 			path = App;
@@ -358,7 +355,6 @@
 			buildConfigurationList = A9D339C24648C25841BE63A9 /* Build configuration list for PBXNativeTarget "PhantomKnob" */;
 			buildPhases = (
 				F8E1368AE5DCEA9E76CEC2A7 /* Sources */,
-				638C54D6C1BE974AABAE0D37 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -407,17 +403,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		638C54D6C1BE974AABAE0D37 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7EC546E05D400231F6C5E287 /* bundled-rules.json in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		943943C4A140AB65F3A689CA /* Sources */ = {

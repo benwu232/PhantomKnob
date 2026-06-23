@@ -207,9 +207,30 @@ struct ControlRule: Codable, Equatable {
             self.linearConfig = try container.decodeIfPresent(LinearKnobConfig.self, forKey: .linearConfig)
             
             // 还原向下兼容字段给旧调用者使用
-            self.translation = try container.decodeIfPresent(InputTranslation.self, forKey: .translation)
-            self.scaleConfig = try container.decodeIfPresent(ScaleConfig.self, forKey: .scaleConfig)
-            self.invert = try container.decodeIfPresent(Bool.self, forKey: .invert)
+            let decodedTrans = try container.decodeIfPresent(InputTranslation.self, forKey: .translation)
+            let decodedScale = try container.decodeIfPresent(ScaleConfig.self, forKey: .scaleConfig)
+            let decodedInvert = try container.decodeIfPresent(Bool.self, forKey: .invert)
+            
+            if let single = self.singleConfig {
+                self.translation = decodedTrans ?? single.translation
+                self.scaleConfig = decodedScale ?? .fixed(single.unitPerDegree)
+                self.invert = decodedInvert ?? (single.clockwiseAction == "arrowDown" || single.clockwiseAction == "arrowLeft" || single.clockwiseAction == "scrollDown" || single.clockwiseAction == "scrollLeft" || single.clockwiseAction == "swipeDown" || single.clockwiseAction == "swipeLeft" || single.clockwiseAction == "decrease")
+            } else if let double = self.doubleConfig {
+                self.translation = decodedTrans ?? double.inner.translation
+                self.scaleConfig = decodedScale ?? .zones([
+                    RadiusZone(minRadius: double.inner.minRadius, maxRadius: double.inner.maxRadius, margin: double.inner.margin, scale: double.inner.unitPerDegree),
+                    RadiusZone(minRadius: double.outer.minRadius, maxRadius: double.outer.maxRadius, margin: double.outer.margin, scale: double.outer.unitPerDegree)
+                ])
+                self.invert = decodedInvert ?? (double.inner.clockwiseAction == "arrowDown" || double.inner.clockwiseAction == "arrowLeft" || double.inner.clockwiseAction == "scrollDown" || double.inner.clockwiseAction == "scrollLeft" || double.inner.clockwiseAction == "swipeDown" || double.inner.clockwiseAction == "swipeLeft" || double.inner.clockwiseAction == "decrease")
+            } else if let linear = self.linearConfig {
+                self.translation = decodedTrans ?? linear.translation
+                self.scaleConfig = decodedScale ?? .linear(ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale))
+                self.invert = decodedInvert ?? (linear.clockwiseAction == "arrowDown" || linear.clockwiseAction == "arrowLeft" || linear.clockwiseAction == "scrollDown" || linear.clockwiseAction == "scrollLeft" || linear.clockwiseAction == "swipeDown" || linear.clockwiseAction == "swipeLeft" || linear.clockwiseAction == "decrease")
+            } else {
+                self.translation = decodedTrans
+                self.scaleConfig = decodedScale
+                self.invert = decodedInvert
+            }
         } else {
             // 后向兼容解析
             let oldTrans = try container.decodeIfPresent(InputTranslation.self, forKey: .translation) ?? .scrollWheelVertical
