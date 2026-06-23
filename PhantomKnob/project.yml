@@ -47,8 +47,7 @@ targets:
       base:
         INFOPLIST_FILE: Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.phantomknob.PhantomKnob
-        CODE_SIGN_STYLE: Manual
-        CODE_SIGN_IDENTITY: PhantomKnob
+        CODE_SIGN_STYLE: Automatic
         ENABLE_HARDENED_RUNTIME: NO
         COMBINE_HIDPI_IMAGES: YES
         CODE_SIGN_ENTITLEMENTS: PhantomKnob.entitlements
