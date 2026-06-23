@@ -22,6 +22,9 @@ class AppState: ObservableObject {
         
         self.knobStateManager.start()
         
+        // 挂载云同步服务
+        CloudSyncManager.shared.start()
+        
         let skipGuide = UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup")
         if !skipGuide {
             UserGuideWindowController.shared.show()
