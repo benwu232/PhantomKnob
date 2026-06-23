@@ -108,7 +108,7 @@ final class CloudSyncManagerTests: XCTestCase {
         NotificationCenter.default.removeObserver(observer)
         
         // 4. 清理本地模拟写入的文件
-        try? FileManager.default.removeItem(at: RuleLibrary.shared.userRulesURL)
+        try? FileManager.default.removeItem(at: RuleLibrary.shared.myKnobsURL)
         RuleLibrary.shared.reload()
     }
     

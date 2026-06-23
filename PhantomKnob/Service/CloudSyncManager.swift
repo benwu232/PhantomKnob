@@ -84,7 +84,7 @@ public final class CloudSyncManager {
     
     private func syncLocalRulesToCloud() {
         guard !isSyncingFromCloud else { return }
-        let url = RuleLibrary.shared.userRulesURL
+        let url = RuleLibrary.shared.myKnobsURL
         guard FileManager.default.fileExists(atPath: url.path),
               let data = try? Data(contentsOf: url) else { return }
         
@@ -164,7 +164,7 @@ public final class CloudSyncManager {
             if key == "com.phantomknob.my_knobs.data" {
                 if let data = cloudStore.data(forKey: key) {
                     print("[CloudSyncDebug] Found rules data in cloudStore, size: \(data.count) bytes")
-                    let url = RuleLibrary.shared.userRulesURL
+                    let url = RuleLibrary.shared.myKnobsURL
                     let dir = url.deletingLastPathComponent()
                     do {
                         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)

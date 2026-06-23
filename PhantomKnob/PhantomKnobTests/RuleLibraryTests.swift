@@ -216,7 +216,7 @@ final class RuleLibraryTests: XCTestCase {
         XCTAssertEqual(lib.lookup(for: otherKey)?.translation, .swipeVertical)
     }
     
-    func testDefaultUserRulesInitialization() throws {
+    func testDefaultMyKnobsInitialization() throws {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let rulesURL = appSupport.appendingPathComponent("PhantomKnob/my_knobs.json")
         let backupURL = appSupport.appendingPathComponent("PhantomKnob/my_knobs.json.test_bak")
@@ -241,12 +241,12 @@ final class RuleLibraryTests: XCTestCase {
         // Ensure the file is deleted
         XCTAssertFalse(FileManager.default.fileExists(atPath: rulesURL.path))
         
-        // Triggers reloading and creation of default user rules
+        // Triggers reloading and creation of default my_knobs
         let lib = RuleLibrary()
         
         XCTAssertTrue(FileManager.default.fileExists(atPath: rulesURL.path))
         
-        // Verify we can lookup default user rules
+        // Verify we can lookup default my_knobs rules
         let jianyingKey = RuleKey(bundleID: "com.lemon.jianyingpro", axRole: "AXSlider", displayName: "Timeline")
         let match = lib.lookup(for: jianyingKey)
         XCTAssertNotNil(match)

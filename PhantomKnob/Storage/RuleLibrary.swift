@@ -9,7 +9,7 @@ final class RuleLibrary {
 
     private var rules: [ControlRule] = []
 
-    internal let userRulesURL: URL = {
+    internal let myKnobsURL: URL = {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport
             .appendingPathComponent("PhantomKnob", isDirectory: true)
@@ -25,18 +25,18 @@ final class RuleLibrary {
         var loaded: [ControlRule] = []
 
         // 如果用户规则文件不存在，自动创建并写入预置规则
-        if !FileManager.default.fileExists(atPath: userRulesURL.path) {
-            setupDefaultUserRules()
+        if !FileManager.default.fileExists(atPath: myKnobsURL.path) {
+            setupDefaultMyKnobs()
         }
         
-        if let userRules = loadRules(from: userRulesURL) {
-            loaded.append(contentsOf: userRules)
+        if let myKnobs = loadKnobs(from: myKnobsURL) {
+            loaded.append(contentsOf: myKnobs)
         }
 
         self.rules = loaded
     }
 
-    private func setupDefaultUserRules() {
+    private func setupDefaultMyKnobs() {
         let defaultRulesJSON = """
         [
           {
@@ -339,11 +339,11 @@ final class RuleLibrary {
         ]
         """
         
-        let dir = userRulesURL.deletingLastPathComponent()
+        let dir = myKnobsURL.deletingLastPathComponent()
         do {
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             if let data = defaultRulesJSON.data(using: .utf8) {
-                try data.write(to: userRulesURL)
+                try data.write(to: myKnobsURL)
                 NSLog("[RuleLibrary] Successfully initialized default my_knobs.json rules.")
             }
         } catch {
@@ -434,14 +434,14 @@ final class RuleLibrary {
         var loadedUserRules: [ControlRule] = []
         
         // 1. 先尝试读取本地 my_knobs.json
-        if FileManager.default.fileExists(atPath: userRulesURL.path) {
-            if let data = try? Data(contentsOf: userRulesURL),
+        if FileManager.default.fileExists(atPath: myKnobsURL.path) {
+            if let data = try? Data(contentsOf: myKnobsURL),
                let existing = try? JSONDecoder().decode([ControlRule].self, from: data) {
                 loadedUserRules = existing
             }
         } else {
             // 确保目录存在
-            let dir = userRulesURL.deletingLastPathComponent()
+            let dir = myKnobsURL.deletingLastPathComponent()
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         }
         
@@ -456,7 +456,7 @@ final class RuleLibrary {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         if let data = try? encoder.encode(loadedUserRules) {
-            try? data.write(to: userRulesURL)
+            try? data.write(to: myKnobsURL)
         }
         
         // 4. 重载内存规则并通知状态机更新
@@ -469,7 +469,7 @@ final class RuleLibrary {
         )
     }
 
-    private func loadRules(from url: URL) -> [ControlRule]? {
+    private func loadKnobs(from url: URL) -> [ControlRule]? {
         guard FileManager.default.fileExists(atPath: url.path),
               let data = try? Data(contentsOf: url) else { return nil }
         let decoder = JSONDecoder()
