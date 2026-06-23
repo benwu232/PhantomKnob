@@ -25,6 +25,10 @@ final class RuleLibrary {
         var loaded: [ControlRule] = []
 
         // 1. 用户规则（高优先级）
+        if !FileManager.default.fileExists(atPath: userRulesURL.path) {
+            setupDefaultUserRules()
+        }
+        
         if let userRules = loadRules(from: userRulesURL) {
             loaded.append(contentsOf: userRules)
         }
@@ -41,6 +45,134 @@ final class RuleLibrary {
         }
 
         self.rules = loaded
+    }
+
+    private func setupDefaultUserRules() {
+        let defaultRulesJSON = """
+        [
+          {
+            "key": {
+              "bundleID": "com.lemon.jianyingpro",
+              "axRole": "AXSlider",
+              "displayName": "Timeline"
+            },
+            "themeColor": "#FF5A5F",
+            "configType": "double",
+            "doubleConfig": {
+              "inner": {
+                "minRadius": 10.0,
+                "maxRadius": 30.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "translation": "scrollWheelVertical",
+                "clockwiseAction": "scrollUp"
+              },
+              "outer": {
+                "minRadius": 30.0,
+                "maxRadius": 80.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "translation": "arrowKeyLeftRight",
+                "clockwiseAction": "arrowRight"
+              }
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.jianyingpro",
+              "axRole": "AXTextField",
+              "displayName": "Parameter"
+            },
+            "themeColor": "#FF5A5F",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lvoverseas",
+              "axRole": "AXSlider",
+              "displayName": "Timeline"
+            },
+            "themeColor": "#FF5A5F",
+            "configType": "double",
+            "doubleConfig": {
+              "inner": {
+                "minRadius": 10.0,
+                "maxRadius": 30.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "translation": "scrollWheelVertical",
+                "clockwiseAction": "scrollUp"
+              },
+              "outer": {
+                "minRadius": 30.0,
+                "maxRadius": 80.0,
+                "margin": 2.0,
+                "unitPerDegree": 1.0,
+                "translation": "arrowKeyLeftRight",
+                "clockwiseAction": "arrowRight"
+              }
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.lemon.lvoverseas",
+              "axRole": "AXTextField",
+              "displayName": "Parameter"
+            },
+            "themeColor": "#FF5A5F",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "arrowKeyLeftRight",
+              "clockwiseAction": "arrowRight"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.blackmagic-design.DaVinciResolve",
+              "axRole": "AXSlider",
+              "displayName": "ColorWheel"
+            },
+            "themeColor": "#007AFF",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 1.0,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollUp"
+            }
+          },
+          {
+            "key": {
+              "bundleID": "com.apple.FinalCut",
+              "axRole": "AXSlider",
+              "displayName": "Timeline Zoom"
+            },
+            "themeColor": "#34C759",
+            "configType": "single",
+            "singleConfig": {
+              "unitPerDegree": 0.5,
+              "translation": "scrollWheelVertical",
+              "clockwiseAction": "scrollUp"
+            }
+          }
+        ]
+        """
+        
+        let dir = userRulesURL.deletingLastPathComponent()
+        do {
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            if let data = defaultRulesJSON.data(using: .utf8) {
+                try data.write(to: userRulesURL)
+                NSLog("[RuleLibrary] Successfully initialized default my_knobs.json rules.")
+            }
+        } catch {
+            NSLog("[RuleLibrary] Failed to initialize default my_knobs.json: \\(error)")
+        }
     }
 
     /// 按优先级顺序查找匹配 ruleKey 的第一条规则。

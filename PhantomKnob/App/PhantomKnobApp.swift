@@ -22,8 +22,8 @@ class AppState: ObservableObject {
         
         self.knobStateManager.start()
         
-        // 挂载云同步服务
-        CloudSyncManager.shared.start()
+        // 挂载云同步服务（当前仅保留本地持久化，已停用 iCloud KVS 同步）
+        // CloudSyncManager.shared.start()
         
         let skipGuide = UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup")
         if !skipGuide {
