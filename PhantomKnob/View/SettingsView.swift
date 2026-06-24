@@ -90,6 +90,7 @@ struct SettingsView: View {
 struct GeneralSettingsView: View {
     @State private var hasAccessibilityPermission = AXIsProcessTrusted()
     @AppStorage("skipUserGuideOnStartup") private var skipUserGuideOnStartup = false
+    @State private var launchAtLogin = false
 
     var body: some View {
         VStack(spacing: 14) {
@@ -178,6 +179,32 @@ struct GeneralSettingsView: View {
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.white.opacity(0.5))
                 
+                Toggle("登录时自动启动", isOn: Binding(
+                    get: { launchAtLogin },
+                    set: { newValue in
+                        do {
+                            if newValue {
+                                try LaunchAtLoginService.shared.enable()
+                            } else {
+                                try LaunchAtLoginService.shared.disable()
+                            }
+                            launchAtLogin = newValue
+                        } catch {
+                            let alert = NSAlert()
+                            alert.messageText = "设置开机启动失败"
+                            alert.informativeText = error.localizedDescription
+                            alert.alertStyle = .warning
+                            alert.addButton(withTitle: "确定")
+                            alert.runModal()
+                            
+                            launchAtLogin = LaunchAtLoginService.shared.isEnabled
+                        }
+                    }
+                ))
+                .toggleStyle(.checkbox)
+                .foregroundColor(.white.opacity(0.85))
+                .font(.system(size: 13))
+                
                 Toggle("启动时显示使用引导", isOn: Binding(
                     get: { !skipUserGuideOnStartup },
                     set: { skipUserGuideOnStartup = !$0 }
@@ -237,7 +264,10 @@ struct GeneralSettingsView: View {
                     .stroke(Color.white.opacity(0.06), lineWidth: 1)
             )
         }
-        .onAppear { hasAccessibilityPermission = AXIsProcessTrusted() }
+        .onAppear {
+            hasAccessibilityPermission = AXIsProcessTrusted()
+            launchAtLogin = LaunchAtLoginService.shared.isEnabled
+        }
     }
 
     private func openAccessibilityPreferences() {
