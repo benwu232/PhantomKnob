@@ -120,6 +120,21 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.handleRuleHotReload(updatedRule)
         }
         .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: NSNotification.Name("LicenseStateDidChange"))
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                self.activationWorkItem?.cancel()
+                self.activationWorkItem = nil
+                self.sessionTimer?.invalidate()
+                self.sessionTimer = nil
+                self.transition(to: .inactive)
+                self.stopMultitouch()
+                self.currentTarget = nil
+                self.currentTranslator = nil
+                self.overlayController.hide()
+            }
+            .store(in: &cancellables)
     }
 
     func start() {

@@ -116,4 +116,19 @@ class LicenseManager {
         storageWrite("licenseKey", nil)
         storageWrite("licenseEmail", nil)
     }
+    
+    #if DEBUG
+    func debugToggleLicense() {
+        if case .licensed = currentState {
+            storageWrite("licenseKey", nil)
+            storageWrite("licenseEmail", nil)
+            let expiredDate = Date().addingTimeInterval(-20 * 24 * 60 * 60)
+            storageWrite("trialStartDate", formatter.string(from: expiredDate))
+        } else {
+            storageWrite("licenseKey", "DEBUG_KEY")
+            storageWrite("licenseEmail", "debug@example.com")
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+    }
+    #endif
 }

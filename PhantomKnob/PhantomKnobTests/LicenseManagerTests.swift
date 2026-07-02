@@ -95,4 +95,19 @@ class LicenseManagerTests: XCTestCase {
             XCTFail("Expected trialing state after deactivation")
         }
     }
+    
+    func testDebugToggleLicense() {
+        #if DEBUG
+        // Start in trialing / expired (not licensed)
+        XCTAssertNotEqual(licenseManager.currentState, .licensed)
+        
+        // Toggle (should change to licensed)
+        licenseManager.debugToggleLicense()
+        XCTAssertEqual(licenseManager.currentState, .licensed)
+        
+        // Toggle again (should revert to expired free)
+        licenseManager.debugToggleLicense()
+        XCTAssertEqual(licenseManager.currentState, .free)
+        #endif
+    }
 }

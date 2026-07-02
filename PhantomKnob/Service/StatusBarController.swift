@@ -10,6 +10,7 @@ class StatusBarController: ObservableObject {
     private var toggleMenuItem: NSMenuItem?
     private var versionMenuItem: NSMenuItem?
     private var hotkeyChangeObserver: AnyCancellable?
+    private var licenseChangeObserver: AnyCancellable?
     
     @Published var currentState: KnobGlobalState = .inactive
     @Published var targetName: String?
@@ -26,6 +27,12 @@ class StatusBarController: ObservableObject {
         hotkeyChangeObserver = NotificationCenter.default
             .publisher(for: .hotkeyDidChange)
             .sink { [weak self] _ in self?.reinstallHotkeyMonitors() }
+            
+        licenseChangeObserver = NotificationCenter.default
+            .publisher(for: NSNotification.Name("LicenseStateDidChange"))
+            .sink { [weak self] _ in
+                self?.updateVersionItem()
+            }
     }
     
     deinit {
@@ -162,6 +169,18 @@ class StatusBarController: ObservableObject {
         menu?.addItem(settingsItem)
         
         menu?.addItem(NSMenuItem.separator())
+        
+        #if DEBUG
+        let debugToggleItem = NSMenuItem(
+            title: "Toggle Free/Premium (Debug)",
+            action: #selector(debugToggleLicense),
+            keyEquivalent: "t"
+        )
+        debugToggleItem.keyEquivalentModifierMask = [.command, .option]
+        debugToggleItem.target = self
+        menu?.addItem(debugToggleItem)
+        menu?.addItem(NSMenuItem.separator())
+        #endif
         
         let quitItem = NSMenuItem(
             title: String(localized: "menu.quit", defaultValue: "Quit"),
@@ -363,4 +382,10 @@ class StatusBarController: ObservableObject {
             return String(localized: "state.customizing", defaultValue: "Customizing")
         }
     }
+    
+    #if DEBUG
+    @objc func debugToggleLicense() {
+        LicenseManager.shared.debugToggleLicense()
+    }
+    #endif
 }
