@@ -100,7 +100,7 @@ class StatusBarController: ObservableObject {
         if let button = statusItem?.button {
             button.image = createIcon(for: .inactive)
             button.image?.isTemplate = true
-            button.toolTip = "Knob 控制：未激活（按 \(HotkeySettings.shared.displayString) 激活）"
+            button.toolTip = String(localized: "tooltip.inactive", defaultValue: "Knob Control: Inactive (Press \(HotkeySettings.shared.displayString) to activate)")
             button.action = #selector(statusBarButtonClicked)
             button.target = self
         }
@@ -111,11 +111,19 @@ class StatusBarController: ObservableObject {
     private func setupMenu() {
         menu = NSMenu()
         
-        let statusMenuItem = NSMenuItem(title: "状态：未激活", action: nil, keyEquivalent: "")
+        let statusMenuItem = NSMenuItem(
+            title: String(localized: "status.inactive", defaultValue: "Status: Inactive"),
+            action: nil,
+            keyEquivalent: ""
+        )
         statusMenuItem.isEnabled = false
         menu?.addItem(statusMenuItem)
         
-        let guideMenuItem = NSMenuItem(title: "使用引导...", action: #selector(openGuide), keyEquivalent: "")
+        let guideMenuItem = NSMenuItem(
+            title: String(localized: "menu.userGuide", defaultValue: "User Guide…"),
+            action: #selector(openGuide),
+            keyEquivalent: ""
+        )
         guideMenuItem.target = self
         menu?.addItem(guideMenuItem)
         
@@ -123,7 +131,7 @@ class StatusBarController: ObservableObject {
         
         let hs = HotkeySettings.shared
         let toggleItem = NSMenuItem(
-            title: "切换控制模式",
+            title: String(localized: "menu.toggleMode", defaultValue: "Toggle Control Mode"),
             action: #selector(toggleMode),
             keyEquivalent: hs.keyEquivalent
         )
@@ -135,7 +143,7 @@ class StatusBarController: ObservableObject {
         menu?.addItem(NSMenuItem.separator())
         
         let settingsItem = NSMenuItem(
-            title: "设置...",
+            title: String(localized: "menu.settings", defaultValue: "Settings…"),
             action: #selector(openSettings),
             keyEquivalent: ","
         )
@@ -145,7 +153,7 @@ class StatusBarController: ObservableObject {
         menu?.addItem(NSMenuItem.separator())
         
         let quitItem = NSMenuItem(
-            title: "退出",
+            title: String(localized: "menu.quit", defaultValue: "Quit"),
             action: #selector(quitApp),
             keyEquivalent: "q"
         )
@@ -254,35 +262,46 @@ class StatusBarController: ObservableObject {
     private func createTooltip(for state: KnobGlobalState, targetName: String?) -> String {
         switch state {
         case .inactive:
-            return "Knob 控制：未激活（按 \(HotkeySettings.shared.displayString) 激活）"
+            return String(localized: "tooltip.inactive", defaultValue: "Knob Control: Inactive (Press \(HotkeySettings.shared.displayString) to activate)")
         case .activated:
-            return "Knob 控制：已激活，等待手势"
+            return String(localized: "tooltip.activated", defaultValue: "Knob Control: Active, waiting for gesture")
         case .knobing:
             if let name = targetName {
-                return "Knob 控制：正在控制 \(name)"
+                let format = String(localized: "tooltip.knobing.withTarget", defaultValue: "Knob Control: Controlling %@")
+                return String(format: format, name)
             }
-            return "Knob 控制：正在控制"
+            return String(localized: "tooltip.knobing", defaultValue: "Knob Control: Controlling")
         case .cooling:
             if let name = targetName {
-                return "Knob 控制：冷却中 (\(name))"
+                let format = String(localized: "tooltip.cooling.withTarget", defaultValue: "Knob Control: Cooling down (%@)")
+                return String(format: format, name)
             }
-            return "Knob 控制：冷却中"
+            return String(localized: "tooltip.cooling", defaultValue: "Knob Control: Cooling down")
         case .customizing:
-            return "Knob 控制：定制中"
+            return String(localized: "tooltip.customizing", defaultValue: "Knob Control: Customizing")
         }
     }
     
     private func stateDescription(for state: KnobGlobalState, targetName: String?) -> String {
         switch state {
-        case .inactive: return "未激活"
-        case .activated: return "已激活"
+        case .inactive:
+            return String(localized: "state.inactive", defaultValue: "Inactive")
+        case .activated:
+            return String(localized: "state.activated", defaultValue: "Active")
         case .knobing:
-            if let name = targetName { return "控制中 - \(name)" }
-            return "控制中"
+            if let name = targetName {
+                let format = String(localized: "state.knobing.withTarget", defaultValue: "Controlling - %@")
+                return String(format: format, name)
+            }
+            return String(localized: "state.knobing", defaultValue: "Controlling")
         case .cooling:
-            if let name = targetName { return "冷却中 - \(name)" }
-            return "冷却中"
-        case .customizing: return "定制中"
+            if let name = targetName {
+                let format = String(localized: "state.cooling.withTarget", defaultValue: "Cooling - %@")
+                return String(format: format, name)
+            }
+            return String(localized: "state.cooling", defaultValue: "Cooling down")
+        case .customizing:
+            return String(localized: "state.customizing", defaultValue: "Customizing")
         }
     }
 }
