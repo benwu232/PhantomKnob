@@ -124,27 +124,59 @@
 5. 许可证存储：Keychain（加密存储 license key + activation date）
 6. 离线容忍：激活后允许 30 天离线使用
 
-### 1.5 Feature Gating（功能锁定机制）
+### 1.5 Feature Gating（功能分层机制）
+
+**设计理念：** 免费用户可使用全部核心旋钮功能（所有旋钮类型、键盘快捷键、自定义规则、Pro App 旋钮包），以培养一致的用户习惯。付费差异化通过"体验摩擦"和"外观定制"实现，而非功能锁定。
 
 **三层用户状态：**
 
 | 功能 | Trial (14天) | Free | Licensed |
 |---|---|---|---|
-| 全局旋钮控制 | ✅ 无限制 | ✅ 每次 5 分钟限时 | ✅ 无限制 |
-| 固定倍率单旋钮 | ✅ | ✅ | ✅ |
-| 双环旋钮模式 | ✅ | ❌ | ✅ |
-| 无极变速旋钮 | ✅ | ❌ | ✅ |
-| Customizer HUD | ✅ | ❌ | ✅ |
-| 自定义规则 | ✅ | ❌ | ✅ |
-| 键盘倍率快捷键 | ✅ | ❌ | ✅ |
-| Pro App 旋钮包 | ✅ | ❌ | ✅ |
-| iCloud 同步 | ✅ | ❌ | ✅ |
+| 所有旋钮类型（固定/双环/无极变速） | ✅ | ✅ | ✅ |
+| 键盘倍率快捷键 (2-9) | ✅ | ✅ | ✅ |
+| 自定义规则 (My Knobs) | ✅ | ✅ | ✅ |
+| Customizer HUD | ✅ | ✅ | ✅ |
+| Pro App 旋钮包 | ✅ | ✅ | ✅ |
+| **激活速度** | 即时 | ⚠️ 2 秒延迟 | 即时 |
+| **会话时长** | 无限制 | ⚠️ 15 分钟后自动退出激活 | 无限制 |
+| **Overlay 样式** | 全部可选 | 固定默认样式 | 自定义颜色/主题/尺寸 |
+| **菜单栏** | 干净图标 | "Free" 标志 + 剩余时间倒计时 | 干净图标 |
+| **iCloud 同步** | ✅ | ❌ | ✅ |
+| **规则导出/分享** | ✅ | ❌ | ✅ |
+
+**Free 层摩擦机制详述：**
+
+1. **延迟激活（2秒）**
+   - 按热键后 Overlay 显示 "Activating..." 倒计时 2 秒，然后进入 activated 状态
+   - 实现位置：KnobStateManager 的 `inactive → activated` 转换中插入延迟
+   - 高频用户每天按几十次热键，每次多等 2 秒形成持续摩擦
+
+2. **15 分钟会话限时**
+   - 从进入 `activated` 状态开始计时 15 分钟
+   - 倒计时在菜单栏状态项实时显示（如 "Free · 12:34 remaining"）
+   - 最后 2 分钟：菜单栏倒计时变为橙色警告
+   - 最后 30 秒：Overlay 短暂闪现 "Session ending soon"
+   - 到期：自动退出 `activated` → `inactive`，显示温和提示 "Session ended. Press ⌘⌥R to start a new session, or upgrade for unlimited use."
+   - 可立即重新激活（走 2 秒延迟），无等待惩罚
+   - 实现位置：KnobStateManager 中添加 sessionTimer
+
+3. **固定 Overlay 样式**
+   - 免费用户只有一种默认 Overlay 外观（标准灰白色调）
+   - 无法自定义颜色、主题、透明度、尺寸
+   - 设置中 Overlay 定制选项显示但加锁标记 + "Upgrade to customize"
+
+4. **菜单栏标识**
+   - 状态栏菜单第一项显示 "PhantomKnob Free" 而非 "PhantomKnob"
+   - 菜单中包含 "Upgrade to Premium" 入口（打开 Paddle 购买页面）
+   - 已激活时显示剩余时间倒计时
 
 **实施要点：**
-1. 创建 FeatureGate 工具类
-2. 免费层限时：KnobStateManager 中添加 5 分钟计时器
-3. 到期提醒：gentle nudge 风格
-4. 锁定 UI：显示功能但加锁图标 + "Upgrade to unlock"
+1. 创建 `LicenseState` 枚举和 `LicenseManager` 单例
+2. 创建 `FeatureGate` 工具类，统一判断当前用户层级
+3. KnobStateManager 中添加 `sessionTimer`（仅 Free 层生效）
+4. StatusBarController 菜单动态更新倒计时
+5. OverlayController 根据 LicenseState 决定是否允许样式定制
+6. 到期提醒采用 gentle nudge 风格——信息性，不阻断
 
 ### 1.6 落地页与支付流程
 
