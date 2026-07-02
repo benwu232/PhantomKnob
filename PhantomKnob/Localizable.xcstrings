@@ -1188,6 +1188,160 @@
           }
         }
       }
+    },
+    "knob.title.volume" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统音量"
+          }
+        }
+      }
+    },
+    "knob.title.brightness" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕亮度"
+          }
+        }
+      }
+    },
+    "knob.title.backlight" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键盘背光"
+          }
+        }
+      }
+    },
+    "tutorial.step1.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎使用 PhantomKnob!"
+          }
+        }
+      }
+    },
+    "tutorial.step1.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通过在触控板上旋转双指来直接调节音量、屏幕亮度和键盘灯。"
+          }
+        }
+      }
+    },
+    "tutorial.step1.hotkey" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双击状态栏上的小圆圈图标，或者按 ⌥Space 快捷键可以呼出/关闭控制面板。"
+          }
+        }
+      }
+    },
+    "tutorial.step1.button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始新手引导"
+          }
+        }
+      }
+    },
+    "tutorial.step2.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手势练习（旋转满 360°）"
+          }
+        }
+      }
+    },
+    "tutorial.step2.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将鼠标移入下方的某个调节盘上，然后放置两指在触控板上进行旋转。"
+          }
+        }
+      }
+    },
+    "tutorial.step2.progress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成: %d° / 360°"
+          }
+        }
+      }
+    },
+    "tutorial.step2.button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一步"
+          }
+        }
+      }
+    },
+    "tutorial.step3.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恭喜，您已完成新手教学！"
+          }
+        }
+      }
+    },
+    "tutorial.step3.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当面板显示时，手势优先改变选中的调节项；当面板隐藏时，手势将控制光标下任意应用的滑块。"
+          }
+        }
+      }
+    },
+    "tutorial.step3.button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启 PhantomKnob"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -32,21 +32,21 @@ struct TutorialView: View {
         VStack(spacing: 20) {
             if tutorialVM.currentStep == 1 {
                 VStack(spacing: 16) {
-                    Text("欢迎使用 PhantomKnob!")
+                    Text(String(localized: "tutorial.step1.title", defaultValue: "Welcome to Phantom Knob!"))
                         .font(.title)
                         .bold()
                         .foregroundColor(.white)
                     
-                    Text("通过在触控板上旋转双指来直接调节音量、屏幕亮度和键盘灯。")
+                    Text(String(localized: "tutorial.step1.description", defaultValue: "Adjust volume, screen brightness, and keyboard backlight by rotating two fingers on your trackpad."))
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white.opacity(0.8))
                     
-                    Text("双击状态栏上的小圆圈图标，或者按 ⌥Space 快捷键可以呼出/关闭控制面板。")
+                    Text(String(localized: "tutorial.step1.hotkey", defaultValue: "Double-click the menu bar icon or press ⌥Space to toggle the control panel."))
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.6))
                     
-                    Button("开始新手引导") {
+                    Button(String(localized: "tutorial.step1.button", defaultValue: "Start Onboarding")) {
                         tutorialVM.nextStep()
                     }
                     .buttonStyle(.borderedProminent)
@@ -54,12 +54,12 @@ struct TutorialView: View {
                 }
             } else if tutorialVM.currentStep == 2 {
                 VStack(spacing: 16) {
-                    Text("手势练习（旋转满 360°）")
+                    Text(String(localized: "tutorial.step2.title", defaultValue: "Gesture Practice (Rotate 360°)"))
                         .font(.title2)
                         .bold()
                         .foregroundColor(.white)
                     
-                    Text("将鼠标移入下方的某个调节盘上，然后放置两指在触控板上进行旋转。")
+                    Text(String(localized: "tutorial.step2.description", defaultValue: "Hover your cursor over any dial below, then place two fingers on the trackpad and rotate."))
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white.opacity(0.8))
@@ -68,11 +68,12 @@ struct TutorialView: View {
                         .progressViewStyle(.linear)
                         .frame(width: 240)
                     
-                    Text("已完成: \(Int(min(tutorialVM.accumulatedRotation, 360.0)))° / 360°")
+                    let progressText = String(format: String(localized: "tutorial.step2.progress", defaultValue: "Completed: %d° / 360°"), Int(min(tutorialVM.accumulatedRotation, 360.0)))
+                    Text(progressText)
                         .font(.system(.caption, design: .monospaced))
                         .foregroundColor(.blue)
                     
-                    Button("下一步") {
+                    Button(String(localized: "tutorial.step2.button", defaultValue: "Next")) {
                         tutorialVM.nextStep()
                     }
                     .disabled(!tutorialVM.isStep2Unlocked)
@@ -80,17 +81,17 @@ struct TutorialView: View {
                 }
             } else {
                 VStack(spacing: 16) {
-                    Text("恭喜，您已完成新手教学！")
+                    Text(String(localized: "tutorial.step3.title", defaultValue: "Congratulations! Onboarding completed."))
                         .font(.title)
                         .bold()
                         .foregroundColor(.white)
                     
-                    Text("当面板显示时，手势优先改变选中的调节项；当面板隐藏时，手势将控制光标下任意应用的滑块。")
+                    Text(String(localized: "tutorial.step3.description", defaultValue: "When this panel is visible, gestures control the selected dial. When hidden, they control any slider under your cursor."))
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white.opacity(0.8))
                     
-                    Button("开启 PhantomKnob") {
+                    Button(String(localized: "tutorial.step3.button", defaultValue: "Get Started")) {
                         tutorialVM.completeTutorial()
                     }
                     .buttonStyle(.borderedProminent)

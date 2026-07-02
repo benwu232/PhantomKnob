@@ -27,7 +27,7 @@ struct KnobPanelView: View {
     private var mainControlLayout: some View {
         HStack(spacing: 40) {
             RadialKnobControlView(
-                title: "系统音量",
+                title: String(localized: "knob.title.volume", defaultValue: "System Volume"),
                 icon: "speaker.wave.3.fill",
                 value: viewModel.volumeVal,
                 angle: viewModel.rotationAngles[.volume, default: 0.0],
@@ -39,7 +39,7 @@ struct KnobPanelView: View {
             }
             
             RadialKnobControlView(
-                title: "屏幕亮度",
+                title: String(localized: "knob.title.brightness", defaultValue: "Screen Brightness"),
                 icon: "sun.max.fill",
                 value: viewModel.brightnessVal,
                 angle: viewModel.rotationAngles[.brightness, default: 0.0],
@@ -51,7 +51,7 @@ struct KnobPanelView: View {
             }
             
             RadialKnobControlView(
-                title: "键盘背光",
+                title: String(localized: "knob.title.backlight", defaultValue: "Keyboard Backlight"),
                 icon: "keyboard.fill",
                 value: viewModel.backlightVal,
                 angle: viewModel.rotationAngles[.keyboardBacklight, default: 0.0],
