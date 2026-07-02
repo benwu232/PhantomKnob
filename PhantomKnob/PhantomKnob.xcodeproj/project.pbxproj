@@ -38,6 +38,7 @@
 		6D99BA3F54A87A56FC3699DF /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */; };
 		6E745EF097F35F553CEA425A /* ControlRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824393D26BE2CFB97C3AED7 /* ControlRule.swift */; };
 		6EAC9E4505DE134DE07E396F /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7057B1B8B0E62D649010B4 /* LaunchAtLoginService.swift */; };
+		72BBB09FF3E8FEA2355A6ECA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 831481C7139BDC5517BEF2FC /* Assets.xcassets */; };
 		73535C7231C6DCFB956DBB0F /* RotationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE2E4031E90F1B450E1D5CD /* RotationDirection.swift */; };
 		782BBECA7771215D3AC55E1D /* InputTranslationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */; };
 		784FB62A003737F37BEE19B9 /* UserGuideWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA6A832C57BD30CB7D46484 /* UserGuideWindowController.swift */; };
@@ -126,6 +127,7 @@
 		78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureClassifierTests.swift; sourceTree = "<group>"; };
 		79E59D5E06F5866BA93B2D8A /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
 		7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetDetectorTests.swift; sourceTree = "<group>"; };
+		831481C7139BDC5517BEF2FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8776E7B99B66A818472F3AD2 /* InputTranslation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslation.swift; sourceTree = "<group>"; };
 		88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultitouchManager.swift; sourceTree = "<group>"; };
 		899D86B28252691F994F0E31 /* AXWriteTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXWriteTranslator.swift; sourceTree = "<group>"; };
@@ -263,6 +265,7 @@
 		AFAF9EF867E7D3062576C0B8 = {
 			isa = PBXGroup;
 			children = (
+				831481C7139BDC5517BEF2FC /* Assets.xcassets */,
 				BFF80AEE2BF2168C727111D1 /* App */,
 				5F82035CB1C4DA47D2E6AB9A /* Control */,
 				B16FFC6517192B8002656370 /* Model */,
@@ -358,6 +361,7 @@
 			buildConfigurationList = A9D339C24648C25841BE63A9 /* Build configuration list for PBXNativeTarget "PhantomKnob" */;
 			buildPhases = (
 				F8E1368AE5DCEA9E76CEC2A7 /* Sources */,
+				638C54D6C1BE974AABAE0D37 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -406,6 +410,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		638C54D6C1BE974AABAE0D37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				72BBB09FF3E8FEA2355A6ECA /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		943943C4A140AB65F3A689CA /* Sources */ = {
