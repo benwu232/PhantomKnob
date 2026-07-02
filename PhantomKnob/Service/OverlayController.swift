@@ -20,6 +20,12 @@ class OverlayController: ObservableObject {
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
     private var fixedCenter: CGPoint = .zero
 
+    private let featureGate: FeatureGate
+
+    init(featureGate: FeatureGate = .shared) {
+        self.featureGate = featureGate
+    }
+
     func show(at position: CGPoint, 
               targetName: String?, 
               scale: Double? = nil, 
@@ -29,9 +35,15 @@ class OverlayController: ObservableObject {
         self.position = position
         self.targetName = targetName
         self.scale = scale
-        self.themeColor = themeColor ?? AppSettings.shared.defaultThemeColor
-        self.overlayStyle = overlayStyle ?? AppSettings.shared.defaultOverlayStyle
-        self.rotationStyle = rotationStyle ?? AppSettings.shared.defaultRotationStyle
+        if !featureGate.hasStyleCustomization {
+            self.themeColor = "#8E8E93"
+            self.overlayStyle = "hud"
+            self.rotationStyle = "ticks"
+        } else {
+            self.themeColor = themeColor ?? AppSettings.shared.defaultThemeColor
+            self.overlayStyle = overlayStyle ?? AppSettings.shared.defaultOverlayStyle
+            self.rotationStyle = rotationStyle ?? AppSettings.shared.defaultRotationStyle
+        }
         self.diameter = 80.0 // 默认直径 (16mm * 5px/mm)
 
         let activeScreen = NSScreen.screens.first { $0.frame.contains(position) } ?? NSScreen.main ?? NSScreen.screens[0]
@@ -96,7 +108,9 @@ class OverlayController: ObservableObject {
         self.angle = angle
         self.isDeadzone = isDeadzone
         self.scale = scale
-        if let themeColor = themeColor {
+        if !featureGate.hasStyleCustomization {
+            self.themeColor = "#8E8E93"
+        } else if let themeColor = themeColor {
             self.themeColor = themeColor
         }
         self.diameter = Self.calculateDiameter(for: radius)

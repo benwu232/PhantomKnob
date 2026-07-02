@@ -54,25 +54,29 @@ class UserGuideViewModelTests: XCTestCase {
         let vm = UserGuideViewModel(audioService: AudioControlService())
         XCTAssertFalse(vm.isGestureActive)
         
-        // Simulating gesture activate
+        let expectation = XCTestExpectation(description: "isGestureActive becomes true")
+        let cancellable = vm.$isGestureActive
+            .dropFirst()
+            .sink { active in
+                if active {
+                    expectation.fulfill()
+                }
+            }
+        
         ControlPanelViewModel.shared.isGestureActive = true
+        wait(for: [expectation], timeout: 5.0)
+        cancellable.cancel()
         
-        let expectation = XCTestExpectation(description: "Wait for published value update")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertTrue(vm.isGestureActive)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1.0)
-        
-        // Simulating gesture deactivate
+        let expectation2 = XCTestExpectation(description: "isGestureActive becomes false")
+        let cancellable2 = vm.$isGestureActive
+            .sink { active in
+                if !active {
+                    expectation2.fulfill()
+                }
+            }
         ControlPanelViewModel.shared.isGestureActive = false
-        
-        let expectation2 = XCTestExpectation(description: "Wait for published value update 2")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertFalse(vm.isGestureActive)
-            expectation2.fulfill()
-        }
-        wait(for: [expectation2], timeout: 1.0)
+        wait(for: [expectation2], timeout: 5.0)
+        cancellable2.cancel()
     }
     
     func testSkipOnNextStartupDefaultsToFalse() {

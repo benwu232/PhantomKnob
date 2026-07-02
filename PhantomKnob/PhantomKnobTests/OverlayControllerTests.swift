@@ -72,4 +72,29 @@ class OverlayControllerTests: XCTestCase {
         controller.update(angle: 90.0, radius: 20.0, isDeadzone: false, scale: 1.2, themeColor: "#FF9F0A")
         XCTAssertEqual(controller.themeColor, "#FF9F0A")
     }
+    
+    func testOverlayGatingForFreeLicense() {
+        class FreeFeatureGate: FeatureGate {
+            override var hasStyleCustomization: Bool { return false }
+        }
+        
+        let mockStorage: [String: String] = [:]
+        let licenseManager = LicenseManager(
+            currentDateProvider: { Date() },
+            storageRead: { key in mockStorage[key] },
+            storageWrite: { _, _ in }
+        )
+        let gate = FreeFeatureGate(licenseManager: licenseManager)
+        
+        let controller = OverlayController(featureGate: gate)
+        
+        controller.show(at: .zero, targetName: "Test", scale: 1.0, themeColor: "#FF0000", overlayStyle: "minimal", rotationStyle: "rimDot")
+        
+        XCTAssertEqual(controller.themeColor, "#8E8E93")
+        XCTAssertEqual(controller.overlayStyle, "hud")
+        XCTAssertEqual(controller.rotationStyle, "ticks")
+        
+        controller.update(angle: 45.0, radius: 20.0, themeColor: "#00FF00")
+        XCTAssertEqual(controller.themeColor, "#8E8E93")
+    }
 }

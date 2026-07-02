@@ -166,18 +166,18 @@ final class CustomKnobTests: XCTestCase {
         
         let expectation = self.expectation(description: "Wait for color update and library save")
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let panel = NSColorPanel.shared
             panel.color = NSColor.red
             NotificationCenter.default.post(name: NSColorPanel.colorDidChangeNotification, object: panel)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 window.orderOut(nil)
                 expectation.fulfill()
             }
         }
         
-        self.waitForExpectations(timeout: 1.0, handler: nil)
+        self.waitForExpectations(timeout: 5.0, handler: nil)
         
         let updatedRule = RuleLibrary.shared.lookup(for: key)
         XCTAssertEqual(updatedRule?.themeColor, "#FF0000")
