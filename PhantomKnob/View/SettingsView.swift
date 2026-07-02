@@ -20,7 +20,7 @@ struct SettingsView: View {
                         activeTab = .general
                     }
                 }) {
-                    Text("通用")
+                    Text(String(localized: "settings.tab.general", defaultValue: "General"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(activeTab == .general ? .white : .white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -35,7 +35,7 @@ struct SettingsView: View {
                         activeTab = .about
                     }
                 }) {
-                    Text("关于")
+                    Text(String(localized: "settings.tab.about", defaultValue: "About"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(activeTab == .about ? .white : .white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -96,16 +96,16 @@ struct GeneralSettingsView: View {
         VStack(spacing: 14) {
             // -- Hotkey Section --
             VStack(alignment: .leading, spacing: 10) {
-                Text("热键")
+                Text(String(localized: "settings.section.hotkey", defaultValue: "Hotkey"))
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.white.opacity(0.5))
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("全局控制开关")
+                        Text(String(localized: "settings.hotkey.title", defaultValue: "Global Toggle Switch"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.white)
-                        Text("激活 / 关闭旋钮控制模式")
+                        Text(String(localized: "settings.hotkey.subtitle", defaultValue: "Activate / deactivate knob control mode"))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.5))
                     }
@@ -123,7 +123,7 @@ struct GeneralSettingsView: View {
 
             // -- Accessibility Section --
             VStack(alignment: .leading, spacing: 10) {
-                Text("辅助功能权限")
+                Text(String(localized: "settings.section.accessibility", defaultValue: "Accessibility Permission"))
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.white.opacity(0.5))
                 
@@ -132,7 +132,9 @@ struct GeneralSettingsView: View {
                         .foregroundColor(hasAccessibilityPermission ? .green : .red)
                         .font(.system(size: 16))
                     
-                    Text(hasAccessibilityPermission ? "已授权辅助功能权限" : "未授权辅助功能权限")
+                    Text(hasAccessibilityPermission 
+                         ? String(localized: "settings.accessibility.granted", defaultValue: "Accessibility permission granted")
+                         : String(localized: "settings.accessibility.notGranted", defaultValue: "Accessibility permission not granted"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white)
                     
@@ -142,7 +144,7 @@ struct GeneralSettingsView: View {
                         Button(action: {
                             openAccessibilityPreferences()
                         }) {
-                            Text("打开系统设置")
+                            Text(String(localized: "settings.accessibility.openSettings", defaultValue: "Open System Settings"))
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 12)
@@ -159,7 +161,7 @@ struct GeneralSettingsView: View {
                 }
                 
                 if !hasAccessibilityPermission {
-                    Text("全局控制模式必须有辅助功能权限才能正常监测手势并执行动作。")
+                    Text(String(localized: "settings.accessibility.description", defaultValue: "Global control mode requires Accessibility permission to detect gestures and perform actions."))
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.4))
                         .padding(.leading, 24)
@@ -175,11 +177,11 @@ struct GeneralSettingsView: View {
 
             // -- Startup Section --
             VStack(alignment: .leading, spacing: 10) {
-                Text("启动")
+                Text(String(localized: "settings.section.startup", defaultValue: "Startup"))
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.white.opacity(0.5))
                 
-                Toggle("登录时自动启动", isOn: Binding(
+                Toggle(String(localized: "settings.startup.launchAtLogin", defaultValue: "Launch at Login"), isOn: Binding(
                     get: { launchAtLogin },
                     set: { newValue in
                         do {
@@ -191,10 +193,10 @@ struct GeneralSettingsView: View {
                             launchAtLogin = newValue
                         } catch {
                             let alert = NSAlert()
-                            alert.messageText = "设置开机启动失败"
+                            alert.messageText = String(localized: "settings.startup.errorTitle", defaultValue: "Failed to set Launch at Login")
                             alert.informativeText = error.localizedDescription
                             alert.alertStyle = .warning
-                            alert.addButton(withTitle: "确定")
+                            alert.addButton(withTitle: String(localized: "settings.alert.ok", defaultValue: "OK"))
                             alert.runModal()
                             
                             launchAtLogin = LaunchAtLoginService.shared.isEnabled
@@ -205,7 +207,7 @@ struct GeneralSettingsView: View {
                 .foregroundColor(.white.opacity(0.85))
                 .font(.system(size: 13))
                 
-                Toggle("启动时显示使用引导", isOn: Binding(
+                Toggle(String(localized: "settings.startup.showGuide", defaultValue: "Show User Guide on Startup"), isOn: Binding(
                     get: { !skipUserGuideOnStartup },
                     set: { skipUserGuideOnStartup = !$0 }
                 ))
@@ -223,16 +225,16 @@ struct GeneralSettingsView: View {
 
             // -- Trackpad Section --
             VStack(alignment: .leading, spacing: 10) {
-                Text("触控板")
+                Text(String(localized: "settings.section.trackpad", defaultValue: "Trackpad"))
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.white.opacity(0.5))
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("重新检测触控板")
+                        Text(String(localized: "settings.trackpad.title", defaultValue: "Redetect Trackpad"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.white)
-                        Text("如果您更换了触控板设备，可以重新发起测试")
+                        Text(String(localized: "settings.trackpad.subtitle", defaultValue: "Restart trackpad detection if you changed devices"))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.5))
                     }
@@ -241,7 +243,7 @@ struct GeneralSettingsView: View {
                     Button(action: {
                         resetAndRedetect()
                     }) {
-                        Text("重新检测…")
+                        Text(String(localized: "settings.trackpad.button", defaultValue: "Redetect…"))
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.white)
                             .padding(.horizontal, 12)
@@ -288,7 +290,8 @@ struct AboutView: View {
     private var versionString: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
         let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
-        return "版本 \(v) (\(b))"
+        let format = String(localized: "about.version", defaultValue: "Version %@ (%@)")
+        return String(format: format, v, b)
     }
 
     var body: some View {
@@ -313,7 +316,7 @@ struct AboutView: View {
                     .foregroundColor(.white.opacity(0.5))
             }
             
-            Text("使用两指旋转手势，像拨动物理旋钮一样\n精确控制任意剪辑或音频应用中的滑块和进度条")
+            Text(String(localized: "about.description", defaultValue: "Use natural two-finger rotation gestures to precisely control\nsliders and dials in video or audio editors, just like a physical dial."))
                 .multilineTextAlignment(.center)
                 .font(.system(size: 13))
                 .foregroundColor(.white.opacity(0.7))
@@ -323,7 +326,7 @@ struct AboutView: View {
                 SettingsWindowController.shared.hide()
                 UserGuideWindowController.shared.show()
             }) {
-                Text("打开使用引导")
+                Text(String(localized: "about.openGuide", defaultValue: "Open User Guide"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.blue)
                     .padding(.horizontal, 16)

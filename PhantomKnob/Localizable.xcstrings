@@ -209,6 +209,985 @@
           }
         }
       }
+    },
+    "settings.tab.general" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
+          }
+        }
+      }
+    },
+    "settings.tab.about" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于"
+          }
+        }
+      }
+    },
+    "settings.section.hotkey" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "热键"
+          }
+        }
+      }
+    },
+    "settings.hotkey.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局控制开关"
+          }
+        }
+      }
+    },
+    "settings.hotkey.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "激活 / 关闭旋钮控制模式"
+          }
+        }
+      }
+    },
+    "settings.section.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "辅助功能权限"
+          }
+        }
+      }
+    },
+    "settings.accessibility.granted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已授权辅助功能权限"
+          }
+        }
+      }
+    },
+    "settings.accessibility.notGranted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未授权辅助功能权限"
+          }
+        }
+      }
+    },
+    "settings.accessibility.openSettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开系统设置"
+          }
+        }
+      }
+    },
+    "settings.accessibility.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局控制模式必须有辅助功能权限才能正常监测手势并执行动作。"
+          }
+        }
+      }
+    },
+    "settings.section.startup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动"
+          }
+        }
+      }
+    },
+    "settings.startup.launchAtLogin" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录时自动启动"
+          }
+        }
+      }
+    },
+    "settings.startup.showGuide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动时显示使用引导"
+          }
+        }
+      }
+    },
+    "settings.startup.errorTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置开机启动失败"
+          }
+        }
+      }
+    },
+    "settings.alert.ok" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定"
+          }
+        }
+      }
+    },
+    "settings.section.trackpad" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控板"
+          }
+        }
+      }
+    },
+    "settings.trackpad.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新检测触控板"
+          }
+        }
+      }
+    },
+    "settings.trackpad.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果您更换了触控板设备，可以重新发起测试"
+          }
+        }
+      }
+    },
+    "settings.trackpad.button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新检测…"
+          }
+        }
+      }
+    },
+    "about.version" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本 %@ (%@)"
+          }
+        }
+      }
+    },
+    "about.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用两指旋转手势，像拨动物理旋钮一样\n精确控制任意剪辑或音频应用中的滑块 and 进度条"
+          }
+        }
+      }
+    },
+    "about.openGuide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开使用引导"
+          }
+        }
+      }
+    },
+    "guide.step1.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第一步：设备检测与基础旋转"
+          }
+        }
+      }
+    },
+    "guide.step1.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检测触控板硬件支持并练习音量旋转手势"
+          }
+        }
+      }
+    },
+    "guide.step2.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二步：三种旋钮对比与深度定制"
+          }
+        }
+      }
+    },
+    "guide.step2.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "练习双环与无极变速旋钮的精细调节、键盘微调及 HUD 定制"
+          }
+        }
+      }
+    },
+    "guide.step3.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第三步：开启全局旋钮控制"
+          }
+        }
+      }
+    },
+    "guide.step3.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "了解激活热键、快捷方式及适配软件列表"
+          }
+        }
+      }
+    },
+    "guide.nav.prev" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上一步"
+          }
+        }
+      }
+    },
+    "guide.nav.next" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一步"
+          }
+        }
+      }
+    },
+    "guide.nav.close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭引导"
+          }
+        }
+      }
+    },
+    "guide.nav.start" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启全局控制"
+          }
+        }
+      }
+    },
+    "guide.step1.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在触控板上练习使用旋钮手势：\n将鼠标移动到音量旋钮上，然后在触控板上用两指做旋转的动作。"
+          }
+        }
+      }
+    },
+    "guide.step1.practiceKnob" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音量练习旋钮"
+          }
+        }
+      }
+    },
+    "guide.step1.detectedSuccess" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✅ 触控板检测成功！您的设备完美支持。"
+          }
+        }
+      }
+    },
+    "guide.step1.waitingDetection" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在等待两指旋转动作以检测设备 (信号样本: %@/3)..."
+          }
+        }
+      }
+    },
+    "guide.step2.doubleKnobName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双环旋钮"
+          }
+        }
+      }
+    },
+    "guide.step2.linearKnobName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无极变速旋钮"
+          }
+        }
+      }
+    },
+    "guide.step2.doubleKnobDesc1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双环（外环0.1倍，内环1.0倍）"
+          }
+        }
+      }
+    },
+    "guide.step2.doubleKnobDesc2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "根据手指距离自动切换微调/粗调"
+          }
+        }
+      }
+    },
+    "guide.step2.customizeButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定制此旋钮"
+          }
+        }
+      }
+    },
+    "guide.step2.linearKnobDesc1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无极变速（0.1 ~ 5.0倍）"
+          }
+        }
+      }
+    },
+    "guide.step2.linearKnobDesc2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "变速步长随手势物理半径无极缩放"
+          }
+        }
+      }
+    },
+    "guide.step2.hintTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💡 使用键盘方向键微调倍率"
+          }
+        }
+      }
+    },
+    "guide.step2.hintLine1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• 旋转中按 ↑/↓ 增减 1.0x，按 ←/→ 增减 0.1x，按数字键 2-9 直接相乘。"
+          }
+        }
+      }
+    },
+    "guide.step2.hintLine2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• 在旋钮上旋转时，按下键盘“C”键可以直接呼出应用内置定制面板。"
+          }
+        }
+      }
+    },
+    "guide.step3.readyTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phantom Knob 已准备就绪！"
+          }
+        }
+      }
+    },
+    "guide.step3.feature1.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局激活热键：⌘ ⌥ R (Command + Option + R)"
+          }
+        }
+      }
+    },
+    "guide.step3.feature1.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在任何有滑动条、步进器或适配控件上，按下此快捷键或在菜单栏开启后，即可通过旋钮手势调节。"
+          }
+        }
+      }
+    },
+    "guide.step3.feature2.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时暂停手势：按住 Option 键"
+          }
+        }
+      }
+    },
+    "guide.step3.feature2.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果您只是想正常使用触控板原生滚动或捏合缩放，可以按住 Option 键临时忽略旋钮手势。"
+          }
+        }
+      }
+    },
+    "guide.step3.feature3.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深度支持的剪辑与多媒体软件"
+          }
+        }
+      }
+    },
+    "guide.step3.feature3.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用已经针对 CapCut (剪映)、QuickTime Player 等主流调色及剪辑软件的时间轴/音量/数值项进行了高保真适配。"
+          }
+        }
+      }
+    },
+    "guide.step3.skipGuide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次启动不再显示使用引导"
+          }
+        }
+      }
+    },
+    "hud.unnamedControl" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未命名控件"
+          }
+        }
+      }
+    },
+    "hud.knobType" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旋钮类型"
+          }
+        }
+      }
+    },
+    "hud.single" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单旋钮"
+          }
+        }
+      }
+    },
+    "hud.double" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双旋钮"
+          }
+        }
+      }
+    },
+    "hud.linear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "线性半径"
+          }
+        }
+      }
+    },
+    "hud.themeColor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主题颜色"
+          }
+        }
+      }
+    },
+    "hud.customColor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义颜色..."
+          }
+        }
+      }
+    },
+    "hud.minRadius" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小响应半径"
+          }
+        }
+      }
+    },
+    "hud.outputTranslation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输出映射方式"
+          }
+        }
+      }
+    },
+    "hud.clockwiseAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顺时针旋转时触发"
+          }
+        }
+      }
+    },
+    "hud.unitPerDegree" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "步长(每度旋转对应的输出变化量)"
+          }
+        }
+      }
+    },
+    "hud.doubleOuter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🟠 外圈旋钮"
+          }
+        }
+      }
+    },
+    "hud.doubleInner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🟢 内圈旋钮"
+          }
+        }
+      }
+    },
+    "hud.doubleBoundarySettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚙️ 切换边界与迟滞范围"
+          }
+        }
+      }
+    },
+    "hud.boundaryRadius" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换边界半径 (Boundary)"
+          }
+        }
+      }
+    },
+    "hud.hysteresisMargin" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "迟滞带宽度 (Margin)"
+          }
+        }
+      }
+    },
+    "hud.locatingIdentifier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "控件定位唯一标识"
+          }
+        }
+      }
+    },
+    "hud.bundleID" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用 ID (Bundle ID)"
+          }
+        }
+      }
+    },
+    "hud.axRole" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元素角色 (AXRole)"
+          }
+        }
+      }
+    },
+    "hud.axIdentifier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元素标识 (AXIdentifier)"
+          }
+        }
+      }
+    },
+    "hud.globalMatch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局匹配 (匹配该 App 内所有此类控件)"
+          }
+        }
+      }
+    },
+    "hud.conflictDetected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠️ 控件标识冲突 (已自动启用层级定位匹配)"
+          }
+        }
+      }
+    },
+    "hud.hierarchyFeatures" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "层级定位特征 (可勾选以进行深度精确定位)"
+          }
+        }
+      }
+    },
+    "hud.splitDifference" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💡 分叉区分点"
+          }
+        }
+      }
+    },
+    "hud.customOuterColor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义外圈颜色..."
+          }
+        }
+      }
+    },
+    "hud.customInnerColor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义内圈颜色..."
+          }
+        }
+      }
+    },
+    "hud.responseRadius" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "响应半径"
+          }
+        }
+      }
+    },
+    "hud.outputTranslationPicker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输出映射"
+          }
+        }
+      }
+    },
+    "hud.clockwiseActionPicker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顺时针触发"
+          }
+        }
+      }
+    },
+    "hud.radiusRange" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "响应半径范围"
+          }
+        }
+      }
+    },
+    "hud.minRadiusLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小半径: %d mm"
+          }
+        }
+      }
+    },
+    "hud.maxRadiusLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大半径: %d mm"
+          }
+        }
+      }
+    },
+    "hud.scaleRange" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "步长(每度旋转对应的输出变化量)范围"
+          }
+        }
+      }
+    },
+    "hud.minScale" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小变化量:"
+          }
+        }
+      }
+    },
+    "hud.maxScale" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大变化量:"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

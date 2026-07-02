@@ -8,24 +8,24 @@ struct UserGuideView: View {
             // Header
             VStack(spacing: 4) {
                 if viewModel.currentStep == 1 {
-                    Text("第一步：设备检测与基础旋转")
+                    Text(String(localized: "guide.step1.title", defaultValue: "Step 1: Device Detection & Basic Rotation"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text("检测触控板硬件支持并练习音量旋转手势")
+                    Text(String(localized: "guide.step1.subtitle", defaultValue: "Check trackpad compatibility and practice rotation gestures"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 } else if viewModel.currentStep == 2 {
-                    Text("第二步：三种旋钮对比与深度定制")
+                    Text(String(localized: "guide.step2.title", defaultValue: "Step 2: Knob Modes & Customization"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text("练习双环与无极变速旋钮的精细调节、键盘微调及 HUD 定制")
+                    Text(String(localized: "guide.step2.subtitle", defaultValue: "Practice fine-tuning with different modes and customize via HUD"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 } else {
-                    Text("第三步：开启全局旋钮控制")
+                    Text(String(localized: "guide.step3.title", defaultValue: "Step 3: Go Global"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text("了解激活热键、快捷方式及适配软件列表")
+                    Text(String(localized: "guide.step3.subtitle", defaultValue: "Learn shortcuts and check supported applications"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 }
@@ -59,7 +59,7 @@ struct UserGuideView: View {
                             viewModel.currentStep -= 1
                         }
                     }) {
-                        Text("上一步")
+                        Text(String(localized: "guide.nav.prev", defaultValue: "Previous"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.white.opacity(0.8))
                             .padding(.horizontal, 16)
@@ -76,7 +76,7 @@ struct UserGuideView: View {
                     Button(action: {
                         viewModel.completeGuide()
                     }) {
-                        Text("关闭引导")
+                        Text(String(localized: "guide.nav.close", defaultValue: "Close Guide"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.white.opacity(0.8))
                             .padding(.horizontal, 16)
@@ -100,7 +100,7 @@ struct UserGuideView: View {
                         }
                     }) {
                         HStack(spacing: 4) {
-                            Text("下一步")
+                            Text(String(localized: "guide.nav.next", defaultValue: "Next"))
                             Image(systemName: "chevron.right")
                         }
                         .font(.system(size: 13, weight: .semibold))
@@ -125,7 +125,7 @@ struct UserGuideView: View {
                     Button(action: {
                         viewModel.completeGuide()
                     }) {
-                        Text("开启全局控制")
+                        Text(String(localized: "guide.nav.start", defaultValue: "Enable Global Control"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
@@ -152,7 +152,7 @@ struct UserGuideView: View {
     // MARK: - Step 1: Device test & Volume practice
     private var step1View: some View {
         VStack(spacing: 16) {
-            Text("请在触控板上练习使用旋钮手势：\n将鼠标移动到音量旋钮上，然后在触控板上用两指做旋转的动作。")
+            Text(String(localized: "guide.step1.description", defaultValue: "Please practice the rotation gesture on your trackpad:\nHover your cursor over the volume dial, then rotate with two fingers."))
                 .font(.system(size: 13))
                 .foregroundColor(.white.opacity(0.8))
                 .multilineTextAlignment(.center)
@@ -161,7 +161,7 @@ struct UserGuideView: View {
             
             ZStack {
                 RadialKnobControlView(
-                    title: "音量练习旋钮",
+                    title: String(localized: "guide.step1.practiceKnob", defaultValue: "Volume Practice Dial"),
                     icon: "speaker.wave.3.fill",
                     value: viewModel.volumeVal,
                     angle: viewModel.rotationAngle,
@@ -187,14 +187,14 @@ struct UserGuideView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
                         .font(.system(size: 16))
-                    Text("✅ 触控板检测成功！您的设备完美支持。")
+                    Text(String(localized: "guide.step1.detectedSuccess", defaultValue: "✅ Trackpad detected successfully! Your device is fully supported."))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.green)
                 } else {
                     ProgressView()
                         .progressViewStyle(.circular)
                         .scaleEffect(0.7)
-                    Text("正在等待两指旋转动作以检测设备 (信号样本: \(viewModel.touchpadSamplesCount)/3)...")
+                    Text(String(format: String(localized: "guide.step1.waitingDetection", defaultValue: "Waiting for rotation gestures to detect device (Samples: %@/3)…"), "\(viewModel.touchpadSamplesCount)"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 }
@@ -217,7 +217,7 @@ struct UserGuideView: View {
                 VStack(spacing: 8) {
                     ZStack {
                         OverlayView(
-                            targetName: "双环旋钮",
+                            targetName: String(localized: "guide.step2.doubleKnobName", defaultValue: "Double-Ring Dial"),
                             valueText: String(format: "%.1f", viewModel.doubleKnobVal),
                             angle: viewModel.doubleKnobAngle,
                             isDeadzone: false,
@@ -233,10 +233,10 @@ struct UserGuideView: View {
                     }
                     .frame(height: 340)
                     
-                    Text("双环（外环0.1倍，内环1.0倍）")
+                    Text(String(localized: "guide.step2.doubleKnobDesc1", defaultValue: "Double-Ring (Outer 0.1x, Inner 1.0x)"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.white.opacity(0.8))
-                    Text("根据手指距离自动切换微调/粗调")
+                    Text(String(localized: "guide.step2.doubleKnobDesc2", defaultValue: "Switches between fine and coarse tuning automatically"))
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.5))
                         .multilineTextAlignment(.center)
@@ -244,7 +244,7 @@ struct UserGuideView: View {
                     Button(action: {
                         triggerCustomizer(for: "DoubleKnob")
                     }) {
-                        Text("定制此旋钮")
+                        Text(String(localized: "guide.step2.customizeButton", defaultValue: "Customize Dial"))
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.blue)
                             .padding(.horizontal, 10)
@@ -260,7 +260,7 @@ struct UserGuideView: View {
                 VStack(spacing: 8) {
                     ZStack {
                         OverlayView(
-                            targetName: "无极变速旋钮",
+                            targetName: String(localized: "guide.step2.linearKnobName", defaultValue: "Variable Speed Dial"),
                             valueText: String(format: "%.1f", viewModel.linearKnobVal),
                             angle: viewModel.linearKnobAngle,
                             isDeadzone: false,
@@ -276,10 +276,10 @@ struct UserGuideView: View {
                     }
                     .frame(height: 340)
                     
-                    Text("无极变速（0.1 ~ 5.0倍）")
+                    Text(String(localized: "guide.step2.linearKnobDesc1", defaultValue: "Variable Speed (0.1x ~ 5.0x)"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.white.opacity(0.8))
-                    Text("变速步长随手势物理半径无极缩放")
+                    Text(String(localized: "guide.step2.linearKnobDesc2", defaultValue: "Speed scales continuously based on finger rotation radius"))
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.5))
                         .multilineTextAlignment(.center)
@@ -287,7 +287,7 @@ struct UserGuideView: View {
                     Button(action: {
                         triggerCustomizer(for: "LinearKnob")
                     }) {
-                        Text("定制此旋钮")
+                        Text(String(localized: "guide.step2.customizeButton", defaultValue: "Customize Dial"))
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.cyan)
                             .padding(.horizontal, 10)
@@ -303,13 +303,13 @@ struct UserGuideView: View {
             
             // Instruction Box
             VStack(alignment: .leading, spacing: 3) {
-                Text("💡 使用键盘方向键微调倍率")
+                Text(String(localized: "guide.step2.hintTitle", defaultValue: "💡 Fine-tune speed with keyboard"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.white)
-                Text("• 旋转中按 ↑/↓ 增减 1.0x，按 ←/→ 增减 0.1x，按数字键 2-9 直接相乘。")
+                Text(String(localized: "guide.step2.hintLine1", defaultValue: "• Press ↑/↓ to adjust by 1.0x, ←/→ to adjust by 0.1x, or 2-9 to multiply speed."))
                     .font(.system(size: 10))
                     .foregroundColor(.white.opacity(0.7))
-                Text("• 在旋钮上旋转时，按下键盘“C”键可以直接呼出应用内置定制面板。")
+                Text(String(localized: "guide.step2.hintLine2", defaultValue: "• Press 'C' key while rotating to open the Customizer HUD panel."))
                     .font(.system(size: 10))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -326,7 +326,7 @@ struct UserGuideView: View {
     // MARK: - Step 3: Global intro & Confirm
     private var step3View: some View {
         VStack(spacing: 20) {
-            Text("Phantom Knob 已准备就绪！")
+            Text(String(localized: "guide.step3.readyTitle", defaultValue: "Phantom Knob is ready!"))
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.green)
                 .padding(.top, 20)
@@ -338,10 +338,10 @@ struct UserGuideView: View {
                         .foregroundColor(.blue)
                         .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("全局激活热键：⌘ ⌥ R (Command + Option + R)")
+                        Text(String(localized: "guide.step3.feature1.title", defaultValue: "Global Toggle Shortcut: ⌘ ⌥ R (Command + Option + R)"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
-                        Text("在任何有滑动条、步进器或适配控件上，按下此快捷键或在菜单栏开启后，即可通过旋钮手势调节。")
+                        Text(String(localized: "guide.step3.feature1.desc", defaultValue: "Press the shortcut or enable it from the menu bar to control any slider, stepper, or dial with gestures."))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -353,10 +353,10 @@ struct UserGuideView: View {
                         .foregroundColor(.cyan)
                         .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("临时暂停手势：按住 Option 键")
+                        Text(String(localized: "guide.step3.feature2.title", defaultValue: "Temporarily Bypass Gestures: Hold Option Key"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
-                        Text("如果您只是想正常使用触控板原生滚动或捏合缩放，可以按住 Option 键临时忽略旋钮手势。")
+                        Text(String(localized: "guide.step3.feature2.desc", defaultValue: "If you want to use native trackpad scrolling or pinch-to-zoom, hold the Option key to temporarily bypass gestures."))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -368,10 +368,10 @@ struct UserGuideView: View {
                         .foregroundColor(.purple)
                         .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("深度支持的剪辑与多媒体软件")
+                        Text(String(localized: "guide.step3.feature3.title", defaultValue: "Out-of-the-box Creative App Integrations"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
-                        Text("应用已经针对 CapCut (剪映)、QuickTime Player 等主流调色及剪辑软件的时间轴/音量/数值项进行了高保真适配。")
+                        Text(String(localized: "guide.step3.feature3.desc", defaultValue: "Phantom Knob is fully optimized for timelines, volumes, and sliders in CapCut, QuickTime Player, and other creative editors."))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -381,7 +381,7 @@ struct UserGuideView: View {
             
             Spacer()
             
-            Toggle("下次启动不再显示使用引导", isOn: $viewModel.skipOnNextStartup)
+            Toggle(String(localized: "guide.step3.skipGuide", defaultValue: "Don't show user guide again on next startup"), isOn: $viewModel.skipOnNextStartup)
                 .toggleStyle(.checkbox)
                 .foregroundColor(.white.opacity(0.85))
                 .font(.system(size: 12))
@@ -396,7 +396,9 @@ struct UserGuideView: View {
             bundleID: "com.phantomknob.controlpanel",
             axRole: "ControlPanel",
             identifier: knobType,
-            displayName: knobType == "DoubleKnob" ? "双环旋钮" : "无极变速旋钮",
+            displayName: knobType == "DoubleKnob" 
+                ? String(localized: "guide.step2.doubleKnobName", defaultValue: "Double-Ring Dial") 
+                : String(localized: "guide.step2.linearKnobName", defaultValue: "Variable Speed Dial"),
             element: nil,
             parentChain: []
         )

@@ -99,7 +99,7 @@ struct CustomizerHUDView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(target.displayName.isEmpty ? "未命名控件" : target.displayName)
+                    Text(target.displayName.isEmpty ? String(localized: "hud.unnamedControl", defaultValue: "Unnamed Control") : target.displayName)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.orange)
                     
@@ -138,13 +138,13 @@ struct CustomizerHUDView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // 1. 旋钮类型 (置于最顶)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("旋钮类型")
+                        Text(String(localized: "hud.knobType", defaultValue: "Knob Type"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(.gray)
                         Picker("", selection: $configType) {
-                            Text("单旋钮").tag(KnobConfigType.single)
-                            Text("双旋钮").tag(KnobConfigType.double)
-                            Text("线性半径").tag(KnobConfigType.linear)
+                            Text(String(localized: "hud.single", defaultValue: "Single Knob")).tag(KnobConfigType.single)
+                            Text(String(localized: "hud.double", defaultValue: "Double-Ring")).tag(KnobConfigType.double)
+                            Text(String(localized: "hud.linear", defaultValue: "Variable Speed")).tag(KnobConfigType.linear)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .onChange(of: configType) { _ in save() }
@@ -164,14 +164,14 @@ struct CustomizerHUDView: View {
                     
                     // 3. 控件定位元数据 (Uniquely Identifying Info)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("控件定位唯一标识")
+                        Text(String(localized: "hud.locatingIdentifier", defaultValue: "Element Locating Identifier"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(.gray)
                         
                         VStack(spacing: 4) {
-                            metadataRow(label: "应用 ID (Bundle ID)", value: target.bundleID)
-                            metadataRow(label: "元素角色 (AXRole)", value: target.axRole)
-                            metadataRow(label: "元素标识 (AXIdentifier)", value: target.identifier ?? "全局匹配 (匹配该 App 内所有此类控件)")
+                            metadataRow(label: String(localized: "hud.bundleID", defaultValue: "Bundle ID"), value: target.bundleID)
+                            metadataRow(label: String(localized: "hud.axRole", defaultValue: "AXRole"), value: target.axRole)
+                            metadataRow(label: String(localized: "hud.axIdentifier", defaultValue: "AXIdentifier"), value: target.identifier ?? String(localized: "hud.globalMatch", defaultValue: "Global match"))
                         }
                         .padding(8)
                         .background(Color.black.opacity(0.2))
@@ -180,7 +180,9 @@ struct CustomizerHUDView: View {
 
                     if !target.parentChain.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(hasConflict ? "⚠️ 控件标识冲突 (已自动启用层级定位匹配)" : "层级定位特征 (可勾选以进行深度精确定位)")
+                            Text(hasConflict 
+                                 ? String(localized: "hud.conflictDetected", defaultValue: "⚠️ Element conflict detected (Hierarchy match enabled)") 
+                                 : String(localized: "hud.hierarchyFeatures", defaultValue: "Hierarchy features (Check to enable precise targeting)"))
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(hasConflict ? .yellow : .gray)
                             
@@ -203,12 +205,12 @@ struct CustomizerHUDView: View {
                                         .toggleStyle(.checkbox)
                                         .disabled(idx == lockedDiffIndex)
                                         
-                                        Text("\(parent.displayName ?? "未命名容器") (\(parent.axRole))")
+                                        Text("\(parent.displayName ?? String(localized: "hud.unnamedControl", defaultValue: "Unnamed Control")) (\(parent.axRole))")
                                             .font(.system(size: 10))
                                             .foregroundColor(idx == lockedDiffIndex ? .green : .white)
                                         
                                         if idx == lockedDiffIndex {
-                                            Text("💡 分叉区分点")
+                                            Text(String(localized: "hud.splitDifference", defaultValue: "💡 Split difference point"))
                                                 .font(.system(size: 8))
                                                 .foregroundColor(.green)
                                                 .padding(.horizontal, 4)
@@ -267,7 +269,7 @@ struct CustomizerHUDView: View {
         VStack(alignment: .leading, spacing: 10) {
             // 配色定制
             VStack(alignment: .leading, spacing: 6) {
-                Text("主题颜色")
+                Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.gray)
                 
@@ -296,7 +298,7 @@ struct CustomizerHUDView: View {
                         Image(systemName: "paintpalette.fill")
                             .font(.system(size: 11))
                             .foregroundColor(Color(hex: themeColor))
-                        Text("自定义颜色...")
+                        Text(String(localized: "hud.customColor", defaultValue: "Custom Color…"))
                             .font(.system(size: 11))
                         Spacer()
                         Text(themeColor)
@@ -318,7 +320,7 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text("最小响应半径").font(.system(size: 11)).foregroundColor(.gray)
+                    Text(String(localized: "hud.minRadius", defaultValue: "Minimum Response Radius")).font(.system(size: 11)).foregroundColor(.gray)
                     Spacer()
                     Text("\(Int(singleMinRadius)) mm")
                         .font(.system(size: 11, design: .monospaced))
@@ -331,7 +333,7 @@ struct CustomizerHUDView: View {
             .padding(.bottom, 6)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("输出映射方式")
+                Text(String(localized: "hud.outputTranslation", defaultValue: "Output Translation"))
                     .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
                 Picker("", selection: $singleTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
@@ -345,7 +347,7 @@ struct CustomizerHUDView: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("顺时针旋转时触发")
+                Text(String(localized: "hud.clockwiseAction", defaultValue: "Clockwise Action"))
                     .font(.system(size: 11))
                 Picker("", selection: $singleCWAction) {
                     ForEach(directionOptions(for: singleTranslation), id: \.self) { opt in
@@ -356,7 +358,7 @@ struct CustomizerHUDView: View {
             }
             
             HStack {
-                Text("步长(每度旋转对应的输出变化量)")
+                Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
                     .font(.system(size: 11))
                 Spacer()
                 TextField("", text: $singleScaleText)
@@ -387,13 +389,13 @@ struct CustomizerHUDView: View {
         VStack(alignment: .leading, spacing: 12) {
             // ⚙️ 切换边界与迟滞范围
             VStack(alignment: .leading, spacing: 10) {
-                Text("⚙️ 切换边界与迟滞范围")
+                Text(String(localized: "hud.doubleBoundarySettings", defaultValue: "⚙️ Boundary & Hysteresis Margin"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.gray)
                 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("切换边界半径 (Boundary)").font(.system(size: 11))
+                        Text(String(localized: "hud.boundaryRadius", defaultValue: "Boundary Radius")).font(.system(size: 11))
                         Spacer()
                         Text("\(Int(doubleInnerRadiusMax)) mm")
                             .font(.system(size: 11, design: .monospaced))
@@ -405,7 +407,7 @@ struct CustomizerHUDView: View {
                         }
                     
                     HStack {
-                        Text("迟滞带宽度 (Margin)").font(.system(size: 11))
+                        Text(String(localized: "hud.hysteresisMargin", defaultValue: "Hysteresis Margin")).font(.system(size: 11))
                         Spacer()
                         Text("\(Int(doubleMargin)) mm")
                             .font(.system(size: 11, design: .monospaced))
@@ -426,12 +428,12 @@ struct CustomizerHUDView: View {
             
             // 外圈旋钮 (粗调) 配置卡片
             VStack(alignment: .leading, spacing: 8) {
-                Text("🟠 外圈旋钮")
+                Text(String(localized: "hud.doubleOuter", defaultValue: "🟠 Outer Ring"))
                     .font(.system(size: 12, weight: .bold)).foregroundColor(.orange)
                 
                 // 外圈配色
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("主题颜色")
+                    Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.gray)
                     
@@ -460,7 +462,7 @@ struct CustomizerHUDView: View {
                             Image(systemName: "paintpalette.fill")
                                 .font(.system(size: 11))
                                 .foregroundColor(Color(hex: doubleOuterThemeColor))
-                            Text("自定义外圈颜色...")
+                            Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
                                 .font(.system(size: 11))
                             Spacer()
                             Text(doubleOuterThemeColor)
@@ -481,13 +483,13 @@ struct CustomizerHUDView: View {
                 .padding(.bottom, 4)
                 
                 HStack {
-                    Text("响应半径").font(.system(size: 11))
+                    Text(String(localized: "hud.responseRadius", defaultValue: "Response Radius")).font(.system(size: 11))
                     Spacer()
                     Text("> \(Int(doubleInnerRadiusMax)) mm")
                         .font(.system(size: 11, design: .monospaced))
                 }
                 
-                Picker("输出映射", selection: $doubleOuterTranslation) {
+                Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleOuterTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
                     }
@@ -497,7 +499,7 @@ struct CustomizerHUDView: View {
                     save()
                 }
                 
-                Picker("顺时针触发", selection: $doubleOuterCWAction) {
+                Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $doubleOuterCWAction) {
                     ForEach(directionOptions(for: doubleOuterTranslation), id: \.self) { opt in
                         Text(actionDescription(opt)).tag(opt)
                     }
@@ -505,7 +507,7 @@ struct CustomizerHUDView: View {
                 .onChange(of: doubleOuterCWAction) { _ in save() }
                 
                 HStack {
-                    Text("步长(每度旋转对应的输出变化量)")
+                    Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $doubleOuterScaleText)
@@ -536,12 +538,12 @@ struct CustomizerHUDView: View {
             
             // 内圈旋钮 (微调) 配置卡片
             VStack(alignment: .leading, spacing: 8) {
-                Text("🟢 内圈旋钮")
+                Text(String(localized: "hud.doubleInner", defaultValue: "🟢 Inner Ring"))
                     .font(.system(size: 12, weight: .bold)).foregroundColor(.green)
                 
                 // 内圈配色
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("主题颜色")
+                    Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.gray)
                     
@@ -570,7 +572,7 @@ struct CustomizerHUDView: View {
                             Image(systemName: "paintpalette.fill")
                                 .font(.system(size: 11))
                                 .foregroundColor(Color(hex: doubleInnerThemeColor))
-                            Text("自定义内圈颜色...")
+                            Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
                                 .font(.system(size: 11))
                             Spacer()
                             Text(doubleInnerThemeColor)
@@ -591,7 +593,7 @@ struct CustomizerHUDView: View {
                 .padding(.bottom, 4)
                 
                 HStack {
-                    Text("响应半径").font(.system(size: 11))
+                    Text(String(localized: "hud.responseRadius", defaultValue: "Response Radius")).font(.system(size: 11))
                     Spacer()
                     Text("\(Int(doubleInnerMinRadius)) mm ~ \(Int(doubleInnerRadiusMax)) mm")
                         .font(.system(size: 11, design: .monospaced))
@@ -602,7 +604,7 @@ struct CustomizerHUDView: View {
                         save()
                     }
                 
-                Picker("输出映射", selection: $doubleInnerTranslation) {
+                Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleInnerTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
                     }
@@ -612,7 +614,7 @@ struct CustomizerHUDView: View {
                     save()
                 }
                 
-                Picker("顺时针触发", selection: $doubleInnerCWAction) {
+                Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $doubleInnerCWAction) {
                     ForEach(directionOptions(for: doubleInnerTranslation), id: \.self) { opt in
                         Text(actionDescription(opt)).tag(opt)
                     }
@@ -620,7 +622,7 @@ struct CustomizerHUDView: View {
                 .onChange(of: doubleInnerCWAction) { _ in save() }
                 
                 HStack {
-                    Text("步长(每度旋转对应的输出变化量)")
+                    Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $doubleInnerScaleText)
@@ -655,7 +657,7 @@ struct CustomizerHUDView: View {
         VStack(alignment: .leading, spacing: 10) {
             // 配色定制
             VStack(alignment: .leading, spacing: 6) {
-                Text("主题颜色")
+                Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.gray)
                 
@@ -684,7 +686,7 @@ struct CustomizerHUDView: View {
                         Image(systemName: "paintpalette.fill")
                             .font(.system(size: 11))
                             .foregroundColor(Color(hex: themeColor))
-                        Text("自定义颜色...")
+                        Text(String(localized: "hud.customColor", defaultValue: "Custom Color…"))
                             .font(.system(size: 11))
                         Spacer()
                         Text(themeColor)
@@ -704,7 +706,7 @@ struct CustomizerHUDView: View {
             }
             .padding(.bottom, 6)
             
-            Picker("输出映射", selection: $linearTranslation) {
+            Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $linearTranslation) {
                 ForEach(InputTranslation.allCases, id: \.self) { trans in
                     Text(transDescription(trans)).tag(trans)
                 }
@@ -714,7 +716,7 @@ struct CustomizerHUDView: View {
                 save()
             }
             
-            Picker("顺时针触发", selection: $linearCWAction) {
+            Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $linearCWAction) {
                 ForEach(directionOptions(for: linearTranslation), id: \.self) { opt in
                     Text(actionDescription(opt)).tag(opt)
                 }
@@ -722,16 +724,18 @@ struct CustomizerHUDView: View {
             .onChange(of: linearCWAction) { _ in save() }
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("响应半径范围").font(.system(size: 11, weight: .semibold))
+                Text(String(localized: "hud.radiusRange", defaultValue: "Response Radius Range")).font(.system(size: 11, weight: .semibold))
                 HStack {
-                    Text("最小半径: \(Int(linearMinRadius)) mm")
+                    let text = String(format: String(localized: "hud.minRadiusLabel", defaultValue: "Min Radius: %d mm"), Int(linearMinRadius))
+                    Text(text)
                     Spacer()
                     Slider(value: $linearMinRadius, in: 5.0...20.0, step: 1.0)
                         .frame(width: 180)
                         .onChange(of: linearMinRadius) { _ in save() }
                 }
                 HStack {
-                    Text("最大半径: \(Int(linearMaxRadius)) mm")
+                    let text = String(format: String(localized: "hud.maxRadiusLabel", defaultValue: "Max Radius: %d mm"), Int(linearMaxRadius))
+                    Text(text)
                     Spacer()
                     Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
                         .frame(width: 180)
@@ -740,9 +744,9 @@ struct CustomizerHUDView: View {
             }
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("步长(每度旋转对应的输出变化量)范围").font(.system(size: 11, weight: .semibold))
+                Text(String(localized: "hud.scaleRange", defaultValue: "Scale Range (Unit per degree)")).font(.system(size: 11, weight: .semibold))
                 HStack {
-                    Text("最小变化量:")
+                    Text(String(localized: "hud.minScale", defaultValue: "Min Scale:"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMinScaleText)
@@ -767,7 +771,7 @@ struct CustomizerHUDView: View {
                         }
                 }
                 HStack {
-                    Text("最大变化量:")
+                    Text(String(localized: "hud.maxScale", defaultValue: "Max Scale:"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMaxScaleText)
