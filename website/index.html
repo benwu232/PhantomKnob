@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Knob — Turn any Trackpad into a Precision Dial</title>
+    <meta name="description" content="Use two-finger rotation gestures to precisely control sliders, timeline playheads, and volume dials in CapCut, Logic Pro, and more.">
+    <link rel="icon" href="assets/logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo-link">
+                <img src="assets/logo.png" alt="Phantom Knob Logo" class="logo-img">
+                Phantom Knob
+            </a>
+            <nav class="nav-menu">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+                <a href="#pricing" class="nav-btn">Get Started</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="section-container hero-grid">
+            <div class="hero-content">
+                <div class="section-tag">Introducing Phantom Knob</div>
+                <h1 class="hero-title">Turn any Trackpad into a <span>Precision Dial</span>.</h1>
+                <p class="hero-desc">Precisely control timeline sliders, color wheels, and dials in CapCut, Premiere, and Logic Pro simply by rotating two fingers on your trackpad. Smooth haptic emulation, custom rules, and zero latency.</p>
+                <div class="hero-actions">
+                    <a href="#pricing" class="btn-primary">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download Free Edition
+                    </a>
+                    <a href="#features" class="btn-secondary">Explore Features</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="visual-container">
+                    <div class="dial-track">
+                        <div class="dial-center" id="interactive-dial">
+                            <div class="dial-pointer"></div>
+                        </div>
+                    </div>
+                    <div class="trackpad-indicator" id="dial-status">Drag dial to practice: 0°</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-container">
+            <div class="section-header">
+                <div class="section-tag">Pure Flow</div>
+                <h2 class="section-title">Designed for Editors and Sound Designers</h2>
+                <p>No more fighting with pixel-imperfect mouse dragging. Make fine micro-adjustments with tactile physical feedback.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    </div>
+                    <h3 class="feature-title">Precision Multipliers</h3>
+                    <p class="feature-desc">Dynamically switch between fine and coarse tuning depending on the radius of your physical gesture. Double-ring dials adapt instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    </div>
+                    <h3 class="feature-title">Dynamic UI Rules</h3>
+                    <p class="feature-desc">Built-in high fidelity rules for CapCut (剪映), QuickTime, Logic Pro, and system controls. Add custom rules for any macOS app in 1 click.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="feature-title">Zero Friction Gating</h3>
+                    <p class="feature-desc">Enjoy full core access for free—all knob styles, hotkeys, and customized rules. Simple activate-to-work flow without blocking paywalls.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="section-container">
+            <div class="section-header">
+                <div class="section-tag">Pricing</div>
+                <h2 class="section-title">Choose Your Version</h2>
+                <p>All core functionalities are free. Upgrade to remove session limitations and unlock beautiful styling options.</p>
+            </div>
+            <div class="pricing-cards">
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <h3 class="plan-name">Free Edition</h3>
+                    <p class="plan-desc">Perfect to get started and build precision habits.</p>
+                    <div class="plan-price">$0</div>
+                    <div class="price-sub">Free forever</div>
+                    <div class="pricing-features-title">Includes:</div>
+                    <ul class="plan-features">
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            All knob styles & rules
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            Keyboard shortcuts & micro-tuning
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            Fixed monochrome grey overlay
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            15-minute active sessions
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            2-second activation delay
+                        </li>
+                    </ul>
+                    <a href="downloads/PhantomKnob.dmg" class="plan-btn free" id="free-download-btn">Download DMG</a>
+                </div>
+                <!-- Pro Plan -->
+                <div class="pricing-card premium">
+                    <div class="pricing-badge">Recommended</div>
+                    <h3 class="plan-name">Pro License</h3>
+                    <p class="plan-desc">For professional creators seeking a seamless workspace.</p>
+                    <div class="plan-price">$19<span> / one-time</span></div>
+                    <div class="price-sub">Lifetime updates & support</div>
+                    <div class="pricing-features-title">Everything in Free plus:</div>
+                    <ul class="plan-features">
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            <strong>Instant activation</strong> (0s delay)
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            <strong>Unlimited session time</strong> (no timeouts)
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            <strong>Overlay customization</strong> (colors & sizes)
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            iCloud sync for custom rules
+                        </li>
+                        <li>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                            Priority email support
+                        </li>
+                    </ul>
+                    <a href="#" class="plan-btn pro" onclick="alert('Checkout process integration coming soon!')">Purchase License</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="section-container">
+            <div class="section-header">
+                <div class="section-tag">FAQ</div>
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p>Have questions about Phantom Knob? Find answers to commonly asked questions below.</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How does Phantom Knob capture trackpad rotations?
+                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Phantom Knob binds directly to macOS Multitouch APIs to monitor raw finger coordinates. By analyzing spatial configurations and touch dynamics, it identifies circular rotation gestures with high accuracy and feeds translation commands back into focused application window coordinates.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Is accessibility permission secure?
+                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. Phantom Knob uses Accessibility API permissions strictly to detect elements under the cursor and post scroll wheel or key events for slider control. Your gesture input data is processed entirely locally on your machine and is never transmitted online.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What happens when the 15-minute free session expires?
+                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>When the session limit is reached, Phantom Knob automatically turns off control mode. There is no penalty, cooldown, or fee—you can instantly reactive it via the menu bar or by pressing the hotkey combination (⌥⌘R) again to start a new session, introducing only a brief activation delay.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Can I build rules for custom apps?
+                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! Simply hover your cursor over any custom UI slider, press the customization hotkey (default is C), and choose from the overlay layout configurations to assign appropriate mappings for immediate control.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-info">
+                <img src="assets/logo.png" alt="Phantom Knob Logo" class="footer-logo">
+                <span>© 2026 Phantom Knob. All rights reserved.</span>
+            </div>
+            <div class="footer-links">
+                <a href="privacy.html" class="footer-link">Privacy Policy</a>
+                <a href="terms.html" class="footer-link">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive JS Dial Logic -->
+    <script>
+        const dial = document.getElementById('interactive-dial');
+        const status = document.getElementById('dial-status');
+        let isDragging = false;
+        let startAngle = 0;
+        let currentAngle = 0;
+
+        function getCenter(el) {
+            const rect = el.getBoundingClientRect();
+            return {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            };
+        }
+
+        function getAngle(event, center) {
+            const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+            const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+            return Math.atan2(clientY - center.y, clientX - center.x);
+        }
+
+        function handleStart(e) {
+            isDragging = true;
+            dial.style.cursor = 'grabbing';
+            const center = getCenter(dial);
+            const angle = getAngle(e, center);
+            startAngle = angle - currentAngle;
+            e.preventDefault();
+        }
+
+        function handleMove(e) {
+            if (!isDragging) return;
+            const center = getCenter(dial);
+            const angle = getAngle(e, center);
+            currentAngle = angle - startAngle;
+            
+            const degrees = Math.round((currentAngle * 180) / Math.PI) % 360;
+            const positiveDegrees = degrees < 0 ? degrees + 360 : degrees;
+            
+            dial.style.transform = `rotate(${currentAngle}rad)`;
+            status.textContent = `Practicing Rotation: ${positiveDegrees}°`;
+        }
+
+        function handleEnd() {
+            isDragging = false;
+            dial.style.cursor = 'grab';
+        }
+
+        dial.addEventListener('mousedown', handleStart);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleEnd);
+
+        dial.addEventListener('touchstart', handleStart);
+        window.addEventListener('touchmove', handleMove);
+        window.addEventListener('touchend', handleEnd);
+
+        // FAQ Toggle Logic
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                faqItems.forEach(i => i.classList.remove('active'));
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
