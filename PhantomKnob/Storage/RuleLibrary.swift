@@ -9,7 +9,7 @@ final class RuleLibrary {
 
     private var rules: [ControlRule] = []
 
-    internal let myKnobsURL: URL = {
+    internal var myKnobsURL: URL = {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport
             .appendingPathComponent("PhantomKnob", isDirectory: true)

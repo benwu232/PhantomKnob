@@ -3,6 +3,26 @@ import SwiftUI
 @testable import PhantomKnob
 
 final class CustomKnobTests: XCTestCase {
+    private var originalMyKnobsURL: URL!
+    private var tempMyKnobsURL: URL!
+
+    override func setUp() {
+        super.setUp()
+        originalMyKnobsURL = RuleLibrary.shared.myKnobsURL
+        let tempDir = NSTemporaryDirectory()
+        let filename = "my_knobs_test_\(UUID().uuidString).json"
+        tempMyKnobsURL = URL(fileURLWithPath: tempDir).appendingPathComponent(filename)
+        RuleLibrary.shared.myKnobsURL = tempMyKnobsURL
+        RuleLibrary.shared.reload()
+    }
+
+    override func tearDown() {
+        try? FileManager.default.removeItem(at: tempMyKnobsURL)
+        RuleLibrary.shared.myKnobsURL = originalMyKnobsURL
+        RuleLibrary.shared.reload()
+        super.tearDown()
+    }
+
     func testControlRuleJSONSerializationSingle() throws {
         let single = SingleKnobConfig(unitPerDegree: 1.2, translation: .axWrite, clockwiseAction: "increase", minRadius: 12.0)
         let rule = ControlRule(
