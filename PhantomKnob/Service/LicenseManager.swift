@@ -117,7 +117,6 @@ class LicenseManager {
         storageWrite("licenseEmail", nil)
     }
     
-    #if DEBUG
     func debugToggleLicense() {
         if case .licensed = currentState {
             storageWrite("licenseKey", nil)
@@ -130,5 +129,4 @@ class LicenseManager {
         }
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
-    #endif
 }

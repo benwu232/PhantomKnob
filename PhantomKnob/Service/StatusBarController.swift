@@ -170,7 +170,6 @@ class StatusBarController: ObservableObject {
         
         menu?.addItem(NSMenuItem.separator())
         
-        #if DEBUG
         let debugToggleItem = NSMenuItem(
             title: "Toggle Free/Premium (Debug)",
             action: #selector(debugToggleLicense),
@@ -180,7 +179,6 @@ class StatusBarController: ObservableObject {
         debugToggleItem.target = self
         menu?.addItem(debugToggleItem)
         menu?.addItem(NSMenuItem.separator())
-        #endif
         
         let quitItem = NSMenuItem(
             title: String(localized: "menu.quit", defaultValue: "Quit"),
@@ -383,9 +381,7 @@ class StatusBarController: ObservableObject {
         }
     }
     
-    #if DEBUG
     @objc func debugToggleLicense() {
         LicenseManager.shared.debugToggleLicense()
     }
-    #endif
 }
