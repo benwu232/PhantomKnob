@@ -107,25 +107,12 @@ codesign -dvvv "${EXPORTED_APP}"
 log_info "运行公证要求性自检评估..."
 spctl --assess --type execute --verbose "${EXPORTED_APP}" || true
 
-# 6. 打包成可分发的 DMG 镜像
-log_info "正在创建 .dmg 磁盘映像文件..."
+# 6. 打包成品牌化可分发的 DMG 镜像
+log_info "正在通过 scripts/package_dmg.sh 创建品牌化 .dmg 磁盘映像文件..."
 DMG_PATH="${DMG_DIR}/${APP_NAME}_v1.0.dmg"
-TEMP_DMG_DIR="${BUILD_DIR}/dmg_temp"
-mkdir -p "${TEMP_DMG_DIR}"
+bash "$(dirname "$0")/package_dmg.sh" "${EXPORTED_APP}" "${DMG_PATH}"
 
-# 复制 App 到临时打包目录
-cp -R "${EXPORTED_APP}" "${TEMP_DMG_DIR}/"
-
-# 使用 hdiutil 构建只读的压缩 DMG 镜像
-hdiutil create \
-    -srcfolder "${TEMP_DMG_DIR}" \
-    -volname "${APP_NAME}" \
-    -fs HFS+ \
-    -fsopt -showresizes \
-    -format UDZO \
-    "${DMG_PATH}"
-
-log_info "DMG 构建成功，路径: ${DMG_PATH}"
+log_info "品牌化 DMG 构建成功，路径: ${DMG_PATH}"
 
 # 7. 对 DMG 磁盘映像本身进行代码签名
 log_info "正在对 DMG 本身进行代码签名..."
