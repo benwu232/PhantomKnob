@@ -16,16 +16,22 @@ public final class CloudSyncManager {
     public static let shared = CloudSyncManager()
     
     #if DEBUG
-    internal var cloudStore: CloudKeyValueStore = NSUbiquitousKeyValueStore.default
+    internal var cloudStore: CloudKeyValueStore
     #else
-    private let cloudStore: CloudKeyValueStore = NSUbiquitousKeyValueStore.default
+    private var cloudStore: CloudKeyValueStore
     #endif
     
     private var cancellables = Set<AnyCancellable>()
     private var isSyncingFromCloud = false
     private var isStarted = false
     
-    private init() {}
+    private init() {
+        if NSClassFromString("XCTestCase") != nil {
+            self.cloudStore = InMemoryCloudStore()
+        } else {
+            self.cloudStore = NSUbiquitousKeyValueStore.default
+        }
+    }
     
     public func start() {
         guard !isStarted else { return }
@@ -215,5 +221,39 @@ public final class CloudSyncManager {
             NotificationCenter.default.post(name: .hotkeyDidChange, object: nil)
             print("[CloudSyncDebug] Posted hotkeyDidChange notification")
         }
+    }
+}
+
+private final class InMemoryCloudStore: CloudKeyValueStore {
+    var storage: [String: Any] = [:]
+    
+    func data(forKey aKey: String) -> Data? {
+        return storage[aKey] as? Data
+    }
+    
+    func set(_ anObject: Any?, forKey aKey: String) {
+        storage[aKey] = anObject
+    }
+    
+    func longLong(forKey aKey: String) -> Int64 {
+        if let val = storage[aKey] as? Int64 {
+            return val
+        }
+        if let val = storage[aKey] as? Int {
+            return Int64(val)
+        }
+        return 0
+    }
+    
+    func bool(forKey aKey: String) -> Bool {
+        return storage[aKey] as? Bool ?? false
+    }
+    
+    func object(forKey aKey: String) -> Any? {
+        return storage[aKey]
+    }
+    
+    func synchronize() -> Bool {
+        return true
     }
 }
