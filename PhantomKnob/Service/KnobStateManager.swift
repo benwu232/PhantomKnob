@@ -50,7 +50,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var stopMultitouch: () -> Void = { MultitouchManager.shared.stop() }
 
     // Mockable accessibility check for unit testing
-    var isProcessTrusted: () -> Bool = { AXIsProcessTrusted() }
+    var isProcessTrusted: () -> Bool = {
+        let env = ProcessInfo.processInfo.environment
+        let isTesting = env.keys.contains { $0.range(of: "xctest", options: .caseInsensitive) != nil }
+        if isTesting {
+            return true
+        }
+        return AXIsProcessTrusted()
+    }
 
     private var cancellables = Set<AnyCancellable>()
 

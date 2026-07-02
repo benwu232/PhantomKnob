@@ -65,7 +65,18 @@ class OverlayControllerTests: XCTestCase {
     }
     
     func testOverlayUpdateThemeColor() {
-        let controller = OverlayController()
+        class PremiumFeatureGate: FeatureGate {
+            override var hasStyleCustomization: Bool { return true }
+        }
+        let mockStorage: [String: String] = [:]
+        let licenseManager = LicenseManager(
+            currentDateProvider: { Date() },
+            storageRead: { key in mockStorage[key] },
+            storageWrite: { _, _ in }
+        )
+        let gate = PremiumFeatureGate(licenseManager: licenseManager)
+        let controller = OverlayController(featureGate: gate)
+        
         controller.show(at: .zero, targetName: "Test", scale: 1.0, themeColor: "#000000")
         XCTAssertEqual(controller.themeColor, "#000000")
         
