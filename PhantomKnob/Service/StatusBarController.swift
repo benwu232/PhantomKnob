@@ -8,6 +8,7 @@ class StatusBarController: ObservableObject {
     private var globalHotkeyMonitor: Any?
     private var localHotkeyMonitor: Any?
     private var toggleMenuItem: NSMenuItem?
+    private var versionMenuItem: NSMenuItem?
     private var hotkeyChangeObserver: AnyCancellable?
     
     @Published var currentState: KnobGlobalState = .inactive
@@ -119,6 +120,16 @@ class StatusBarController: ObservableObject {
         statusMenuItem.isEnabled = false
         menu?.addItem(statusMenuItem)
         
+        let versionItem = NSMenuItem(
+            title: "",
+            action: nil,
+            keyEquivalent: ""
+        )
+        versionItem.isEnabled = false
+        self.versionMenuItem = versionItem
+        menu?.addItem(versionItem)
+        updateVersionItem()
+        
         let guideMenuItem = NSMenuItem(
             title: String(localized: "menu.userGuide", defaultValue: "User Guide…"),
             action: #selector(openGuide),
@@ -175,8 +186,56 @@ class StatusBarController: ObservableObject {
         }
         
         if let menu = menu, let firstItem = menu.items.first {
-            firstItem.title = "状态：\(stateDescription(for: state, targetName: targetName))"
+            let format = String(localized: "menu.status.format", defaultValue: "Status: %@")
+            firstItem.title = String(format: format, stateDescription(for: state, targetName: targetName))
         }
+        
+        updateVersionItem()
+    }
+    
+    func updateVersionItem(timeRemaining: Double? = nil) {
+        let licenseState = LicenseManager.shared.currentState
+        let title: String
+        switch licenseState {
+        case .licensed:
+            title = String(localized: "menu.license.premium", defaultValue: "License: Premium")
+        case .trialing(let days):
+            let format = String(localized: "menu.license.trial", defaultValue: "License: Trial (%d days remaining)")
+            title = String(format: format, days)
+        case .free:
+            let prefix = String(localized: "menu.license.free", defaultValue: "License: Free Edition")
+            if let time = timeRemaining {
+                let minutes = Int(time) / 60
+                let seconds = Int(time) % 60
+                let format = String(localized: "menu.session.remaining", defaultValue: "Session Remaining: %02d:%02d")
+                let sessionStr = String(format: format, minutes, seconds)
+                title = "\(prefix) (\(sessionStr))"
+            } else {
+                let limitStr = String(localized: "menu.session.limit", defaultValue: "Session Limit: 15 minutes")
+                title = "\(prefix) (\(limitStr))"
+            }
+        }
+        
+        versionMenuItem?.title = title
+    }
+    
+    func updateStateActivating(secondsRemaining: Double) {
+        if let button = statusItem?.button {
+            let symbolImage = NSImage(systemSymbolName: "circle.dashed", accessibilityDescription: nil)
+            let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+            let finalImage = symbolImage?.withSymbolConfiguration(config) ?? symbolImage
+            finalImage?.isTemplate = true
+            button.image = finalImage
+            
+            let format = String(localized: "tooltip.activating", defaultValue: "Activating in %ds...")
+            button.toolTip = String(format: format, Int(ceil(secondsRemaining)))
+        }
+        
+        if let menu = menu, let firstItem = menu.items.first {
+            firstItem.title = String(localized: "status.activating", defaultValue: "Status: Activating...")
+        }
+        
+        updateVersionItem()
     }
     
     private var pendingMenuWorkItem: DispatchWorkItem?

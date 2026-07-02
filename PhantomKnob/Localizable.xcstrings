@@ -568,7 +568,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请在触控板上练习使用旋钮手势：\n将鼠标移动到音量旋钮上，然后在触控板上用两指做旋转的动作。"
+            "value" : "请在触控板上练习使用旋钮手势：\n将鼠标移动 to 音量旋钮上，然后在触控板上用两指做旋转的动作。"
           }
         }
       }
@@ -1339,6 +1339,94 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "开启 PhantomKnob"
+          }
+        }
+      }
+    },
+    "menu.license.premium" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "许可证：专业版"
+          }
+        }
+      }
+    },
+    "menu.license.trial" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "许可证：试用版（剩余 %d 天）"
+          }
+        }
+      }
+    },
+    "menu.license.free" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "许可证：免费版"
+          }
+        }
+      }
+    },
+    "menu.session.remaining" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本次会话剩余：%02d:%02d"
+          }
+        }
+      }
+    },
+    "menu.session.limit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会话限时：15分钟"
+          }
+        }
+      }
+    },
+    "status.activating" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状态：激活中..."
+          }
+        }
+      }
+    },
+    "tooltip.activating" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将在 %d 秒内激活..."
+          }
+        }
+      }
+    },
+    "menu.status.format" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状态：%@"
           }
         }
       }

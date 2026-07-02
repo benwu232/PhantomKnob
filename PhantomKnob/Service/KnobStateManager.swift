@@ -39,6 +39,11 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var didSimulateReturnForTest = false
     private var didFocusCurrentTextField = false
     private var isOptionHoldInactive = false
+    
+    private let featureGate: FeatureGate
+    private var activationWorkItem: DispatchWorkItem?
+    private var sessionTimer: Timer?
+    var sessionTimeRemaining: Double = 0.0
 
     // Mockable multitouch control for unit testing
     var startMultitouch: () -> Void = { MultitouchManager.shared.start() }
@@ -55,13 +60,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         overlayController: OverlayController,
         statusBarController: StatusBarController,
         touchHandler: GlobalTouchHandler,
-        sensitivityConfig: SensitivityConfig = SensitivityConfig()
+        sensitivityConfig: SensitivityConfig = SensitivityConfig(),
+        featureGate: FeatureGate = .shared
     ) {
         self.targetDetector = targetDetector
         self.gestureClassifier = gestureClassifier
         self.overlayController = overlayController
         self.statusBarController = statusBarController
         self.touchHandler = touchHandler
+        self.featureGate = featureGate
 
         setupBindings()
         setupEventTap()
@@ -131,11 +138,20 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     func toggleMode() {
         writeDebugLog("[KnobStateManager] toggleMode() called, current state: \(state)")
+        if activationWorkItem != nil {
+            writeDebugLog("[KnobStateManager] Cancelling activation delay")
+            activationWorkItem?.cancel()
+            activationWorkItem = nil
+            statusBarController.updateState(.inactive)
+            return
+        }
+        
         if isOptionHoldActive {
             writeDebugLog("[KnobStateManager] Converting temporary Option Hold to persistent activated state")
             isOptionHoldActive = false
             if case .cooling = state {
                 transition(to: .activated)
+                startSessionLimitTimer()
             }
         } else if isOptionHoldInactive {
             writeDebugLog("[KnobStateManager] Converting temporary Option Inactive to persistent inactive state")
@@ -147,13 +163,31 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 _ = AXIsProcessTrustedWithOptions(options)
                 return
             }
-            writeDebugLog("[KnobStateManager] Transitioning to activated")
-            transition(to: .activated)
-
-            // 启动后台多点触控捕获
-            startMultitouch()
+            
+            let delay = featureGate.activationDelay
+            if delay > 0.0 {
+                writeDebugLog("[KnobStateManager] Scheduling activation after delay of \(delay)s")
+                statusBarController.updateStateActivating(secondsRemaining: delay)
+                
+                let workItem = DispatchWorkItem { [weak self] in
+                    guard let self = self else { return }
+                    self.activationWorkItem = nil
+                    self.completeActivation()
+                }
+                activationWorkItem = workItem
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
+            } else {
+                completeActivation()
+            }
         } else {
             writeDebugLog("[KnobStateManager] Transitioning to inactive")
+            
+            activationWorkItem?.cancel()
+            activationWorkItem = nil
+            
+            sessionTimer?.invalidate()
+            sessionTimer = nil
+            
             transition(to: .inactive)
 
             // 停止后台多点触控捕获
@@ -163,6 +197,37 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             currentTranslator = nil
             overlayController.hide()
             targetDetector.clearCache()
+        }
+    }
+    
+    private func completeActivation() {
+        writeDebugLog("[KnobStateManager] Transitioning to activated")
+        transition(to: .activated)
+        
+        // 启动后台多点触控捕获
+        startMultitouch()
+        
+        startSessionLimitTimer()
+    }
+    
+    private func startSessionLimitTimer() {
+        if sessionTimer != nil { return }
+        
+        guard let limit = featureGate.sessionLimitSeconds else { return }
+        sessionTimeRemaining = limit
+        
+        statusBarController.updateVersionItem(timeRemaining: sessionTimeRemaining)
+        
+        let interval = min(1.0, limit)
+        sessionTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.sessionTimeRemaining -= interval
+            self.statusBarController.updateVersionItem(timeRemaining: self.sessionTimeRemaining)
+            
+            if self.sessionTimeRemaining <= 0 {
+                writeDebugLog("[KnobStateManager] Session limit reached. Automatically deactivating.")
+                self.toggleMode()
+            }
         }
     }
 
