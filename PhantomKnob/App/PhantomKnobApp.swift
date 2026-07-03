@@ -49,6 +49,10 @@ class AppState: ObservableObject {
 struct PhantomKnobApp: App {
     @StateObject private var appState = AppState()
     
+    init() {
+        AppLanguageManager.shared.applyLanguageOverrideOnStartup()
+    }
+    
     var body: some Scene {
         Settings {
             SettingsView()

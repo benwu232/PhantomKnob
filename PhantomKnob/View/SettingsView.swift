@@ -223,6 +223,57 @@ struct GeneralSettingsView: View {
                     .stroke(Color.white.opacity(0.06), lineWidth: 1)
             )
 
+            // -- Language Section --
+            VStack(alignment: .leading, spacing: 10) {
+                Text(String(localized: "settings.section.language", defaultValue: "Language"))
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.5))
+                
+                HStack {
+                    Text(String(localized: "settings.language.title", defaultValue: "Language"))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Picker("", selection: Binding(
+                        get: { AppLanguageManager.shared.currentLanguage },
+                        set: { newLanguage in
+                            let oldLanguage = AppLanguageManager.shared.currentLanguage
+                            guard newLanguage != oldLanguage else { return }
+                            
+                            AppLanguageManager.shared.currentLanguage = newLanguage
+                            
+                            // Prompt user to restart
+                            let alert = NSAlert()
+                            alert.messageText = String(localized: "settings.language.alert.title", defaultValue: "Change Language")
+                            alert.informativeText = String(localized: "settings.language.alert.message", defaultValue: "PhantomKnob must restart to apply the new language settings. Would you like to restart now?")
+                            alert.alertStyle = .informational
+                            alert.addButton(withTitle: String(localized: "settings.language.alert.restartNow", defaultValue: "Restart Now"))
+                            alert.addButton(withTitle: String(localized: "settings.language.alert.later", defaultValue: "Later"))
+                            
+                            let response = alert.runModal()
+                            if response == .alertFirstButtonReturn {
+                                AppLanguageManager.shared.relaunchApp()
+                            }
+                        }
+                    )) {
+                        ForEach(AppLanguageManager.Language.allCases) { lang in
+                            Text(lang.displayName).tag(lang)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 150)
+                }
+            }
+            .padding(12)
+            .background(Color.white.opacity(0.04))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
+
             // -- Trackpad Section --
             VStack(alignment: .leading, spacing: 10) {
                 Text(String(localized: "settings.section.trackpad", defaultValue: "Trackpad"))
