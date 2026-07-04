@@ -66,6 +66,12 @@ rm -rf "${DMG_DIR}"
 mkdir -p "${BUILD_DIR}"
 mkdir -p "${DMG_DIR}"
 
+# 2.5. 设置 build number 自增
+log_info "设置 Build Number..."
+BUILD_NUMBER=$(git rev-list --count HEAD)
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "${PROJECT_DIR}/Info.plist"
+log_info "Build Number 设置为: $BUILD_NUMBER"
+
 # 3. 运行 xcodebuild 进行归档构建 (Archive)
 log_info "开始使用 xcodebuild 编译并归档项目 (Release 配置)..."
 xcodebuild archive \
