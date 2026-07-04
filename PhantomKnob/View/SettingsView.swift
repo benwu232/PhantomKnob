@@ -316,6 +316,28 @@ struct GeneralSettingsView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.white.opacity(0.06), lineWidth: 1)
             )
+
+            // -- Privacy Section --
+            VStack(alignment: .leading, spacing: 10) {
+                Text(String(localized: "settings.section.privacy", defaultValue: "Privacy"))
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.5))
+                
+                Toggle(String(localized: "settings.crashReporting", defaultValue: "Send crash reports"), isOn: Binding(
+                    get: { !UserDefaults.standard.bool(forKey: "disableCrashReporting") },
+                    set: { UserDefaults.standard.set(!$0, forKey: "disableCrashReporting") }
+                ))
+                .toggleStyle(.checkbox)
+                .foregroundColor(.white.opacity(0.85))
+                .font(.system(size: 13))
+            }
+            .padding(12)
+            .background(Color.white.opacity(0.04))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
         }
         .onAppear {
             hasAccessibilityPermission = AXIsProcessTrusted()

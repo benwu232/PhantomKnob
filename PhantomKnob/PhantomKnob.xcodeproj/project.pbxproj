@@ -11,6 +11,7 @@
 		08725A37A3171E8C9E1D442D /* KnobCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73263D014AF58E4418641B4A /* KnobCircleView.swift */; };
 		0B4CB2CFBA892E1561B96459 /* TutorialViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1E79FB5B05E4BFDD848CF1 /* TutorialViewModelTests.swift */; };
 		0C92020E5937FF28D75398DA /* SensitivityConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24BD249E7CFB5B5F78FC45EB /* SensitivityConfigTests.swift */; };
+		0E88544EEEAF7D4393B061CF /* logic-pro.json in Resources */ = {isa = PBXBuildFile; fileRef = BECCD01545240799A9A54A67 /* logic-pro.json */; };
 		16B8B75B6244747BE3B83458 /* KnobPanelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC69641B463FC61F6329B1B1 /* KnobPanelViewModel.swift */; };
 		1773A3A108295DAA417DD1A7 /* KnobPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAF87A6073EE6800820C8A8 /* KnobPanelView.swift */; };
 		19EAA3A782F956431C311D9F /* ScaleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB013A64BA258E0802863E95 /* ScaleResolver.swift */; };
@@ -29,6 +30,7 @@
 		420339FEBDE051C4655DC2FE /* PhantomKnobApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */; };
 		467E33FB2518EA0F2030ECD0 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE64900D039A90EF7F38282 /* AppSettings.swift */; };
 		46905D868F84074B17794338 /* CustomKnobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C9B369B5463055B638A95E6 /* CustomKnobTests.swift */; };
+		48372952AC769B19FEF10F52 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 7EC1E3D674732B23AAA3D06E /* Sentry */; };
 		4F12C029F2E542B599ADF3C4 /* AppLanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CDEC7A8A488C0D2A64D6AA /* AppLanguageManager.swift */; };
 		5469DDF8E41720D5D140AC2C /* KnobPanelViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B8A0EEE9ADDE36EBD680C /* KnobPanelViewModelTests.swift */; };
 		55F5DCD9ECDD28004DFEA03A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F265AA267220CC6CEE2B9C1A /* SettingsView.swift */; };
@@ -56,6 +58,9 @@
 		86B5FBD17C12E7D00F0BC8AE /* ScrollWheelTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E9AB06D406D93054769DF3 /* ScrollWheelTranslator.swift */; };
 		89CC4DDB76C47724BEEF1BC0 /* JSONCParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DD05C13BC59773FD98055F /* JSONCParserTests.swift */; };
 		8CC5803134336AEC78F42B6E /* KnobPanelWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6409308252718581F95D9CD /* KnobPanelWindowController.swift */; };
+		91BA023F6642C406A78AE521 /* Logger+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9785379F4C1295E57267D2BC /* Logger+Extensions.swift */; };
+		92A07B9D8857FFC3528F0A0A /* final-cut-pro.json in Resources */ = {isa = PBXBuildFile; fileRef = BD6585BAA9CD7820FC6E16DC /* final-cut-pro.json */; };
+		9370546A95618B48796AE620 /* davinci-resolve.json in Resources */ = {isa = PBXBuildFile; fileRef = 0960371388A77DEDB4D452D5 /* davinci-resolve.json */; };
 		9517D0F648E2CE11D3436865 /* DemoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33997C526CE3C79D79F6AC92 /* DemoViewModel.swift */; };
 		97D55EA78F60F8DEB1A95D4B /* CustomizerHUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */; };
 		9925F34855238AC2A1877858 /* CloudSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29618E44B78DFC05E3D4E562 /* CloudSyncManagerTests.swift */; };
@@ -105,6 +110,7 @@
 /* Begin PBXFileReference section */
 		0279BBA53DE238B7A49EE6A6 /* KnobState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobState.swift; sourceTree = "<group>"; };
 		0704C959B2850EE4DF5B9648 /* GestureConflictTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureConflictTests.swift; sourceTree = "<group>"; };
+		0960371388A77DEDB4D452D5 /* davinci-resolve.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "davinci-resolve.json"; sourceTree = "<group>"; };
 		0BD747C9F6DC171899EA02CC /* GlobalTouchHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTouchHandler.swift; sourceTree = "<group>"; };
 		0DFF6C161024FEAF9EB3124E /* LicenseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseState.swift; sourceTree = "<group>"; };
 		12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedTarget.swift; sourceTree = "<group>"; };
@@ -152,6 +158,7 @@
 		8FAD6E788B87835867469C3F /* CustomizerHUDWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizerHUDWindowController.swift; sourceTree = "<group>"; };
 		91C4863C27548F454AFB0D80 /* UserGuideViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGuideViewModelTests.swift; sourceTree = "<group>"; };
 		92F9A87164F5EE435A917D0A /* SystemServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemServicesTests.swift; sourceTree = "<group>"; };
+		9785379F4C1295E57267D2BC /* Logger+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Logger+Extensions.swift"; sourceTree = "<group>"; };
 		AA7057B1B8B0E62D649010B4 /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		AB1E79FB5B05E4BFDD848CF1 /* TutorialViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViewModelTests.swift; sourceTree = "<group>"; };
 		AC69641B463FC61F6329B1B1 /* KnobPanelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobPanelViewModel.swift; sourceTree = "<group>"; };
@@ -162,6 +169,8 @@
 		B83D8874A40287B9C9842B36 /* DemoSliderTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSliderTarget.swift; sourceTree = "<group>"; };
 		BB013A64BA258E0802863E95 /* ScaleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleResolver.swift; sourceTree = "<group>"; };
 		BC6423248EA5723E80A08AEA /* DisplayBrightnessService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBrightnessService.swift; sourceTree = "<group>"; };
+		BD6585BAA9CD7820FC6E16DC /* final-cut-pro.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "final-cut-pro.json"; sourceTree = "<group>"; };
+		BECCD01545240799A9A54A67 /* logic-pro.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "logic-pro.json"; sourceTree = "<group>"; };
 		C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobStateManager.swift; sourceTree = "<group>"; };
 		C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMultiplierTests.swift; sourceTree = "<group>"; };
 		C4DECA527A57B3E32B400EF2 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
@@ -190,7 +199,36 @@
 		FF51B47DC27F97A4D1FB480E /* ScaleResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleResolverTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		AAC7D020D674C1AAAC175733 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48372952AC769B19FEF10F52 /* Sentry in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
+		34C1DA44C6DDFEE3EB4470D1 /* pro-rules */ = {
+			isa = PBXGroup;
+			children = (
+				0960371388A77DEDB4D452D5 /* davinci-resolve.json */,
+				BD6585BAA9CD7820FC6E16DC /* final-cut-pro.json */,
+				BECCD01545240799A9A54A67 /* logic-pro.json */,
+			);
+			path = "pro-rules";
+			sourceTree = "<group>";
+		};
+		3535FADFD5B9C7B56E7DF168 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				34C1DA44C6DDFEE3EB4470D1 /* pro-rules */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		3C9E425469C6BD831E85F72C /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -242,6 +280,7 @@
 				C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */,
 				AA7057B1B8B0E62D649010B4 /* LaunchAtLoginService.swift */,
 				33E0AF95038612DA34DA2759 /* LicenseManager.swift */,
+				9785379F4C1295E57267D2BC /* Logger+Extensions.swift */,
 				88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */,
 				14058306126BA0F12A966584 /* OverlayController.swift */,
 				BB013A64BA258E0802863E95 /* ScaleResolver.swift */,
@@ -291,6 +330,7 @@
 				5F82035CB1C4DA47D2E6AB9A /* Control */,
 				B16FFC6517192B8002656370 /* Model */,
 				F050F9EC56C943F0627BF3B7 /* PhantomKnobTests */,
+				3535FADFD5B9C7B56E7DF168 /* Resources */,
 				529BA234DA7F582FBBFDDD7B /* Service */,
 				8A988B8E36DBB3B840565482 /* Storage */,
 				50110A052D3D411FDB492928 /* View */,
@@ -389,6 +429,7 @@
 			buildPhases = (
 				F8E1368AE5DCEA9E76CEC2A7 /* Sources */,
 				638C54D6C1BE974AABAE0D37 /* Resources */,
+				AAC7D020D674C1AAAC175733 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -396,6 +437,7 @@
 			);
 			name = PhantomKnob;
 			packageProductDependencies = (
+				7EC1E3D674732B23AAA3D06E /* Sentry */,
 			);
 			productName = PhantomKnob;
 			productReference = DA6C8F511A5273CBF2A8094B /* PhantomKnob.app */;
@@ -427,6 +469,9 @@
 			);
 			mainGroup = AFAF9EF867E7D3062576C0B8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DF549626FCFD0A6D7328085D /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3C9E425469C6BD831E85F72C /* Products */;
 			projectDirPath = "";
@@ -444,6 +489,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				72BBB09FF3E8FEA2355A6ECA /* Assets.xcassets in Resources */,
+				9370546A95618B48796AE620 /* davinci-resolve.json in Resources */,
+				92A07B9D8857FFC3528F0A0A /* final-cut-pro.json in Resources */,
+				0E88544EEEAF7D4393B061CF /* logic-pro.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,6 +572,7 @@
 				6EAC9E4505DE134DE07E396F /* LaunchAtLoginService.swift in Sources */,
 				2C795AAE6FD6761A192DF9B9 /* LicenseManager.swift in Sources */,
 				E5D78096C3FE0AF7509E0164 /* LicenseState.swift in Sources */,
+				91BA023F6642C406A78AE521 /* Logger+Extensions.swift in Sources */,
 				5B0159A542CFECBEC84D42F7 /* MultitouchManager.swift in Sources */,
 				2C9B5146B062FB1B035278C0 /* OverlayController.swift in Sources */,
 				DA239AC64B92C952567FFAC8 /* OverlayView.swift in Sources */,
@@ -789,6 +838,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DF549626FCFD0A6D7328085D /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7EC1E3D674732B23AAA3D06E /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF549626FCFD0A6D7328085D /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B10F9B6433F5F844F0C50F0F /* Project object */;
 }
