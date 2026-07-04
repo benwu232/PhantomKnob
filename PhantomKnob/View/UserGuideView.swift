@@ -8,24 +8,24 @@ struct UserGuideView: View {
             // Header
             VStack(spacing: 4) {
                 if viewModel.currentStep == 1 {
-                    Text(String(localized: "guide.step1.title", defaultValue: "Step 1: Device Detection & Basic Rotation"))
+                    Text(String(localized: "guide.step1.title", defaultValue: "Step 1: Detect & Rotate"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text(String(localized: "guide.step1.subtitle", defaultValue: "Check trackpad compatibility and practice rotation gestures"))
+                    Text(String(localized: "guide.step1.subtitle", defaultValue: "Verify your trackpad and practice the rotation gesture"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 } else if viewModel.currentStep == 2 {
-                    Text(String(localized: "guide.step2.title", defaultValue: "Step 2: Knob Modes & Customization"))
+                    Text(String(localized: "guide.step2.title", defaultValue: "Step 2: Modes & Customization"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text(String(localized: "guide.step2.subtitle", defaultValue: "Practice fine-tuning with different modes and customize via HUD"))
+                    Text(String(localized: "guide.step2.subtitle", defaultValue: "Try different knob modes and customize your dial"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 } else {
                     Text(String(localized: "guide.step3.title", defaultValue: "Step 3: Go Global"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text(String(localized: "guide.step3.subtitle", defaultValue: "Learn shortcuts and check supported applications"))
+                    Text(String(localized: "guide.step3.subtitle", defaultValue: "Master shortcuts and discover supported apps"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 }
@@ -323,6 +323,19 @@ struct UserGuideView: View {
         }
     }
     
+    private var supportedApps: [String] {
+        let appNames: [String: String] = [
+            "com.apple.QuickTimePlayerX": "QuickTime Player",
+            "com.apple.FinalCut": "Final Cut Pro",
+            "com.apple.logic10": "Logic Pro",
+            "com.blackmagic-design.DaVinciResolve": "DaVinci Resolve",
+            "com.lemon.lvoverseas": "CapCut",
+            "com.lemon.jianyingpro": "JianYing",
+        ]
+        _ = appNames
+        return ["QuickTime Player", "Final Cut Pro", "DaVinci Resolve", "CapCut", "Logic Pro"]
+    }
+
     // MARK: - Step 3: Global intro & Confirm
     private var step3View: some View {
         VStack(spacing: 20) {
@@ -371,9 +384,21 @@ struct UserGuideView: View {
                         Text(String(localized: "guide.step3.feature3.title", defaultValue: "Out-of-the-box Creative App Integrations"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
-                        Text(String(localized: "guide.step3.feature3.desc", defaultValue: "Phantom Knob is fully optimized for timelines, volumes, and sliders in CapCut, QuickTime Player, and other creative editors."))
+                        Text(String(localized: "guide.step3.feature3.desc", defaultValue: "Phantom Knob works with timelines, volumes, and sliders in supported apps. Hover over any control and rotate."))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.6))
+                        HStack(spacing: 6) {
+                            ForEach(supportedApps, id: \.self) { appName in
+                                Text(appName)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.8))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(Color.white.opacity(0.1))
+                                    .cornerRadius(4)
+                            }
+                        }
+                        .padding(.top, 2)
                     }
                 }
             }
