@@ -1,4 +1,5 @@
 import AppKit
+import os
 
 public class AppLanguageManager {
     public static let shared = AppLanguageManager()
@@ -59,7 +60,7 @@ public class AppLanguageManager {
         
         NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, error in
             if let error = error {
-                NSLog("[AppLanguageManager] Failed to relaunch app: \(error)")
+                Logger.language.error("Failed to relaunch app: \(String(describing: error))")
             }
             DispatchQueue.main.async {
                 NSApp.terminate(nil)

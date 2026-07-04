@@ -1,5 +1,6 @@
 import Foundation
 import CoreGraphics
+import os
 
 protocol MultitouchEventDelegate: AnyObject {
     func onMultitouchBegan(points: [Int: CGPoint])
@@ -34,7 +35,7 @@ class MultitouchManager {
         handle = dlopen(libPath, RTLD_NOW)
         
         guard let h = handle else {
-            writeDebugLog("[MultitouchManager] Critical: Failed to dlopen MultitouchSupport.framework")
+            Logger.multitouch.error("Failed to dlopen MultitouchSupport.framework")
             return
         }
         
@@ -54,11 +55,11 @@ class MultitouchManager {
             MTDeviceRelease = unsafeBitCast(sym, to: MTDeviceReleaseFunc.self)
         }
         
-        writeDebugLog("[MultitouchManager] Dynamic library loaded and C functions bound successfully")
+        Logger.multitouch.debug("Dynamic library loaded and C functions bound successfully")
     }
     
     func start() {
-        writeDebugLog("[MultitouchManager] start() requested, isRunning: \(isRunning)")
+        Logger.multitouch.debug("start() requested, isRunning: \(self.isRunning)")
         guard !isRunning else { return }
         
         inGesture = false // 🌟 重置手势生命周期状态机变量，确保不会继承过往周期的残留
@@ -66,18 +67,18 @@ class MultitouchManager {
         guard let createDefault = MTDeviceCreateDefault,
               let registerCallback = MTRegisterContactFrameCallback,
               let startDevice = MTDeviceStart else {
-            writeDebugLog("[MultitouchManager] Start failed: missing bound symbols")
+            Logger.multitouch.error("Start failed: missing bound symbols")
             return
         }
         
         device = createDefault()
         guard let dev = device else {
-            writeDebugLog("[MultitouchManager] Start failed: failed to create default multitouch device")
+            Logger.multitouch.error("Start failed: failed to create default multitouch device")
             return
         }
         
         let callback: MTContactCallback = { device, contactsRawPtr, numContacts, timestamp, frame in
-            writeVerboseLog("[MultitouchManager] Raw Callback: numContacts = \(numContacts), frame = \(frame)")
+            Logger.multitouch.debug("Raw Callback: numContacts = \(numContacts), frame = \(frame)")
             if let rawPtr = contactsRawPtr {
                 let contactsPtr = rawPtr.assumingMemoryBound(to: MTContact.self)
                 MultitouchManager.shared.handleContacts(contactsPtr, count: Int(numContacts))
@@ -91,11 +92,11 @@ class MultitouchManager {
         registerCallback(dev, callback)
         startDevice(dev, 0)
         isRunning = true
-        writeDebugLog("[MultitouchManager] Global background multitouch device start success")
+        Logger.multitouch.debug("Global background multitouch device start success")
     }
     
     func stop() {
-        writeDebugLog("[MultitouchManager] stop() requested, isRunning: \(isRunning)")
+        Logger.multitouch.debug("stop() requested, isRunning: \(self.isRunning)")
         guard isRunning, let dev = device, let stopDevice = MTDeviceStop else { return }
         stopDevice(dev)
         
@@ -107,7 +108,7 @@ class MultitouchManager {
         device = nil
         isRunning = false
         inGesture = false // 🌟 显式复位手势状态，保障生命周期干净
-        writeDebugLog("[MultitouchManager] Stopped global background multitouch monitoring")
+        Logger.multitouch.debug("Stopped global background multitouch monitoring")
     }
     
     // 双指手势生命周期状态机
@@ -121,7 +122,7 @@ class MultitouchManager {
             for i in 0..<count {
                 let contact = contacts[i]
                 // 印出所有手指的 state 信息用于诊断
-                writeVerboseLog("[MultitouchManager] Contact[\(i)]: ID = \(contact.identifier), state = \(contact.state), pos = (\(contact.normalized.pos.x), \(contact.normalized.pos.y))")
+                Logger.multitouch.debug("Contact[\(i)]: ID = \(contact.identifier), state = \(contact.state), pos = (\(contact.normalized.pos.x), \(contact.normalized.pos.y))")
                 
                 // state 的取值范围说明：
                 // 0 = not touching (空插槽)
@@ -142,18 +143,18 @@ class MultitouchManager {
             }
         }
         
-        writeVerboseLog("[MultitouchManager] handleContacts: activePoints count = \(activePoints.count), inGesture = \(inGesture)")
+        Logger.multitouch.debug("handleContacts: activePoints count = \(activePoints.count), inGesture = \(self.inGesture)")
         
         // 当触控板上有且至少有 2 根手指活动时，激活或更新旋钮手势
         if activePoints.count >= 2 {
             if !inGesture {
                 inGesture = true
-                writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchBegan with points = \(activePoints)")
+                Logger.multitouch.debug("Gesture trigger: onMultitouchBegan with points = \(String(describing: activePoints))")
                 DispatchQueue.main.async {
                     self.delegate?.onMultitouchBegan(points: activePoints)
                 }
             } else {
-                writeVerboseLog("[MultitouchManager] Gesture trigger: onMultitouchMoved with points = \(activePoints)")
+                Logger.multitouch.debug("Gesture trigger: onMultitouchMoved with points = \(String(describing: activePoints))")
                 DispatchQueue.main.async {
                     self.delegate?.onMultitouchMoved(points: activePoints)
                 }
@@ -161,7 +162,7 @@ class MultitouchManager {
         } else if activePoints.count == 1 {
             if inGesture {
                 // 🌟 核心改进：当处于手势中且降为单指时，延续旋钮手势，继续发送 Moved 事件
-                writeVerboseLog("[MultitouchManager] Gesture trigger: onMultitouchMoved (1 finger) with points = \(activePoints)")
+                Logger.multitouch.debug("Gesture trigger: onMultitouchMoved (1 finger) with points = \(String(describing: activePoints))")
                 DispatchQueue.main.async {
                     self.delegate?.onMultitouchMoved(points: activePoints)
                 }
@@ -170,7 +171,7 @@ class MultitouchManager {
             // 🌟 当触碰点归零时，说明所有手指完全抬起，立即无延迟终止手势
             if inGesture {
                 inGesture = false
-                writeDebugLog("[MultitouchManager] Gesture trigger: onMultitouchEnded (Immediate - 0 fingers)")
+                Logger.multitouch.debug("Gesture trigger: onMultitouchEnded (Immediate - 0 fingers)")
                 DispatchQueue.main.async {
                     self.delegate?.onMultitouchEnded()
                 }

@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import os
 
 protocol GlobalTouchDelegate: AnyObject {
     func onGlobalScroll(phase: NSEvent.Phase, deltaX: CGFloat, deltaY: CGFloat)
@@ -23,7 +24,7 @@ class GlobalTouchHandler {
         }
         
         isMonitoring = true
-        writeDebugLog("[GlobalTouchHandler] Standard global event tap started successfully")
+        Logger.globalTouch.debug("Standard global event tap started successfully")
     }
     
     func stopMonitoring() {
@@ -32,7 +33,7 @@ class GlobalTouchHandler {
         NSEvent.removeMonitor(monitor)
         eventMonitor = nil
         isMonitoring = false
-        writeDebugLog("[GlobalTouchHandler] Standard global event tap stopped")
+        Logger.globalTouch.debug("Standard global event tap stopped")
     }
     
     private func handleEvent(_ event: NSEvent) {

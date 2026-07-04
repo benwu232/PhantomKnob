@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Combine
+import os
 
 class StatusBarController: ObservableObject {
     private var statusItem: NSStatusItem?
@@ -18,7 +19,7 @@ class StatusBarController: ObservableObject {
     var onToggleHotkey: (() -> Void)?
     
     init() {
-        NSLog("[StatusBarController] init() called")
+        Logger.statusBar.info("init() called")
         setupStatusBar()
         setupGlobalHotkey()
         setupLocalHotkey()
@@ -68,7 +69,7 @@ class StatusBarController: ObservableObject {
 
     private func setupLocalHotkey() {
         localHotkeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            writeDebugLog("[StatusBarController] Local keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
+            Logger.statusBar.debug("Local keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
             if event.keyCode == 49 && event.modifierFlags.contains(.option) {
                 KnobPanelWindowController.shared.toggle()
                 return nil
@@ -76,18 +77,18 @@ class StatusBarController: ObservableObject {
             let hs = HotkeySettings.shared
             let pressedMods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if event.keyCode == hs.keyCode && pressedMods == hs.modifiers {
-                writeDebugLog("[StatusBarController] Local hotkey detected")
+                Logger.statusBar.debug("Local hotkey detected")
                 self?.toggleMode()
                 return nil
             }
             return event
         }
-        NSLog("[StatusBarController] Local hotkey monitor installed")
+        Logger.statusBar.info("Local hotkey monitor installed")
     }
     
     private func setupGlobalHotkey() {
         globalHotkeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            writeDebugLog("[StatusBarController] Global keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
+            Logger.statusBar.debug("Global keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
             if event.keyCode == 49 && event.modifierFlags.contains(.option) {
                 KnobPanelWindowController.shared.toggle()
                 return
@@ -95,11 +96,11 @@ class StatusBarController: ObservableObject {
             let hs = HotkeySettings.shared
             let pressedMods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if event.keyCode == hs.keyCode && pressedMods == hs.modifiers {
-                writeDebugLog("[StatusBarController] Global hotkey detected")
+                Logger.statusBar.debug("Global hotkey detected")
                 self?.toggleMode()
             }
         }
-        NSLog("[StatusBarController] Global hotkey monitor installed")
+        Logger.statusBar.info("Global hotkey monitor installed")
     }
     
     private func setupStatusBar() {
@@ -190,16 +191,16 @@ class StatusBarController: ObservableObject {
     }
     
     func updateState(_ state: KnobGlobalState, targetName: String? = nil) {
-        NSLog("[StatusBarController] updateState called with state: \(state)")
+        Logger.statusBar.info("updateState called with state: \(String(describing: state))")
         self.currentState = state
         self.targetName = targetName
         
         if let button = statusItem?.button {
             let newImage = createIcon(for: state)
-            newImage?.isTemplate = (state == .inactive)
+            newImage?.isTemplate = true
             button.image = newImage
             button.toolTip = createTooltip(for: state, targetName: targetName)
-            NSLog("[StatusBarController] Image updated, isTemplate: \(newImage?.isTemplate ?? false)")
+            Logger.statusBar.info("Image updated, isTemplate: \(newImage?.isTemplate ?? false)")
         }
         
         if let menu = menu, let firstItem = menu.items.first {
@@ -289,12 +290,12 @@ class StatusBarController: ObservableObject {
     }
     
     @objc private func toggleMode() {
-        NSLog("[StatusBarController] toggleMode menu item clicked")
+        Logger.statusBar.info("toggleMode menu item clicked")
         onToggleHotkey?()
     }
     
     @objc func openSettings() {
-        NSLog("[StatusBarController] openSettings() clicked, showing custom settings window")
+        Logger.statusBar.info("openSettings() clicked, showing custom settings window")
         SettingsWindowController.shared.show()
     }
     
@@ -307,31 +308,15 @@ class StatusBarController: ObservableObject {
     }
     
     private func createIcon(for state: KnobGlobalState) -> NSImage? {
-        // Use SF Symbol for better visibility
-        let symbolName: String
+        let name: String
         switch state {
-        case .inactive: symbolName = "circle"
-        case .activated: symbolName = "circle.fill"
-        case .knobing, .cooling: symbolName = "circle.lefthalf.fill"
-        case .customizing: symbolName = "circle.dashed"
+        case .inactive: name = "statusbar_inactive"
+        case .activated: name = "statusbar_activated"
+        case .knobing, .cooling: name = "statusbar_knobing"
+        case .customizing: name = "statusbar_inactive"
         }
-        
-        if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil) {
-            let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-            return image.withSymbolConfiguration(config) ?? image
-        }
-        
-        // Fallback: create a larger circle
-        let size = NSSize(width: 20, height: 20)
-        let image = NSImage(size: size)
-        
-        image.lockFocus()
-        let rect = NSRect(origin: .zero, size: size)
-        let path = NSBezierPath(ovalIn: rect.insetBy(dx: 2, dy: 2))
-        NSColor.gray.setFill()
-        path.fill()
-        image.unlockFocus()
-        
+        let image = NSImage(named: name)
+        image?.isTemplate = true
         return image
     }
     

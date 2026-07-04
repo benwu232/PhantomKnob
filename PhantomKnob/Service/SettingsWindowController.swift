@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import os
 
 class SettingsWindow: NSWindow {
     override var canBecomeKey: Bool {
@@ -23,7 +24,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         }
         
         // Elevate activation policy to .regular so the settings window can get focus and show up in Dock/App Switcher
-        NSLog("[SettingsWindowController] Elevating activation policy to .regular to show settings window")
+        Logger.settings.info("Elevating activation policy to .regular to show settings window")
         NSApp.setActivationPolicy(.regular)
         
         window?.makeKeyAndOrderFront(nil)
@@ -36,7 +37,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     func hide() {
         window?.orderOut(nil)
         removeClickMonitor()
-        NSLog("[SettingsWindowController] Settings window closing, reverting activation policy to .accessory")
+        Logger.settings.info("Settings window closing, reverting activation policy to .accessory")
         NSApp.setActivationPolicy(.accessory)
         
         NotificationCenter.default.post(name: NSNotification.Name("SettingsPanelDidHide"), object: nil)

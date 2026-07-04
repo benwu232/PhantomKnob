@@ -1,5 +1,6 @@
 // PhantomKnob/Storage/RuleLibrary.swift
 import Foundation
+import os
 
 /// 规则库：查找 ControlRule 的单一入口。
 /// 优先级：用户规则（Application Support）> 内置规则（App Bundle）
@@ -31,6 +32,19 @@ final class RuleLibrary {
         
         if let myKnobs = loadKnobs(from: myKnobsURL) {
             loaded.append(contentsOf: myKnobs)
+        }
+
+        // Load pro-rules from app bundle
+        if let proRulesDir = Bundle.main.resourceURL?.appendingPathComponent("pro-rules") {
+            if FileManager.default.fileExists(atPath: proRulesDir.path) {
+                if let files = try? FileManager.default.contentsOfDirectory(at: proRulesDir, includingPropertiesForKeys: nil) {
+                    for file in files where file.pathExtension == "json" {
+                        if let rules = loadKnobs(from: file) {
+                            loaded.append(contentsOf: rules)
+                        }
+                    }
+                }
+            }
         }
 
         self.rules = loaded
@@ -510,10 +524,10 @@ final class RuleLibrary {
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             if let data = defaultRulesJSON.data(using: .utf8) {
                 try data.write(to: myKnobsURL)
-                NSLog("[RuleLibrary] Successfully initialized default my_knobs.json rules.")
+                Logger.ruleLibrary.info("Successfully initialized default my_knobs.json rules.")
             }
         } catch {
-            NSLog("[RuleLibrary] Failed to initialize default my_knobs.json: \(error)")
+            Logger.ruleLibrary.error("Failed to initialize default my_knobs.json: \(String(describing: error))")
         }
     }
 

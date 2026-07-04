@@ -1,10 +1,24 @@
 import SwiftUI
+import os
+import Sentry
 
 class AppState: ObservableObject {
     let knobStateManager: KnobStateManager
     let statusBarController: StatusBarController
     
     init() {
+        SentrySDK.start { options in
+            options.dsn = "YOUR_SENTRY_DSN"
+            options.environment = "production"
+            options.sampleRate = 1.0
+            options.enableAutoSessionTracking = true
+            options.attachStacktrace = true
+            options.beforeSend = { event in
+                let optOut = UserDefaults.standard.bool(forKey: "disableCrashReporting")
+                return optOut ? nil : event
+            }
+        }
+        
         let targetDetector = TargetDetector()
         let gestureClassifier = GestureClassifier()
         let overlayController = OverlayController()
@@ -35,11 +49,11 @@ class AppState: ObservableObject {
             }
         }
         
-        NSLog("[AppState] Initialized and touch monitoring started")
+        Logger.app.info("Initialized and touch monitoring started")
     }
     
     func toggleKnobMode() {
-        NSLog("[AppState] toggleKnobMode called from UI")
+        Logger.app.info("toggleKnobMode called from UI")
         knobStateManager.toggleMode()
     }
 }

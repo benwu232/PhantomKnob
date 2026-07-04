@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import os
 
 public protocol CloudKeyValueStore: AnyObject {
     func data(forKey aKey: String) -> Data?
@@ -98,7 +99,7 @@ public final class CloudSyncManager {
         if cloudData != data {
             cloudStore.set(data, forKey: "com.phantomknob.my_knobs.data")
             cloudStore.synchronize()
-            NSLog("[CloudSync] Synced local custom rules to cloud.")
+            Logger.cloudSync.info("Synced local custom rules to cloud.")
         }
     }
     
@@ -122,7 +123,7 @@ public final class CloudSyncManager {
         
         if changed {
             cloudStore.synchronize()
-            NSLog("[CloudSync] Synced local hotkey to cloud.")
+            Logger.cloudSync.info("Synced local hotkey to cloud.")
         }
     }
     
@@ -133,7 +134,7 @@ public final class CloudSyncManager {
         if localVal != cloudVal {
             cloudStore.set(localVal, forKey: "skipUserGuideOnStartup")
             cloudStore.synchronize()
-            NSLog("[CloudSync] Synced skipUserGuideOnStartup to cloud: \(localVal)")
+            Logger.cloudSync.info("Synced skipUserGuideOnStartup to cloud: \(localVal)")
         }
     }
     

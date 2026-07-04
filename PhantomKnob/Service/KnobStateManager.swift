@@ -3,6 +3,8 @@ import Foundation
 import AppKit
 import Combine
 import ApplicationServices
+import os
+import Sentry
 
 class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDelegate {
     @Published private(set) var state: KnobGlobalState = .inactive
@@ -159,9 +161,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     func toggleMode() {
-        writeDebugLog("[KnobStateManager] toggleMode() called, current state: \(state)")
+        Logger.knob.debug("toggleMode() called, current state: \(String(describing: self.state))")
         if activationWorkItem != nil {
-            writeDebugLog("[KnobStateManager] Cancelling activation delay")
+            Logger.knob.debug("Cancelling activation delay")
             activationWorkItem?.cancel()
             activationWorkItem = nil
             statusBarController.updateState(.inactive)
@@ -169,14 +171,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
         
         if isOptionHoldActive {
-            writeDebugLog("[KnobStateManager] Converting temporary Option Hold to persistent activated state")
+            Logger.knob.debug("Converting temporary Option Hold to persistent activated state")
             isOptionHoldActive = false
             if case .cooling = state {
                 transition(to: .activated)
                 startSessionLimitTimer()
             }
         } else if isOptionHoldInactive {
-            writeDebugLog("[KnobStateManager] Converting temporary Option Inactive to persistent inactive state")
+            Logger.knob.debug("Converting temporary Option Inactive to persistent inactive state")
             isOptionHoldInactive = false
         } else if case .inactive = state {
             let isTrusted = isProcessTrusted()
@@ -188,7 +190,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             
             let delay = featureGate.activationDelay
             if delay > 0.0 {
-                writeDebugLog("[KnobStateManager] Scheduling activation after delay of \(delay)s")
+                Logger.knob.debug("Scheduling activation after delay of \(delay)s")
                 statusBarController.updateStateActivating(secondsRemaining: delay)
                 
                 let workItem = DispatchWorkItem { [weak self] in
@@ -202,7 +204,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 completeActivation()
             }
         } else {
-            writeDebugLog("[KnobStateManager] Transitioning to inactive")
+            Logger.knob.debug("Transitioning to inactive")
             
             activationWorkItem?.cancel()
             activationWorkItem = nil
@@ -223,7 +225,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
     
     private func completeActivation() {
-        writeDebugLog("[KnobStateManager] Transitioning to activated")
+        Logger.knob.debug("Transitioning to activated")
         transition(to: .activated)
         
         // 启动后台多点触控捕获
@@ -247,13 +249,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.statusBarController.updateVersionItem(timeRemaining: self.sessionTimeRemaining)
             
             if self.sessionTimeRemaining <= 0 {
-                writeDebugLog("[KnobStateManager] Session limit reached. Automatically deactivating.")
+                Logger.knob.debug("Session limit reached. Automatically deactivating.")
                 self.toggleMode()
             }
         }
     }
 
     func transition(to newState: KnobGlobalState) {
+        SentrySDK.addBreadcrumb(Breadcrumb(level: .info, category: "state"))
         state = newState
         let targetName = currentTarget?.displayName
         statusBarController.updateState(newState, targetName: targetName)
@@ -265,10 +268,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         if let tap = eventTap {
             if newState != .inactive {
                 CGEvent.tapEnable(tap: tap, enable: true)
-                writeDebugLog("[KnobStateManager] Enabled event tap for state: \(newState)")
+                Logger.knob.debug("Enabled event tap for state: \(String(describing: newState))")
             } else {
                 CGEvent.tapEnable(tap: tap, enable: false)
-                writeDebugLog("[KnobStateManager] Disabled event tap for state: \(newState)")
+                Logger.knob.debug("Disabled event tap for state: \(String(describing: newState))")
             }
         }
         
@@ -321,7 +324,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     private func handleKnobPanelDidShow() {
-        writeDebugLog("[KnobStateManager] handleKnobPanelDidShow() called, current state: \(state)")
+        Logger.knob.debug("handleKnobPanelDidShow() called, current state: \(String(describing: self.state))")
         if case .inactive = state {
             wasInactiveBeforePanelShow = true
             toggleMode()
@@ -331,7 +334,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     private func handleKnobPanelDidHide() {
-        writeDebugLog("[KnobStateManager] handleKnobPanelDidHide() called, current state: \(state), wasInactiveBeforePanelShow: \(wasInactiveBeforePanelShow)")
+        Logger.knob.debug("handleKnobPanelDidHide() called, current state: \(String(describing: self.state)), wasInactiveBeforePanelShow: \(self.wasInactiveBeforePanelShow)")
         if state == .customizing {
             transition(to: wasInactiveBeforePanelShow ? .inactive : .activated)
             wasInactiveBeforePanelShow = false
@@ -411,12 +414,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             if !isOptionHoldActive && !isOptionHoldInactive {
                 if state == .inactive {
                     isOptionHoldActive = true
-                    writeDebugLog("[KnobStateManager] Option key held, starting background multitouch capture (temporary active)")
+                    Logger.knob.debug("Option key held, starting background multitouch capture (temporary active)")
                     transition(to: .activated)
                     startMultitouch()
                 } else if state == .activated {
                     isOptionHoldInactive = true
-                    writeDebugLog("[KnobStateManager] Option key held, stopping background multitouch capture (temporary inactive)")
+                    Logger.knob.debug("Option key held, stopping background multitouch capture (temporary inactive)")
                     transition(to: .inactive)
                     stopMultitouch()
                     overlayController.hide()
@@ -428,7 +431,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         } else {
             if isOptionHoldActive {
                 isOptionHoldActive = false
-                writeDebugLog("[KnobStateManager] Option key released, stopping background multitouch capture (restoring inactive)")
+                Logger.knob.debug("Option key released, stopping background multitouch capture (restoring inactive)")
                 transition(to: .inactive)
                 stopMultitouch()
                 overlayController.hide()
@@ -437,7 +440,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 targetDetector.clearCache()
             } else if isOptionHoldInactive {
                 isOptionHoldInactive = false
-                writeDebugLog("[KnobStateManager] Option key released, restoring background multitouch capture (restoring active)")
+                Logger.knob.debug("Option key released, restoring background multitouch capture (restoring active)")
                 transition(to: .activated)
                 startMultitouch()
             }
@@ -451,7 +454,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     // MARK: - MultitouchEventDelegate (硬件绝对坐标多指捕获)
 
     func onMultitouchBegan(points: [Int: CGPoint]) {
-        writeDebugLog("[KnobStateManager] onMultitouchBegan: points count = \(points.count), state = \(state)")
+        Logger.knob.debug("onMultitouchBegan: points count = \(points.count), state = \(String(describing: self.state))")
         guard state != .inactive else { return }
         
         if points.count >= 2 {
@@ -507,7 +510,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             isInterceptingGestures = true
             if let tap = eventTap {
                 CGEvent.tapEnable(tap: tap, enable: true)
-                writeDebugLog("[KnobStateManager] Enabled event tap on begin (ControlPanel mode)")
+                Logger.knob.debug("Enabled event tap on begin (ControlPanel mode)")
             }
             return
         }
@@ -558,7 +561,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             isInterceptingGestures = true
             if let tap = eventTap {
                 CGEvent.tapEnable(tap: tap, enable: true)
-                writeDebugLog("[KnobStateManager] Enabled event tap on begin (adjustable/option hold)")
+                Logger.knob.debug("Enabled event tap on begin (adjustable/option hold)")
             }
         } else {
             isInterceptingGestures = false
@@ -835,7 +838,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.currentAngle = currentAngle
             previousAngle = currentAngle
 
-            writeVerboseLog("[KnobStateManager] applied delta=\(deltaAngle) dir=\(direction) scale=\(finalScale)")
+            Logger.knob.debug("applied delta=\(deltaAngle) dir=\(String(describing: direction)) scale=\(finalScale)")
         }
     }
 
@@ -930,7 +933,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             },
             userInfo: selfPointer
         ) else {
-            writeDebugLog("[KnobStateManager] Failed to create event tap")
+            Logger.knob.error("Failed to create event tap")
             return
         }
         
@@ -947,7 +950,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     func reEnableEventTap() {
         if let tap = eventTap {
             CGEvent.tapEnable(tap: tap, enable: true)
-            writeDebugLog("[KnobStateManager] Re-enabled event tap after timeout/disable event")
+            Logger.knob.debug("Re-enabled event tap after timeout/disable event")
         }
     }
 
@@ -978,7 +981,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let typeVal = type.rawValue
         if typeVal == 29 || typeVal == 19 || typeVal == 18 {
             if state.isKnobing || isInterceptingGestures {
-                writeDebugLog("[KnobStateManager] Swallowed gesture event of type: \(typeVal) (knobing: \(state.isKnobing), intercepting: \(isInterceptingGestures))")
+                Logger.knob.debug("Swallowed gesture event of type: \(typeVal) (knobing: \(self.state.isKnobing), intercepting: \(self.isInterceptingGestures))")
                 return true
             }
         }
@@ -1298,7 +1301,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     private func simulateClick(at point: CGPoint) {
         didSimulateClickForTest = true
-        writeDebugLog("[KnobStateManager] Simulating click to focus: \(point)")
+        Logger.knob.debug("Simulating click to focus: \(String(describing: point))")
         let source = CGEventSource(stateID: .privateState)
         source?.userData = 0xDEADC0DE // 携带特殊标记防自身 tap 拦截死循环
         
@@ -1321,7 +1324,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     private func simulateReturnKey() {
         didSimulateReturnForTest = true
-        writeDebugLog("[KnobStateManager] Simulating Return key to release text focus")
+        Logger.knob.debug("Simulating Return key to release text focus")
         let source = CGEventSource(stateID: .privateState)
         source?.userData = 0xDEADC0DE
         
@@ -1354,33 +1357,4 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
               
         return TargetDetector.extractResolvePageMode(from: title)
     }
-}
-
-// [DEBUG-LOG-HARNESS]
-private let debugLogQueue = DispatchQueue(label: "com.phantomknob.debugLogQueue")
-
-func writeDebugLog(_ message: String) {
-    debugLogQueue.async {
-        NSLog("[DEBUG-LOG-HARNESS] \(message)")
-        let logPath = "/Users/wb/work/phantom_knob_mac/debug.log"
-        let timestamp = Date().description
-        let logLine = "[\(timestamp)] \(message)\n"
-        if let data = logLine.data(using: .utf8) {
-            if FileManager.default.fileExists(atPath: logPath) {
-                if let fileHandle = FileHandle(forWritingAtPath: logPath) {
-                    fileHandle.seekToEndOfFile()
-                    fileHandle.write(data)
-                    fileHandle.closeFile()
-                }
-            } else {
-                try? data.write(to: URL(fileURLWithPath: logPath))
-            }
-        }
-    }
-}
-
-func writeVerboseLog(_ message: String) {
-    #if DEBUG
-    writeDebugLog(message)
-    #endif
 }
