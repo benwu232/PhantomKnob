@@ -16,7 +16,7 @@ settings:
     ENABLE_PREVIEWS: YES
 
 packages:
-  Sentry:
+  sentry-cocoa:
     url: https://github.com/getsentry/sentry-cocoa
     from: "8.0.0"
 
@@ -58,7 +58,8 @@ targets:
         CODE_SIGN_ENTITLEMENTS: PhantomKnob.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     dependencies:
-      - package: Sentry
+      - package: sentry-cocoa
+        product: Sentry
     info:
       path: Info.plist
       properties:
