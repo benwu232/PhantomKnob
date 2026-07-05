@@ -214,6 +214,14 @@ struct GeneralSettingsView: View {
                 .toggleStyle(.checkbox)
                 .foregroundColor(.white.opacity(0.85))
                 .font(.system(size: 13))
+
+                Toggle(String(localized: "settings.startup.autoUpdate", defaultValue: "Automatically check for updates"), isOn: Binding(
+                    get: { UserDefaults.standard.object(forKey: "SUEnableAutomaticChecks") as? Bool ?? true },
+                    set: { UserDefaults.standard.set($0, forKey: "SUEnableAutomaticChecks") }
+                ))
+                .toggleStyle(.checkbox)
+                .foregroundColor(.white.opacity(0.85))
+                .font(.system(size: 13))
             }
             .padding(12)
             .background(Color.white.opacity(0.04))
@@ -326,6 +334,19 @@ struct GeneralSettingsView: View {
                 Toggle(String(localized: "settings.crashReporting", defaultValue: "Send crash reports"), isOn: Binding(
                     get: { !UserDefaults.standard.bool(forKey: "disableCrashReporting") },
                     set: { UserDefaults.standard.set(!$0, forKey: "disableCrashReporting") }
+                ))
+                .toggleStyle(.checkbox)
+                .foregroundColor(.white.opacity(0.85))
+                .font(.system(size: 13))
+
+                Toggle(String(localized: "settings.analytics", defaultValue: "Share anonymous usage statistics"), isOn: Binding(
+                    get: { !UserDefaults.standard.bool(forKey: "disableAnalytics") },
+                    set: { newValue in
+                        UserDefaults.standard.set(!newValue, forKey: "disableAnalytics")
+                        if newValue {
+                            AnalyticsManager.shared.initialize()
+                        }
+                    }
                 ))
                 .toggleStyle(.checkbox)
                 .foregroundColor(.white.opacity(0.85))
