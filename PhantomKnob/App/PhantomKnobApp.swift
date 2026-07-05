@@ -23,6 +23,8 @@ class AppState: ObservableObject {
         }
         #endif
         
+        AnalyticsManager.shared.initialize()
+        
         let targetDetector = TargetDetector()
         let gestureClassifier = GestureClassifier()
         let overlayController = OverlayController()
