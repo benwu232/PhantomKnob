@@ -8,7 +8,7 @@ final class AnalyticsManager {
     
     func initialize() {
         guard !UserDefaults.standard.bool(forKey: "disableAnalytics") else { return }
-        let config = TelemetryManagerConfiguration(appID: "YOUR_TELEMETRYDECK_APP_ID")
+        let config = TelemetryManagerConfiguration(appID: "00000000-0000-0000-0000-000000000000")
         TelemetryManager.initialize(with: config)
         
         trackEvent("appLaunched")
