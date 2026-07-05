@@ -12,9 +12,15 @@ let package = Package(
             targets: ["PhantomKnob"]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "8.0.0")
+    ],
     targets: [
         .target(
             name: "PhantomKnob",
+            dependencies: [
+                .product(name: "Sentry", package: "sentry-cocoa")
+            ],
             path: ".",
             sources: [
                 "Model/",
