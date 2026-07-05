@@ -55,6 +55,10 @@ class AppState: ObservableObject {
             }
         }
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            ReleaseNotesController.shared.showIfNeeded()
+        }
+        
         PKLogger.app.info("Initialized and touch monitoring started")
     }
     
