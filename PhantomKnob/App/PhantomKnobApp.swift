@@ -49,11 +49,11 @@ class AppState: ObservableObject {
             }
         }
         
-        Logger.app.info("Initialized and touch monitoring started")
+        os.Logger.app.info("Initialized and touch monitoring started")
     }
     
     func toggleKnobMode() {
-        Logger.app.info("toggleKnobMode called from UI")
+        os.Logger.app.info("toggleKnobMode called from UI")
         knobStateManager.toggleMode()
     }
 }
