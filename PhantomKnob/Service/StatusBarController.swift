@@ -146,6 +146,22 @@ class StatusBarController: ObservableObject {
         guideMenuItem.target = self
         menu?.addItem(guideMenuItem)
         
+        let updateItem = NSMenuItem(
+            title: String(localized: "menu.checkUpdates", defaultValue: "Check for Updates…"),
+            action: #selector(checkForUpdates),
+            keyEquivalent: ""
+        )
+        updateItem.target = self
+        menu?.addItem(updateItem)
+        
+        let feedbackItem = NSMenuItem(
+            title: String(localized: "menu.feedback", defaultValue: "Send Feedback…"),
+            action: #selector(sendFeedback),
+            keyEquivalent: ""
+        )
+        feedbackItem.target = self
+        menu?.addItem(feedbackItem)
+        
         menu?.addItem(NSMenuItem.separator())
         
         let hs = HotkeySettings.shared
@@ -305,6 +321,39 @@ class StatusBarController: ObservableObject {
     
     @objc private func openGuide() {
         UserGuideWindowController.shared.show()
+    }
+    
+    @objc private func checkForUpdates() {
+        UpdateManager.shared.checkForUpdates()
+    }
+
+    @objc private func sendFeedback() {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        let os = ProcessInfo.processInfo.operatingSystemVersionString
+        let model = Host.current().localizedName ?? "Unknown Mac"
+        let license = "\(LicenseManager.shared.currentState)"
+
+        let subject = "PhantomKnob Feedback (v\(version) build \(build))"
+        let body = """
+        
+        
+        ---
+        App: PhantomKnob v\(version) (\(build))
+        macOS: \(os)
+        Device: \(model)
+        License: \(license)
+        """
+
+        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let mailto = "mailto:support@phantomknob.com?subject=\(encodedSubject)&body=\(encodedBody)"
+
+        if let url = URL(string: mailto) {
+            NSWorkspace.shared.open(url)
+        }
+        
+        AnalyticsManager.shared.trackEvent("feedbackClicked")
     }
     
     private func createIcon(for state: KnobGlobalState) -> NSImage? {
