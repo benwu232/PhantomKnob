@@ -82,7 +82,7 @@ targets:
         NSHumanReadableCopyright: "Copyright © 2025 Ben Wu. All rights reserved."
         LSUIElement: true
         SUFeedURL: "https://phantomknob.com/appcast.xml"
-        SUPublicEDKey: "PLACEHOLDER_PUBLIC_KEY"
+        SUPublicEDKey: "5CmEsYugmzzvzy/eL9awVk3/bqjCwAap9i0K3ao/3sM="
         SUEnableAutomaticChecks: true
 
   PhantomKnobTests:
