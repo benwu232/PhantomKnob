@@ -19,6 +19,12 @@ packages:
   sentry-cocoa:
     url: https://github.com/getsentry/sentry-cocoa
     from: "8.0.0"
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: "2.5.0"
+  TelemetryClient:
+    url: https://github.com/TelemetryDeck/SwiftClient
+    from: "1.0.0"
 
 targets:
   PhantomKnob:
@@ -60,6 +66,10 @@ targets:
     dependencies:
       - package: sentry-cocoa
         product: Sentry
+      - package: Sparkle
+        product: Sparkle
+      - package: TelemetryClient
+        product: TelemetryClient
     info:
       path: Info.plist
       properties:
@@ -71,6 +81,9 @@ targets:
         LSApplicationCategoryType: public.app-category.utilities
         NSHumanReadableCopyright: "Copyright © 2025 Ben Wu. All rights reserved."
         LSUIElement: true
+        SUFeedURL: "https://phantomknob.com/appcast.xml"
+        SUPublicEDKey: "PLACEHOLDER_PUBLIC_KEY"
+        SUEnableAutomaticChecks: true
 
   PhantomKnobTests:
     type: bundle.unit-test
