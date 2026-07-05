@@ -1,12 +1,15 @@
 import SwiftUI
 import os
+#if canImport(Sentry)
 import Sentry
+#endif
 
 class AppState: ObservableObject {
     let knobStateManager: KnobStateManager
     let statusBarController: StatusBarController
     
     init() {
+        #if canImport(Sentry)
         SentrySDK.start { options in
             options.dsn = "YOUR_SENTRY_DSN"
             options.environment = "production"
@@ -18,6 +21,7 @@ class AppState: ObservableObject {
                 return optOut ? nil : event
             }
         }
+        #endif
         
         let targetDetector = TargetDetector()
         let gestureClassifier = GestureClassifier()

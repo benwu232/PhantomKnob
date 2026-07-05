@@ -4,7 +4,9 @@ import AppKit
 import Combine
 import ApplicationServices
 import os
+#if canImport(Sentry)
 import Sentry
+#endif
 
 class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDelegate {
     @Published private(set) var state: KnobGlobalState = .inactive
@@ -256,7 +258,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     func transition(to newState: KnobGlobalState) {
+        #if canImport(Sentry)
         SentrySDK.addBreadcrumb(Breadcrumb(level: .info, category: "state"))
+        #endif
         state = newState
         let targetName = currentTarget?.displayName
         statusBarController.updateState(newState, targetName: targetName)
