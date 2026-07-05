@@ -99,7 +99,7 @@ public final class CloudSyncManager {
         if cloudData != data {
             cloudStore.set(data, forKey: "com.phantomknob.my_knobs.data")
             cloudStore.synchronize()
-            Logger.cloudSync.info("Synced local custom rules to cloud.")
+            PKLogger.cloudSync.info("Synced local custom rules to cloud.")
         }
     }
     
@@ -123,7 +123,7 @@ public final class CloudSyncManager {
         
         if changed {
             cloudStore.synchronize()
-            Logger.cloudSync.info("Synced local hotkey to cloud.")
+            PKLogger.cloudSync.info("Synced local hotkey to cloud.")
         }
     }
     
@@ -134,7 +134,7 @@ public final class CloudSyncManager {
         if localVal != cloudVal {
             cloudStore.set(localVal, forKey: "skipUserGuideOnStartup")
             cloudStore.synchronize()
-            Logger.cloudSync.info("Synced skipUserGuideOnStartup to cloud: \(localVal)")
+            PKLogger.cloudSync.info("Synced skipUserGuideOnStartup to cloud: \(localVal)")
         }
     }
     

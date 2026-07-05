@@ -90,7 +90,7 @@ class OverlayController: ObservableObject {
         self.fixedCenter = chosenCenter
 
         showCount += 1
-        Logger.overlay.debug("show() called: targetName = \(String(describing: targetName)), scale = \(self.scale ?? 0.0), showCount = \(self.showCount), position = \(String(describing: self.position)), fixedCenter = \(String(describing: self.fixedCenter))")
+        PKLogger.overlay.debug("show() called: targetName = \(String(describing: targetName)), scale = \(self.scale ?? 0.0), showCount = \(self.showCount), position = \(String(describing: self.position)), fixedCenter = \(String(describing: self.fixedCenter))")
 
         if panel == nil {
             createPanel()
@@ -121,14 +121,14 @@ class OverlayController: ObservableObject {
     }
 
     func hide() {
-        Logger.overlay.debug("hide() called: ordering panel out, isVisible was \(self.isVisible)")
+        PKLogger.overlay.debug("hide() called: ordering panel out, isVisible was \(self.isVisible)")
         panel?.orderOut(nil)
         isVisible = false
     }
 
     func fadeOut(duration: TimeInterval = 1.0, completion: (() -> Void)? = nil) {
         let currentGeneration = showCount // 捕获开启淡出时的代数标记
-        Logger.overlay.debug("fadeOut() initiated: duration = \(duration), currentGeneration = \(currentGeneration)")
+        PKLogger.overlay.debug("fadeOut() initiated: duration = \(duration), currentGeneration = \(currentGeneration)")
 
         NSAnimationContext.runAnimationGroup { context in
             context.duration = duration
@@ -140,11 +140,11 @@ class OverlayController: ObservableObject {
             // 竞态校验：如果在淡出期间或之后，开启了新的手势周期（showCount 发生变更），
             // 则说明新 Overlay 已经激活，必须立刻跳过隐藏逻辑，防止误关新界面的 Bug！
             guard self.showCount == currentGeneration else {
-                Logger.overlay.debug("fadeOut aborted: new gesture session detected (showCount changed from \(currentGeneration) to \(self.showCount))")
+                PKLogger.overlay.debug("fadeOut aborted: new gesture session detected (showCount changed from \(currentGeneration) to \(self.showCount))")
                 return
             }
 
-            Logger.overlay.debug("fadeOut completed successfully: calling hide() for generation \(currentGeneration)")
+            PKLogger.overlay.debug("fadeOut completed successfully: calling hide() for generation \(currentGeneration)")
             self.hide()
             self.panel?.alphaValue = 1
             completion?()

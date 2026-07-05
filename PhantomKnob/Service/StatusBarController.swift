@@ -19,7 +19,7 @@ class StatusBarController: ObservableObject {
     var onToggleHotkey: (() -> Void)?
     
     init() {
-        Logger.statusBar.info("init() called")
+        PKLogger.statusBar.info("init() called")
         setupStatusBar()
         setupGlobalHotkey()
         setupLocalHotkey()
@@ -69,7 +69,7 @@ class StatusBarController: ObservableObject {
 
     private func setupLocalHotkey() {
         localHotkeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            Logger.statusBar.debug("Local keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
+            PKLogger.statusBar.debug("Local keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
             if event.keyCode == 49 && event.modifierFlags.contains(.option) {
                 KnobPanelWindowController.shared.toggle()
                 return nil
@@ -77,18 +77,18 @@ class StatusBarController: ObservableObject {
             let hs = HotkeySettings.shared
             let pressedMods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if event.keyCode == hs.keyCode && pressedMods == hs.modifiers {
-                Logger.statusBar.debug("Local hotkey detected")
+                PKLogger.statusBar.debug("Local hotkey detected")
                 self?.toggleMode()
                 return nil
             }
             return event
         }
-        Logger.statusBar.info("Local hotkey monitor installed")
+        PKLogger.statusBar.info("Local hotkey monitor installed")
     }
     
     private func setupGlobalHotkey() {
         globalHotkeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            Logger.statusBar.debug("Global keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
+            PKLogger.statusBar.debug("Global keyDown: keyCode=\(event.keyCode) modifiers=\(event.modifierFlags.rawValue) charsIgnoringModifiers=\(event.charactersIgnoringModifiers ?? "") chars=\(event.characters ?? "")")
             if event.keyCode == 49 && event.modifierFlags.contains(.option) {
                 KnobPanelWindowController.shared.toggle()
                 return
@@ -96,11 +96,11 @@ class StatusBarController: ObservableObject {
             let hs = HotkeySettings.shared
             let pressedMods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if event.keyCode == hs.keyCode && pressedMods == hs.modifiers {
-                Logger.statusBar.debug("Global hotkey detected")
+                PKLogger.statusBar.debug("Global hotkey detected")
                 self?.toggleMode()
             }
         }
-        Logger.statusBar.info("Global hotkey monitor installed")
+        PKLogger.statusBar.info("Global hotkey monitor installed")
     }
     
     private func setupStatusBar() {
@@ -191,7 +191,7 @@ class StatusBarController: ObservableObject {
     }
     
     func updateState(_ state: KnobGlobalState, targetName: String? = nil) {
-        Logger.statusBar.info("updateState called with state: \(String(describing: state))")
+        PKLogger.statusBar.info("updateState called with state: \(String(describing: state))")
         self.currentState = state
         self.targetName = targetName
         
@@ -200,7 +200,7 @@ class StatusBarController: ObservableObject {
             newImage?.isTemplate = true
             button.image = newImage
             button.toolTip = createTooltip(for: state, targetName: targetName)
-            Logger.statusBar.info("Image updated, isTemplate: \(newImage?.isTemplate ?? false)")
+            PKLogger.statusBar.info("Image updated, isTemplate: \(newImage?.isTemplate ?? false)")
         }
         
         if let menu = menu, let firstItem = menu.items.first {
@@ -290,12 +290,12 @@ class StatusBarController: ObservableObject {
     }
     
     @objc private func toggleMode() {
-        Logger.statusBar.info("toggleMode menu item clicked")
+        PKLogger.statusBar.info("toggleMode menu item clicked")
         onToggleHotkey?()
     }
     
     @objc func openSettings() {
-        Logger.statusBar.info("openSettings() clicked, showing custom settings window")
+        PKLogger.statusBar.info("openSettings() clicked, showing custom settings window")
         SettingsWindowController.shared.show()
     }
     

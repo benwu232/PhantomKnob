@@ -524,10 +524,10 @@ final class RuleLibrary {
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             if let data = defaultRulesJSON.data(using: .utf8) {
                 try data.write(to: myKnobsURL)
-                Logger.ruleLibrary.info("Successfully initialized default my_knobs.json rules.")
+                PKLogger.ruleLibrary.info("Successfully initialized default my_knobs.json rules.")
             }
         } catch {
-            Logger.ruleLibrary.error("Failed to initialize default my_knobs.json: \(String(describing: error))")
+            PKLogger.ruleLibrary.error("Failed to initialize default my_knobs.json: \(String(describing: error))")
         }
     }
 

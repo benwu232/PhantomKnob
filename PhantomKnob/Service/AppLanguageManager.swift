@@ -60,7 +60,7 @@ public class AppLanguageManager {
         
         NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, error in
             if let error = error {
-                Logger.language.error("Failed to relaunch app: \(String(describing: error))")
+                PKLogger.language.error("Failed to relaunch app: \(String(describing: error))")
             }
             DispatchQueue.main.async {
                 NSApp.terminate(nil)

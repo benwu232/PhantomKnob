@@ -24,7 +24,7 @@ class GlobalTouchHandler {
         }
         
         isMonitoring = true
-        Logger.globalTouch.debug("Standard global event tap started successfully")
+        PKLogger.globalTouch.debug("Standard global event tap started successfully")
     }
     
     func stopMonitoring() {
@@ -33,7 +33,7 @@ class GlobalTouchHandler {
         NSEvent.removeMonitor(monitor)
         eventMonitor = nil
         isMonitoring = false
-        Logger.globalTouch.debug("Standard global event tap stopped")
+        PKLogger.globalTouch.debug("Standard global event tap stopped")
     }
     
     private func handleEvent(_ event: NSEvent) {

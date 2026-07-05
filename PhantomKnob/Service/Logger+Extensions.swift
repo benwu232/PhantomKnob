@@ -1,6 +1,8 @@
 import os
 
-extension os.Logger {
+typealias PKLogger = os.Logger
+
+extension PKLogger {
     static let knob = os.Logger(subsystem: "com.phantomknob", category: "knob")
     static let multitouch = os.Logger(subsystem: "com.phantomknob", category: "multitouch")
     static let overlay = os.Logger(subsystem: "com.phantomknob", category: "overlay")

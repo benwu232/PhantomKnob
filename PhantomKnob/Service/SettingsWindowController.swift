@@ -24,7 +24,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         }
         
         // Elevate activation policy to .regular so the settings window can get focus and show up in Dock/App Switcher
-        Logger.settings.info("Elevating activation policy to .regular to show settings window")
+        PKLogger.settings.info("Elevating activation policy to .regular to show settings window")
         NSApp.setActivationPolicy(.regular)
         
         window?.makeKeyAndOrderFront(nil)
@@ -37,7 +37,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     func hide() {
         window?.orderOut(nil)
         removeClickMonitor()
-        Logger.settings.info("Settings window closing, reverting activation policy to .accessory")
+        PKLogger.settings.info("Settings window closing, reverting activation policy to .accessory")
         NSApp.setActivationPolicy(.accessory)
         
         NotificationCenter.default.post(name: NSNotification.Name("SettingsPanelDidHide"), object: nil)
