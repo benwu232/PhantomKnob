@@ -72,27 +72,6 @@ struct UserGuideView: View {
                 
                 Spacer()
                 
-                if viewModel.currentStep == 2 {
-                    Button(action: {
-                        viewModel.completeGuide()
-                    }) {
-                        Text(String(localized: "guide.nav.close", defaultValue: "Close Guide"))
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.red.opacity(0.15))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.red.opacity(0.3), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Spacer()
-                }
-                
                 if viewModel.currentStep < 3 {
                     Button(action: {
                         withAnimation {
