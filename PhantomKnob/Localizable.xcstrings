@@ -135,7 +135,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请在触控板上练习使用旋钮手势："
+            "value" : "旋钮手势教程："
           }
         }
       }
@@ -146,7 +146,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在系统设置 / 隐私与安全 / 辅助功能里为 PhantomKnob 授权"
+            "value" : "PhantomKnob 需要辅助功能权限，如有要求，请授权"
           }
         }
       }
@@ -179,7 +179,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "✅ 触控板检测成功！您的设备完美支持。"
+            "value" : "🎉 恭喜！您已成功使用旋钮手势，请点击下一步继续。"
           }
         }
       }

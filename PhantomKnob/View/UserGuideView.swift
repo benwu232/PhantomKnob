@@ -151,7 +151,9 @@ struct UserGuideView: View {
     
     // MARK: - Step 1: Device test & Volume practice
     private var step1View: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
+            Spacer()
+            
             ZStack {
                 RadialKnobControlView(
                     title: String(localized: "guide.step1.practiceKnob", defaultValue: "Volume Practice Dial"),
@@ -174,6 +176,8 @@ struct UserGuideView: View {
                 }
             }
             .frame(height: 140)
+            
+            Spacer()
             
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(localized: "guide.step1.intro", defaultValue: "Please practice using the knob gesture on your trackpad:"))
@@ -202,13 +206,14 @@ struct UserGuideView: View {
                     .stroke(Color.white.opacity(0.05), lineWidth: 1)
             )
             .padding(.horizontal, 32)
+            .padding(.bottom, 12)
             
             HStack(spacing: 8) {
                 if viewModel.isTouchpadDetected {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
                         .font(.system(size: 16))
-                    Text(String(localized: "guide.step1.detectedSuccess", defaultValue: "✅ Trackpad detected successfully! Your device is fully supported."))
+                    Text(String(localized: "guide.step1.detectedSuccess", defaultValue: "🎉 Congratulations! You have successfully used the knob gesture. Please click Next to continue."))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.green)
                 } else {
@@ -224,8 +229,7 @@ struct UserGuideView: View {
             .padding(.vertical, 6)
             .background(Color.white.opacity(0.05))
             .cornerRadius(20)
-            
-            Spacer()
+            .padding(.bottom, 16)
         }
     }
     

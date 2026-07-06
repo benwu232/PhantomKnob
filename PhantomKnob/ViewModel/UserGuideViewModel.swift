@@ -150,6 +150,10 @@ class UserGuideViewModel: ObservableObject {
             }
             
             playFeedbackSound(absDeg)
+            
+            if accumulatedRotation >= 45.0 && !isTouchpadDetected {
+                isTouchpadDetected = true
+            }
         } else if currentStep == 2 {
             if hoveredKnob == .doubleKnob {
                 doubleKnobAngle -= degrees
