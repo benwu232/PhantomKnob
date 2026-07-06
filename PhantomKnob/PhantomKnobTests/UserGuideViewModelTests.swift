@@ -27,7 +27,7 @@ class UserGuideViewModelTests: XCTestCase {
         vm.nextStep()
         XCTAssertEqual(vm.currentStep, 1)
         
-        // Simulate touchpad detection (3 notifications)
+        // Simulate touchpad touch coordinates (samples count increments)
         for _ in 1...3 {
             NotificationCenter.default.post(
                 name: NSNotification.Name("TouchpadCoordinatesValidated"),
@@ -35,6 +35,12 @@ class UserGuideViewModelTests: XCTestCase {
                 userInfo: ["points": [0: CGPoint.zero]]
             )
         }
+        // Touch alone should NOT unlock step 1
+        XCTAssertFalse(vm.isTouchpadDetected)
+        
+        // Simulate rotation to 30 degrees while hovered
+        vm.hovered = true
+        vm.registerRotation(30.0)
         XCTAssertTrue(vm.isTouchpadDetected)
         
         // Now nextStep succeeds
@@ -144,7 +150,7 @@ class UserGuideViewModelTests: XCTestCase {
             userInfo: ["points": [0: CGPoint.zero]]
         )
         XCTAssertEqual(vm.touchpadSamplesCount, 3)
-        XCTAssertTrue(vm.isTouchpadDetected)
+        XCTAssertFalse(vm.isTouchpadDetected)
     }
     
     func testKeyboardMultiplierNotification() {

@@ -71,9 +71,6 @@ class UserGuideViewModel: ObservableObject {
                 guard let self = self else { return }
                 if self.currentStep == 1 {
                     self.touchpadSamplesCount += 1
-                    if self.touchpadSamplesCount >= 3 {
-                        self.isTouchpadDetected = true
-                    }
                 } else if self.currentStep == 2 {
                     if let points = notification.userInfo?["points"] as? [Int: CGPoint] {
                         self.processTouchPoints(points)
