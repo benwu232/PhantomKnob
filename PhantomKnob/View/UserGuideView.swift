@@ -254,6 +254,8 @@ struct UserGuideView: View {
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.doubleKnobDiameter
                         )
+                        .scaleEffect(viewModel.hoveredKnob == .doubleKnob ? 1.1 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.hoveredKnob)
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .doubleKnob : .none
                         }
@@ -298,6 +300,8 @@ struct UserGuideView: View {
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.linearKnobDiameter
                         )
+                        .scaleEffect(viewModel.hoveredKnob == .linearKnob ? 1.1 : 1.0)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.hoveredKnob)
                         .onHover { isHover in
                             viewModel.hoveredKnob = isHover ? .linearKnob : .none
                         }
