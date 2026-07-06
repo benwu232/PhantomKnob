@@ -152,13 +152,6 @@ struct UserGuideView: View {
     // MARK: - Step 1: Device test & Volume practice
     private var step1View: some View {
         VStack(spacing: 16) {
-            Text(String(localized: "guide.step1.description", defaultValue: "Please practice the rotation gesture on your trackpad:\nHover your cursor over the volume dial, then rotate with two fingers."))
-                .font(.system(size: 13))
-                .foregroundColor(.white.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-                .padding(.top, 16)
-            
             ZStack {
                 RadialKnobControlView(
                     title: String(localized: "guide.step1.practiceKnob", defaultValue: "Volume Practice Dial"),
@@ -181,6 +174,34 @@ struct UserGuideView: View {
                 }
             }
             .frame(height: 140)
+            
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(localized: "guide.step1.intro", defaultValue: "Please practice using the knob gesture on your trackpad:"))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.bottom, 2)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    bulletItem(text: String(localized: "guide.step1.step1", defaultValue: "Grant accessibility permission to PhantomKnob in System Settings > Privacy & Security > Accessibility."))
+                    bulletItem(text: String(localized: "guide.step1.step2", defaultValue: "Move the cursor onto the volume practice dial."))
+                    bulletItem(text: String(localized: "guide.step1.step3", defaultValue: "Touch the trackpad with two fingers and perform a rotation gesture."))
+                }
+                
+                Text(String(localized: "guide.step1.footer", defaultValue: "The system will detect whether your hardware supports knob gestures; if supported, you will see the dial rotate and hear the volume change."))
+                    .font(.system(size: 11))
+                    .foregroundColor(.white.opacity(0.6))
+                    .padding(.top, 4)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 12)
+            .background(Color.white.opacity(0.03))
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            )
+            .padding(.horizontal, 32)
             
             HStack(spacing: 8) {
                 if viewModel.isTouchpadDetected {
@@ -428,6 +449,18 @@ struct UserGuideView: View {
             parentChain: []
         )
         CustomizerHUDWindowController.shared.show(for: target)
+    }
+    
+    private func bulletItem(text: String) -> some View {
+        HStack(alignment: .top, spacing: 6) {
+            Text("•")
+                .foregroundColor(.blue)
+                .font(.system(size: 13, weight: .bold))
+            Text(text)
+                .font(.system(size: 12))
+                .foregroundColor(.white.opacity(0.8))
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 
