@@ -26,6 +26,7 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
         NSApp.activate(ignoringOtherApps: true)
         setupClickMonitor()
         
+        NotificationCenter.default.post(name: NSNotification.Name("UserGuideWindowDidShow"), object: nil)
         // 通知状态机开启临时拦截
         NotificationCenter.default.post(name: NSNotification.Name("KnobPanelDidShow"), object: nil)
     }

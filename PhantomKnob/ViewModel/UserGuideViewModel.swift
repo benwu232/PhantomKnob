@@ -51,6 +51,7 @@ class UserGuideViewModel: ObservableObject {
         self.audioService = audioService
         self.volumeVal = audioService.getVolume() ?? 0.5
         self.currentMultiplier = getControlPanelMultiplier()
+        self.isTouchpadDetected = UserDefaults.standard.bool(forKey: "userGuideTouchpadPracticed")
         setupBindings()
         
         let soundURL = URL(fileURLWithPath: "/System/Library/Sounds/Tink.aiff")
@@ -120,6 +121,12 @@ class UserGuideViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+            
+        NotificationCenter.default.publisher(for: NSNotification.Name("UserGuideWindowDidShow"))
+            .sink { [weak self] _ in
+                self?.resetState()
+            }
+            .store(in: &cancellables)
     }
     
     func nextStep() {
@@ -151,8 +158,9 @@ class UserGuideViewModel: ObservableObject {
             
             playFeedbackSound(absDeg)
             
-            if accumulatedRotation >= 45.0 && !isTouchpadDetected {
+            if accumulatedRotation >= 30.0 && !isTouchpadDetected {
                 isTouchpadDetected = true
+                UserDefaults.standard.set(true, forKey: "userGuideTouchpadPracticed")
             }
         } else if currentStep == 2 {
             if hoveredKnob == .doubleKnob {
@@ -249,5 +257,22 @@ class UserGuideViewModel: ObservableObject {
             linearKnobDiameter = OverlayController.calculateDiameter(for: radius)
             doubleKnobDiameter = 120.0
         }
+    }
+    
+    func resetState() {
+        currentStep = 1
+        isTouchpadDetected = UserDefaults.standard.bool(forKey: "userGuideTouchpadPracticed")
+        touchpadSamplesCount = 0
+        volumeVal = audioService.getVolume() ?? 0.5
+        rotationAngle = 0.0
+        accumulatedRotation = 0.0
+        hovered = false
+        hoveredKnob = .none
+        doubleKnobVal = 50.0
+        linearKnobVal = 50.0
+        doubleKnobAngle = 0.0
+        linearKnobAngle = 0.0
+        doubleKnobDiameter = 120.0
+        linearKnobDiameter = 120.0
     }
 }

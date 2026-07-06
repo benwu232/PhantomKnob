@@ -2,6 +2,22 @@ import XCTest
 @testable import PhantomKnob
 
 class UserGuideViewModelTests: XCTestCase {
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        UserDefaults.standard.removeObject(forKey: "userGuideTouchpadPracticed")
+        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
+        UserDefaults.standard.removeObject(forKey: "firstRunUserGuideCompleted")
+        UserDefaults.standard.removeObject(forKey: "firstRunTutorialCompleted")
+    }
+    
+    override func tearDownWithError() throws {
+        UserDefaults.standard.removeObject(forKey: "userGuideTouchpadPracticed")
+        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
+        UserDefaults.standard.removeObject(forKey: "firstRunUserGuideCompleted")
+        UserDefaults.standard.removeObject(forKey: "firstRunTutorialCompleted")
+        try super.tearDownWithError()
+    }
+
     func testUserGuideStepTransitionsAndRotationUnlock() {
         let vm = UserGuideViewModel(audioService: AudioControlService())
         XCTAssertEqual(vm.currentStep, 1)
