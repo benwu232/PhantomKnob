@@ -118,6 +118,17 @@
         }
       }
     },
+    "guide.nav.exit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出"
+          }
+        }
+      }
+    },
     "guide.step1.footer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -355,7 +366,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第二步：进阶旋钮"
+            "value" : "第二步：三种旋钮对比与深度定制"
           }
         }
       }
@@ -366,7 +377,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在任何有滑动条、步进器或适配控件上，按下此快捷键或在菜单栏开启后，即可通过旋钮手势调节。"
+            "value" : "按下此快捷键或在菜单栏开启后，即可通过旋钮手势调节鼠标下的滑动条、步进器或适配控件。"
           }
         }
       }
@@ -377,7 +388,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全局激活热键：⌘ ⌥ R (Command + Option + R)"
+            "value" : "全局激活热键：⌘ ⌥ R (Command + Option + R)。可在设置中修改。"
           }
         }
       }
@@ -388,7 +399,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果您只是想正常使用触控板原生滚动或捏合缩放，可以按住 Option 键临时忽略旋钮手势。"
+            "value" : "如果您想临时使用旋钮，可以按住 Option 键并进行旋钮操作；如果在旋钮激活状态，按下 Option 键会临时退出。"
           }
         }
       }
@@ -399,7 +410,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "临时暂停手势：按住 Option 键"
+            "value" : "临时切换：按住 Option 键"
           }
         }
       }
@@ -410,7 +421,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "应用已经针对 CapCut (剪映)、QuickTime Player 等主流调色及剪辑软件的时间轴/音量/数值项进行了高保真适配。"
+            "value" : "应用已经针对 CapCut (剪映)、QuickTime Player 等主流调色及剪辑软件的时间轴/音量/数值项进行了适配。"
           }
         }
       }
@@ -421,7 +432,29 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "深度支持的剪辑与多媒体软件"
+            "value" : "深度支持剪辑与多媒体软件"
+          }
+        }
+      }
+    },
+    "guide.step3.featureStatusbar.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双击状态栏里的图标，会弹出快捷旋钮面板，可以用旋钮手势方便地调整音量、屏幕亮度等。"
+          }
+        }
+      }
+    },
+    "guide.step3.featureStatusbar.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状态栏快捷面板与控制"
           }
         }
       }

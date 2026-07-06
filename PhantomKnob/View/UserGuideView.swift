@@ -125,20 +125,20 @@ struct UserGuideView: View {
                     Button(action: {
                         viewModel.completeGuide()
                     }) {
-                        Text(String(localized: "guide.nav.start", defaultValue: "Enable Global Control"))
+                        Text(String(localized: "guide.nav.exit", defaultValue: "Exit"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
                             .background(
                                 LinearGradient(
-                                    colors: [Color.green, Color.emerald],
+                                    colors: [Color.red.opacity(0.8), Color.red.opacity(0.6)],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
                             .cornerRadius(8)
-                            .shadow(color: Color.green.opacity(0.3), radius: 4, y: 2)
+                            .shadow(color: Color.red.opacity(0.2), radius: 4, y: 2)
                     }
                     .buttonStyle(.plain)
                 }
@@ -382,6 +382,45 @@ struct UserGuideView: View {
                 .padding(.top, 20)
             
             VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .center, spacing: 16) {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "menubar.rectangle")
+                            .font(.system(size: 16))
+                            .foregroundColor(.orange)
+                            .frame(width: 24)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(String(localized: "guide.step3.featureStatusbar.title", defaultValue: "Quick Control Panel"))
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white)
+                            Text(String(localized: "guide.step3.featureStatusbar.desc", defaultValue: "Double-click the menu bar icon to pop up the quick control panel, allowing you to easily adjust volume, screen brightness, etc., with knob gestures."))
+                                .font(.system(size: 11))
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                    }
+                    
+                    Spacer(minLength: 12)
+                    
+                    Button(action: {
+                        viewModel.completeGuide()
+                    }) {
+                        Text(String(localized: "guide.nav.start", defaultValue: "Enable Global Control"))
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .background(
+                                LinearGradient(
+                                    colors: [Color.green, Color.emerald],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(6)
+                            .shadow(color: Color.green.opacity(0.3), radius: 3, y: 1.5)
+                    }
+                    .buttonStyle(.plain)
+                }
+                
                 HStack(alignment: .top, spacing: 12) {
                     Image(systemName: "command")
                         .font(.system(size: 18))
