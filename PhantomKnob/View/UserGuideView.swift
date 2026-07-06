@@ -249,7 +249,7 @@ struct UserGuideView: View {
                             angle: viewModel.doubleKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.doubleKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: "#F59E0B",
+                            themeColorHex: "#007AFF",
                             overlayStyle: AppSettings.shared.defaultOverlayStyle,
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.doubleKnobDiameter
@@ -293,7 +293,7 @@ struct UserGuideView: View {
                             angle: viewModel.linearKnobAngle,
                             isDeadzone: false,
                             scale: viewModel.linearKnobBaseMultiplier * viewModel.currentMultiplier,
-                            themeColorHex: "#F59E0B",
+                            themeColorHex: "#34C759",
                             overlayStyle: AppSettings.shared.defaultOverlayStyle,
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
                             diameter: viewModel.linearKnobDiameter
@@ -318,10 +318,10 @@ struct UserGuideView: View {
                     }) {
                         Text(String(localized: "guide.step2.customizeButton", defaultValue: "Customize Dial"))
                             .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.cyan)
+                            .foregroundColor(.green)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
-                            .background(Color.cyan.opacity(0.15))
+                            .background(Color.green.opacity(0.15))
                             .cornerRadius(6)
                     }
                     .buttonStyle(.plain)
