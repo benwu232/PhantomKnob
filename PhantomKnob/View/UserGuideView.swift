@@ -15,10 +15,10 @@ struct UserGuideView: View {
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 } else if viewModel.currentStep == 2 {
-                    Text(String(localized: "guide.step2.title", defaultValue: "Step 2: Modes & Customization"))
+                    Text(String(localized: "guide.step2.title", defaultValue: "Step 2: Advanced Knobs"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text(String(localized: "guide.step2.subtitle", defaultValue: "Try different knob modes and customize your dial"))
+                    Text(String(localized: "guide.step2.subtitle", defaultValue: "Practice double-ring and variable speed knobs, adjust speed, and try customizer"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 } else {
@@ -235,7 +235,9 @@ struct UserGuideView: View {
     
     // MARK: - Step 2: Knob comparison, multipliers, HUD trigger
     private var step2View: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
+            Spacer()
+            
             // Side-by-side self-drawn knobs
             HStack(spacing: 80) {
                 // Double Ring Knob
@@ -256,7 +258,7 @@ struct UserGuideView: View {
                             viewModel.hoveredKnob = isHover ? .doubleKnob : .none
                         }
                     }
-                    .frame(height: 340)
+                    .frame(height: 180)
                     
                     Text(String(localized: "guide.step2.doubleKnobDesc1", defaultValue: "Double-Ring (Outer 0.1x, Inner 1.0x)"))
                         .font(.system(size: 11, weight: .medium))
@@ -265,6 +267,7 @@ struct UserGuideView: View {
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.5))
                         .multilineTextAlignment(.center)
+                        .frame(height: 24)
                     
                     Button(action: {
                         triggerCustomizer(for: "DoubleKnob")
@@ -279,7 +282,7 @@ struct UserGuideView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .frame(width: 300)
+                .frame(width: 260)
                 
                 // Linear Knob
                 VStack(spacing: 8) {
@@ -299,7 +302,7 @@ struct UserGuideView: View {
                             viewModel.hoveredKnob = isHover ? .linearKnob : .none
                         }
                     }
-                    .frame(height: 340)
+                    .frame(height: 180)
                     
                     Text(String(localized: "guide.step2.linearKnobDesc1", defaultValue: "Variable Speed (0.1x ~ 5.0x)"))
                         .font(.system(size: 11, weight: .medium))
@@ -308,6 +311,7 @@ struct UserGuideView: View {
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.5))
                         .multilineTextAlignment(.center)
+                        .frame(height: 24)
                     
                     Button(action: {
                         triggerCustomizer(for: "LinearKnob")
@@ -322,29 +326,33 @@ struct UserGuideView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .frame(width: 300)
+                .frame(width: 260)
             }
-            .padding(.vertical, 10)
-            
-            // Instruction Box
-            VStack(alignment: .leading, spacing: 3) {
-                Text(String(localized: "guide.step2.hintTitle", defaultValue: "💡 Fine-tune speed with keyboard"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.white)
-                Text(String(localized: "guide.step2.hintLine1", defaultValue: "• Press ↑/↓ to adjust by 1.0x, ←/→ to adjust by 0.1x, or 2-9 to multiply speed."))
-                    .font(.system(size: 10))
-                    .foregroundColor(.white.opacity(0.7))
-                Text(String(localized: "guide.step2.hintLine2", defaultValue: "• Press 'C' key while rotating to open the Customizer HUD panel."))
-                    .font(.system(size: 10))
-                    .foregroundColor(.white.opacity(0.7))
-            }
-            .padding(8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
-            .padding(.horizontal, 24)
             
             Spacer()
+            
+            // Card layout instruction box matching Page 1
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(localized: "guide.step2.hintTitle", defaultValue: "💡 Fine-tune speed & customize:").trimmingCharacters(in: .whitespacesAndNewlines))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.bottom, 2)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    bulletItem(text: String(localized: "guide.step2.hintLine1", defaultValue: "Press ↑/↓ to adjust by 1.0x, ←/→ to adjust by 0.1x, or 2-9 to multiply speed."))
+                    bulletItem(text: String(localized: "guide.step2.hintLine2", defaultValue: "Press 'C' key while rotating to open the Customizer HUD panel."))
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 12)
+            .background(Color.white.opacity(0.03))
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            )
+            .padding(.horizontal, 32)
+            .padding(.bottom, 16)
         }
     }
     

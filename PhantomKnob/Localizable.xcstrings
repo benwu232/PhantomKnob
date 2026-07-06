@@ -146,7 +146,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "PhantomKnob 需要辅助功能权限，如有要求，请授权"
+            "value" : "PhantomKnob 需要辅助功能权限。如有要求，请授权"
           }
         }
       }
@@ -212,7 +212,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第一步：设备检测与基础旋转"
+            "value" : "第一步：设备检测与简单旋钮"
           }
         }
       }
@@ -311,7 +311,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无极变速（0.1 ~ 5.0倍）"
+            "value" : "无级变速（0.1 ~ 5.0倍）"
           }
         }
       }
@@ -322,7 +322,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "变速步长随手势物理半径无极缩放"
+            "value" : "变速步长随手势物理半径无级缩放"
           }
         }
       }
@@ -333,7 +333,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无极变速旋钮"
+            "value" : "无级变速旋钮"
           }
         }
       }
@@ -344,7 +344,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "练习双环与无极变速旋钮的精细调节、键盘微调及 HUD 定制"
+            "value" : "练习双环与无级变速旋钮的精细调节、键盘微调及 HUD 定制"
           }
         }
       }
@@ -355,7 +355,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第二步：三种旋钮对比与深度定制"
+            "value" : "第二步：进阶旋钮"
           }
         }
       }
