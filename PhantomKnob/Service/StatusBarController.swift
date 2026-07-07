@@ -4,7 +4,7 @@ import Combine
 import os
 
 class StatusBarController: ObservableObject {
-    private var statusItem: NSStatusItem?
+    var statusItem: NSStatusItem?
     private var menu: NSMenu?
     private var globalHotkeyMonitor: Any?
     private var localHotkeyMonitor: Any?
@@ -216,6 +216,19 @@ class StatusBarController: ObservableObject {
             newImage?.isTemplate = true
             button.image = newImage
             button.toolTip = createTooltip(for: state, targetName: targetName)
+            
+            // Apply Dynamic Tint Coloring (Option B)
+            switch state {
+            case .inactive:
+                button.contentTintColor = .systemGray
+            case .activated:
+                button.contentTintColor = .systemCyan
+            case .knobing, .cooling:
+                button.contentTintColor = .systemGreen
+            case .customizing:
+                button.contentTintColor = .systemGray
+            }
+            
             PKLogger.statusBar.info("Image updated, isTemplate: \(newImage?.isTemplate ?? false)")
         }
         
@@ -260,6 +273,9 @@ class StatusBarController: ObservableObject {
             let finalImage = symbolImage?.withSymbolConfiguration(config) ?? symbolImage
             finalImage?.isTemplate = true
             button.image = finalImage
+            
+            // Activating state counts as transitioning, color cyan
+            button.contentTintColor = .systemCyan
             
             let format = String(localized: "tooltip.activating", defaultValue: "Activating in %ds...")
             button.toolTip = String(format: format, Int(ceil(secondsRemaining)))

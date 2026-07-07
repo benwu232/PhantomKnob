@@ -92,4 +92,30 @@ final class StatusBarControllerTests: XCTestCase {
         XCTAssertEqual(NSApp.activationPolicy(), .accessory)
         XCTAssertFalse(SettingsWindowController.shared.isVisible)
     }
+    
+    func testStatusBarIconColorAndTemplate() {
+        let controller = StatusBarController()
+        let dummyTarget = DetectedTarget(bundleID: "com.test.app", axRole: "AXSlider", identifier: nil, displayName: "Test", element: nil, parentChain: [])
+        
+        // Test inactive state
+        controller.updateState(.inactive)
+        if let button = controller.statusItem?.button {
+            XCTAssertTrue(button.image?.isTemplate ?? false)
+            XCTAssertEqual(button.contentTintColor, .systemGray)
+        }
+        
+        // Test activated state
+        controller.updateState(.activated)
+        if let button = controller.statusItem?.button {
+            XCTAssertTrue(button.image?.isTemplate ?? false)
+            XCTAssertEqual(button.contentTintColor, .systemCyan)
+        }
+        
+        // Test knobing state
+        controller.updateState(.knobing(target: dummyTarget))
+        if let button = controller.statusItem?.button {
+            XCTAssertTrue(button.image?.isTemplate ?? false)
+            XCTAssertEqual(button.contentTintColor, .systemGreen)
+        }
+    }
 }
