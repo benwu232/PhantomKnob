@@ -221,7 +221,7 @@ class StatusBarController: ObservableObject {
             case .activated:
                 tintColor = .systemCyan
             case .knobing, .cooling:
-                tintColor = .systemGreen
+                tintColor = .systemYellow
             case .customizing:
                 tintColor = .systemGray
             }
