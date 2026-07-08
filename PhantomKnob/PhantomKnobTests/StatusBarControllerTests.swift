@@ -100,22 +100,22 @@ final class StatusBarControllerTests: XCTestCase {
         // Test inactive state
         controller.updateState(.inactive)
         if let button = controller.statusItem?.button {
-            XCTAssertTrue(button.image?.isTemplate ?? false)
-            XCTAssertEqual(button.contentTintColor, .systemGray)
+            XCTAssertNotNil(button.image)
+            XCTAssertFalse(button.image?.isTemplate ?? true)
         }
         
         // Test activated state
         controller.updateState(.activated)
         if let button = controller.statusItem?.button {
-            XCTAssertTrue(button.image?.isTemplate ?? false)
-            XCTAssertEqual(button.contentTintColor, .systemCyan)
+            XCTAssertNotNil(button.image)
+            XCTAssertFalse(button.image?.isTemplate ?? true)
         }
         
         // Test knobing state
         controller.updateState(.knobing(target: dummyTarget))
         if let button = controller.statusItem?.button {
-            XCTAssertTrue(button.image?.isTemplate ?? false)
-            XCTAssertEqual(button.contentTintColor, .systemGreen)
+            XCTAssertNotNil(button.image)
+            XCTAssertFalse(button.image?.isTemplate ?? true)
         }
     }
 }

@@ -107,14 +107,12 @@ class StatusBarController: ObservableObject {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusItem?.button {
-            button.image = createIcon(for: .inactive)
-            button.image?.isTemplate = true
-            button.toolTip = String(localized: "tooltip.inactive", defaultValue: "Knob Control: Inactive (Press \(HotkeySettings.shared.displayString) to activate)")
             button.action = #selector(statusBarButtonClicked)
             button.target = self
         }
         
         setupMenu()
+        updateState(.inactive)
     }
     
     private func setupMenu() {
@@ -212,24 +210,26 @@ class StatusBarController: ObservableObject {
         self.targetName = targetName
         
         if let button = statusItem?.button {
-            let newImage = createIcon(for: state)
-            newImage?.isTemplate = true
-            button.image = newImage
-            button.toolTip = createTooltip(for: state, targetName: targetName)
+            let baseImage = createIcon(for: state)
+            baseImage?.isTemplate = true
             
-            // Apply Dynamic Tint Coloring (Option B)
+            // Resolve tint color based on state (Option B)
+            let tintColor: NSColor
             switch state {
             case .inactive:
-                button.contentTintColor = .systemGray
+                tintColor = .systemGray
             case .activated:
-                button.contentTintColor = .systemCyan
+                tintColor = .systemCyan
             case .knobing, .cooling:
-                button.contentTintColor = .systemGreen
+                tintColor = .systemGreen
             case .customizing:
-                button.contentTintColor = .systemGray
+                tintColor = .systemGray
             }
             
-            PKLogger.statusBar.info("Image updated, isTemplate: \(newImage?.isTemplate ?? false)")
+            let tintedImage = baseImage?.tinted(with: tintColor, appearance: button.effectiveAppearance)
+            button.image = tintedImage
+            button.toolTip = createTooltip(for: state, targetName: targetName)
+            PKLogger.statusBar.info("Image updated with tint color, isTemplate: \(tintedImage?.isTemplate ?? false)")
         }
         
         if let menu = menu, let firstItem = menu.items.first {
@@ -270,12 +270,12 @@ class StatusBarController: ObservableObject {
         if let button = statusItem?.button {
             let symbolImage = NSImage(systemSymbolName: "circle.dashed", accessibilityDescription: nil)
             let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-            let finalImage = symbolImage?.withSymbolConfiguration(config) ?? symbolImage
-            finalImage?.isTemplate = true
-            button.image = finalImage
+            let baseImage = symbolImage?.withSymbolConfiguration(config) ?? symbolImage
+            baseImage?.isTemplate = true
             
             // Activating state counts as transitioning, color cyan
-            button.contentTintColor = .systemCyan
+            let tintedImage = baseImage?.tinted(with: .systemCyan, appearance: button.effectiveAppearance)
+            button.image = tintedImage
             
             let format = String(localized: "tooltip.activating", defaultValue: "Activating in %ds...")
             button.toolTip = String(format: format, Int(ceil(secondsRemaining)))
@@ -433,5 +433,32 @@ class StatusBarController: ObservableObject {
     
     @objc func debugToggleLicense() {
         LicenseManager.shared.debugToggleLicense()
+    }
+}
+
+extension NSImage {
+    func tinted(with color: NSColor, appearance: NSAppearance?) -> NSImage? {
+        let size = self.size
+        let tintedImage = NSImage(size: size)
+        tintedImage.lockFocus()
+        
+        let resolvedColor: NSColor
+        if let appearance = appearance {
+            let saved = NSAppearance.current
+            NSAppearance.current = appearance
+            resolvedColor = color.usingColorSpace(.deviceRGB) ?? color
+            NSAppearance.current = saved
+        } else {
+            resolvedColor = color
+        }
+        
+        resolvedColor.set()
+        let imageRect = NSRect(origin: .zero, size: size)
+        self.draw(in: imageRect, from: imageRect, operation: .sourceOver, fraction: 1.0)
+        imageRect.fill(using: .sourceAtop)
+        
+        tintedImage.unlockFocus()
+        tintedImage.isTemplate = false
+        return tintedImage
     }
 }
