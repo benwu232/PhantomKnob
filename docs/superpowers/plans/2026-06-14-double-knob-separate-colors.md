@@ -4,7 +4,7 @@
 
 **目标：** 实现双旋钮手势独立配置（包括内圈/外圈的各自配色、输出映射、变化量），重组 HUD 配色定制面板为三个精美的 Tab 标签，并在跨越圈边界时支持 Overlay 圆环颜色动态热切换。
 
-**架构：** 在 `VirtualKnobConfig` 数据模型中增加可选的 `themeColor` 属性以保持后向兼容。优化 `CustomizerHUDView` 界面为三标签式 Tab（单旋钮、双旋钮、线性半径），在双旋钮模式下将大旋钮（外圈）放在上方，并各自独立包含单行 16 色预设配色区。更新 `KnobStateManager` 和 `OverlayController` 以便在手势移动切换内/外圈时实时动态切换 Overlay UI 颜色。
+**架构：** 在 `VirtualKnobConfig` 数据模型中增加可选的 `themeColor` 属性以保持后向兼容。优化 `CustomizerHUDView` 界面为三标签式 Tab（单旋钮、双旋钮、无级变速），在双旋钮模式下将大旋钮（外圈）放在上方，并各自独立包含单行 16 色预设配色区。更新 `KnobStateManager` 和 `OverlayController` 以便在手势移动切换内/外圈时实时动态切换 Overlay UI 颜色。
 
 **技术栈：** Swift 5.9, SwiftUI, AppKit, XCTest
 
@@ -284,7 +284,7 @@
     HStack(spacing: 0) {
         tabButton("单旋钮", type: .single, icon: "circle")
         tabButton("双旋钮", type: .double, icon: "circle.circle")
-        tabButton("线性半径", type: .linear, icon: "arrow.up.and.down.circle")
+        tabButton("无级变速", type: .linear, icon: "arrow.up.and.down.circle")
     }
     .padding(3)
     .background(Color.white.opacity(0.06))

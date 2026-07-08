@@ -57,13 +57,27 @@ class LicenseManager {
     
     init(
         currentDateProvider: @escaping () -> Date = { Date() },
-        storageRead: @escaping (String) -> String? = { KeychainHelper.get(forKey: $0) },
+        storageRead: @escaping (String) -> String? = {
+            #if DEBUG
+            UserDefaults.standard.string(forKey: $0)
+            #else
+            KeychainHelper.get(forKey: $0)
+            #endif
+        },
         storageWrite: @escaping (String, String?) -> Void = { key, value in
+            #if DEBUG
+            if let val = value {
+                UserDefaults.standard.set(val, forKey: key)
+            } else {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+            #else
             if let val = value {
                 KeychainHelper.set(val, forKey: key)
             } else {
                 KeychainHelper.delete(forKey: key)
             }
+            #endif
         }
     ) {
         self.currentDateProvider = currentDateProvider

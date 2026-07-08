@@ -1,5 +1,5 @@
 {
-  "originHash" : "a72b37d142139a9f8de021ec1a2d4e7ec2a7ffc9ebc87493f58bac80a85691cb",
+  "originHash" : "a1a3d224b20186c38802d707d3af0f2ac8943cb9e5fbc0ecff5b6dda8440382e",
   "pins" : [
     {
       "identity" : "sentry-cocoa",
@@ -8,6 +8,24 @@
       "state" : {
         "revision" : "dad229c665bfd043c5d80ac7aa77717cbd19a1c3",
         "version" : "8.58.3"
+      }
+    },
+    {
+      "identity" : "sparkle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparkle-project/Sparkle",
+      "state" : {
+        "revision" : "b6496a74a087257ef5e6da1c5b29a447a60f5bd7",
+        "version" : "2.9.4"
+      }
+    },
+    {
+      "identity" : "swiftclient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/TelemetryDeck/SwiftClient",
+      "state" : {
+        "revision" : "d20ccc4b8266cf739eede58cdfc7e9c6ffb41cda",
+        "version" : "1.5.1"
       }
     }
   ],

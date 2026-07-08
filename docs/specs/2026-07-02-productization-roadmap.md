@@ -18,7 +18,7 @@
 - 核心手势引擎（状态机、手势分类、5° 阈值检测、冷却期）
 - 输入翻译系统（AX write / 滚轮 / 方向键 / 滑动，共 7 种）
 - 目标检测（Accessibility API，支持 AXSlider / AXProgressIndicator / AXScrollBar）
-- Scale 系统（固定 / 双环 / 无极变速）
+- Scale 系统（固定 / 双环 / 无级变速）
 - 规则库双层架构（内置 bundled-rules + 用户 my_knobs.json）
 - 实时 Overlay UI
 - Customizer HUD（1071 行，功能丰富）
@@ -132,7 +132,7 @@
 
 | 功能 | Trial (14天) | Free | Licensed |
 |---|---|---|---|
-| 所有旋钮类型（固定/双环/无极变速） | ✅ | ✅ | ✅ |
+| 所有旋钮类型（固定/双环/无级变速） | ✅ | ✅ | ✅ |
 | 键盘倍率快捷键 (2-9) | ✅ | ✅ | ✅ |
 | 自定义规则 (My Knobs) | ✅ | ✅ | ✅ |
 | Customizer HUD | ✅ | ✅ | ✅ |

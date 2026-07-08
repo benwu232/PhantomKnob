@@ -113,7 +113,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "开启全局控制"
+            "value" : "快捷旋钮面板"
           }
         }
       }
@@ -707,7 +707,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "线性半径"
+            "value" : "无级变速"
           }
         }
       }

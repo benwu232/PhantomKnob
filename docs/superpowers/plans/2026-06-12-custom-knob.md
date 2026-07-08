@@ -2,7 +2,7 @@
 
 > **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [ ]`）语法来跟踪进度。
 
-**目标：** 实现旋钮定制化功能。允许用户在 Overlay HUD 显示时，按下 `C` 键唤起毛玻璃定制面板 HUD，选择不同的模式（单旋钮、独立双旋钮、线性半径），自定义控制变化系数、方向映射、主题颜色并实时热重载生效，修改即无缝自动保存到本地 `rules.json`。
+**目标：** 实现旋钮定制化功能。允许用户在 Overlay HUD 显示时，按下 `C` 键唤起毛玻璃定制面板 HUD，选择不同的模式（单旋钮、独立双旋钮、无级变速），自定义控制变化系数、方向映射、主题颜色并实时热重载生效，修改即无缝自动保存到本地 `rules.json`。
 
 **架构：**
 1. **Model 重构 (`ControlRule.swift`)**：引入 `KnobConfigType` 及不同模式下的配置子结构（`SingleKnobConfig`、`DoubleKnobConfig`、`LinearKnobConfig`），并支持旧版数据格式的后向兼容解析。
@@ -600,7 +600,7 @@
                           Picker("", selection: $configType) {
                               Text("单旋钮").tag(KnobConfigType.single)
                               Text("双旋钮").tag(KnobConfigType.double)
-                              Text("线性半径").tag(KnobConfigType.linear)
+                              Text("无级变速").tag(KnobConfigType.linear)
                           }
                           .pickerStyle(SegmentedPickerStyle())
                           .onChange(of: configType) { _ in save() }
