@@ -104,8 +104,8 @@ func updateStatusBarIcon(for state: KnobGlobalState) {
     // 2. 根据“方案乙”应用对应的系统内容色彩染色
     switch state {
     case .inactive:
-        // 未激活：系统自适应灰色
-        button.contentTintColor = .systemGray
+        // 未激活：系统自适应标签色 + 透明度
+        button.contentTintColor = NSColor.labelColor.withAlphaComponent(0.35)
     case .activated:
         // 已激活就绪：系统青色/冰蓝色 (Cyan)
         button.contentTintColor = .systemCyan
@@ -113,7 +113,7 @@ func updateStatusBarIcon(for state: KnobGlobalState) {
         // 操作中：系统绿色 (Green)
         button.contentTintColor = .systemGreen
     case .customizing:
-        button.contentTintColor = .systemGray
+        button.contentTintColor = NSColor.labelColor.withAlphaComponent(0.35)
     }
 }
 ```
@@ -127,5 +127,5 @@ func updateStatusBarIcon(for state: KnobGlobalState) {
 - [ ] 应用程序 Logo 在 Launchpad 深色底色下，青-紫霓虹色依然鲜明可见。
 
 ### 5.2 状态栏对比度验证
-- [ ] **系统深色菜单栏测试**：Inactive（灰色）、Activated（青色）、Knobing（绿色）均清晰可见，对比度大于 4.5:1。
-- [ ] **系统浅色菜单栏测试**：Inactive（深灰）、Activated（深青）、Knobing（深绿）均自动加深，对比度依然符合要求。
+- [ ] **系统深色菜单栏测试**：Inactive（35%不透明度白色）、Activated（青色）、Knobing（绿色）均清晰可见，对比度大于 4.5:1。
+- [ ] **系统浅色菜单栏测试**：Inactive（35%不透明度黑色）、Activated（深青）、Knobing（深绿）均自动加深，对比度依然符合要求。
