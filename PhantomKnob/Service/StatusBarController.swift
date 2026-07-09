@@ -109,6 +109,7 @@ class StatusBarController: ObservableObject {
         if let button = statusItem?.button {
             button.action = #selector(statusBarButtonClicked)
             button.target = self
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
         
         setupMenu()
@@ -302,6 +303,20 @@ class StatusBarController: ObservableObject {
             return
         }
         
+        // 判断是否为右键点击事件
+        let isRightClick = ev.type == .rightMouseUp || 
+                           (ev.type == .leftMouseUp && ev.modifierFlags.contains(.control))
+        
+        if isRightClick {
+            pendingMenuWorkItem?.cancel()
+            pendingMenuWorkItem = nil
+            if let menu = menu {
+                statusItem?.popUpMenu(menu)
+            }
+            return
+        }
+        
+        // 左键点击判定
         if ev.clickCount == 2 {
             pendingMenuWorkItem?.cancel()
             pendingMenuWorkItem = nil
@@ -309,15 +324,14 @@ class StatusBarController: ObservableObject {
         } else if ev.clickCount == 1 {
             pendingMenuWorkItem?.cancel()
             
+            let interval = NSEvent.doubleClickInterval
             let workItem = DispatchWorkItem { [weak self] in
                 guard let self = self else { return }
-                if let menu = self.menu {
-                    self.statusItem?.popUpMenu(menu)
-                }
+                self.toggleMode()
                 self.pendingMenuWorkItem = nil
             }
             pendingMenuWorkItem = workItem
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: workItem)
+            DispatchQueue.main.asyncAfter(deadline: .now() + interval, execute: workItem)
         }
     }
     
