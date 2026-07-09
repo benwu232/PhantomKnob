@@ -15,7 +15,7 @@ final class StatusBarControllerTests: XCTestCase {
         XCTAssertFalse(panelController.isVisible)
         
         let doubleClickEvent = NSEvent.mouseEvent(
-            with: .leftMouseDown,
+            with: .leftMouseUp,
             location: .zero,
             modifierFlags: [],
             timestamp: 0,
@@ -39,18 +39,16 @@ final class StatusBarControllerTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
     
-    func testStatusBarSingleClickDoesNotToggleImmediately() {
+    func testStatusBarLeftSingleClickTogglesModeAfterInterval() {
         let controller = StatusBarController()
-        let panelController = KnobPanelWindowController.shared
         
-        // Ensure window is hidden initially
-        if panelController.isVisible {
-            panelController.hide()
+        var toggleTriggered = false
+        controller.onToggleHotkey = {
+            toggleTriggered = true
         }
-        XCTAssertFalse(panelController.isVisible)
         
         let singleClickEvent = NSEvent.mouseEvent(
-            with: .leftMouseDown,
+            with: .leftMouseUp,
             location: .zero,
             modifierFlags: [],
             timestamp: 0,
@@ -61,11 +59,17 @@ final class StatusBarControllerTests: XCTestCase {
             pressure: 0
         )
         
-        let expectation = XCTestExpectation(description: "No toggle on single click")
-        DispatchQueue.main.async {
-            controller.handleStatusItemClick(event: singleClickEvent)
-            // It should not toggle immediately
-            XCTAssertFalse(panelController.isVisible)
+        let expectation = XCTestExpectation(description: "Toggle mode triggered after doubleClickInterval")
+        
+        controller.handleStatusItemClick(event: singleClickEvent)
+        
+        // Immediately should not trigger
+        XCTAssertFalse(toggleTriggered)
+        
+        // After doubleClickInterval + small buffer, should trigger
+        let delay = NSEvent.doubleClickInterval + 0.1
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            XCTAssertTrue(toggleTriggered)
             expectation.fulfill()
         }
         
@@ -117,5 +121,41 @@ final class StatusBarControllerTests: XCTestCase {
             XCTAssertNotNil(button.image)
             XCTAssertFalse(button.image?.isTemplate ?? true)
         }
+    }
+    
+    func testStatusBarRightClickShowsMenu() {
+        let controller = StatusBarController()
+        
+        let rightClickEvent = NSEvent.mouseEvent(
+            with: .rightMouseUp,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 0,
+            clickCount: 1,
+            pressure: 0
+        )
+        
+        controller.handleStatusItemClick(event: rightClickEvent)
+    }
+    
+    func testStatusBarControlLeftClickShowsMenu() {
+        let controller = StatusBarController()
+        
+        let controlLeftClickEvent = NSEvent.mouseEvent(
+            with: .leftMouseUp,
+            location: .zero,
+            modifierFlags: .control,
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 0,
+            clickCount: 1,
+            pressure: 0
+        )
+        
+        controller.handleStatusItemClick(event: controlLeftClickEvent)
     }
 }
