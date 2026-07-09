@@ -400,26 +400,30 @@ class StatusBarController: ObservableObject {
     }
     
     private func createTooltip(for state: KnobGlobalState, targetName: String?) -> String {
+        let stateStr: String
         switch state {
         case .inactive:
-            return String(localized: "tooltip.inactive", defaultValue: "Knob Control: Inactive (Press \(HotkeySettings.shared.displayString) to activate)")
+            stateStr = String(localized: "tooltip.inactive", defaultValue: "Inactive")
         case .activated:
-            return String(localized: "tooltip.activated", defaultValue: "Knob Control: Active, waiting for gesture")
+            stateStr = String(localized: "tooltip.activated", defaultValue: "Active")
         case .knobing:
             if let name = targetName {
-                let format = String(localized: "tooltip.knobing.withTarget", defaultValue: "Knob Control: Controlling %@")
-                return String(format: format, name)
+                let format = String(localized: "tooltip.knobing.withTarget", defaultValue: "Controlling %@")
+                stateStr = String(format: format, name)
+            } else {
+                stateStr = String(localized: "tooltip.knobing", defaultValue: "Controlling")
             }
-            return String(localized: "tooltip.knobing", defaultValue: "Knob Control: Controlling")
         case .cooling:
             if let name = targetName {
-                let format = String(localized: "tooltip.cooling.withTarget", defaultValue: "Knob Control: Cooling down (%@)")
-                return String(format: format, name)
+                let format = String(localized: "tooltip.cooling.withTarget", defaultValue: "Cooling down (%@)")
+                stateStr = String(format: format, name)
+            } else {
+                stateStr = String(localized: "tooltip.cooling", defaultValue: "Cooling down")
             }
-            return String(localized: "tooltip.cooling", defaultValue: "Knob Control: Cooling down")
         case .customizing:
-            return String(localized: "tooltip.customizing", defaultValue: "Knob Control: Customizing")
+            stateStr = String(localized: "tooltip.customizing", defaultValue: "Customizing")
         }
+        return "PhantomKnob\n\(stateStr)"
     }
     
     private func stateDescription(for state: KnobGlobalState, targetName: String?) -> String {

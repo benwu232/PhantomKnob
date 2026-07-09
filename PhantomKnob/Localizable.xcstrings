@@ -1426,7 +1426,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knob 控制：已激活，等待手势"
+            "value" : "已激活"
           }
         }
       }
@@ -1448,7 +1448,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knob 控制：冷却中"
+            "value" : "冷却中"
           }
         }
       }
@@ -1459,7 +1459,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knob 控制：冷却中 (%@)"
+            "value" : "冷却中 (%@)"
           }
         }
       }
@@ -1470,7 +1470,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knob 控制：定制中"
+            "value" : "定制中"
           }
         }
       }
@@ -1481,7 +1481,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knob 控制：未激活（按 %@ 激活）"
+            "value" : "未激活"
           }
         }
       }
@@ -1492,7 +1492,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knob 控制：正在控制"
+            "value" : "正在控制"
           }
         }
       }
@@ -1503,7 +1503,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knob 控制：正在控制 %@"
+            "value" : "正在控制 %@"
           }
         }
       }
