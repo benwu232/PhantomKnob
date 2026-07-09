@@ -158,4 +158,13 @@ final class StatusBarControllerTests: XCTestCase {
         
         controller.handleStatusItemClick(event: controlLeftClickEvent)
     }
+    
+    func testStatusBarTooltipFormatting() {
+        let controller = StatusBarController()
+        
+        controller.updateState(.inactive)
+        if let button = controller.statusItem?.button {
+            XCTAssertEqual(button.toolTip?.hasPrefix("PhantomKnob\n"), true)
+        }
+    }
 }
