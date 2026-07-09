@@ -218,13 +218,13 @@ class StatusBarController: ObservableObject {
             let tintColor: NSColor
             switch state {
             case .inactive:
-                tintColor = .systemGray
+                tintColor = NSColor.labelColor.withAlphaComponent(0.35)
             case .activated:
                 tintColor = .systemCyan
             case .knobing, .cooling:
                 tintColor = .systemYellow
             case .customizing:
-                tintColor = .systemGray
+                tintColor = NSColor.labelColor.withAlphaComponent(0.35)
             }
             
             let tintedImage = baseImage?.tinted(with: tintColor, appearance: button.effectiveAppearance)
