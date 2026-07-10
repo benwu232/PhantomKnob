@@ -79,11 +79,11 @@ func drawStatusBarSlash(on image: NSImage) -> NSImage? {
     ctx.setLineWidth(strokeW)
     ctx.setLineCap(.round)
     
-    // 坐标比例：在 16x16px 视图下为 (10, 2) 到 (14, 6)
-    let x1 = S * 10.0 / 16.0
-    let y1 = S * 2.0 / 16.0
-    let x2 = S * 14.0 / 16.0
-    let y2 = S * 6.0 / 16.0
+    // 坐标比例：在 16x16px 视图下为 (7, 1) 到 (15, 9)
+    let x1 = S * 7.0 / 16.0
+    let y1 = S * 1.0 / 16.0
+    let x2 = S * 15.0 / 16.0
+    let y2 = S * 9.0 / 16.0
     
     ctx.beginPath()
     ctx.move(to: CGPoint(x: x1, y: y1))
