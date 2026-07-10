@@ -129,3 +129,29 @@ func updateStatusBarIcon(for state: KnobGlobalState) {
 ### 5.2 状态栏对比度验证
 - [ ] **系统深色菜单栏测试**：Inactive（35%不透明度白色）、Activated（青色）、Knobing（绿色）均清晰可见，对比度大于 4.5:1。
 - [ ] **系统浅色菜单栏测试**：Inactive（35%不透明度黑色）、Activated（深青）、Knobing（深绿）均自动加深，对比度依然符合要求。
+
+---
+
+## 6. Free 与 Premium (Pro) 版的视觉差异规格
+
+为了在保持品牌色彩统一性的同时，为 Free 用户提供明确的版本区别与升级暗示，采用以下双层几何区隔方案：
+
+### 6.1 官方 App Logo 差异
+* **Premium (Pro) 版**：纯净无暇的三层浮空圆环结构，四角没有任何文字或图形遮挡，展现最完美的艺术与全息质感。
+* **Free 版**：在主体底座的**右下角**增加一个倾斜的 **"Free" 红色角标绶带**（斜向 -45°，警告红背景，白色加粗无衬线字体）。绶带边缘略微超出圆角底座的边界以增强视觉张力，起到持续但优雅的升级心理暗示。
+
+### 6.2 状态栏图标 (Status Bar Icons) 差异
+状态栏图标在 16x16px 尺寸下同样贯彻“斜角绶带”的几何隐喻——在图标的**右下角切出一条 45° 的微小斜划线**（在 16x16 像素栅格下为 2~3 像素长的单色斜线）。该斜线作为“微型 Free 标志”，不影响主体旋钮图标的各种颜色状态渲染。
+
+| 状态文件名称 | 几何元素结构 | Pro 与 Free 渲染差异 |
+| :--- | :--- | :--- |
+| **`statusbar_inactive`** | 细圆环 + 竖直向上指针 | **Pro**：纯净圆环图标。<br>**Free**：右下角切出单像素斜划线 `\`。 |
+| **`statusbar_activated`** | 细圆环 + 竖直向上指针 | **Pro**：纯净圆环图标（激活色染色）。<br>**Free**：右下角切出单像素斜划线 `\`（激活色染色）。 |
+| **`statusbar_knobing`** | 细圆环 + 右倾 45° 指针 + 双点 | **Pro**：纯净操作图标（操作色染色）。<br>**Free**：右下角切出单像素斜划线 `\`（操作色染色）。 |
+
+### 6.3 命名与技术打包规范
+* Free 版本的状态栏图标在 `Assets.xcassets` 中作为独立资源导入，命名为：
+  * `statusbar_inactive_free`
+  * `statusbar_activated_free`
+  * `statusbar_knobing_free`
+* 在 `StatusBarController.swift` 中，更新渲染图片逻辑，当检测到 `LicenseManager.shared.currentState` 为 `.free` 时，在读取图片名称时自动拼接 `_free` 后缀以载入带有斜划线的模板图，其余染色逻辑保持完全不变。

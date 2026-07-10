@@ -536,6 +536,160 @@
             background: rgba(255,255,255,0.1);
             border-radius: 2px;
         }
+
+        /* ==================== Free / Premium 效果对比新增样式 ==================== */
+        body.edition-free {
+            /* 保持现有的颜色配色不变，不进行重写 */
+        }
+
+        /* App Icon CSS Mockup */
+        .logo-preview-box {
+            width: 60px;
+            height: 60px;
+            background: #1a1a24;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden; /* 裁剪斜角丝带 */
+        }
+
+        /* 右下角斜角 Free 丝带 */
+        .logo-ribbon {
+            position: absolute;
+            bottom: 4px;
+            right: -16px;
+            background: #e06c75; /* 优雅的珊瑚红/警告红 */
+            color: #fff;
+            font-size: 7px;
+            font-weight: 700;
+            padding: 1px 16px;
+            transform: rotate(-45deg); /* 负角度转到右下角 */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 -1px 3px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 5;
+            font-family: sans-serif;
+        }
+
+        body.edition-free .logo-ribbon {
+            display: block;
+        }
+
+        /* 状态栏 Free 斜线 */
+        .sb-free-slash {
+            display: none;
+        }
+        body.edition-free .sb-free-slash {
+            display: block;
+        }
+        
+        .logo-preview-pad {
+            width: 48px;
+            height: 48px;
+            background: #252836;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+        
+        .logo-preview-ring {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2.5px solid var(--active-color);
+            box-shadow: 0 0 8px var(--active-color);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .logo-preview-pointer {
+            position: absolute;
+            width: 2.5px;
+            height: 8px;
+            background: var(--active-color);
+            border-radius: 1px;
+            top: 2px;
+            left: calc(50% - 1.25px);
+            transform-origin: bottom center;
+            transform: rotate(-45deg);
+            box-shadow: 0 0 4px var(--active-color);
+            transition: all 0.3s ease;
+        }
+        
+        .logo-preview-dot {
+            position: absolute;
+            width: 3.5px;
+            height: 3.5px;
+            border-radius: 50%;
+            background: #ffcad4;
+            box-shadow: 0 0 4px #ffcad4;
+            transition: all 0.3s ease;
+        }
+        
+        .logo-preview-dot.dot1 {
+            top: 8px;
+            right: 8px;
+        }
+        .logo-preview-dot.dot2 {
+            bottom: 8px;
+            left: 8px;
+        }
+        
+        /* Free 模式下的 Logo 样式微调已移除，保持与 Premium 完全相同的色彩 */
+
+        /* 状态栏预览条中各图标的色彩适配 */
+        .sb-item {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.25); /* 默认未激活状态 */
+            transition: color 0.3s ease;
+        }
+        
+        /* Pro 状态栏配色 */
+        .sb-item.active {
+            color: var(--neon-blue); /* 就绪 */
+        }
+        .sb-item.knobing {
+            color: var(--neon-green); /* 操作中 */
+        }
+        
+        /* Free 状态栏配色覆盖已移除，让其自动继承 --neon-blue 与 --neon-green 展现系统标准蓝/橙 */
+
+        /* 配色小圆点 */
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .color-dot.active {
+            border-color: #fff;
+            transform: scale(1.2);
+        }
+        .dot-blue { background: #00e5ff; box-shadow: 0 0 8px rgba(0,229,255,0.4); }
+        .dot-purple { background: #bd10e0; box-shadow: 0 0 8px rgba(189,16,224,0.4); }
+        .dot-green { background: #39ff14; box-shadow: 0 0 8px rgba(57,255,20,0.4); }
+        
+        body.edition-free .color-dot {
+            opacity: 0.3;
+            pointer-events: none; /* 禁用 */
+        }
     </style>
 </head>
 <body class="wp-resolve">
@@ -702,17 +856,90 @@
                     </div>
                 </div>
 
-                <!-- 颜色与主题自定义卡片 -->
+                <!-- 区别与版本沙盒 (Pro / Free 区分) -->
                 <div class="card">
                     <div class="card-title">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-3"></path></svg>
-                        状态栏颜色映射 (Pro / Free 区分)
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Free / Premium 版本设计对比
                     </div>
-                    <span style="font-size:12px; color:var(--text-secondary);">选择主题配色：</span>
-                    <div class="color-dot-wrapper">
-                        <div class="color-dot dot-blue active" onclick="setTheme('blue', this)"></div>
-                        <div class="color-dot dot-purple" onclick="setTheme('purple', this)"></div>
-                        <div class="color-dot dot-green" onclick="setTheme('green', this)"></div>
+                    
+                    <!-- 版本切换按钮 -->
+                    <div class="edition-tabs" style="display: flex; gap: 8px; margin-bottom: 15px;">
+                        <button class="btn-select active" id="btn-edition-premium" onclick="setEdition('premium')" style="flex: 1; text-align: center; justify-content: center;">Premium (Pro) 炫彩</button>
+                        <button class="btn-select" id="btn-edition-free" onclick="setEdition('free')" style="flex: 1; text-align: center; justify-content: center;">Free Edition 哑光</button>
+                    </div>
+
+                    <!-- Pro 版配色选择 (仅 Pro 可用) -->
+                    <div id="pro-color-selector" style="margin-bottom: 15px; transition: all 0.3s ease;">
+                        <span style="font-size:12px; color:var(--text-secondary); display: block; margin-bottom: 6px;">Pro 专属霓虹配色：</span>
+                        <div class="color-dot-wrapper">
+                            <div class="color-dot dot-blue active" onclick="setTheme('blue', this)"></div>
+                            <div class="color-dot dot-purple" onclick="setTheme('purple', this)"></div>
+                            <div class="color-dot dot-green" onclick="setTheme('green', this)"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- App Logo 拟物对比 -->
+                    <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px; margin-top: 10px;">
+                        <span style="font-size:12px; color:var(--text-secondary); display: block; margin-bottom: 8px;">App Logo 拟物效果：</span>
+                        <div style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.04);">
+                            <div class="logo-preview-box">
+                                <div class="logo-ribbon">Free</div>
+                                <div class="logo-preview-pad">
+                                    <div class="logo-preview-ring">
+                                        <div class="logo-preview-pointer"></div>
+                                    </div>
+                                    <div class="logo-preview-dot dot1"></div>
+                                    <div class="logo-preview-dot dot2"></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-secondary); flex: 1; line-height: 1.4;">
+                                <div id="logo-desc-title" style="font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Premium App Icon</div>
+                                <div id="logo-desc-body">三层浮空阴影结构，青蓝至靛紫的霓虹发光与发光粉色触点，传递出极高端全息手势触控体验。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 状态栏图标对比 -->
+                    <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px; margin-top: 15px;">
+                        <span style="font-size:12px; color:var(--text-secondary); display: block; margin-bottom: 8px;">StatusBar 状态自适应染色：</span>
+                        <div class="statusbar-preview-bar" style="background: #111216; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                            <span style="color: #616e85; font-weight: 500; font-family: monospace;">Menu Bar</span>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <!-- Inactive -->
+                                <div class="sb-item" style="opacity: 0.5;">
+                                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.5 1.5"/>
+                                        <line x1="8" y1="8" x2="8" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <!-- 斜角丝带斜线 -->
+                                        <line x1="11" y1="15" x2="15" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="sb-free-slash"/>
+                                    </svg>
+                                    <span style="font-size: 9px; margin-left: 2px;">未激活</span>
+                                </div>
+                                <!-- Activated -->
+                                <div class="sb-item active" id="sb-active-indicator">
+                                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="8" y1="8" x2="8" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <!-- 斜角丝带斜线 -->
+                                        <line x1="11" y1="15" x2="15" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="sb-free-slash"/>
+                                    </svg>
+                                    <span style="font-size: 9px; margin-left: 2px;">就绪</span>
+                                </div>
+                                <!-- Knobing -->
+                                <div class="sb-item knobing" id="sb-knobing-indicator">
+                                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="8" y1="8" x2="11" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <circle cx="12" cy="4" r="1.2" fill="currentColor"/>
+                                        <circle cx="4" cy="12" r="1.2" fill="currentColor"/>
+                                        <!-- 斜角丝带斜线 -->
+                                        <line x1="11" y1="15" x2="15" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="sb-free-slash"/>
+                                    </svg>
+                                    <span style="font-size: 9px; margin-left: 2px;">操作</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -918,7 +1145,60 @@
         }
 
         // 6. 状态颜色切换 (模拟 Pro/Free 及运行态)
+        let currentEdition = 'premium';
+
+        function setEdition(edition) {
+            currentEdition = edition;
+            const btnFree = document.getElementById('btn-edition-free');
+            const btnPremium = document.getElementById('btn-edition-premium');
+            const proSelector = document.getElementById('pro-color-selector');
+            const logoTitle = document.getElementById('logo-desc-title');
+            const logoBody = document.getElementById('logo-desc-body');
+            
+            if (edition === 'free') {
+                document.body.classList.add('edition-free');
+                btnFree.classList.add('active');
+                btnPremium.classList.remove('active');
+                proSelector.style.opacity = '1'; /* 保持可用，让用户依然能切换颜色体验 */
+                proSelector.style.pointerEvents = 'auto';
+                
+                logoTitle.textContent = "Free App Icon";
+                logoTitle.style.color = "#8e98ab";
+                logoBody.textContent = "保持全息渐变霓虹与三层浮空，但在【右下角】增加红色 “Free” 绶带角标。";
+                
+                // 还原选中的颜色主题，保持配色一致
+                const activeDot = document.querySelector('.color-dot.active');
+                if (activeDot) {
+                    const themeName = activeDot.classList.contains('dot-blue') ? 'blue' : 
+                                      activeDot.classList.contains('dot-purple') ? 'purple' : 'green';
+                    currentEdition = 'premium'; // 临时解锁修改
+                    setTheme(themeName, activeDot);
+                    currentEdition = 'free';
+                }
+            } else {
+                document.body.classList.remove('edition-free');
+                btnPremium.classList.add('active');
+                btnFree.classList.remove('active');
+                proSelector.style.opacity = '1';
+                proSelector.style.pointerEvents = 'auto';
+                
+                logoTitle.textContent = "Premium App Icon";
+                logoTitle.style.color = "#f5f6f9";
+                logoBody.textContent = "三层浮空阴影结构，青蓝至靛紫的霓虹发光与发光粉色触点，传递出极高端全息手势触控体验。";
+                
+                // 还原选中的颜色主题
+                const activeDot = document.querySelector('.color-dot.active');
+                if (activeDot) {
+                    setTheme(activeDot.classList.contains('dot-blue') ? 'blue' : 
+                             activeDot.classList.contains('dot-purple') ? 'purple' : 'green', activeDot);
+                }
+            }
+            updateHUD();
+        }
+
         function setTheme(color, dot) {
+            if (currentEdition === 'free') return; // Free版不允许修改
+
             // 更新 UI 激活点
             const dots = dot.parentElement.querySelectorAll('.color-dot');
             dots.forEach(d => d.classList.remove('active'));
@@ -930,12 +1210,18 @@
             if (color === 'blue') {
                 targetHex = '#00e5ff';
                 document.documentElement.style.setProperty('--active-color', '#00e5ff');
+                document.documentElement.style.setProperty('--neon-blue', '#00e5ff');
+                document.documentElement.style.setProperty('--neon-green', '#39ff14');
             } else if (color === 'purple') {
                 targetHex = '#bd10e0';
                 document.documentElement.style.setProperty('--active-color', '#bd10e0');
+                document.documentElement.style.setProperty('--neon-blue', '#bd10e0');
+                document.documentElement.style.setProperty('--neon-green', '#ff398a'); // 紫色主题时使用亮粉色作为操作中指示
             } else if (color === 'green') {
                 targetHex = '#39ff14';
                 document.documentElement.style.setProperty('--active-color', '#39ff14');
+                document.documentElement.style.setProperty('--neon-blue', '#39ff14');
+                document.documentElement.style.setProperty('--neon-green', '#00e5ff'); // 绿色主题时使用青色作为操作中指示
             }
             
             // 强制重新着色
