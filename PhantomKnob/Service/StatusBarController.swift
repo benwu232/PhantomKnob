@@ -5,7 +5,7 @@ import os
 
 class StatusBarController: ObservableObject {
     var statusItem: NSStatusItem?
-    private var menu: NSMenu?
+    var menu: NSMenu?
     private var globalHotkeyMonitor: Any?
     private var localHotkeyMonitor: Any?
     private var toggleMenuItem: NSMenuItem?
@@ -137,6 +137,31 @@ class StatusBarController: ObservableObject {
         menu?.addItem(versionItem)
         updateVersionItem()
         
+        menu?.addItem(NSMenuItem.separator())
+        
+        let hs = HotkeySettings.shared
+        let toggleItem = NSMenuItem(
+            title: String(localized: "menu.toggleMode", defaultValue: "Toggle Control Mode"),
+            action: #selector(toggleMode),
+            keyEquivalent: hs.keyEquivalent
+        )
+        toggleItem.keyEquivalentModifierMask = hs.modifiers
+        toggleItem.target = self
+        toggleMenuItem = toggleItem
+        menu?.addItem(toggleItem)
+        
+        menu?.addItem(NSMenuItem.separator())
+        
+        let settingsItem = NSMenuItem(
+            title: String(localized: "menu.settings", defaultValue: "Settings…"),
+            action: #selector(openSettings),
+            keyEquivalent: ","
+        )
+        settingsItem.target = self
+        menu?.addItem(settingsItem)
+        
+        menu?.addItem(NSMenuItem.separator())
+        
         let guideMenuItem = NSMenuItem(
             title: String(localized: "menu.userGuide", defaultValue: "User Guide…"),
             action: #selector(openGuide),
@@ -160,29 +185,6 @@ class StatusBarController: ObservableObject {
         )
         feedbackItem.target = self
         menu?.addItem(feedbackItem)
-        
-        menu?.addItem(NSMenuItem.separator())
-        
-        let hs = HotkeySettings.shared
-        let toggleItem = NSMenuItem(
-            title: String(localized: "menu.toggleMode", defaultValue: "Toggle Control Mode"),
-            action: #selector(toggleMode),
-            keyEquivalent: hs.keyEquivalent
-        )
-        toggleItem.keyEquivalentModifierMask = hs.modifiers
-        toggleItem.target = self
-        toggleMenuItem = toggleItem
-        menu?.addItem(toggleItem)
-        
-        menu?.addItem(NSMenuItem.separator())
-        
-        let settingsItem = NSMenuItem(
-            title: String(localized: "menu.settings", defaultValue: "Settings…"),
-            action: #selector(openSettings),
-            keyEquivalent: ","
-        )
-        settingsItem.target = self
-        menu?.addItem(settingsItem)
         
         menu?.addItem(NSMenuItem.separator())
         
@@ -394,7 +396,15 @@ class StatusBarController: ObservableObject {
         case .knobing, .cooling: name = "statusbar_knobing"
         case .customizing: name = "statusbar_inactive"
         }
-        let image = NSImage(named: name)
+        
+        let finalName: String
+        if LicenseManager.shared.currentState == .free {
+            finalName = name + "_free"
+        } else {
+            finalName = name
+        }
+        
+        let image = NSImage(named: finalName)
         image?.isTemplate = true
         return image
     }
