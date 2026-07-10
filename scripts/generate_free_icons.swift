@@ -81,7 +81,7 @@ func drawStatusBarSlash(on image: NSImage) -> NSImage? {
     
     let center = CGPoint(x: S / 2.0, y: S / 2.0)
     let radius = S * 6.0 / 16.0
-    ctx.addArc(center: center, radius: radius, startAngle: -75.0 * .pi / 180.0, endAngle: -15.0 * .pi / 180.0, clockwise: false)
+    ctx.addArc(center: center, radius: radius, startAngle: -67.5 * .pi / 180.0, endAngle: -22.5 * .pi / 180.0, clockwise: false)
     ctx.strokePath()
     ctx.restoreGState()
     
