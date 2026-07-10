@@ -85,23 +85,6 @@ func drawStatusBarSlash(on image: NSImage) -> NSImage? {
     ctx.strokePath()
     ctx.restoreGState()
     
-    // 2. 在右下角缺口中切入单色斜线 (向右倾斜45度)
-    let strokeW = max(1.0, S / 16.0 * 1.5)
-    ctx.setStrokeColor(NSColor.white.cgColor) // 模板图必须是纯白色
-    ctx.setLineWidth(strokeW)
-    ctx.setLineCap(.round)
-    
-    // 坐标比例：在 16x16px 视图下为 (7, 1) 到 (15, 9)
-    let x1 = S * 7.0 / 16.0
-    let y1 = S * 1.0 / 16.0
-    let x2 = S * 15.0 / 16.0
-    let y2 = S * 9.0 / 16.0
-    
-    ctx.beginPath()
-    ctx.move(to: CGPoint(x: x1, y: y1))
-    ctx.addLine(to: CGPoint(x: x2, y: y2))
-    ctx.strokePath()
-    
     freeImage.unlockFocus()
     return freeImage
 }
