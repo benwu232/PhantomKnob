@@ -26,6 +26,7 @@
 		2C9B5146B062FB1B035278C0 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14058306126BA0F12A966584 /* OverlayController.swift */; };
 		2E1279868AA8F928C0F4538A /* KnobGlobalState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C4C81CBF98264E7686C45B /* KnobGlobalState.swift */; };
 		2E5E69A3A010696CE124CDA8 /* DisplayBrightnessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6423248EA5723E80A08AEA /* DisplayBrightnessService.swift */; };
+		31CDCB6AAB2A916EB1382526 /* DockIconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601C074E4660383A42DB512A /* DockIconManager.swift */; };
 		33971F76665F69DB98FCFF5C /* InputTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C955EF152C23C292A17B7F8A /* InputTranslator.swift */; };
 		367F55A8914856016C59C71D /* TargetDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB470A7453374CC4862FD7 /* TargetDetector.swift */; };
 		37B5CCF456D3EE1E46375088 /* KnobAlgorithmTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */; };
@@ -150,6 +151,7 @@
 		54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		58A77841598587C200D25FBF /* AppLanguageManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageManagerTests.swift; sourceTree = "<group>"; };
 		5FE64900D039A90EF7F38282 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		601C074E4660383A42DB512A /* DockIconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockIconManager.swift; sourceTree = "<group>"; };
 		7276B847C3350CE8E5BEE90C /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 		73263D014AF58E4418641B4A /* KnobCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCircleView.swift; sourceTree = "<group>"; };
 		7824393D26BE2CFB97C3AED7 /* ControlRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlRule.swift; sourceTree = "<group>"; };
@@ -292,6 +294,7 @@
 				1D501667239AF8D006C21DF8 /* CloudSyncManager.swift */,
 				8FAD6E788B87835867469C3F /* CustomizerHUDWindowController.swift */,
 				BC6423248EA5723E80A08AEA /* DisplayBrightnessService.swift */,
+				601C074E4660383A42DB512A /* DockIconManager.swift */,
 				E927BFD011FA7F408A75D99D /* FeatureGate.swift */,
 				28B15AA0918B5B487EAD25BC /* GestureClassifier.swift */,
 				0BD747C9F6DC171899EA02CC /* GlobalTouchHandler.swift */,
@@ -585,6 +588,7 @@
 				9517D0F648E2CE11D3436865 /* DemoViewModel.swift in Sources */,
 				82BBAB63D2E9D62FDE90805C /* DetectedTarget.swift in Sources */,
 				2E5E69A3A010696CE124CDA8 /* DisplayBrightnessService.swift in Sources */,
+				31CDCB6AAB2A916EB1382526 /* DockIconManager.swift in Sources */,
 				E7319043FD2CA4D8536CC9C9 /* FeatureGate.swift in Sources */,
 				C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */,
 				EF138900E1C6F71B57127BE9 /* GlobalTouchHandler.swift in Sources */,

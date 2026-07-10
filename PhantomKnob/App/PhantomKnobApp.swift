@@ -42,6 +42,9 @@ class AppState: ObservableObject {
         
         self.knobStateManager.start()
         
+        // 启动 Dock 图标版本切换管理
+        DockIconManager.shared.start()
+        
         // 挂载云同步服务（当前仅保留本地持久化，已停用 iCloud KVS 同步）
         // CloudSyncManager.shared.start()
         
