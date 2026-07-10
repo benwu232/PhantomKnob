@@ -589,6 +589,19 @@
             display: block;
         }
         
+        .sb-circle-free {
+            display: none;
+        }
+        .sb-circle-premium {
+            display: block;
+        }
+        body.edition-free .sb-circle-free {
+            display: block;
+        }
+        body.edition-free .sb-circle-premium {
+            display: none;
+        }
+        
         .logo-preview-pad {
             width: 48px;
             height: 48px;
@@ -909,7 +922,14 @@
                                 <!-- Inactive -->
                                 <div class="sb-item" style="opacity: 0.5;">
                                     <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.5 1.5"/>
+                                        <defs>
+                                            <mask id="free-mask">
+                                                <rect x="0" y="0" width="16" height="16" fill="white"/>
+                                                <rect x="7.5" y="7.5" width="9" height="9" fill="black"/>
+                                            </mask>
+                                        </defs>
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.5 1.5" class="sb-circle-premium"/>
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.5 1.5" mask="url(#free-mask)" class="sb-circle-free"/>
                                         <line x1="8" y1="8" x2="8" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                         <!-- 斜角丝带斜线 -->
                                         <line x1="7" y1="15" x2="15" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="sb-free-slash"/>
@@ -919,7 +939,8 @@
                                 <!-- Activated -->
                                 <div class="sb-item active" id="sb-active-indicator">
                                     <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" class="sb-circle-premium"/>
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" mask="url(#free-mask)" class="sb-circle-free"/>
                                         <line x1="8" y1="8" x2="8" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                         <!-- 斜角丝带斜线 -->
                                         <line x1="7" y1="15" x2="15" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" class="sb-free-slash"/>
@@ -929,7 +950,8 @@
                                 <!-- Knobing -->
                                 <div class="sb-item knobing" id="sb-knobing-indicator">
                                     <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" class="sb-circle-premium"/>
+                                        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" mask="url(#free-mask)" class="sb-circle-free"/>
                                         <line x1="8" y1="8" x2="11" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                         <circle cx="12" cy="4" r="1.2" fill="currentColor"/>
                                         <circle cx="4" cy="12" r="1.2" fill="currentColor"/>

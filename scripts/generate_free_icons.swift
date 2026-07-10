@@ -58,7 +58,7 @@ func drawFreeRibbon(on image: NSImage) -> NSImage? {
     return freeImage
 }
 
-// 2. 辅助函数：绘制右下角斜切单色线 (作为微型 Free 绶带)
+// 2. 辅助函数：绘制右下角斜切单色线 (作为微型 Free 绶带，且将圆周右下角 1/4 空出)
 func drawStatusBarSlash(on image: NSImage) -> NSImage? {
     let size = image.size
     let S = size.width
@@ -73,7 +73,19 @@ func drawStatusBarSlash(on image: NSImage) -> NSImage? {
         return nil
     }
     
-    // 在右下角切一道单色斜线 (向右倾斜45度)
+    // 1. 在 Cocoa Y-up 坐标系下，使用 clear 模式擦除右下角 (-95° 到 5°) 范围内的圆周线
+    ctx.saveGState()
+    ctx.setBlendMode(.clear)
+    ctx.setLineWidth(max(1.5, S / 16.0 * 2.2)) // 稍微宽于圆周线以确保擦干净
+    ctx.setLineCap(.square)
+    
+    let center = CGPoint(x: S / 2.0, y: S / 2.0)
+    let radius = S * 6.0 / 16.0
+    ctx.addArc(center: center, radius: radius, startAngle: -95.0 * .pi / 180.0, endAngle: 5.0 * .pi / 180.0, clockwise: false)
+    ctx.strokePath()
+    ctx.restoreGState()
+    
+    // 2. 在右下角缺口中切入单色斜线 (向右倾斜45度)
     let strokeW = max(1.0, S / 16.0 * 1.5)
     ctx.setStrokeColor(NSColor.white.cgColor) // 模板图必须是纯白色
     ctx.setLineWidth(strokeW)
