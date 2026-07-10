@@ -379,8 +379,9 @@ struct GeneralSettingsView: View {
 }
 
 // MARK: - About Tab
-
 struct AboutView: View {
+    @State private var licenseState: LicenseState = LicenseManager.shared.currentState
+    
     private var versionString: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
         let b = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
@@ -388,19 +389,25 @@ struct AboutView: View {
         return String(format: format, v, b)
     }
 
+    private var appIcon: NSImage {
+        if case .free = licenseState {
+            return NSImage(named: "AppIconFree") ?? NSImage(named: "NSApplicationIcon") ?? NSImage()
+        } else {
+            return NSImage(named: "NSApplicationIcon") ?? NSImage()
+        }
+    }
+
     var body: some View {
         VStack(spacing: 16) {
             Spacer()
-            if let icon = NSApp.applicationIconImage {
-                Image(nsImage: icon)
-                    .resizable()
-                    .frame(width: 72, height: 72)
-                    .cornerRadius(16)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
-            }
+            Image(nsImage: appIcon)
+                .resizable()
+                .frame(width: 72, height: 72)
+                .cornerRadius(16)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
             VStack(spacing: 4) {
                 Text("Phantom Knob")
                     .font(.system(size: 20, weight: .bold))
@@ -437,6 +444,9 @@ struct AboutView: View {
             Spacer()
         }
         .frame(minHeight: 260)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LicenseStateDidChange"))) { _ in
+            self.licenseState = LicenseManager.shared.currentState
+        }
     }
 }
 
