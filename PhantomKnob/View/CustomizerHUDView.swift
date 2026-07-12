@@ -103,26 +103,15 @@ struct CustomizerHUDView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 
-                if let icon = appIcon {
-                    Image(nsImage: icon)
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                } else {
-                    Image(systemName: "app.badge")
-                        .resizable()
-                        .foregroundColor(.white.opacity(0.5))
-                        .frame(width: 24, height: 24)
-                }
+                // 🌟 使用 PhantomKnob 品牌标识图标与标题
+                Image(systemName: "slider.horizontal.3")
+                    .resizable()
+                    .foregroundColor(.orange)
+                    .frame(width: 16, height: 16)
                 
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(target.displayName.isEmpty ? String(localized: "hud.unnamedControl", defaultValue: "Unnamed Control") : target.displayName)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.orange)
-                    
-                    Text("\(appName) · \(target.axRole)")
-                        .font(.system(size: 9))
-                        .foregroundColor(.white.opacity(0.5))
-                }
+                Text("PhantomKnob Customizer")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(.white)
                 
                 Spacer()
                 
@@ -154,9 +143,9 @@ struct CustomizerHUDView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // ① 旋钮类型
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(String(localized: "hud.knobType", defaultValue: "Knob Type"))
+                        Text(String(localized: "hud.knobType", defaultValue: "旋钮类型"))
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white)
                         Picker("", selection: $configType) {
                             Text(String(localized: "hud.single", defaultValue: "Single Knob")).tag(KnobConfigType.single)
                             Text(String(localized: "hud.double", defaultValue: "Double-Ring")).tag(KnobConfigType.double)
@@ -168,11 +157,11 @@ struct CustomizerHUDView: View {
                     
                     Divider().background(Color.white.opacity(0.08))
                     
-                    // ② 🎨 外观定制
+                    // ② 旋钮外观
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("🎨 \(String(localized: "hud.section.appearance", defaultValue: "Appearance"))")
+                        Text(String(localized: "hud.section.appearance", defaultValue: "旋钮外观"))
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white)
                         
                         switch configType {
                         case .single:
@@ -186,11 +175,11 @@ struct CustomizerHUDView: View {
                     
                     Divider().background(Color.white.opacity(0.08))
                     
-                    // ③ ⚡ 行为定制
+                    // ③ 旋钮行为
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("⚡ \(String(localized: "hud.section.behavior", defaultValue: "Behavior"))")
+                        Text(String(localized: "hud.section.behavior", defaultValue: "旋钮行为"))
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white)
                         
                         switch configType {
                         case .single:
@@ -204,9 +193,28 @@ struct CustomizerHUDView: View {
                     
                     Divider().background(Color.white.opacity(0.08))
                     
-                    // ④ ▶ 高级定位信息 (默认折叠)
+                    // ④ 辅助信息
                     DisclosureGroup(isExpanded: $isAdvancedExpanded) {
                         VStack(alignment: .leading, spacing: 12) {
+                            // 被控应用品牌标识移入辅助信息首行
+                            HStack(spacing: 8) {
+                                if let icon = appIcon {
+                                    Image(nsImage: icon)
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                } else {
+                                    Image(systemName: "app.badge")
+                                        .resizable()
+                                        .foregroundColor(.white.opacity(0.5))
+                                        .frame(width: 20, height: 20)
+                                }
+                                Text(appName)
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.top, 4)
+                            .padding(.bottom, 6)
+                            
                             // 控件定位元数据
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(String(localized: "hud.locatingIdentifier", defaultValue: "Element Locating Identifier"))
@@ -275,13 +283,9 @@ struct CustomizerHUDView: View {
                         }
                         .padding(.top, 4)
                     } label: {
-                        HStack {
-                            Image(systemName: isAdvancedExpanded ? "chevron.down" : "chevron.right")
-                                .font(.system(size: 10, weight: .bold))
-                            Text(String(localized: "hud.section.advanced", defaultValue: "Advanced Positioning Options"))
-                                .font(.system(size: 11, weight: .bold))
-                        }
-                        .foregroundColor(.gray)
+                        Text(String(localized: "hud.section.helper", defaultValue: "辅助信息"))
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
                     }
                 }
             }
