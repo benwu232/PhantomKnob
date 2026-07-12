@@ -64,6 +64,11 @@
   ```
 - 接着展示“控件定位唯一标识”的 `Bundle ID`、`AXRole`、`AXIdentifier` 以及冲突特征层级链。
 
+### 3.4 修改即时持久化与生命周期存档机制
+为了彻底解决“自定义调色盘修改配色后退出，变回原色”的 Bug：
+1. **调色板实时同步**：在 `CustomizerHUDView.swift` 监听 `NSColorPanel.colorDidChangeNotification` 的闭包中，更新完 themeColor 后，必须同步调用一次 `save()` 方法，使颜色修改即时保存到 `my_knobs.json` 磁盘文件中。
+2. **生命周期安全存档**：在 `CustomizerHUDView.swift` 的主 View 容器上附加 `.onDisappear` 钩子，在面板退出销毁的瞬间，显式调用一次 `save()` 作为最底层的安全双保险，保证面板的任何修改绝对 100% 被持久化。
+
 ---
 
 ## 4. 验证计划
