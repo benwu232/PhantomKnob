@@ -371,7 +371,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     private func handleRuleHotReload(_ rule: ControlRule) {
-        guard let target = currentTarget, target.ruleKey == rule.key else { return }
+        guard let target = currentTarget,
+              let resolvedRule = RuleLibrary.shared.lookup(for: target.ruleKey),
+              resolvedRule.key.matches(rule.key) else { return }
         
         // 1. 重新实例化当前 Translator
         let newTranslator = makeTranslator(for: target, rule: rule, radius: self.currentRadius)
