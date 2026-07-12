@@ -14,6 +14,10 @@ struct CustomizerHUDView: View {
     @State private var selectedParents: Set<Int> = [] // 选中的 parentChain 索引集合
     @State private var lockedDiffIndex: Int? = nil    // 自动锁定的分叉点索引
     @State private var isFirstLoad: Bool = true
+    
+    @State private var linearOuterColor: String = "#FF9F0A"
+    @State private var linearInnerColor: String = "#30D158"
+    @State private var isAdvancedExpanded: Bool = false
 
     private var currentRuleKey: RuleKey {
         let chain = target.parentChain.enumerated().filter {
@@ -27,6 +31,8 @@ struct CustomizerHUDView: View {
             parentChain: chain.isEmpty ? nil : chain
         )
     }
+
+
     
     // 单旋钮
     @State private var singleScale: Double = 1.0
@@ -84,27 +90,36 @@ struct CustomizerHUDView: View {
     ]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            // 控件标识卡片 (Metadata Card)
+        VStack(alignment: .leading, spacing: 12) {
+            // 控件标识卡片 (Metadata Card) 兼顶栏（含左上角显式关闭按钮）
             HStack(spacing: 12) {
+                Button(action: {
+                    CustomizerHUDWindowController.shared.hide()
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.gray)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
                 if let icon = appIcon {
                     Image(nsImage: icon)
                         .resizable()
-                        .frame(width: 32, height: 32)
+                        .frame(width: 24, height: 24)
                 } else {
                     Image(systemName: "app.badge")
                         .resizable()
                         .foregroundColor(.gray)
-                        .frame(width: 32, height: 32)
+                        .frame(width: 24, height: 24)
                 }
                 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 1) {
                     Text(target.displayName.isEmpty ? String(localized: "hud.unnamedControl", defaultValue: "Unnamed Control") : target.displayName)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.orange)
                     
                     Text("\(appName) · \(target.axRole)")
-                        .font(.system(size: 10))
+                        .font(.system(size: 9))
                         .foregroundColor(.gray)
                 }
                 
@@ -112,31 +127,21 @@ struct CustomizerHUDView: View {
                 
                 if let radius = liveRadius {
                     Text("\(Int(radius)) mm")
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
                         .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 2)
                         .background(Color.orange.opacity(0.15))
                         .foregroundColor(.orange)
-                        .cornerRadius(6)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
-                        )
+                        .cornerRadius(4)
                 }
             }
-            .padding(10)
-            .background(Color.white.opacity(0.06))
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
-            )
             
             Divider().background(Color.white.opacity(0.1))
             
-            ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 0) {
+                ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    // 1. 旋钮类型 (置于最顶)
+                    // ① 旋钮类型
                     VStack(alignment: .leading, spacing: 6) {
                         Text(String(localized: "hud.knobType", defaultValue: "Knob Type"))
                             .font(.system(size: 11, weight: .bold))
@@ -150,86 +155,138 @@ struct CustomizerHUDView: View {
                         .onChange(of: configType) { _ in save() }
                     }
                     
-                    // 2. 不同模式子表单 (内含配色)
-                    switch configType {
-                    case .single:
-                        singleSubForm
-                    case .double:
-                        doubleSubForm
-                    case .linear:
-                        linearSubForm
-                    }
+                    Divider().background(Color.white.opacity(0.08))
                     
-                    Divider().background(Color.white.opacity(0.1))
-                    
-                    // 3. 控件定位元数据 (Uniquely Identifying Info)
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(String(localized: "hud.locatingIdentifier", defaultValue: "Element Locating Identifier"))
+                    // ② 🎨 外观定制
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("🎨 \(String(localized: "hud.section.appearance", defaultValue: "Appearance"))")
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(.gray)
                         
-                        VStack(spacing: 4) {
-                            metadataRow(label: String(localized: "hud.bundleID", defaultValue: "Bundle ID"), value: target.bundleID)
-                            metadataRow(label: String(localized: "hud.axRole", defaultValue: "AXRole"), value: target.axRole)
-                            metadataRow(label: String(localized: "hud.axIdentifier", defaultValue: "AXIdentifier"), value: target.identifier ?? String(localized: "hud.globalMatch", defaultValue: "Global match"))
+                        switch configType {
+                        case .single:
+                            singleAppearanceForm
+                        case .double:
+                            doubleAppearanceForm
+                        case .linear:
+                            linearAppearanceForm
                         }
-                        .padding(8)
-                        .background(Color.black.opacity(0.2))
-                        .cornerRadius(8)
                     }
-
-                    if !target.parentChain.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(hasConflict 
-                                 ? String(localized: "hud.conflictDetected", defaultValue: "⚠️ Element conflict detected (Hierarchy match enabled)") 
-                                 : String(localized: "hud.hierarchyFeatures", defaultValue: "Hierarchy features (Check to enable precise targeting)"))
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(hasConflict ? .yellow : .gray)
+                    
+                    Divider().background(Color.white.opacity(0.08))
+                    
+                    // ③ ⚡ 行为定制
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("⚡ \(String(localized: "hud.section.behavior", defaultValue: "Behavior"))")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.gray)
+                        
+                        switch configType {
+                        case .single:
+                            singleBehaviorForm
+                        case .double:
+                            doubleBehaviorForm
+                        case .linear:
+                            linearBehaviorForm
+                        }
+                    }
+                    
+                    Divider().background(Color.white.opacity(0.08))
+                    
+                    // ④ ▶ 高级定位信息 (默认折叠)
+                    DisclosureGroup(isExpanded: $isAdvancedExpanded) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            // 控件定位元数据
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(String(localized: "hud.locatingIdentifier", defaultValue: "Element Locating Identifier"))
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundColor(.gray)
+                                
+                                VStack(spacing: 4) {
+                                    metadataRow(label: String(localized: "hud.bundleID", defaultValue: "Bundle ID"), value: target.bundleID)
+                                    metadataRow(label: String(localized: "hud.axRole", defaultValue: "AXRole"), value: target.axRole)
+                                    metadataRow(label: String(localized: "hud.axIdentifier", defaultValue: "AXIdentifier"), value: target.identifier ?? String(localized: "hud.globalMatch", defaultValue: "Global match"))
+                                }
+                                .padding(8)
+                                .background(Color.black.opacity(0.2))
+                                .cornerRadius(8)
+                            }
                             
-                            VStack(alignment: .leading, spacing: 4) {
-                                ForEach(0..<target.parentChain.count, id: \.self) { idx in
-                                    let parent = target.parentChain[idx]
-                                    HStack(spacing: 6) {
-                                        Toggle("", isOn: Binding(
-                                            get: { self.selectedParents.contains(idx) },
-                                            set: { isCheck in
-                                                if idx == lockedDiffIndex { return } // 强制锁定的分叉点禁止取消
-                                                if isCheck {
-                                                    self.selectedParents.insert(idx)
-                                                } else {
-                                                    self.selectedParents.remove(idx)
+                            // 层级链冲突与分叉点配置
+                            if !target.parentChain.isEmpty {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(hasConflict 
+                                         ? String(localized: "hud.conflictDetected", defaultValue: "⚠️ Element conflict detected (Hierarchy match enabled)") 
+                                         : String(localized: "hud.hierarchyFeatures", defaultValue: "Hierarchy features (Check to enable precise targeting)"))
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundColor(hasConflict ? .yellow : .gray)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        ForEach(0..<target.parentChain.count, id: \.self) { idx in
+                                            let parent = target.parentChain[idx]
+                                            HStack(spacing: 6) {
+                                                Toggle("", isOn: Binding(
+                                                    get: { self.selectedParents.contains(idx) },
+                                                    set: { isCheck in
+                                                        if idx == lockedDiffIndex { return } // 强制锁定的分叉点禁止取消
+                                                        if isCheck {
+                                                            self.selectedParents.insert(idx)
+                                                        } else {
+                                                            self.selectedParents.remove(idx)
+                                                        }
+                                                        loadExisting()
+                                                    }
+                                                ))
+                                                .toggleStyle(.checkbox)
+                                                .disabled(idx == lockedDiffIndex)
+                                                
+                                                Text("\(parent.displayName ?? String(localized: "hud.unnamedControl", defaultValue: "Unnamed Control")) (\(parent.axRole))")
+                                                    .font(.system(size: 10))
+                                                    .foregroundColor(idx == lockedDiffIndex ? .green : .white)
+                                                
+                                                if idx == lockedDiffIndex {
+                                                    Text(String(localized: "hud.splitDifference", defaultValue: "💡 Split difference point"))
+                                                        .font(.system(size: 8))
+                                                        .foregroundColor(.green)
+                                                        .padding(.horizontal, 4)
+                                                        .background(Color.green.opacity(0.1))
+                                                        .cornerRadius(4)
                                                 }
-                                                loadExisting()
                                             }
-                                        ))
-                                        .toggleStyle(.checkbox)
-                                        .disabled(idx == lockedDiffIndex)
-                                        
-                                        Text("\(parent.displayName ?? String(localized: "hud.unnamedControl", defaultValue: "Unnamed Control")) (\(parent.axRole))")
-                                            .font(.system(size: 10))
-                                            .foregroundColor(idx == lockedDiffIndex ? .green : .white)
-                                        
-                                        if idx == lockedDiffIndex {
-                                            Text(String(localized: "hud.splitDifference", defaultValue: "💡 Split difference point"))
-                                                .font(.system(size: 8))
-                                                .foregroundColor(.green)
-                                                .padding(.horizontal, 4)
-                                                .background(Color.green.opacity(0.1))
-                                                .cornerRadius(4)
+                                            .padding(.vertical, 2)
                                         }
                                     }
-                                    .padding(.vertical, 2)
+                                    .padding(8)
+                                    .background(Color.black.opacity(0.2))
+                                    .cornerRadius(8)
                                 }
                             }
-                            .padding(8)
-                            .background(Color.black.opacity(0.2))
-                            .cornerRadius(8)
                         }
+                        .padding(.top, 4)
+                    } label: {
+                        HStack {
+                            Image(systemName: isAdvancedExpanded ? "chevron.down" : "chevron.right")
+                                .font(.system(size: 10, weight: .bold))
+                            Text(String(localized: "hud.section.advanced", defaultValue: "Advanced Positioning Options"))
+                                .font(.system(size: 11, weight: .bold))
+                        }
+                        .foregroundColor(.gray)
                     }
                 }
             }
         }
-        .padding(16)
+        
+        // 底部滚动淡出羽化渐变阴影蒙层，提示用户下方还有未展示内容
+        LinearGradient(
+            gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .frame(height: 12)
+        .padding(.top, -12)
+        .allowsHitTesting(false)
+    }
+    .padding(16)
         .onAppear {
             loadExisting()
         }
@@ -263,9 +320,15 @@ struct CustomizerHUDView: View {
         }
     }
     
+    // MARK: - WYSIWYG 预览组件与手势
+
+
+    
     // MARK: - 模式子表单实现
     
-    private var singleSubForm: some View {
+    // MARK: - 外观子表单实现
+    
+    private var singleAppearanceForm: some View {
         VStack(alignment: .leading, spacing: 10) {
             // 配色定制
             VStack(alignment: .leading, spacing: 6) {
@@ -316,7 +379,6 @@ struct CustomizerHUDView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            .padding(.bottom, 6)
             
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
@@ -330,8 +392,292 @@ struct CustomizerHUDView: View {
                         save()
                     }
             }
-            .padding(.bottom, 6)
+        }
+    }
+    
+    private var doubleAppearanceForm: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // ⚙️ 边界与迟滞范围
+            VStack(alignment: .leading, spacing: 10) {
+                Text(String(localized: "hud.doubleBoundarySettings", defaultValue: "⚙️ Boundary & Hysteresis Margin"))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.gray)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(String(localized: "hud.boundaryRadius", defaultValue: "Boundary Radius")).font(.system(size: 11))
+                        Spacer()
+                        Text("\(Int(doubleInnerRadiusMax)) mm")
+                            .font(.system(size: 11, design: .monospaced))
+                    }
+                    Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
+                        .onChange(of: doubleInnerRadiusMax) { next in
+                            doubleOuterRadiusMin = next
+                            save()
+                        }
+                    
+                    HStack {
+                        Text(String(localized: "hud.hysteresisMargin", defaultValue: "Hysteresis Margin")).font(.system(size: 11))
+                        Spacer()
+                        Text("\(Int(doubleMargin)) mm")
+                            .font(.system(size: 11, design: .monospaced))
+                    }
+                    Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
+                        .onChange(of: doubleMargin) { next in
+                            save()
+                        }
+                    
+                    HStack {
+                        Text(String(localized: "hud.doubleInnerMinRadius", defaultValue: "Inner Ring Min Radius")).font(.system(size: 11))
+                        Spacer()
+                        Text("\(Int(doubleInnerMinRadius)) mm")
+                            .font(.system(size: 11, design: .monospaced))
+                    }
+                    Slider(value: $doubleInnerMinRadius, in: 5.0...15.0, step: 1.0)
+                        .onChange(of: doubleInnerMinRadius) { _ in
+                            save()
+                        }
+                }
+                .padding(10)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                )
+            }
             
+            // 外圈配色
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(localized: "hud.doubleOuterColor", defaultValue: "🟠 Outer Ring Theme Color"))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.orange)
+                
+                HStack(spacing: 5) {
+                    ForEach(colors, id: \.self) { colorHex in
+                        Circle()
+                            .fill(Color(hex: colorHex))
+                            .frame(width: 16, height: 16)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: doubleOuterThemeColor == colorHex ? 1.5 : 0)
+                            )
+                            .onTapGesture {
+                                doubleOuterThemeColor = colorHex
+                                save()
+                            }
+                    }
+                }
+                
+                Button(action: {
+                    activeColorTarget = .doubleOuter
+                    NSColorPanel.shared.color = NSColor(Color(hex: doubleOuterThemeColor))
+                    NSColorPanel.shared.orderFront(nil)
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: doubleOuterThemeColor))
+                        Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
+                            .font(.system(size: 11))
+                        Spacer()
+                        Text(doubleOuterThemeColor)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            
+            // 内圈配色
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(localized: "hud.doubleInnerColor", defaultValue: "🟢 Inner Ring Theme Color"))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.green)
+                
+                HStack(spacing: 5) {
+                    ForEach(colors, id: \.self) { colorHex in
+                        Circle()
+                            .fill(Color(hex: colorHex))
+                            .frame(width: 16, height: 16)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: doubleInnerThemeColor == colorHex ? 1.5 : 0)
+                            )
+                            .onTapGesture {
+                                doubleInnerThemeColor = colorHex
+                                save()
+                            }
+                    }
+                }
+                
+                Button(action: {
+                    activeColorTarget = .doubleInner
+                    NSColorPanel.shared.color = NSColor(Color(hex: doubleInnerThemeColor))
+                    NSColorPanel.shared.orderFront(nil)
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: doubleInnerThemeColor))
+                        Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
+                            .font(.system(size: 11))
+                        Spacer()
+                        Text(doubleInnerThemeColor)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+    
+    private var linearAppearanceForm: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 外圈配色
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(localized: "hud.linearOuterColor", defaultValue: "🟠 Outer Ring Color (Slow)"))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.orange)
+                
+                HStack(spacing: 5) {
+                    ForEach(colors, id: \.self) { colorHex in
+                        Circle()
+                            .fill(Color(hex: colorHex))
+                            .frame(width: 16, height: 16)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: linearOuterColor == colorHex ? 1.5 : 0)
+                            )
+                            .onTapGesture {
+                                linearOuterColor = colorHex
+                                save()
+                            }
+                    }
+                }
+                
+                Button(action: {
+                    activeColorTarget = .global
+                    NSColorPanel.shared.color = NSColor(Color(hex: linearOuterColor))
+                    NSColorPanel.shared.orderFront(nil)
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: linearOuterColor))
+                        Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
+                            .font(.system(size: 11))
+                        Spacer()
+                        Text(linearOuterColor)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            
+            // 内圈配色
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(localized: "hud.linearInnerColor", defaultValue: "🟢 Inner Ring Color (Fast)"))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.green)
+                
+                HStack(spacing: 5) {
+                    ForEach(colors, id: \.self) { colorHex in
+                        Circle()
+                            .fill(Color(hex: colorHex))
+                            .frame(width: 16, height: 16)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: linearInnerColor == colorHex ? 1.5 : 0)
+                            )
+                            .onTapGesture {
+                                linearInnerColor = colorHex
+                                save()
+                            }
+                    }
+                }
+                
+                Button(action: {
+                    activeColorTarget = .doubleInner
+                    NSColorPanel.shared.color = NSColor(Color(hex: linearInnerColor))
+                    NSColorPanel.shared.orderFront(nil)
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(Color(hex: linearInnerColor))
+                        Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
+                            .font(.system(size: 11))
+                        Spacer()
+                        Text(linearInnerColor)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            
+            // 半径范围
+            VStack(alignment: .leading, spacing: 8) {
+                Text(String(localized: "hud.radiusRange", defaultValue: "Response Radius Range")).font(.system(size: 11, weight: .semibold))
+                HStack {
+                    let text = String(format: String(localized: "hud.minRadiusLabel", defaultValue: "Min Radius: %d mm"), Int(linearMinRadius))
+                    Text(text).font(.system(size: 11))
+                    Spacer()
+                    Slider(value: $linearMinRadius, in: 5.0...20.0, step: 1.0)
+                        .frame(width: 180)
+                        .onChange(of: linearMinRadius) { _ in save() }
+                }
+                HStack {
+                    let text = String(format: String(localized: "hud.maxRadiusLabel", defaultValue: "Max Radius: %d mm"), Int(linearMaxRadius))
+                    Text(text).font(.system(size: 11))
+                    Spacer()
+                    Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
+                        .frame(width: 180)
+                        .onChange(of: linearMaxRadius) { _ in save() }
+                }
+            }
+        }
+    }
+    
+    // MARK: - 行为子表单实现
+    
+    private var singleBehaviorForm: some View {
+        VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(String(localized: "hud.outputTranslation", defaultValue: "Output Translation"))
                     .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
@@ -385,109 +731,13 @@ struct CustomizerHUDView: View {
         }
     }
     
-    private var doubleSubForm: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // ⚙️ 切换边界与迟滞范围
-            VStack(alignment: .leading, spacing: 10) {
-                Text(String(localized: "hud.doubleBoundarySettings", defaultValue: "⚙️ Boundary & Hysteresis Margin"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.gray)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text(String(localized: "hud.boundaryRadius", defaultValue: "Boundary Radius")).font(.system(size: 11))
-                        Spacer()
-                        Text("\(Int(doubleInnerRadiusMax)) mm")
-                            .font(.system(size: 11, design: .monospaced))
-                    }
-                    Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
-                        .onChange(of: doubleInnerRadiusMax) { next in
-                            doubleOuterRadiusMin = next
-                            save()
-                        }
-                    
-                    HStack {
-                        Text(String(localized: "hud.hysteresisMargin", defaultValue: "Hysteresis Margin")).font(.system(size: 11))
-                        Spacer()
-                        Text("\(Int(doubleMargin)) mm")
-                            .font(.system(size: 11, design: .monospaced))
-                    }
-                    Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
-                        .onChange(of: doubleMargin) { next in
-                            save()
-                        }
-                }
-                .padding(10)
-                .background(Color.white.opacity(0.03))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
-                )
-            }
-            
-            // 外圈旋钮 (粗调) 配置卡片
+    private var doubleBehaviorForm: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            // 外圈行为
             VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.doubleOuter", defaultValue: "🟠 Outer Ring"))
-                    .font(.system(size: 12, weight: .bold)).foregroundColor(.orange)
-                
-                // 外圈配色
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.gray)
-                    
-                    HStack(spacing: 5) {
-                        ForEach(colors, id: \.self) { colorHex in
-                            Circle()
-                                .fill(Color(hex: colorHex))
-                                .frame(width: 16, height: 16)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.white, lineWidth: doubleOuterThemeColor == colorHex ? 1.5 : 0)
-                                )
-                                .onTapGesture {
-                                    doubleOuterThemeColor = colorHex
-                                    save()
-                                }
-                        }
-                    }
-                    
-                    Button(action: {
-                        activeColorTarget = .doubleOuter
-                        NSColorPanel.shared.color = NSColor(Color(hex: doubleOuterThemeColor))
-                        NSColorPanel.shared.orderFront(nil)
-                    }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "paintpalette.fill")
-                                .font(.system(size: 11))
-                                .foregroundColor(Color(hex: doubleOuterThemeColor))
-                            Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
-                                .font(.system(size: 11))
-                            Spacer()
-                            Text(doubleOuterThemeColor)
-                                .font(.system(size: 10, design: .monospaced))
-                                .foregroundColor(.gray)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.06))
-                        .cornerRadius(6)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-                .padding(.bottom, 4)
-                
-                HStack {
-                    Text(String(localized: "hud.responseRadius", defaultValue: "Response Radius")).font(.system(size: 11))
-                    Spacer()
-                    Text("> \(Int(doubleInnerRadiusMax)) mm")
-                        .font(.system(size: 11, design: .monospaced))
-                }
+                Text(String(localized: "hud.doubleOuterBehavior", defaultValue: "🟠 Outer Ring (Coarse Action)"))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.orange)
                 
                 Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleOuterTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
@@ -533,76 +783,14 @@ struct CustomizerHUDView: View {
                 }
             }
             .padding(8)
-            .background(Color.white.opacity(0.05))
+            .background(Color.white.opacity(0.04))
             .cornerRadius(8)
             
-            // 内圈旋钮 (微调) 配置卡片
+            // 内圈行为
             VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.doubleInner", defaultValue: "🟢 Inner Ring"))
-                    .font(.system(size: 12, weight: .bold)).foregroundColor(.green)
-                
-                // 内圈配色
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.gray)
-                    
-                    HStack(spacing: 5) {
-                        ForEach(colors, id: \.self) { colorHex in
-                            Circle()
-                                .fill(Color(hex: colorHex))
-                                .frame(width: 16, height: 16)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.white, lineWidth: doubleInnerThemeColor == colorHex ? 1.5 : 0)
-                                )
-                                .onTapGesture {
-                                    doubleInnerThemeColor = colorHex
-                                    save()
-                                }
-                        }
-                    }
-                    
-                    Button(action: {
-                        activeColorTarget = .doubleInner
-                        NSColorPanel.shared.color = NSColor(Color(hex: doubleInnerThemeColor))
-                        NSColorPanel.shared.orderFront(nil)
-                    }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "paintpalette.fill")
-                                .font(.system(size: 11))
-                                .foregroundColor(Color(hex: doubleInnerThemeColor))
-                            Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
-                                .font(.system(size: 11))
-                            Spacer()
-                            Text(doubleInnerThemeColor)
-                                .font(.system(size: 10, design: .monospaced))
-                                .foregroundColor(.gray)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.06))
-                        .cornerRadius(6)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-                .padding(.bottom, 4)
-                
-                HStack {
-                    Text(String(localized: "hud.responseRadius", defaultValue: "Response Radius")).font(.system(size: 11))
-                    Spacer()
-                    Text("\(Int(doubleInnerMinRadius)) mm ~ \(Int(doubleInnerRadiusMax)) mm")
-                        .font(.system(size: 11, design: .monospaced))
-                }
-                
-                Slider(value: $doubleInnerMinRadius, in: 5.0...15.0, step: 1.0)
-                    .onChange(of: doubleInnerMinRadius) { _ in
-                        save()
-                    }
+                Text(String(localized: "hud.doubleInnerBehavior", defaultValue: "🟢 Inner Ring (Fine Action)"))
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.green)
                 
                 Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleInnerTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
@@ -648,64 +836,13 @@ struct CustomizerHUDView: View {
                 }
             }
             .padding(8)
-            .background(Color.white.opacity(0.05))
+            .background(Color.white.opacity(0.04))
             .cornerRadius(8)
         }
     }
     
-    private var linearSubForm: some View {
+    private var linearBehaviorForm: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // 配色定制
-            VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.gray)
-                
-                HStack(spacing: 5) {
-                    ForEach(colors, id: \.self) { colorHex in
-                        Circle()
-                            .fill(Color(hex: colorHex))
-                            .frame(width: 16, height: 16)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.white, lineWidth: themeColor == colorHex ? 1.5 : 0)
-                            )
-                            .onTapGesture {
-                                themeColor = colorHex
-                                save()
-                            }
-                    }
-                }
-                
-                Button(action: {
-                    activeColorTarget = .global
-                    NSColorPanel.shared.color = NSColor(Color(hex: themeColor))
-                    NSColorPanel.shared.orderFront(nil)
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "paintpalette.fill")
-                            .font(.system(size: 11))
-                            .foregroundColor(Color(hex: themeColor))
-                        Text(String(localized: "hud.customColor", defaultValue: "Custom Color…"))
-                            .font(.system(size: 11))
-                        Spacer()
-                        Text(themeColor)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.06))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-            .padding(.bottom, 6)
-            
             Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $linearTranslation) {
                 ForEach(InputTranslation.allCases, id: \.self) { trans in
                     Text(transDescription(trans)).tag(trans)
@@ -724,54 +861,8 @@ struct CustomizerHUDView: View {
             .onChange(of: linearCWAction) { _ in save() }
             
             VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.radiusRange", defaultValue: "Response Radius Range")).font(.system(size: 11, weight: .semibold))
                 HStack {
-                    let text = String(format: String(localized: "hud.minRadiusLabel", defaultValue: "Min Radius: %d mm"), Int(linearMinRadius))
-                    Text(text)
-                    Spacer()
-                    Slider(value: $linearMinRadius, in: 5.0...20.0, step: 1.0)
-                        .frame(width: 180)
-                        .onChange(of: linearMinRadius) { _ in save() }
-                }
-                HStack {
-                    let text = String(format: String(localized: "hud.maxRadiusLabel", defaultValue: "Max Radius: %d mm"), Int(linearMaxRadius))
-                    Text(text)
-                    Spacer()
-                    Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
-                        .frame(width: 180)
-                        .onChange(of: linearMaxRadius) { _ in save() }
-                }
-            }
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.scaleRange", defaultValue: "Scale Range (Unit per degree)")).font(.system(size: 11, weight: .semibold))
-                HStack {
-                    Text(String(localized: "hud.minScale", defaultValue: "Min Scale:"))
-                        .font(.system(size: 11))
-                    Spacer()
-                    TextField("", text: $linearMinScaleText)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.white)
-                        .frame(width: 80)
-                        .multilineTextAlignment(.trailing)
-                        .onChange(of: linearMinScaleText) { next in
-                            if let val = Double(next) {
-                                linearMinScale = val
-                                save()
-                            }
-                        }
-                }
-                HStack {
-                    Text(String(localized: "hud.maxScale", defaultValue: "Max Scale:"))
+                    Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "Inner Ring Scale (Min Radius):"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMaxScaleText)
@@ -791,6 +882,31 @@ struct CustomizerHUDView: View {
                         .onChange(of: linearMaxScaleText) { next in
                             if let val = Double(next) {
                                 linearMaxScale = val
+                                save()
+                            }
+                        }
+                }
+                HStack {
+                    Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "Outer Ring Scale (Max Radius):"))
+                        .font(.system(size: 11))
+                    Spacer()
+                    TextField("", text: $linearMinScaleText)
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.black.opacity(0.3))
+                        .cornerRadius(4)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        )
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundColor(.white)
+                        .frame(width: 80)
+                        .multilineTextAlignment(.trailing)
+                        .onChange(of: linearMinScaleText) { next in
+                            if let val = Double(next) {
+                                linearMinScale = val
                                 save()
                             }
                         }
@@ -837,6 +953,8 @@ struct CustomizerHUDView: View {
         self.linearMaxScaleText = "30.0"
         self.linearTranslation = .scrollWheelVertical
         self.linearCWAction = "scrollUp"
+        self.linearOuterColor = "#FF9F0A"
+        self.linearInnerColor = "#30D158"
         
         self.activeColorTarget = .global
     }
@@ -890,6 +1008,8 @@ struct CustomizerHUDView: View {
                 self.linearMaxScaleText = String(format: "%.4g", l.maxScale)
                 self.linearTranslation = l.translation
                 self.linearCWAction = l.clockwiseAction
+                self.linearOuterColor = l.outerThemeColor ?? existing.themeColor ?? "#FF9F0A"
+                self.linearInnerColor = l.innerThemeColor ?? existing.themeColor ?? "#30D158"
             }
         }
         onLoadExisting?(self.configType, self.themeColor)
@@ -923,8 +1043,11 @@ struct CustomizerHUDView: View {
                 minScale: linearMinScale,
                 maxScale: linearMaxScale,
                 translation: linearTranslation,
-                clockwiseAction: linearCWAction
+                clockwiseAction: linearCWAction,
+                outerThemeColor: linearOuterColor,
+                innerThemeColor: linearInnerColor
             )
+            rule.themeColor = linearOuterColor
         }
         
         RuleLibrary.shared.saveRule(rule)
@@ -1071,4 +1194,6 @@ extension Color {
         return NSColor(self).toHex()
     }
 }
+
+
 
