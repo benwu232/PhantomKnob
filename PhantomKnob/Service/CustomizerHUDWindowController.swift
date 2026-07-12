@@ -12,12 +12,14 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
     
     private var window: CustomizerWindow?
     private var localClickMonitor: Any?
+    private var overlayFixedCenter: CGPoint? = nil
     
     var isVisible: Bool {
         return window?.isVisible ?? false
     }
     
-    func show(for target: DetectedTarget) {
+    func show(for target: DetectedTarget, overlayCenter: CGPoint? = nil) {
+        self.overlayFixedCenter = overlayCenter
         if window == nil {
             createWindow(for: target)
         } else {
@@ -27,7 +29,7 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
                 hostingView.rootView = AnyView(CustomizerHUDView(target: target).id(UUID()))
             }
             
-            // 动态更新窗口位置到最新的光标处并做边界约束
+            // 动态更新窗口位置到避让处并做边界约束
             updateWindowPosition()
         }
         
@@ -61,28 +63,47 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
     }
     
     private func calculateWindowFrame() -> NSRect {
-        let width: CGFloat = 400
-        let height: CGFloat = 520
-        let mouseLoc = NSEvent.mouseLocation
-        
-        // 寻找包含光标的屏幕，支持多屏显示
+        let width: CGFloat = 440
+        let height: CGFloat = 480
         let screens = NSScreen.screens
+        
+        if let overlayCenter = overlayFixedCenter {
+            // 寻找包含 Overlay 的屏幕
+            let screen = screens.first(where: { NSMouseInRect(overlayCenter, $0.frame, false) }) ?? NSScreen.main ?? screens.first
+            let screenFrame = screen?.visibleFrame ?? .zero
+            
+            let gap: CGFloat = 130
+            var originX = overlayCenter.x + gap
+            
+            // 如果右侧溢出，镜像翻转到左侧
+            if originX + width > screenFrame.maxX {
+                originX = overlayCenter.x - gap - width
+            }
+            
+            // 垂直居中对齐 Overlay
+            var originY = overlayCenter.y - height / 2
+            
+            originX = max(screenFrame.minX, min(originX, screenFrame.maxX - width))
+            originY = max(screenFrame.minY, min(originY, screenFrame.maxY - height))
+            
+            return NSRect(x: originX, y: originY, width: width, height: height)
+        }
+        
+        // Fallback: 默认基于光标
+        let mouseLoc = NSEvent.mouseLocation
         let screen = screens.first(where: { NSMouseInRect(mouseLoc, $0.frame, false) }) ?? NSScreen.main ?? screens.first
         let screenFrame = screen?.visibleFrame ?? .zero
         
         var originX = mouseLoc.x + 30
         var originY = mouseLoc.y - height - 30
         
-        // 如果右侧溢出，镜像翻转到光标左侧
         if originX + width > screenFrame.maxX {
             originX = mouseLoc.x - width - 30
         }
-        // 如果底部溢出，镜像翻转到光标上方
         if originY < screenFrame.minY {
             originY = mouseLoc.y + 30
         }
         
-        // 最后进行严格约束，确保 100% 不超出当前屏幕的安全区域
         originX = max(screenFrame.minX, min(originX, screenFrame.maxX - width))
         originY = max(screenFrame.minY, min(originY, screenFrame.maxY - height))
         
