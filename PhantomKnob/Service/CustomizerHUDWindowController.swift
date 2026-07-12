@@ -5,6 +5,13 @@ class CustomizerWindow: NSWindow {
     override var canBecomeKey: Bool {
         return true
     }
+    
+    override func scrollWheel(with event: NSEvent) {
+        if ControlPanelViewModel.shared.isGestureActive {
+            return // 手势旋转时吞掉滚动事件，防止面板内容滚动
+        }
+        super.scrollWheel(with: event)
+    }
 }
 
 class CustomizerHUDWindowController: NSObject, NSWindowDelegate {

@@ -371,14 +371,51 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     private func handleRuleHotReload(_ rule: ControlRule) {
-        guard let target = currentTarget,
-              let resolvedRule = RuleLibrary.shared.lookup(for: target.ruleKey),
+        PKLogger.knob.debug("[DEBUG-color-reload] handleRuleHotReload called, state: \(String(describing: self.state)), rule key: \(String(describing: rule.key)), themeColor: \(rule.themeColor ?? "nil")")
+        
+        guard let target = currentTarget else { return }
+        
+        if state == .customizing {
+            // 自定义状态下，直接使用刚修改的规则更新 Overlay，并根据配置计算一个安全的静态 Radius，防止 radius 为 0.0 时 Overlay 不可见
+            let renderRadius: Double
+            if self.currentRadius > 0 {
+                renderRadius = self.currentRadius
+            } else {
+                switch rule.configType {
+                case .single:
+                    renderRadius = rule.singleConfig?.minRadius ?? 16.0
+                case .double:
+                    renderRadius = rule.doubleConfig?.outer.maxRadius ?? 24.0
+                case .linear:
+                    renderRadius = rule.linearConfig?.maxRadius ?? 24.0
+                }
+            }
+            
+            // 重新实例化当前 Translator
+            let newTranslator = makeTranslator(for: target, rule: rule, radius: renderRadius)
+            newTranslator.scale = currentTranslator?.scale ?? 1.0
+            self.currentTranslator = newTranslator
+            
+            let color = resolveThemeColor(for: rule, zoneIndex: currentZoneIndex, radius: renderRadius)
+            overlayController.update(
+                angle: self.currentAngle,
+                radius: renderRadius,
+                isDeadzone: false,
+                scale: self.lastResolvedBaseScale,
+                themeColor: color,
+                outerThemeColor: rule.linearConfig?.outerThemeColor,
+                innerThemeColor: rule.linearConfig?.innerThemeColor,
+                configType: rule.configType
+            )
+            return
+        }
+        
+        // 否则（非自定义状态下），走严格匹配过滤
+        guard let resolvedRule = RuleLibrary.shared.lookup(for: target.ruleKey),
               resolvedRule.key.matches(rule.key) else { return }
         
         // 1. 重新实例化当前 Translator
         let newTranslator = makeTranslator(for: target, rule: rule, radius: self.currentRadius)
-        
-        // 保留当前已经累积的步长信息防止跳跃
         newTranslator.scale = currentTranslator?.scale ?? 1.0
         self.currentTranslator = newTranslator
         
@@ -411,20 +448,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 themeColor: color,
                 overlayStyle: rule.overlayStyle,
                 rotationStyle: rule.rotationStyle,
-                outerThemeColor: rule.linearConfig?.outerThemeColor,
-                innerThemeColor: rule.linearConfig?.innerThemeColor,
-                configType: rule.configType
-            )
-        }
-        
-        if state == .customizing {
-            let color = resolveThemeColor(for: rule, zoneIndex: currentZoneIndex, radius: self.currentRadius)
-            overlayController.update(
-                angle: self.currentAngle,
-                radius: self.currentRadius,
-                isDeadzone: false,
-                scale: self.lastResolvedBaseScale,
-                themeColor: color,
                 outerThemeColor: rule.linearConfig?.outerThemeColor,
                 innerThemeColor: rule.linearConfig?.innerThemeColor,
                 configType: rule.configType
