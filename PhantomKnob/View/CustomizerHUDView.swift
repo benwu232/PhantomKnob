@@ -70,6 +70,7 @@ struct CustomizerHUDView: View {
     
     // 物理半径实时指示
     @State private var liveRadius: Double? = nil
+    @State private var isPinned: Bool = false
     
     // 双旋钮配色
     @State private var doubleInnerThemeColor: String = "#30D158"
@@ -92,12 +93,12 @@ struct CustomizerHUDView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // 控件标识卡片 (Metadata Card) 兼顶栏（含左上角显式关闭按钮）
-            HStack(spacing: 12) {
+            HStack(spacing: 10) {
                 Button(action: {
                     CustomizerHUDWindowController.shared.hide()
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 20))
+                        .font(.system(size: 16))
                         .foregroundColor(.gray)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -134,6 +135,16 @@ struct CustomizerHUDView: View {
                         .foregroundColor(.orange)
                         .cornerRadius(4)
                 }
+                
+                Button(action: {
+                    isPinned.toggle()
+                    CustomizerHUDWindowController.shared.isPinned = isPinned
+                }) {
+                    Image(systemName: isPinned ? "pin.fill" : "pin")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(isPinned ? .accentColor : .gray)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             
             Divider().background(Color.white.opacity(0.1))
@@ -288,6 +299,7 @@ struct CustomizerHUDView: View {
     }
     .padding(16)
         .onAppear {
+            self.isPinned = CustomizerHUDWindowController.shared.isPinned
             loadExisting()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("CustomizerRadiusDidUpdate"))) { notification in
