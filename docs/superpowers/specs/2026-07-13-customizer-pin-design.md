@@ -1,66 +1,68 @@
-# 旋钮定制面板智能图钉（Smart Pinning）设计规范
+# 旋钮定制面板智能交互与布局优化设计规范
 
 ## 1. 业务目标
-为了在用户进行“边调边试”测试时提供最好的连贯体验，允许用户通过点击面板右上角的图钉（Pin）按钮将定制面板钉住：
-- 钉住后，面板窗口置顶，且不会因为用户点击主应用或其他地方导致面板隐退。
-- 用户可以点击主应用的各个参数或操作触控板手势，实时看见效果。
-- 缺省为轻量级状态（Unpinned），此时点击外部或失焦依然会自动隐退。
+为了提供极佳的交互连贯性与专业的视觉一致性，对定制面板做如下优化：
+1. **拖拽支持**：支持用户直接按住配置面板窗口的任何空白背景进行鼠标拖动，以便自由排布其在屏幕上的位置。
+2. **顶栏品牌标识**：原本在顶栏左侧显示的被控第三方应用（如 DaVinci Resolve）图标改回为 `PhantomKnob` 自身的 App 标识，彰显当前定制工具的主体属性。
+3. **对比度与中文大标题优化**：分项大标题统一改写为高对比度的**白色**，并将标题的中文固定改为：
+   - ① **旋钮类型** (Knob Type)
+   - ② **旋钮外观** (Knob Appearance)
+   - ③ **旋钮行为** (Knob Behavior)
+   - ④ **辅助信息** (Advanced Information, 默认折叠)
+4. **辅助信息折叠归集**：原先顶栏的“目标应用图标”和“应用名称”移到“辅助信息”的最上方。折叠展开后即可展示被控 App 详情及“空间定位唯一标识 (Element Locating Identifier)”和层级链信息。
 
 ---
 
 ## 2. 界面设计 (UI/UX)
-- **关闭按钮**：位于顶栏左上角，使用 macOS 原生图标 `xmark.circle.fill`，在 Hover 时高亮，点击立即显式关闭面板（并恢复状态机）。
-- **图钉按钮**：位于顶栏右上角，使用 macOS 系统标准图钉图标：
-  - **未钉住 (Unpinned, 缺省)**：使用 `pin` 图标。
-  - **钉住 (Pinned)**：使用 `pin.fill` 图标（使用系统主题蓝色或高亮高清晰度显示）。
-- **按钮样式**：使用 macOS 标准微动图标，采用标准的点击回弹。
+- **顶栏**：
+  - 左侧：关闭按钮 `xmark.circle.fill`（`.white.opacity(0.65)`）。
+  - 中间：`PhantomKnob` 自身的官方应用图标，及“PhantomKnob Customizer”或“旋钮定制面板”白色大标题。
+  - 右侧：图钉按钮（`pin`/`pin.fill`，绑定 `isPinned` 状态）。
+- **拖动感应**：双击或按住面板空白处的毛玻璃背景即可在全屏范围滑动窗口。
+- **大标题**：VStack 的首行分类采用 `.white` 颜色渲染：
+  - `Text("旋钮类型")`
+  - `Text("旋钮外观")`
+  - `Text("旋钮行为")`
+  - `Text("辅助信息")` （作为 `DisclosureGroup` 标题）
 
 ---
 
 ## 3. 详细设计 (Detailed Design)
 
-### 3.1 CustomizerHUDWindowController.swift 状态控制
-- 增加 `var isPinned: Bool = false` 属性。
-- 并在变更时修改 `CustomizerWindow` 的行为：
+### 3.1 鼠标拖拽支持
+- 在 `CustomizerHUDWindowController.swift` 中的 `createWindow()` 里，直接为 `CustomizerWindow` 设置 `isMovableByWindowBackground` 属性：
   ```swift
-  var isPinned: Bool = false {
-      didSet {
-          updateWindowLevelAndBehavior()
-      }
-  }
-  
-  private func updateWindowLevelAndBehavior() {
-      guard let win = window else { return }
-      if isPinned {
-          win.level = .floating         // 始终浮在最上层
-          win.hidesOnDeactivate = false // 屏蔽 App 失去前台后的系统级窗口隐藏
-      } else {
-          win.level = .statusBar
-          win.hidesOnDeactivate = true
-      }
-  }
+  win.isMovableByWindowBackground = true
   ```
-- **避让/关闭行为过滤**：
-  - 在 `localClickMonitor` 监听到点击外部时，如果 `isPinned == true`，直接返回，不调用 `hide()`。
-  - 在 `windowDidResignKey`（窗口失焦）被触发时，如果 `isPinned == true`，直接返回，不调用 `hide()`。
-  - 在 `handleAppDeactivate`（App 失去前台）触发时，如果 `isPinned == true`，不调用 `hide()`（但仍正常调用 `NSColorPanel.shared.orderOut(nil)` 收起系统调色板）。
 
-### 3.2 CustomizerHUDView.swift 顶栏布局
-- 顶栏左右边缘排布：
-  - 左侧：关闭按钮 `xmark.circle.fill`。
-  - 右侧：图钉按钮（绑定共享的 `isPinned` 状态）。
-- 声明共享的 `@State` 或 `@Binding` 属性绑定到 `CustomizerHUDWindowController.shared.isPinned`。
-- 图钉点击时：
+### 3.2 顶栏 PhantomKnob 图标与品牌展示
+- 在 `CustomizerHUDView.swift` 中，顶栏图标使用主 App 的 `AppIcon` 或通用设置图标，并显示 “PhantomKnob Customizer”：
   ```swift
-  Button(action: {
-      CustomizerHUDWindowController.shared.isPinned.toggle()
-  }) {
-      Image(systemName: CustomizerHUDWindowController.shared.isPinned ? "pin.fill" : "pin")
-          .font(.system(size: 13, weight: .semibold))
-          .foregroundColor(CustomizerHUDWindowController.shared.isPinned ? .accentColor : .gray)
-  }
-  .buttonStyle(.plain)
+  Image("AppIcon") // 或使用系统级专属定制图标
+      .resizable()
+      .frame(width: 24, height: 24)
+  Text("PhantomKnob Customizer")
+      .font(.system(size: 13, weight: .bold))
+      .foregroundColor(.white)
   ```
+
+### 3.3 辅助信息折叠重组
+- 将 `DisclosureGroup("辅助信息", isExpanded: $isAdvancedExpanded)` 作为第四项。
+- 展开后首行渲染：
+  ```swift
+  HStack(spacing: 8) {
+      if let icon = appIcon {
+          Image(nsImage: icon)
+              .resizable()
+              .frame(width: 20, height: 20)
+      }
+      Text(appName)
+          .font(.system(size: 11, weight: .semibold))
+          .foregroundColor(.white)
+  }
+  .padding(.bottom, 4)
+  ```
+- 接着展示“控件定位唯一标识”的 `Bundle ID`、`AXRole`、`AXIdentifier` 以及冲突特征层级链。
 
 ---
 
@@ -68,10 +70,10 @@
 
 ### 4.1 手工联调测试
 1. 呼出真实 Overlay，按 C 键弹出定制面板。
-2. 验证定制面板右上角存在 `pin` 形状图钉按钮（默认未填充灰色）。
-3. 验证点击定制面板外的 Finder 窗口或空白，定制面板自动隐退。
-4. 重新弹出，点击图钉使其变为蓝色高亮 `pin.fill`：
-   - 验证点击第三方应用或 Finder，定制面板保持显示，始终置顶在最上方。
-   - 在主应用中操作物理手势，验证 Overlay 正常，且定制面板完好可见且其 ScrollView 绝不发生滚动。
-5. 点击定制面板右上角的图钉（解开）：
-   - 验证图钉恢复为未填充灰色，且点击外部空白，面板立刻顺畅隐退。
+2. 验证顶栏图标为 PhantomKnob 标志，标题为白色，右上角为灰色空心图钉。
+3. 鼠标按住面板背景，验证能自由拖动整个面板在屏幕上任意滑动。
+4. 验证面板中的 4 大分类标题（“旋钮类型”、“旋钮外观”、“旋钮行为”、“辅助信息”）字体颜色均为高亮白色。
+5. 点击展开“辅助信息”折叠栏：
+   - 验证出现当前前台被控应用（例如 QuickTime 或浏览器）的图标和名字。
+   - 验证包含“空间定位唯一标识”的 Bundle ID 等详情。
+6. 点击图钉并移动主应用，验证面板锁定置顶。
