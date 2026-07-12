@@ -99,7 +99,7 @@ struct CustomizerHUDView: View {
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 16))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.white.opacity(0.65))
                 }
                 .buttonStyle(PlainButtonStyle())
                 
@@ -110,7 +110,7 @@ struct CustomizerHUDView: View {
                 } else {
                     Image(systemName: "app.badge")
                         .resizable()
-                        .foregroundColor(.gray)
+                        .foregroundColor(.white.opacity(0.5))
                         .frame(width: 24, height: 24)
                 }
                 
@@ -121,7 +121,7 @@ struct CustomizerHUDView: View {
                     
                     Text("\(appName) · \(target.axRole)")
                         .font(.system(size: 9))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.white.opacity(0.5))
                 }
                 
                 Spacer()
@@ -142,7 +142,7 @@ struct CustomizerHUDView: View {
                 }) {
                     Image(systemName: isPinned ? "pin.fill" : "pin")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(isPinned ? .accentColor : .gray)
+                        .foregroundColor(isPinned ? .blue : .white.opacity(0.65))
                 }
                 .buttonStyle(PlainButtonStyle())
             }
@@ -156,7 +156,7 @@ struct CustomizerHUDView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(String(localized: "hud.knobType", defaultValue: "Knob Type"))
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                         Picker("", selection: $configType) {
                             Text(String(localized: "hud.single", defaultValue: "Single Knob")).tag(KnobConfigType.single)
                             Text(String(localized: "hud.double", defaultValue: "Double-Ring")).tag(KnobConfigType.double)
@@ -172,7 +172,7 @@ struct CustomizerHUDView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("🎨 \(String(localized: "hud.section.appearance", defaultValue: "Appearance"))")
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                         
                         switch configType {
                         case .single:
@@ -190,7 +190,7 @@ struct CustomizerHUDView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("⚡ \(String(localized: "hud.section.behavior", defaultValue: "Behavior"))")
                             .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                         
                         switch configType {
                         case .single:
@@ -211,7 +211,7 @@ struct CustomizerHUDView: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(String(localized: "hud.locatingIdentifier", defaultValue: "Element Locating Identifier"))
                                     .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.secondary)
                                 
                                 VStack(spacing: 4) {
                                     metadataRow(label: String(localized: "hud.bundleID", defaultValue: "Bundle ID"), value: target.bundleID)
@@ -230,7 +230,7 @@ struct CustomizerHUDView: View {
                                          ? String(localized: "hud.conflictDetected", defaultValue: "⚠️ Element conflict detected (Hierarchy match enabled)") 
                                          : String(localized: "hud.hierarchyFeatures", defaultValue: "Hierarchy features (Check to enable precise targeting)"))
                                         .font(.system(size: 10, weight: .bold))
-                                        .foregroundColor(hasConflict ? .yellow : .gray)
+                                        .foregroundColor(hasConflict ? .yellow : .secondary)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         ForEach(0..<target.parentChain.count, id: \.self) { idx in
@@ -346,7 +346,7 @@ struct CustomizerHUDView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.white.opacity(0.65))
                 
                 HStack(spacing: 5) {
                     ForEach(colors, id: \.self) { colorHex in
@@ -378,7 +378,7 @@ struct CustomizerHUDView: View {
                         Spacer()
                         Text(themeColor)
                             .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.white.opacity(0.5))
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
@@ -394,7 +394,7 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text(String(localized: "hud.minRadius", defaultValue: "Minimum Response Radius")).font(.system(size: 11)).foregroundColor(.gray)
+                    Text(String(localized: "hud.minRadius", defaultValue: "Minimum Response Radius")).font(.system(size: 11)).foregroundColor(.secondary)
                     Spacer()
                     Text("\(Int(singleMinRadius)) mm")
                         .font(.system(size: 11, design: .monospaced))
@@ -413,7 +413,7 @@ struct CustomizerHUDView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(String(localized: "hud.doubleBoundarySettings", defaultValue: "⚙️ Boundary & Hysteresis Margin"))
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
                 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
@@ -692,7 +692,7 @@ struct CustomizerHUDView: View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(String(localized: "hud.outputTranslation", defaultValue: "Output Translation"))
-                    .font(.system(size: 11, weight: .bold)).foregroundColor(.gray)
+                    .font(.system(size: 11, weight: .bold)).foregroundColor(.secondary)
                 Picker("", selection: $singleTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
@@ -1178,7 +1178,7 @@ struct CustomizerHUDView: View {
         HStack {
             Text(label)
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
             Spacer()
             Text(value)
                 .font(.system(size: 10, design: .monospaced))
