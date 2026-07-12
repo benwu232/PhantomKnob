@@ -21,6 +21,23 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
     private var localClickMonitor: Any?
     private var overlayFixedCenter: CGPoint? = nil
     
+    var isPinned: Bool = false {
+        didSet {
+            updateWindowLevelAndBehavior()
+        }
+    }
+    
+    private func updateWindowLevelAndBehavior() {
+        guard let win = window else { return }
+        if isPinned {
+            win.level = .floating
+            win.hidesOnDeactivate = false
+        } else {
+            win.level = .statusBar
+            win.hidesOnDeactivate = true
+        }
+    }
+    
     var isVisible: Bool {
         return window?.isVisible ?? false
     }
@@ -54,6 +71,7 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
     }
     
     func hide() {
+        isPinned = false
         window?.orderOut(nil)
         removeClickMonitor()
         NotificationCenter.default.removeObserver(self, name: NSApplication.willResignActiveNotification, object: nil)
@@ -65,6 +83,9 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
     @objc private func handleAppDeactivate() {
         if NSColorPanel.shared.isVisible {
             NSColorPanel.shared.orderOut(nil)
+        }
+        if isPinned {
+            return
         }
         hide()
     }
@@ -162,6 +183,9 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
         removeClickMonitor()
         localClickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
             guard let self = self, let win = self.window else { return event }
+            if self.isPinned {
+                return event
+            }
             let clickLocation = NSEvent.mouseLocation
             
             let clickedInHUD = NSPointInRect(clickLocation, win.frame)
@@ -199,6 +223,9 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
     func windowDidResignKey(_ notification: Notification) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            if self.isPinned {
+                return
+            }
             // 如果新成为 Key 窗口的是系统调色板，则不隐藏定制 HUD 面板
             if NSApp.keyWindow == NSColorPanel.shared {
                 return
