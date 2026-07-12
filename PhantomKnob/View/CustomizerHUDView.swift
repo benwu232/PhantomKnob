@@ -334,6 +334,9 @@ struct CustomizerHUDView: View {
         .onChange(of: target.ruleKey) { _ in
             loadExisting()
         }
+        .onDisappear {
+            save()
+        }
     }
     
     // MARK: - WYSIWYG 预览组件与手势
