@@ -340,6 +340,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private func handleKnobPanelDidHide() {
         PKLogger.knob.debug("handleKnobPanelDidHide() called, current state: \(String(describing: self.state)), wasInactiveBeforePanelShow: \(self.wasInactiveBeforePanelShow)")
         if state == .customizing {
+            overlayController.hide()
             transition(to: wasInactiveBeforePanelShow ? .inactive : .activated)
             wasInactiveBeforePanelShow = false
             return
@@ -359,12 +360,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         isInterceptingGestures = false
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
-        overlayController.hide()
+        
+        // 保持 Overlay 在原地常驻不消失，并终止任何正在运行的淡出动画
+        overlayController.keepVisible()
         
         transition(to: .customizing)
         
-        // 弹出配置面板并传入当前的锁定中心
-        CustomizerHUDWindowController.shared.show(for: target, overlayCenter: self.fixedCenter)
+        // 弹出配置面板并传入当前的真实锁定中心（屏幕像素坐标）
+        CustomizerHUDWindowController.shared.show(for: target, overlayCenter: overlayController.fixedCenter)
     }
 
     private func handleRuleHotReload(_ rule: ControlRule) {

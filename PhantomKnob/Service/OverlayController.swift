@@ -16,10 +16,13 @@ class OverlayController: ObservableObject {
     @Published var overlayStyle: String = "hud"
     @Published var rotationStyle: String = "ticks"
     @Published var diameter: CGFloat = 80.0
+    @Published var outerThemeColor: String? = nil
+    @Published var innerThemeColor: String? = nil
+    @Published var configType: KnobConfigType = .single
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
-    private var fixedCenter: CGPoint = .zero
+    var fixedCenter: CGPoint = .zero
 
     private let featureGate: FeatureGate
 
@@ -32,16 +35,24 @@ class OverlayController: ObservableObject {
               scale: Double? = nil, 
               themeColor: String? = nil, 
               overlayStyle: String? = nil, 
-              rotationStyle: String? = nil) {
+              rotationStyle: String? = nil,
+              outerThemeColor: String? = nil,
+              innerThemeColor: String? = nil,
+              configType: KnobConfigType = .single) {
         self.position = position
         self.targetName = targetName
         self.scale = scale
+        self.configType = configType
         if !featureGate.hasStyleCustomization {
             self.themeColor = "#8E8E93"
+            self.outerThemeColor = nil
+            self.innerThemeColor = nil
             self.overlayStyle = "hud"
             self.rotationStyle = "ticks"
         } else {
             self.themeColor = themeColor ?? AppSettings.shared.defaultThemeColor
+            self.outerThemeColor = outerThemeColor
+            self.innerThemeColor = innerThemeColor
             self.overlayStyle = overlayStyle ?? AppSettings.shared.defaultOverlayStyle
             self.rotationStyle = rotationStyle ?? AppSettings.shared.defaultRotationStyle
         }
@@ -105,19 +116,40 @@ class OverlayController: ObservableObject {
         isVisible = true
     }
 
-    func update(angle: Double, radius: Double, isDeadzone: Bool = false, scale: Double? = nil, themeColor: String? = nil) {
+    func update(angle: Double, 
+                radius: Double, 
+                isDeadzone: Bool = false, 
+                scale: Double? = nil, 
+                themeColor: String? = nil,
+                outerThemeColor: String? = nil,
+                innerThemeColor: String? = nil,
+                configType: KnobConfigType = .single) {
         self.angle = angle
         self.isDeadzone = isDeadzone
         self.scale = scale
+        self.configType = configType
         if !featureGate.hasStyleCustomization {
             self.themeColor = "#8E8E93"
-        } else if let themeColor = themeColor {
-            self.themeColor = themeColor
+            self.outerThemeColor = nil
+            self.innerThemeColor = nil
+        } else {
+            if let themeColor = themeColor {
+                self.themeColor = themeColor
+            }
+            self.outerThemeColor = outerThemeColor
+            self.innerThemeColor = innerThemeColor
         }
         self.diameter = Self.calculateDiameter(for: radius)
         
         updatePanelFrame()
         updateOverlayView()
+    }
+
+    func keepVisible() {
+        showCount += 1 // 递增代数打断任何淡出完成的回调
+        panel?.animator().alphaValue = 1.0
+        panel?.alphaValue = 1.0
+        isVisible = true
     }
 
     func hide() {
@@ -187,7 +219,10 @@ class OverlayController: ObservableObject {
             themeColorHex: themeColor,
             overlayStyle: overlayStyle,
             rotationStyle: rotationStyle,
-            diameter: diameter
+            diameter: diameter,
+            outerThemeColorHex: outerThemeColor,
+            innerThemeColorHex: innerThemeColor,
+            configType: configType
         ))
 
         panel.contentView = view
@@ -205,7 +240,10 @@ class OverlayController: ObservableObject {
             themeColorHex: themeColor,
             overlayStyle: overlayStyle,
             rotationStyle: rotationStyle,
-            diameter: diameter
+            diameter: diameter,
+            outerThemeColorHex: outerThemeColor,
+            innerThemeColorHex: innerThemeColor,
+            configType: configType
         )
     }
 
