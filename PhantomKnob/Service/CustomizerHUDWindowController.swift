@@ -153,6 +153,7 @@ class CustomizerHUDWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
+        win.isMovableByWindowBackground = true
         
         win.backgroundColor = .clear
         win.isOpaque = false
