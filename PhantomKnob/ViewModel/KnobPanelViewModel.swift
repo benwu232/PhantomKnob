@@ -11,6 +11,11 @@ enum ControllableVariable {
 class ControlPanelViewModel: ObservableObject {
     static let shared = ControlPanelViewModel()
     
+    @Published var isPinned: Bool = false {
+        didSet {
+            KnobPanelWindowController.shared.setPinned(isPinned)
+        }
+    }
     @Published var volumeVal: Float = 0.5
     @Published var brightnessVal: Float = 0.5
     @Published var backlightVal: Float = 0.3

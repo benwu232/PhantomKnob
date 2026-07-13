@@ -13,6 +13,7 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
     
     private var window: KnobPanelWindow?
     private var localClickMonitor: Any?
+    var isPinned: Bool = false
     
     var isVisible: Bool {
         return window?.isVisible ?? false
@@ -25,7 +26,15 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
         
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-        setupClickMonitor()
+        
+        if isPinned {
+            window?.hidesOnDeactivate = false
+            removeClickMonitor()
+        } else {
+            window?.hidesOnDeactivate = true
+            setupClickMonitor()
+        }
+        
         NotificationCenter.default.post(name: NSNotification.Name("KnobPanelDidShow"), object: nil)
     }
     
@@ -40,6 +49,19 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
             hide()
         } else {
             show()
+        }
+    }
+    
+    func setPinned(_ pinned: Bool) {
+        self.isPinned = pinned
+        if let win = window {
+            if pinned {
+                win.hidesOnDeactivate = false
+                removeClickMonitor()
+            } else {
+                win.hidesOnDeactivate = true
+                setupClickMonitor()
+            }
         }
     }
     
@@ -110,6 +132,8 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
     }
     
     func windowDidResignKey(_ notification: Notification) {
-        hide()
+        if !isPinned {
+            hide()
+        }
     }
 }

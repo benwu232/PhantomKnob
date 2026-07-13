@@ -12,6 +12,11 @@ enum HoveredKnobType: String {
 
 class UserGuideViewModel: ObservableObject {
     @Published var currentStep: Int = 1
+    @Published var isPinned: Bool = false {
+        didSet {
+            UserGuideWindowController.shared.setPinned(isPinned)
+        }
+    }
     
     // Step 1 states: Volume practice and touchpad check
     @Published var isTouchpadDetected: Bool = false

@@ -11,6 +11,7 @@
 		04B23D46ED2398168310E343 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 120041D50B70899FF05F7C9D /* Sparkle */; };
 		08725A37A3171E8C9E1D442D /* KnobCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73263D014AF58E4418641B4A /* KnobCircleView.swift */; };
 		09897705C0C8B7D06DC6EDEE /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEDDC2B2FB1885EA5CB8219 /* UpdateManager.swift */; };
+		0AA30BEBD46B8735AC01ABD9 /* HUDCircleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEDF01CC72784BA849E0EC9 /* HUDCircleButton.swift */; };
 		0B4CB2CFBA892E1561B96459 /* TutorialViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1E79FB5B05E4BFDD848CF1 /* TutorialViewModelTests.swift */; };
 		0C92020E5937FF28D75398DA /* SensitivityConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24BD249E7CFB5B5F78FC45EB /* SensitivityConfigTests.swift */; };
 		0E88544EEEAF7D4393B061CF /* logic-pro.json in Resources */ = {isa = PBXBuildFile; fileRef = BECCD01545240799A9A54A67 /* logic-pro.json */; };
@@ -177,6 +178,7 @@
 		9785379F4C1295E57267D2BC /* Logger+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Logger+Extensions.swift"; sourceTree = "<group>"; };
 		A0F3BECF18F2E9EF5F8CA348 /* ReleaseNotesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotesController.swift; sourceTree = "<group>"; };
 		AA7057B1B8B0E62D649010B4 /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
+		AAEDF01CC72784BA849E0EC9 /* HUDCircleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDCircleButton.swift; sourceTree = "<group>"; };
 		AB1E79FB5B05E4BFDD848CF1 /* TutorialViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViewModelTests.swift; sourceTree = "<group>"; };
 		AC69641B463FC61F6329B1B1 /* KnobPanelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobPanelViewModel.swift; sourceTree = "<group>"; };
 		ADEDDC2B2FB1885EA5CB8219 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateManager.swift; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 				43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */,
 				4339B35F28D56220AFFFE149 /* DesignSystem.swift */,
 				3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */,
+				AAEDF01CC72784BA849E0EC9 /* HUDCircleButton.swift */,
 				DEAF87A6073EE6800820C8A8 /* KnobPanelView.swift */,
 				79E59D5E06F5866BA93B2D8A /* OverlayView.swift */,
 				8120D28F7EC33A9A5859F62D /* ReleaseNotesView.swift */,
@@ -596,6 +599,7 @@
 				E7319043FD2CA4D8536CC9C9 /* FeatureGate.swift in Sources */,
 				C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */,
 				EF138900E1C6F71B57127BE9 /* GlobalTouchHandler.swift in Sources */,
+				0AA30BEBD46B8735AC01ABD9 /* HUDCircleButton.swift in Sources */,
 				A488FB9A185767D4438E3149 /* HotkeyRecorderView.swift in Sources */,
 				85DCF281E08D26D7408AF5AB /* HotkeySettings.swift in Sources */,
 				D8EDE11220DF5C7F6A758198 /* InputTranslation.swift in Sources */,

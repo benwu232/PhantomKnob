@@ -21,7 +21,25 @@ struct KnobPanelView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.vertical, 16)
+        .padding(.top, 28)
+        .padding(.bottom, 16)
+        .overlay(
+            HStack {
+                HUDCircleButton(icon: "xmark", color: .white.opacity(0.7)) {
+                    KnobPanelWindowController.shared.hide()
+                }
+                Spacer()
+                HUDCircleButton(
+                    icon: viewModel.isPinned ? "pin.fill" : "pin",
+                    color: viewModel.isPinned ? .orange : .white.opacity(0.6)
+                ) {
+                    viewModel.isPinned.toggle()
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 14),
+            alignment: .top
+        )
     }
     
     private var mainControlLayout: some View {

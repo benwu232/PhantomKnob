@@ -12,6 +12,7 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
     
     private var window: UserGuideWindow?
     private var localClickMonitor: Any?
+    var isPinned: Bool = false
     
     var isVisible: Bool {
         return window?.isVisible ?? false
@@ -24,7 +25,14 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
         
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-        setupClickMonitor()
+        
+        if isPinned {
+            window?.hidesOnDeactivate = false
+            removeClickMonitor()
+        } else {
+            window?.hidesOnDeactivate = true
+            setupClickMonitor()
+        }
         
         NotificationCenter.default.post(name: NSNotification.Name("UserGuideWindowDidShow"), object: nil)
         // 通知状态机开启临时拦截
@@ -37,6 +45,19 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
         
         // 通知状态机还原拦截
         NotificationCenter.default.post(name: NSNotification.Name("KnobPanelDidHide"), object: nil)
+    }
+    
+    func setPinned(_ pinned: Bool) {
+        self.isPinned = pinned
+        if let win = window {
+            if pinned {
+                win.hidesOnDeactivate = false
+                removeClickMonitor()
+            } else {
+                win.hidesOnDeactivate = true
+                setupClickMonitor()
+            }
+        }
     }
     
     private func createWindow() {
@@ -102,6 +123,8 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
     }
     
     func windowDidResignKey(_ notification: Notification) {
-        hide()
+        if !isPinned {
+            hide()
+        }
     }
 }

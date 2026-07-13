@@ -30,7 +30,7 @@ struct UserGuideView: View {
                         .foregroundColor(.white.opacity(0.6))
                 }
             }
-            .padding(.top, 24)
+            .padding(.top, 28)
             .padding(.bottom, 16)
             
             Divider()
@@ -126,6 +126,23 @@ struct UserGuideView: View {
             .padding(.vertical, 16)
         }
         .frame(width: 725, height: 575)
+        .overlay(
+            HStack {
+                HUDCircleButton(icon: "xmark", color: .white.opacity(0.7)) {
+                    UserGuideWindowController.shared.hide()
+                }
+                Spacer()
+                HUDCircleButton(
+                    icon: viewModel.isPinned ? "pin.fill" : "pin",
+                    color: viewModel.isPinned ? .orange : .white.opacity(0.6)
+                ) {
+                    viewModel.isPinned.toggle()
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 14),
+            alignment: .top
+        )
     }
     
     // MARK: - Step 1: Device test & Volume practice
