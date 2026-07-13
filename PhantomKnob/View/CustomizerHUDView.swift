@@ -426,33 +426,27 @@ struct CustomizerHUDView: View {
     
     private var doubleAppearanceForm: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // ⚙️ 边界与迟滞范围
-            VStack(alignment: .leading, spacing: 10) {
-                Text(String(localized: "hud.doubleBoundarySettings", defaultValue: "⚙️ Boundary & Hysteresis Margin"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.secondary)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text(String(localized: "hud.boundaryRadius", defaultValue: "Boundary Radius")).font(.system(size: 11))
-                        Spacer()
-                        Text("\(Int(doubleInnerRadiusMax)) mm")
-                            .font(.system(size: 11, design: .monospaced))
-                    }
-                    Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
-                        .onChange(of: doubleInnerRadiusMax) { next in
-                            doubleOuterRadiusMin = next
-                            save()
-                        }
+            // ⚙️ 边界
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(String(localized: "hud.boundaryRadius", defaultValue: "Boundary Radius")).font(.system(size: 11))
+                    Spacer()
+                    Text("\(Int(doubleInnerRadiusMax)) mm")
+                        .font(.system(size: 11, design: .monospaced))
                 }
-                .padding(10)
-                .background(Color.white.opacity(0.03))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
-                )
+                Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
+                    .onChange(of: doubleInnerRadiusMax) { next in
+                        doubleOuterRadiusMin = next
+                        save()
+                    }
             }
+            .padding(10)
+            .background(Color.white.opacity(0.03))
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
             
             // 外圈配色
             VStack(alignment: .leading, spacing: 6) {
