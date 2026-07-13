@@ -420,6 +420,7 @@ struct CustomizerHUDView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                .frame(width: 331)
             }
         }
     }
@@ -496,6 +497,7 @@ struct CustomizerHUDView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                .frame(width: 331)
             }
             
             // 内圈配色
@@ -546,6 +548,7 @@ struct CustomizerHUDView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                .frame(width: 331)
             }
         }
     }
@@ -600,6 +603,7 @@ struct CustomizerHUDView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                .frame(width: 331)
             }
             
             // 内圈配色
@@ -650,6 +654,7 @@ struct CustomizerHUDView: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                .frame(width: 331)
             }
             
             // 最大显示半径
