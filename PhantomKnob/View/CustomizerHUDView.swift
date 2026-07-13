@@ -397,28 +397,29 @@ struct CustomizerHUDView: View {
                     }
                 }
                 
-                Button(action: {
-                    activeColorTarget = .global
-                    NSColorPanel.shared.color = NSColor(Color(hex: themeColor))
-                    NSColorPanel.shared.orderFront(nil)
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "paintpalette.fill")
-                            .font(.system(size: 11))
-                            .foregroundColor(Color(hex: themeColor))
-                        Text(String(localized: "hud.customColor", defaultValue: "Custom Color…"))
-                            .font(.system(size: 11))
-                        Spacer()
-                        Text(themeColor)
-                            .font(.hudCode)
-                            .foregroundColor(.hudMetadata)
+                HStack(spacing: 8) {
+                    Button(action: {
+                        activeColorTarget = .global
+                        NSColorPanel.shared.color = NSColor(Color(hex: themeColor))
+                        NSColorPanel.shared.orderFront(nil)
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: themeColor))
+                            Text(String(localized: "hud.customColor", defaultValue: "Custom Color…"))
+                                .font(.system(size: 11))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .hudInputStyle()
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .hudInputStyle()
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Text(themeColor)
+                        .font(.hudCode)
+                        .foregroundColor(.hudMetadata)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .frame(width: 331)
             }
         }
     }
@@ -467,28 +468,29 @@ struct CustomizerHUDView: View {
                     }
                 }
                 
-                Button(action: {
-                    activeColorTarget = .doubleOuter
-                    NSColorPanel.shared.color = NSColor(Color(hex: doubleOuterThemeColor))
-                    NSColorPanel.shared.orderFront(nil)
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "paintpalette.fill")
-                            .font(.system(size: 11))
-                            .foregroundColor(Color(hex: doubleOuterThemeColor))
-                        Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
-                            .font(.system(size: 11))
-                        Spacer()
-                        Text(doubleOuterThemeColor)
-                            .font(.hudCode)
-                            .foregroundColor(.hudMetadata)
+                HStack(spacing: 8) {
+                    Button(action: {
+                        activeColorTarget = .doubleOuter
+                        NSColorPanel.shared.color = NSColor(Color(hex: doubleOuterThemeColor))
+                        NSColorPanel.shared.orderFront(nil)
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: doubleOuterThemeColor))
+                            Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
+                                .font(.system(size: 11))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .hudInputStyle()
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .hudInputStyle()
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Text(doubleOuterThemeColor)
+                        .font(.hudCode)
+                        .foregroundColor(.hudMetadata)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .frame(width: 331)
             }
             
             // 内圈配色
@@ -513,28 +515,29 @@ struct CustomizerHUDView: View {
                     }
                 }
                 
-                Button(action: {
-                    activeColorTarget = .doubleInner
-                    NSColorPanel.shared.color = NSColor(Color(hex: doubleInnerThemeColor))
-                    NSColorPanel.shared.orderFront(nil)
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "paintpalette.fill")
-                            .font(.system(size: 11))
-                            .foregroundColor(Color(hex: doubleInnerThemeColor))
-                        Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
-                            .font(.system(size: 11))
-                        Spacer()
-                        Text(doubleInnerThemeColor)
-                            .font(.hudCode)
-                            .foregroundColor(.hudMetadata)
+                HStack(spacing: 8) {
+                    Button(action: {
+                        activeColorTarget = .doubleInner
+                        NSColorPanel.shared.color = NSColor(Color(hex: doubleInnerThemeColor))
+                        NSColorPanel.shared.orderFront(nil)
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: doubleInnerThemeColor))
+                            Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
+                                .font(.system(size: 11))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .hudInputStyle()
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .hudInputStyle()
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Text(doubleInnerThemeColor)
+                        .font(.hudCode)
+                        .foregroundColor(.hudMetadata)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .frame(width: 331)
             }
         }
     }
@@ -563,28 +566,29 @@ struct CustomizerHUDView: View {
                     }
                 }
                 
-                Button(action: {
-                    activeColorTarget = .global
-                    NSColorPanel.shared.color = NSColor(Color(hex: linearOuterColor))
-                    NSColorPanel.shared.orderFront(nil)
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "paintpalette.fill")
-                            .font(.system(size: 11))
-                            .foregroundColor(Color(hex: linearOuterColor))
-                        Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
-                            .font(.system(size: 11))
-                        Spacer()
-                        Text(linearOuterColor)
-                            .font(.hudCode)
-                            .foregroundColor(.hudMetadata)
+                HStack(spacing: 8) {
+                    Button(action: {
+                        activeColorTarget = .global
+                        NSColorPanel.shared.color = NSColor(Color(hex: linearOuterColor))
+                        NSColorPanel.shared.orderFront(nil)
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: linearOuterColor))
+                            Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
+                                .font(.system(size: 11))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .hudInputStyle()
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .hudInputStyle()
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Text(linearOuterColor)
+                        .font(.hudCode)
+                        .foregroundColor(.hudMetadata)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .frame(width: 331)
             }
             
             // 内圈配色
@@ -609,28 +613,29 @@ struct CustomizerHUDView: View {
                     }
                 }
                 
-                Button(action: {
-                    activeColorTarget = .doubleInner
-                    NSColorPanel.shared.color = NSColor(Color(hex: linearInnerColor))
-                    NSColorPanel.shared.orderFront(nil)
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "paintpalette.fill")
-                            .font(.system(size: 11))
-                            .foregroundColor(Color(hex: linearInnerColor))
-                        Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
-                            .font(.system(size: 11))
-                        Spacer()
-                        Text(linearInnerColor)
-                            .font(.hudCode)
-                            .foregroundColor(.hudMetadata)
+                HStack(spacing: 8) {
+                    Button(action: {
+                        activeColorTarget = .doubleInner
+                        NSColorPanel.shared.color = NSColor(Color(hex: linearInnerColor))
+                        NSColorPanel.shared.orderFront(nil)
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(Color(hex: linearInnerColor))
+                            Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
+                                .font(.system(size: 11))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .hudInputStyle()
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .hudInputStyle()
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Text(linearInnerColor)
+                        .font(.hudCode)
+                        .foregroundColor(.hudMetadata)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .frame(width: 331)
             }
             
             // 最大显示半径
