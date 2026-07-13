@@ -444,17 +444,6 @@ struct CustomizerHUDView: View {
                             doubleOuterRadiusMin = next
                             save()
                         }
-                    
-                    HStack {
-                        Text(String(localized: "hud.hysteresisMargin", defaultValue: "Hysteresis Margin")).font(.system(size: 11))
-                        Spacer()
-                        Text("\(Int(doubleMargin)) mm")
-                            .font(.system(size: 11, design: .monospaced))
-                    }
-                    Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
-                        .onChange(of: doubleMargin) { next in
-                            save()
-                        }
                 }
                 .padding(10)
                 .background(Color.white.opacity(0.03))
