@@ -58,6 +58,14 @@ struct OverlayView: View {
     let rotationStyle: String
     let diameter: CGFloat
     
+    // 新增：渐变渲染与内嵌高亮支持
+    let outerThemeColorHex: String?
+    let innerThemeColorHex: String?
+    let configType: KnobConfigType
+    let isActive: Bool
+    let minRadius: Double?
+    let maxRadius: Double?
+    
     init(targetName: String?,
          valueText: String? = nil,
          angle: Double,
@@ -66,7 +74,13 @@ struct OverlayView: View {
          themeColorHex: String,
          overlayStyle: String,
          rotationStyle: String,
-         diameter: CGFloat) {
+         diameter: CGFloat,
+         outerThemeColorHex: String? = nil,
+         innerThemeColorHex: String? = nil,
+         configType: KnobConfigType = .single,
+         isActive: Bool = true,
+         minRadius: Double? = nil,
+         maxRadius: Double? = nil) {
         self.targetName = targetName
         self.valueText = valueText
         self.angle = angle
@@ -76,10 +90,19 @@ struct OverlayView: View {
         self.overlayStyle = overlayStyle
         self.rotationStyle = rotationStyle
         self.diameter = diameter
+        self.outerThemeColorHex = outerThemeColorHex
+        self.innerThemeColorHex = innerThemeColorHex
+        self.configType = configType
+        self.isActive = isActive
+        self.minRadius = minRadius
+        self.maxRadius = maxRadius
     }
     
     var body: some View {
-        let activeColor = Color(hex: themeColorHex)
+        let activeColor: Color = {
+            let base = Color(hex: themeColorHex)
+            return isActive ? base : base.opacity(0.3)
+        }()
         
         VStack(spacing: 4) {
             // 1. 名字及数值悬浮正上方
