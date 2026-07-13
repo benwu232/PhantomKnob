@@ -73,6 +73,7 @@
 		97D55EA78F60F8DEB1A95D4B /* CustomizerHUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */; };
 		9925F34855238AC2A1877858 /* CloudSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29618E44B78DFC05E3D4E562 /* CloudSyncManagerTests.swift */; };
 		9BD67FBCDAD45F5056D4F77D /* KnobPanelNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB40B42C0370CE2503669AC4 /* KnobPanelNotificationTests.swift */; };
+		9BEEF8B34F519B37BCB30F5E /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4339B35F28D56220AFFFE149 /* DesignSystem.swift */; };
 		9D43C46E67005EC6776B824E /* TouchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B499ACF164A9451B0AAD1C /* TouchpadView.swift */; };
 		9E21ED3BDDB126A6A6905E2C /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7276B847C3350CE8E5BEE90C /* AppSettingsTests.swift */; };
 		9F4C5719CF0BE0C6FFA610B6 /* AXWriteTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 899D86B28252691F994F0E31 /* AXWriteTranslator.swift */; };
@@ -147,6 +148,7 @@
 		33E0AF95038612DA34DA2759 /* LicenseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseManager.swift; sourceTree = "<group>"; };
 		3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslationTests.swift; sourceTree = "<group>"; };
 		3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderView.swift; sourceTree = "<group>"; };
+		4339B35F28D56220AFFFE149 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizerHUDView.swift; sourceTree = "<group>"; };
 		54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		58A77841598587C200D25FBF /* AppLanguageManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageManagerTests.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */,
+				4339B35F28D56220AFFFE149 /* DesignSystem.swift */,
 				3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */,
 				DEAF87A6073EE6800820C8A8 /* KnobPanelView.swift */,
 				79E59D5E06F5866BA93B2D8A /* OverlayView.swift */,
@@ -586,6 +589,7 @@
 				E3B301B86DE777C9EA25FA70 /* CustomizerHUDWindowController.swift in Sources */,
 				7BFFB745C067E91F8395B361 /* DemoSliderTarget.swift in Sources */,
 				9517D0F648E2CE11D3436865 /* DemoViewModel.swift in Sources */,
+				9BEEF8B34F519B37BCB30F5E /* DesignSystem.swift in Sources */,
 				82BBAB63D2E9D62FDE90805C /* DetectedTarget.swift in Sources */,
 				2E5E69A3A010696CE124CDA8 /* DisplayBrightnessService.swift in Sources */,
 				31CDCB6AAB2A916EB1382526 /* DockIconManager.swift in Sources */,
