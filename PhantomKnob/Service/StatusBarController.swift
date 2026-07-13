@@ -152,9 +152,18 @@ class StatusBarController: ObservableObject {
         
         let knobPanelItem = NSMenuItem(title: "", action: #selector(openKnobPanel), keyEquivalent: "")
         let titleText = String(localized: "menu.knobPanel", defaultValue: "Shortcut Knob...\tDouble click")
+        let parts = titleText.components(separatedBy: "\t")
+        let mainPart = parts.first ?? ""
+        let rightPart = parts.count > 1 ? parts[1] : ""
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.tabStops = [NSTextTab(textAlignment: .right, location: 220.0, options: [:])]
-        knobPanelItem.attributedTitle = NSAttributedString(string: titleText, attributes: [.paragraphStyle: paragraphStyle])
+        let attrStr = NSMutableAttributedString()
+        attrStr.append(NSAttributedString(string: mainPart + "\t", attributes: [.paragraphStyle: paragraphStyle]))
+        attrStr.append(NSAttributedString(string: rightPart, attributes: [
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor: NSColor.secondaryLabelColor
+        ]))
+        knobPanelItem.attributedTitle = attrStr
         knobPanelItem.target = self
         menu?.addItem(knobPanelItem)
         
