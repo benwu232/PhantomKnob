@@ -741,33 +741,29 @@ struct CustomizerHUDView: View {
     }
     
     private var doubleBehaviorForm: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            // 外圈行为
+        VStack(alignment: .leading, spacing: 10) {
+            Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleInnerTranslation) {
+                ForEach(InputTranslation.allCases, id: \.self) { trans in
+                    Text(transDescription(trans)).tag(trans)
+                }
+            }
+            .onChange(of: doubleInnerTranslation) { next in
+                doubleInnerCWAction = defaultAction(for: next)
+                save()
+            }
+            
+            Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $doubleInnerCWAction) {
+                ForEach(directionOptions(for: doubleInnerTranslation), id: \.self) { opt in
+                    Text(actionDescription(opt)).tag(opt)
+                }
+            }
+            .onChange(of: doubleInnerCWAction) { _ in save() }
+            
             VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.doubleOuterBehavior", defaultValue: "🟠 外环映射方式"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.orange)
-                
-                Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleOuterTranslation) {
-                    ForEach(InputTranslation.allCases, id: \.self) { trans in
-                        Text(transDescription(trans)).tag(trans)
-                    }
-                }
-                .onChange(of: doubleOuterTranslation) { next in
-                    doubleOuterCWAction = defaultAction(for: next)
-                    save()
-                }
-                
-                Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $doubleOuterCWAction) {
-                    ForEach(directionOptions(for: doubleOuterTranslation), id: \.self) { opt in
-                        Text(actionDescription(opt)).tag(opt)
-                    }
-                }
-                .onChange(of: doubleOuterCWAction) { _ in save() }
-                
                 HStack {
-                    Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
+                    Text(String(localized: "hud.doubleOuterScaleLabel", defaultValue: "外环灵敏度:"))
                         .font(.system(size: 11))
+                        .foregroundColor(.orange)
                     Spacer()
                     TextField("", text: $doubleOuterScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -790,37 +786,11 @@ struct CustomizerHUDView: View {
                             }
                         }
                 }
-            }
-            .padding(8)
-            .background(Color.white.opacity(0.04))
-            .cornerRadius(8)
-            
-            // 内圈行为
-            VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.doubleInnerBehavior", defaultValue: "🟢 内环映射方式"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.green)
-                
-                Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleInnerTranslation) {
-                    ForEach(InputTranslation.allCases, id: \.self) { trans in
-                        Text(transDescription(trans)).tag(trans)
-                    }
-                }
-                .onChange(of: doubleInnerTranslation) { next in
-                    doubleInnerCWAction = defaultAction(for: next)
-                    save()
-                }
-                
-                Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $doubleInnerCWAction) {
-                    ForEach(directionOptions(for: doubleInnerTranslation), id: \.self) { opt in
-                        Text(actionDescription(opt)).tag(opt)
-                    }
-                }
-                .onChange(of: doubleInnerCWAction) { _ in save() }
                 
                 HStack {
-                    Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
+                    Text(String(localized: "hud.doubleInnerScaleLabel", defaultValue: "内环灵敏度:"))
                         .font(.system(size: 11))
+                        .foregroundColor(.green)
                     Spacer()
                     TextField("", text: $doubleInnerScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -844,9 +814,6 @@ struct CustomizerHUDView: View {
                         }
                 }
             }
-            .padding(8)
-            .background(Color.white.opacity(0.04))
-            .cornerRadius(8)
         }
     }
     
