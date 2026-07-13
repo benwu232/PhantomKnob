@@ -156,7 +156,7 @@ class StatusBarController: ObservableObject {
         let mainPart = parts.first ?? ""
         let rightPart = parts.count > 1 ? parts[1] : ""
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.tabStops = [NSTextTab(textAlignment: .right, location: 280.0, options: [:])]
+        paragraphStyle.tabStops = [NSTextTab(textAlignment: .right, location: 340.0, options: [:])]
         let attrStr = NSMutableAttributedString()
         attrStr.append(NSAttributedString(string: mainPart + "\t", attributes: [.paragraphStyle: paragraphStyle]))
         attrStr.append(NSAttributedString(string: rightPart, attributes: [
