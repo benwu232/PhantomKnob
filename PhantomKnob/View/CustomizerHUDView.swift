@@ -71,6 +71,7 @@ struct CustomizerHUDView: View {
     // 物理半径实时指示
     @State private var liveRadius: Double? = nil
     @State private var isPinned: Bool = false
+    @State private var commonMinRadius: Double = 10.0
     
     // 双旋钮配色
     @State private var doubleInnerThemeColor: String = "#30D158"
@@ -453,7 +454,7 @@ struct CustomizerHUDView: View {
                         }
                     
                     HStack {
-                        Text(String(localized: "hud.doubleInnerMinRadius", defaultValue: "Inner Ring Min Radius")).font(.system(size: 11))
+                        Text(String(localized: "hud.doubleInnerMinRadius", defaultValue: "最小响应半径")).font(.system(size: 11))
                         Spacer()
                         Text("\(Int(doubleInnerMinRadius)) mm")
                             .font(.system(size: 11, design: .monospaced))
@@ -578,7 +579,7 @@ struct CustomizerHUDView: View {
         VStack(alignment: .leading, spacing: 12) {
             // 外圈配色
             VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "hud.linearOuterColor", defaultValue: "🟠 Outer Ring Color (Slow)"))
+                Text(String(localized: "hud.linearOuterColor", defaultValue: "🟠 外环颜色"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.orange)
                 
@@ -628,7 +629,7 @@ struct CustomizerHUDView: View {
             
             // 内圈配色
             VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "hud.linearInnerColor", defaultValue: "🟢 Inner Ring Color (Fast)"))
+                Text(String(localized: "hud.linearInnerColor", defaultValue: "🟢 内环颜色"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.green)
                 
@@ -887,7 +888,7 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "Inner Ring Scale (Min Radius):"))
+                    Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "内环灵敏度:"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMaxScaleText)
@@ -912,7 +913,7 @@ struct CustomizerHUDView: View {
                         }
                 }
                 HStack {
-                    Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "Outer Ring Scale (Max Radius):"))
+                    Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "外环灵敏度:"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMinScaleText)
@@ -1037,6 +1038,16 @@ struct CustomizerHUDView: View {
                 self.linearInnerColor = l.innerThemeColor ?? existing.themeColor ?? "#30D158"
             }
         }
+        
+        switch self.configType {
+        case .single:
+            self.commonMinRadius = self.singleMinRadius
+        case .double:
+            self.commonMinRadius = self.doubleInnerMinRadius
+        case .linear:
+            self.commonMinRadius = self.linearMinRadius
+        }
+        
         onLoadExisting?(self.configType, self.themeColor)
         
         DispatchQueue.main.async {
@@ -1046,6 +1057,11 @@ struct CustomizerHUDView: View {
     
     private func save() {
         guard !isLoadingConfig else { return }
+        
+        self.singleMinRadius = self.commonMinRadius
+        self.doubleInnerMinRadius = self.commonMinRadius
+        self.linearMinRadius = self.commonMinRadius
+        
         var rule = ControlRule(key: currentRuleKey, themeColor: themeColor, configType: configType)
         
         switch configType {
