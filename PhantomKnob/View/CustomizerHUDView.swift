@@ -467,7 +467,7 @@ struct CustomizerHUDView: View {
             
             // 外圈配色
             VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "hud.doubleOuterColor", defaultValue: "🟠 Outer Ring Theme Color"))
+                Text(String(localized: "hud.doubleOuterColor", defaultValue: "🟠 外环颜色"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.orange)
                 
@@ -517,7 +517,7 @@ struct CustomizerHUDView: View {
             
             // 内圈配色
             VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "hud.doubleInnerColor", defaultValue: "🟢 Inner Ring Theme Color"))
+                Text(String(localized: "hud.doubleInnerColor", defaultValue: "🟢 内环颜色"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.green)
                 
@@ -744,7 +744,7 @@ struct CustomizerHUDView: View {
         VStack(alignment: .leading, spacing: 14) {
             // 外圈行为
             VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.doubleOuterBehavior", defaultValue: "🟠 Outer Ring (Coarse Action)"))
+                Text(String(localized: "hud.doubleOuterBehavior", defaultValue: "🟠 外环映射方式"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.orange)
                 
@@ -797,7 +797,7 @@ struct CustomizerHUDView: View {
             
             // 内圈行为
             VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.doubleInnerBehavior", defaultValue: "🟢 Inner Ring (Fine Action)"))
+                Text(String(localized: "hud.doubleInnerBehavior", defaultValue: "🟢 内环映射方式"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.green)
                 
@@ -871,7 +871,7 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "内环灵敏度:"))
+                    Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "最小半径对应灵敏度:"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMaxScaleText)
@@ -896,7 +896,7 @@ struct CustomizerHUDView: View {
                         }
                 }
                 HStack {
-                    Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "外环灵敏度:"))
+                    Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "最大半径对应灵敏度:"))
                         .font(.system(size: 11))
                     Spacer()
                     TextField("", text: $linearMinScaleText)
@@ -1058,7 +1058,7 @@ struct CustomizerHUDView: View {
         case .double:
             rule.doubleConfig = DoubleKnobConfig(
                 inner: VirtualKnobConfig(minRadius: doubleInnerMinRadius, maxRadius: doubleInnerRadiusMax, margin: doubleMargin, unitPerDegree: doubleInnerScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleInnerThemeColor),
-                outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleOuterTranslation, clockwiseAction: doubleOuterCWAction, themeColor: doubleOuterThemeColor)
+                outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleOuterThemeColor)
             )
         case .linear:
             rule.linearConfig = LinearKnobConfig(
