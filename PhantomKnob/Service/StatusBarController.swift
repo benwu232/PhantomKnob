@@ -151,10 +151,11 @@ class StatusBarController: ObservableObject {
         menu?.addItem(toggleItem)
         
         let knobPanelItem = NSMenuItem(
-            title: String(localized: "menu.knobPanel", defaultValue: "Shortcut Knob... (Double click)"),
+            title: String(localized: "menu.knobPanel", defaultValue: "Shortcut Knob..."),
             action: #selector(openKnobPanel),
-            keyEquivalent: ""
+            keyEquivalent: " "
         )
+        knobPanelItem.keyEquivalentModifierMask = .option
         knobPanelItem.target = self
         menu?.addItem(knobPanelItem)
         
