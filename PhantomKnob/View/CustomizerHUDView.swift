@@ -104,12 +104,18 @@ struct CustomizerHUDView: View {
                 .buttonStyle(PlainButtonStyle())
                 
                 // 🌟 使用 PhantomKnob 品牌标识图标与标题
-                Image(systemName: "slider.horizontal.3")
-                    .resizable()
-                    .foregroundColor(.orange)
-                    .frame(width: 16, height: 16)
+                if let appIcon = NSApplication.shared.applicationIconImage {
+                    Image(nsImage: appIcon)
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                } else {
+                    Image(systemName: "slider.horizontal.3")
+                        .resizable()
+                        .foregroundColor(.orange)
+                        .frame(width: 16, height: 16)
+                }
                 
-                Text("PhantomKnob Customizer")
+                Text(String(localized: "hud.title.customizer", defaultValue: "PhantomKnob 旋钮定制"))
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
                 
