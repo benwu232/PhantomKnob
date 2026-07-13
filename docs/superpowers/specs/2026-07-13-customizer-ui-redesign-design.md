@@ -1,51 +1,63 @@
-# 旋钮定制面板 UI/UX 视觉重构设计规范
+# 旋钮定制面板及全局 HUD 视觉重构设计规范
 
 ## 1. 业务目标
-基于对定制面板美观度、视觉一致性和信息层级清晰度的极致追求，联合制定本套设计规范。旨在通过重构面板的字体、颜色、卡片质感和间距系统，打造出一款具备 macOS 原生质感且极富现代科技感的深色 HUD 界面。
+基于对 PhantomKnob 全局界面美观度、视觉一致性和信息层级清晰度的极致追求，特制定本套全局 UI/UX 设计系统。
+本规范将定制面板重构的优秀设计（字体、颜色、微凹凸毛玻璃卡片、网格间距系统）提炼为全局通用的 SwiftUI Extension 资产，以便在定制面板首批落地，并在未来无缝推广应用到 **用户指南 (UserGuideView)** 与 **系统快捷控制面板 (KnobPanelView)** 中，从而建立极具奢华感和统一专业感的 macOS 品牌视觉体验。
 
 ---
 
-## 2. 设计系统 Token 定义
+## 2. 全局设计系统 Token (Design System Tokens)
 
-为实现面板全局样式的统一控制，抽离并确立以下视觉 Token：
+我们统一在独立的公共文件 [DesignSystem.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/View/DesignSystem.swift) 中为 SwiftUI 扩展以下视觉 Token。
 
-| 范畴 | 属性 | 规格 / 颜色值 | 用途 |
-| :--- | :--- | :--- | :--- |
-| **色彩 (Colors)** | 主前景字色 | `Color.white` | 一级标题、核心加粗文本 |
-| | 次级前景字色 | `Color.white.opacity(0.60)` | 二级属性标签、普通参数说明 |
-| | 辅助技术元数据色| `Color.white.opacity(0.45)` | 三级元数据（如 axRole、Identifier 属性） |
-| | 卡片底色 | `Color.white.opacity(0.04)` | 表单卡片容器填充背景 |
-| | 卡片边框色 | `Color.white.opacity(0.08)` | 表单卡片容器细线描边 |
-| | 输入框底色 | `Color.black.opacity(0.25)` | TextField、Picker 的凹陷背景 |
-| | 输入框边框色 | `Color.white.opacity(0.10)` | TextField、Picker 细线边框 |
-| **几何 (Geometry)**| 表单卡片圆角 | `8.0` px | 所有设置卡片圆角 |
-| | 输入框圆角 | `5.0` px | TextField 文本框、Picker 控件圆角 |
-| **间距 (Spacing)** | 全局外边距 | `14.0` px | ScrollView 左右两侧与面板边缘的水平缩进 |
-| | 模块垂直间距 | `16.0` px | 每一个大分类（①、②、③、④）之间的垂直 Spacing |
-| | 卡片内行间距 | `10.0` px | 卡片容器内各 HStack 属性行之间的垂直 Spacing |
+### 2.1 调色 Token (`Color` Extension)
+- `Color.hudTitle` = `Color.white`（主前景字色）
+- `Color.hudSecondary` = `Color.white.opacity(0.60)`（二级标签色）
+- `Color.hudMetadata` = `Color.white.opacity(0.45)`（三级等宽辅助字色）
+- `Color.hudCardBg` = `Color.white.opacity(0.04)`（微凸悬浮卡片底色）
+- `Color.hudCardBorder` = `Color.white.opacity(0.08)`（微凸悬浮卡片细边框描边色）
+- `Color.hudInputBg` = `Color.black.opacity(0.25)`（输入框凹陷底色）
+- `Color.hudInputBorder` = `Color.white.opacity(0.10)`（输入框/Picker 细边框色）
 
----
+### 2.2 字体 Token (`Font` Extension)
+- `Font.hudTitle` = `.system(size: 12, weight: .bold)`（大分类一级标题）
+- `Font.hudLabel` = `.system(size: 11, weight: .medium)`（子属性二级标签）
+- `Font.hudValue` = `.system(size: 11, weight: .bold, design: .monospaced)`（数值和指示）
+- `Font.hudCode` = `.system(size: 10, design: .monospaced)`（高级辅助技术元数据）
 
-## 3. 字体层级系统
-
-对文本字重与大小实施统一阶梯化层级控制：
-
-- **一级大标题 (12pt, Bold, White)**：
-  - 应用于大分类标题（如：“旋钮类型”、“旋钮外观”、“旋钮行为”、“辅助信息”）。
-- **二级普通标签 (11pt, Medium, White 60%)**：
-  - 应用于普通设置属性项（如：“外环颜色”、“映射方向”、“内外环边界”等）。
-- **三级辅助元数据 (10pt, Monospaced Regular, White 45%)**：
-  - 应用于 AX 定位属性、BundleID 标识、Hex 码等高级辅助性排布文本。
+### 2.3 几何与网格 Token (Metrics)
+- **卡片圆角**: `8.0` px
+- **输入框圆角**: `5.0` px
+- **网格宽度对齐端点**: 全局所有设置项滑块、Picker 及自定义颜色 Button 宽度固定锁死为 `331` px。
+- **三级网格间距**:
+  - 外层内缩 (Horizontal Padding): `14` px
+  - 模块间距 (Section Spacing): `16` px
+  - 行内间距 (Row Spacing): `10` px
 
 ---
 
-## 4. 界面卡片与网格排布
+## 3. 界面卡片与微凸凹模型
 
-- **微凸与微凹视觉模型**：
-  - 所有表单组采用 `Color.white.opacity(0.04)` 卡片背景底色 + `Color.white.opacity(0.08)` 的 1px 细描边包裹，体现悬浮微立体卡片质感。
-  - 所有数值 TextField 输入框和下拉 Picker 统一更换为 `Color.black.opacity(0.25)` 黑色凹陷质感背景 + `Color.white.opacity(0.10)` 细描边，与凸起卡片形成强烈对比。
-- **网格严密对齐**：
-  - 将全部外观表单中的 Slider 控件、自定义颜色按钮及输入框的最大宽度和左右对齐端点锁死在 331px 水平宽度网格上，保持严密的视觉垂直参考线。
+在重构中引入全局统一的边框与背景 Modifier：
+
+- **微凸悬浮卡片背景 (Floating Card Modifier)**：
+  对表单组应用 `.background(Color.hudCardBg)` 加上 `.cornerRadius(8)` 且 `.overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.hudCardBorder, lineWidth: 1))`，体现悬浮微立体卡片质感。
+- **微凹输入框背景 (Sunken Input Modifier)**：
+  对 TextField 和 Picker 应用 `.background(Color.hudInputBg)` 加上 `.cornerRadius(5)` 且 `.overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.hudInputBorder, lineWidth: 1))`，实现向下凹陷的物理刻画感。
+
+---
+
+## 4. 全系统推广蓝图
+
+### 4.1 用户指南 (UserGuideView) 接入方案
+- **标题统合**：主标题“Step 1: Detect & Rotate”提升为 20pt Bold 纯白，副标题升级为 `Color.hudSecondary`（白 60%）。
+- **流程说明卡片**：各步骤下的指引卡片、快捷键提示背景由原来的 `Color.white.opacity(0.1)` 替换为标准微凸卡片背景（White 4% 背景 + White 8% 边框），圆角统合为 8px。
+- **导航按钮**：Previous/Next 按钮采用统一的微凹或微凸底色描边规范，彻底融入系统视觉。
+
+### 4.2 系统控制面板 (KnobPanelView) 接入方案
+- **三环控制旋钮排布**：保持 40px 的模块呼吸间距。
+- **旋钮控制文字**：“System Volume” 等文字由 `Color.white.opacity(0.6)` 提升为 `Color.hudTitle` 与 `Color.hudSecondary` 等级。
+- **新手引导卡片 (TutorialView)**：顶部浮动的引导框统合为微凸悬浮毛玻璃卡片（White 4% 背景 + 8% 细实线边框），与下方的控制区域实现视觉完美咬合。
 
 ---
 
