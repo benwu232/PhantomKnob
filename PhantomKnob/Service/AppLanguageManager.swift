@@ -37,6 +37,13 @@ public class AppLanguageManager {
     }
     
     public func applyLanguageOverrideOnStartup() {
+        // 移除命令行参数（如 Xcode 启动时传递的 -AppleLanguages）对语言的覆盖
+        var volatileDomain = UserDefaults.standard.volatileDomain(forName: "NSArgumentDocmain")
+        if volatileDomain["AppleLanguages"] != nil {
+            volatileDomain.removeValue(forKey: "AppleLanguages")
+            UserDefaults.standard.setVolatileDomain(volatileDomain, forName: "NSArgumentDomain")
+        }
+        
         let lang = currentLanguage
         applyLanguageOverride(lang)
     }

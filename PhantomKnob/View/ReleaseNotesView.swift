@@ -81,16 +81,18 @@ struct ReleaseNotesView: View {
     }
 }
 
-#Preview {
-    ReleaseNotesView(
-        version: "1.0",
-        title: "Welcome to PhantomKnob!",
-        items: [
-            "🎛️ Global knob control with two-finger rotation gesture",
-            "🎬 Pro knob packs for DaVinci Resolve, Final Cut Pro, and Logic Pro",
-            "⚡ Three knob modes: Fixed, Double-Ring, and Variable Speed",
-            "🔧 Full customization with Customizer HUD"
-        ]
-    ) { _ in }
-    .background(Color.black.opacity(0.8))
+struct ReleaseNotesView_Previews: PreviewProvider {
+    static var previews: some View {
+        ReleaseNotesView(
+            version: "1.0",
+            title: "Welcome to PhantomKnob!",
+            items: [
+                "🎛️ Global knob control with two-finger rotation gesture",
+                "🎬 Pro knob packs for DaVinci Resolve, Final Cut Pro, and Logic Pro",
+                "⚡ Three knob modes: Fixed, Double-Ring, and Variable Speed",
+                "🔧 Full customization with Customizer HUD"
+            ]
+        ) { _ in }
+        .background(Color.black.opacity(0.8))
+    }
 }

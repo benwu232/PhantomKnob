@@ -90,6 +90,26 @@ struct LinearKnobConfig: Codable, Equatable {
     var maxScale: Double
     var translation: InputTranslation
     var clockwiseAction: String
+    var outerThemeColor: String?
+    var innerThemeColor: String?
+
+    init(minRadius: Double,
+         maxRadius: Double,
+         minScale: Double,
+         maxScale: Double,
+         translation: InputTranslation,
+         clockwiseAction: String,
+         outerThemeColor: String? = nil,
+         innerThemeColor: String? = nil) {
+        self.minRadius = minRadius
+        self.maxRadius = maxRadius
+        self.minScale = minScale
+        self.maxScale = maxScale
+        self.translation = translation
+        self.clockwiseAction = clockwiseAction
+        self.outerThemeColor = outerThemeColor
+        self.innerThemeColor = innerThemeColor
+    }
 }
 
 /// RuleLibrary 中存储的一条规则。
@@ -184,7 +204,16 @@ struct ControlRule: Codable, Equatable {
             )
         case .linear(let config):
             self.configType = .linear
-            self.linearConfig = LinearKnobConfig(minRadius: config.minRadius, maxRadius: config.maxRadius, minScale: config.minScale, maxScale: config.maxScale, translation: translation, clockwiseAction: defaultCWAction)
+            self.linearConfig = LinearKnobConfig(
+                minRadius: config.minRadius,
+                maxRadius: config.maxRadius,
+                minScale: config.minScale,
+                maxScale: config.maxScale,
+                translation: translation,
+                clockwiseAction: defaultCWAction,
+                outerThemeColor: themeColor,
+                innerThemeColor: themeColor
+            )
         case .fixed(let val):
             self.configType = .single
             self.singleConfig = SingleKnobConfig(unitPerDegree: val, translation: translation, clockwiseAction: defaultCWAction)
@@ -264,7 +293,16 @@ struct ControlRule: Codable, Equatable {
                 )
             case .linear(let config):
                 self.configType = .linear
-                self.linearConfig = LinearKnobConfig(minRadius: config.minRadius, maxRadius: config.maxRadius, minScale: config.minScale, maxScale: config.maxScale, translation: oldTrans, clockwiseAction: defaultCWAction)
+                self.linearConfig = LinearKnobConfig(
+                    minRadius: config.minRadius,
+                    maxRadius: config.maxRadius,
+                    minScale: config.minScale,
+                    maxScale: config.maxScale,
+                    translation: oldTrans,
+                    clockwiseAction: defaultCWAction,
+                    outerThemeColor: themeColor,
+                    innerThemeColor: themeColor
+                )
             case .fixed(let val):
                 self.configType = .single
                 self.singleConfig = SingleKnobConfig(unitPerDegree: val, translation: oldTrans, clockwiseAction: defaultCWAction)
