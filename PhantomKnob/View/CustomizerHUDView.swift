@@ -151,8 +151,8 @@ struct CustomizerHUDView: View {
                     // ① 旋钮类型
                     VStack(alignment: .leading, spacing: 6) {
                         Text(String(localized: "hud.knobType", defaultValue: "旋钮类型"))
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.hudTitle)
+                            .foregroundColor(.hudTitle)
                         Picker("", selection: $configType) {
                             Text(String(localized: "hud.single", defaultValue: "Single Knob")).tag(KnobConfigType.single)
                             Text(String(localized: "hud.double", defaultValue: "Double-Ring")).tag(KnobConfigType.double)
@@ -167,24 +167,28 @@ struct CustomizerHUDView: View {
                     
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
-                            Text(String(localized: "hud.minRadius", defaultValue: "最小响应半径")).font(.system(size: 11)).foregroundColor(.secondary)
+                            Text(String(localized: "hud.minRadius", defaultValue: "最小响应半径"))
+                                .font(.hudLabel)
+                                .foregroundColor(.hudSecondary)
                             Spacer()
                             Text("\(Int(commonMinRadius)) mm")
-                                .font(.system(size: 11, design: .monospaced))
+                                .font(.hudValue)
+                                .foregroundColor(.hudTitle)
                         }
                         Slider(value: $commonMinRadius, in: 5.0...15.0, step: 1.0)
+                            .frame(width: 331)
                             .onChange(of: commonMinRadius) { _ in
                                 save()
                             }
                     }
                     
-                    Divider().background(Color.white.opacity(0.08))
+                    Divider().background(Color.hudCardBorder)
                     
                     // ② 旋钮外观
                     VStack(alignment: .leading, spacing: 8) {
                         Text(String(localized: "hud.section.appearance", defaultValue: "旋钮外观"))
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.hudTitle)
+                            .foregroundColor(.hudTitle)
                         
                         switch configType {
                         case .single:
@@ -196,13 +200,13 @@ struct CustomizerHUDView: View {
                         }
                     }
                     
-                    Divider().background(Color.white.opacity(0.08))
+                    Divider().background(Color.hudCardBorder)
                     
                     // ③ 旋钮行为
                     VStack(alignment: .leading, spacing: 8) {
                         Text(String(localized: "hud.section.behavior", defaultValue: "旋钮行为"))
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.hudTitle)
+                            .foregroundColor(.hudTitle)
                         
                         switch configType {
                         case .single:
@@ -214,7 +218,7 @@ struct CustomizerHUDView: View {
                         }
                     }
                     
-                    Divider().background(Color.white.opacity(0.08))
+                    Divider().background(Color.hudCardBorder)
                     
                     // ④ 辅助信息
                     DisclosureGroup(isExpanded: $isAdvancedExpanded) {
@@ -241,8 +245,8 @@ struct CustomizerHUDView: View {
                             // 控件定位元数据
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(String(localized: "hud.locatingIdentifier", defaultValue: "Element Locating Identifier"))
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.secondary)
+                                    .font(.hudCode)
+                                    .foregroundColor(.hudSecondary)
                                 
                                 VStack(spacing: 4) {
                                     metadataRow(label: String(localized: "hud.bundleID", defaultValue: "Bundle ID"), value: target.bundleID)
@@ -250,8 +254,7 @@ struct CustomizerHUDView: View {
                                     metadataRow(label: String(localized: "hud.axIdentifier", defaultValue: "AXIdentifier"), value: target.identifier ?? String(localized: "hud.globalMatch", defaultValue: "Global match"))
                                 }
                                 .padding(8)
-                                .background(Color.black.opacity(0.2))
-                                .cornerRadius(8)
+                                .hudInputStyle()
                             }
                             
                             // 层级链冲突与分叉点配置
@@ -260,7 +263,7 @@ struct CustomizerHUDView: View {
                                     Text(hasConflict 
                                          ? String(localized: "hud.conflictDetected", defaultValue: "⚠️ Element conflict detected (Hierarchy match enabled)") 
                                          : String(localized: "hud.hierarchyFeatures", defaultValue: "Hierarchy features (Check to enable precise targeting)"))
-                                        .font(.system(size: 10, weight: .bold))
+                                        .font(.hudCode)
                                         .foregroundColor(hasConflict ? .yellow : .secondary)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
@@ -283,7 +286,7 @@ struct CustomizerHUDView: View {
                                                 .disabled(idx == lockedDiffIndex)
                                                 
                                                 Text("\(parent.displayName ?? String(localized: "hud.unnamedControl", defaultValue: "Unnamed Control")) (\(parent.axRole))")
-                                                    .font(.system(size: 10))
+                                                    .font(.hudCode)
                                                     .foregroundColor(idx == lockedDiffIndex ? .green : .white)
                                                 
                                                 if idx == lockedDiffIndex {
@@ -299,16 +302,15 @@ struct CustomizerHUDView: View {
                                         }
                                     }
                                     .padding(8)
-                                    .background(Color.black.opacity(0.2))
-                                    .cornerRadius(8)
+                                    .hudInputStyle()
                                 }
                             }
                         }
                         .padding(.top, 4)
                     } label: {
                         Text(String(localized: "hud.section.helper", defaultValue: "辅助信息"))
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.hudTitle)
+                            .foregroundColor(.hudTitle)
                     }
                 }
             }
@@ -324,7 +326,8 @@ struct CustomizerHUDView: View {
         .padding(.top, -12)
         .allowsHitTesting(false)
     }
-    .padding(16)
+    .padding(.horizontal, 14)
+    .padding(.vertical, 16)
         .onAppear {
             self.isPinned = CustomizerHUDWindowController.shared.isPinned
             loadExisting()
@@ -375,8 +378,8 @@ struct CustomizerHUDView: View {
             // 配色定制
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(localized: "hud.themeColor", defaultValue: "Theme Color"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.white.opacity(0.65))
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
                 
                 HStack(spacing: 5) {
                     ForEach(colors, id: \.self) { colorHex in
@@ -407,17 +410,12 @@ struct CustomizerHUDView: View {
                             .font(.system(size: 11))
                         Spacer()
                         Text(themeColor)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.5))
+                            .font(.hudCode)
+                            .foregroundColor(.hudMetadata)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.06))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
+                    .hudInputStyle()
                 }
                 .buttonStyle(PlainButtonStyle())
                 .frame(width: 331)
@@ -430,29 +428,27 @@ struct CustomizerHUDView: View {
             // ⚙️ 边界
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(String(localized: "hud.boundaryRadius", defaultValue: "Boundary Radius")).font(.system(size: 11))
+                    Text(String(localized: "hud.boundaryRadius", defaultValue: "Boundary Radius"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
                     Spacer()
                     Text("\(Int(doubleInnerRadiusMax)) mm")
-                        .font(.system(size: 11, design: .monospaced))
+                        .font(.hudValue)
+                        .foregroundColor(.hudTitle)
                 }
                 Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
+                    .frame(width: 331)
                     .onChange(of: doubleInnerRadiusMax) { next in
                         doubleOuterRadiusMin = next
                         save()
                     }
             }
-            .padding(10)
-            .background(Color.white.opacity(0.03))
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-            )
+            .hudCardStyle()
             
             // 外圈配色
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(localized: "hud.doubleOuterColor", defaultValue: "🟠 外环颜色"))
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.hudLabel)
                     .foregroundColor(.orange)
                 
                 HStack(spacing: 5) {
@@ -484,17 +480,12 @@ struct CustomizerHUDView: View {
                             .font(.system(size: 11))
                         Spacer()
                         Text(doubleOuterThemeColor)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.gray)
+                            .font(.hudCode)
+                            .foregroundColor(.hudMetadata)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.06))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
+                    .hudInputStyle()
                 }
                 .buttonStyle(PlainButtonStyle())
                 .frame(width: 331)
@@ -503,7 +494,7 @@ struct CustomizerHUDView: View {
             // 内圈配色
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(localized: "hud.doubleInnerColor", defaultValue: "🟢 内环颜色"))
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.hudLabel)
                     .foregroundColor(.green)
                 
                 HStack(spacing: 5) {
@@ -535,17 +526,12 @@ struct CustomizerHUDView: View {
                             .font(.system(size: 11))
                         Spacer()
                         Text(doubleInnerThemeColor)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.gray)
+                            .font(.hudCode)
+                            .foregroundColor(.hudMetadata)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.06))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
+                    .hudInputStyle()
                 }
                 .buttonStyle(PlainButtonStyle())
                 .frame(width: 331)
@@ -558,7 +544,7 @@ struct CustomizerHUDView: View {
             // 外圈配色
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(localized: "hud.linearOuterColor", defaultValue: "🟠 外环颜色"))
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.hudLabel)
                     .foregroundColor(.orange)
                 
                 HStack(spacing: 5) {
@@ -590,17 +576,12 @@ struct CustomizerHUDView: View {
                             .font(.system(size: 11))
                         Spacer()
                         Text(linearOuterColor)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.gray)
+                            .font(.hudCode)
+                            .foregroundColor(.hudMetadata)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.06))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
+                    .hudInputStyle()
                 }
                 .buttonStyle(PlainButtonStyle())
                 .frame(width: 331)
@@ -609,7 +590,7 @@ struct CustomizerHUDView: View {
             // 内圈配色
             VStack(alignment: .leading, spacing: 6) {
                 Text(String(localized: "hud.linearInnerColor", defaultValue: "🟢 内环颜色"))
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.hudLabel)
                     .foregroundColor(.green)
                 
                 HStack(spacing: 5) {
@@ -641,17 +622,12 @@ struct CustomizerHUDView: View {
                             .font(.system(size: 11))
                         Spacer()
                         Text(linearInnerColor)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.gray)
+                            .font(.hudCode)
+                            .foregroundColor(.hudMetadata)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.06))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
+                    .hudInputStyle()
                 }
                 .buttonStyle(PlainButtonStyle())
                 .frame(width: 331)
@@ -661,13 +637,16 @@ struct CustomizerHUDView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     let text = String(format: String(localized: "hud.maxRadiusLabel", defaultValue: "最大显示半径: %d mm"), Int(linearMaxRadius))
-                    Text(text).font(.system(size: 11))
+                    Text(text)
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
                     Spacer()
                     Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
                         .frame(width: 180)
                         .onChange(of: linearMaxRadius) { _ in save() }
                 }
             }
+            .hudCardStyle()
         }
     }
     
@@ -677,7 +656,8 @@ struct CustomizerHUDView: View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(String(localized: "hud.outputTranslation", defaultValue: "Output Translation"))
-                    .font(.system(size: 11, weight: .bold)).foregroundColor(.secondary)
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
                 Picker("", selection: $singleTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
@@ -691,7 +671,8 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(String(localized: "hud.clockwiseAction", defaultValue: "Clockwise Action"))
-                    .font(.system(size: 11))
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
                 Picker("", selection: $singleCWAction) {
                     ForEach(directionOptions(for: singleTranslation), id: \.self) { opt in
                         Text(actionDescription(opt)).tag(opt)
@@ -702,20 +683,16 @@ struct CustomizerHUDView: View {
             
             HStack {
                 Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
-                    .font(.system(size: 11))
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
                 Spacer()
                 TextField("", text: $singleScaleText)
                     .textFieldStyle(PlainTextFieldStyle())
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.black.opacity(0.3))
-                    .cornerRadius(4)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    )
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.white)
+                    .hudInputStyle()
+                    .font(.hudValue)
+                    .foregroundColor(.hudTitle)
                     .frame(width: 80)
                     .multilineTextAlignment(.trailing)
                     .onChange(of: singleScaleText) { next in
@@ -750,21 +727,16 @@ struct CustomizerHUDView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(String(localized: "hud.doubleOuterScaleLabel", defaultValue: "外环灵敏度:"))
-                        .font(.system(size: 11))
+                        .font(.hudLabel)
                         .foregroundColor(.orange)
                     Spacer()
                     TextField("", text: $doubleOuterScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.white)
+                        .hudInputStyle()
+                        .font(.hudValue)
+                        .foregroundColor(.hudTitle)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: doubleOuterScaleText) { next in
@@ -777,21 +749,16 @@ struct CustomizerHUDView: View {
                 
                 HStack {
                     Text(String(localized: "hud.doubleInnerScaleLabel", defaultValue: "内环灵敏度:"))
-                        .font(.system(size: 11))
+                        .font(.hudLabel)
                         .foregroundColor(.green)
                     Spacer()
                     TextField("", text: $doubleInnerScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.white)
+                        .hudInputStyle()
+                        .font(.hudValue)
+                        .foregroundColor(.hudTitle)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: doubleInnerScaleText) { next in
@@ -827,20 +794,16 @@ struct CustomizerHUDView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "最小半径对应灵敏度:"))
-                        .font(.system(size: 11))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
                     Spacer()
                     TextField("", text: $linearMaxScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.white)
+                        .hudInputStyle()
+                        .font(.hudValue)
+                        .foregroundColor(.hudTitle)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: linearMaxScaleText) { next in
@@ -852,20 +815,16 @@ struct CustomizerHUDView: View {
                 }
                 HStack {
                     Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "最大半径对应灵敏度:"))
-                        .font(.system(size: 11))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
                     Spacer()
                     TextField("", text: $linearMinScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                        )
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.white)
+                        .hudInputStyle()
+                        .font(.hudValue)
+                        .foregroundColor(.hudTitle)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
                         .onChange(of: linearMinScaleText) { next in
@@ -1144,12 +1103,12 @@ struct CustomizerHUDView: View {
     private func metadataRow(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.secondary)
+                .font(.hudCode)
+                .foregroundColor(.hudSecondary)
             Spacer()
             Text(value)
-                .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(.white)
+                .font(.hudCode)
+                .foregroundColor(.hudTitle)
                 .lineLimit(1)
                 .truncationMode(.middle)
         }
