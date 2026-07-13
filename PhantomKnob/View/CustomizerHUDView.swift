@@ -159,7 +159,23 @@ struct CustomizerHUDView: View {
                             Text(String(localized: "hud.linear", defaultValue: "Variable Speed")).tag(KnobConfigType.linear)
                         }
                         .pickerStyle(SegmentedPickerStyle())
-                        .onChange(of: configType) { _ in save() }
+                        .onChange(of: configType) { _ in
+                            // 切换类型时，自动将当前公共响应半径带入新类型并保存
+                            save()
+                        }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text(String(localized: "hud.minRadius", defaultValue: "最小响应半径")).font(.system(size: 11)).foregroundColor(.secondary)
+                            Spacer()
+                            Text("\(Int(commonMinRadius)) mm")
+                                .font(.system(size: 11, design: .monospaced))
+                        }
+                        Slider(value: $commonMinRadius, in: 5.0...15.0, step: 1.0)
+                            .onChange(of: commonMinRadius) { _ in
+                                save()
+                            }
                     }
                     
                     Divider().background(Color.white.opacity(0.08))
@@ -405,19 +421,6 @@ struct CustomizerHUDView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text(String(localized: "hud.minRadius", defaultValue: "Minimum Response Radius")).font(.system(size: 11)).foregroundColor(.secondary)
-                    Spacer()
-                    Text("\(Int(singleMinRadius)) mm")
-                        .font(.system(size: 11, design: .monospaced))
-                }
-                Slider(value: $singleMinRadius, in: 5.0...15.0, step: 1.0)
-                    .onChange(of: singleMinRadius) { _ in
-                        save()
-                    }
-            }
         }
     }
     
@@ -450,17 +453,6 @@ struct CustomizerHUDView: View {
                     }
                     Slider(value: $doubleMargin, in: 0.0...10.0, step: 1.0)
                         .onChange(of: doubleMargin) { next in
-                            save()
-                        }
-                    
-                    HStack {
-                        Text(String(localized: "hud.doubleInnerMinRadius", defaultValue: "最小响应半径")).font(.system(size: 11))
-                        Spacer()
-                        Text("\(Int(doubleInnerMinRadius)) mm")
-                            .font(.system(size: 11, design: .monospaced))
-                    }
-                    Slider(value: $doubleInnerMinRadius, in: 5.0...15.0, step: 1.0)
-                        .onChange(of: doubleInnerMinRadius) { _ in
                             save()
                         }
                 }
@@ -677,19 +669,10 @@ struct CustomizerHUDView: View {
                 .buttonStyle(PlainButtonStyle())
             }
             
-            // 半径范围
+            // 最大显示半径
             VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "hud.radiusRange", defaultValue: "Response Radius Range")).font(.system(size: 11, weight: .semibold))
                 HStack {
-                    let text = String(format: String(localized: "hud.minRadiusLabel", defaultValue: "Min Radius: %d mm"), Int(linearMinRadius))
-                    Text(text).font(.system(size: 11))
-                    Spacer()
-                    Slider(value: $linearMinRadius, in: 5.0...20.0, step: 1.0)
-                        .frame(width: 180)
-                        .onChange(of: linearMinRadius) { _ in save() }
-                }
-                HStack {
-                    let text = String(format: String(localized: "hud.maxRadiusLabel", defaultValue: "Max Radius: %d mm"), Int(linearMaxRadius))
+                    let text = String(format: String(localized: "hud.maxRadiusLabel", defaultValue: "最大显示半径: %d mm"), Int(linearMaxRadius))
                     Text(text).font(.system(size: 11))
                     Spacer()
                     Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
