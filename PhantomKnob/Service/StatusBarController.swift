@@ -150,12 +150,11 @@ class StatusBarController: ObservableObject {
         toggleMenuItem = toggleItem
         menu?.addItem(toggleItem)
         
-        let knobPanelItem = NSMenuItem(
-            title: String(localized: "menu.knobPanel", defaultValue: "Shortcut Knob..."),
-            action: #selector(openKnobPanel),
-            keyEquivalent: " "
-        )
-        knobPanelItem.keyEquivalentModifierMask = .option
+        let knobPanelItem = NSMenuItem(title: "", action: #selector(openKnobPanel), keyEquivalent: "")
+        let titleText = String(localized: "menu.knobPanel", defaultValue: "Shortcut Knob...\tDouble click")
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.tabStops = [NSTextTab(textAlignment: .right, location: 220.0, options: [:])]
+        knobPanelItem.attributedTitle = NSAttributedString(string: titleText, attributes: [.paragraphStyle: paragraphStyle])
         knobPanelItem.target = self
         menu?.addItem(knobPanelItem)
         
