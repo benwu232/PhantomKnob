@@ -707,22 +707,32 @@ struct CustomizerHUDView: View {
     
     private var doubleBehaviorForm: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $doubleInnerTranslation) {
-                ForEach(InputTranslation.allCases, id: \.self) { trans in
-                    Text(transDescription(trans)).tag(trans)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"))
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
+                Picker("", selection: $doubleInnerTranslation) {
+                    ForEach(InputTranslation.allCases, id: \.self) { trans in
+                        Text(transDescription(trans)).tag(trans)
+                    }
                 }
-            }
-            .onChange(of: doubleInnerTranslation) { next in
-                doubleInnerCWAction = defaultAction(for: next)
-                save()
+                .onChange(of: doubleInnerTranslation) { next in
+                    doubleInnerCWAction = defaultAction(for: next)
+                    save()
+                }
             }
             
-            Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $doubleInnerCWAction) {
-                ForEach(directionOptions(for: doubleInnerTranslation), id: \.self) { opt in
-                    Text(actionDescription(opt)).tag(opt)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
+                Picker("", selection: $doubleInnerCWAction) {
+                    ForEach(directionOptions(for: doubleInnerTranslation), id: \.self) { opt in
+                        Text(actionDescription(opt)).tag(opt)
+                    }
                 }
+                .onChange(of: doubleInnerCWAction) { _ in save() }
             }
-            .onChange(of: doubleInnerCWAction) { _ in save() }
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -774,22 +784,32 @@ struct CustomizerHUDView: View {
     
     private var linearBehaviorForm: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Picker(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"), selection: $linearTranslation) {
-                ForEach(InputTranslation.allCases, id: \.self) { trans in
-                    Text(transDescription(trans)).tag(trans)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"))
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
+                Picker("", selection: $linearTranslation) {
+                    ForEach(InputTranslation.allCases, id: \.self) { trans in
+                        Text(transDescription(trans)).tag(trans)
+                    }
                 }
-            }
-            .onChange(of: linearTranslation) { next in
-                linearCWAction = defaultAction(for: next)
-                save()
+                .onChange(of: linearTranslation) { next in
+                    linearCWAction = defaultAction(for: next)
+                    save()
+                }
             }
             
-            Picker(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"), selection: $linearCWAction) {
-                ForEach(directionOptions(for: linearTranslation), id: \.self) { opt in
-                    Text(actionDescription(opt)).tag(opt)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
+                    .font(.hudLabel)
+                    .foregroundColor(.hudSecondary)
+                Picker("", selection: $linearCWAction) {
+                    ForEach(directionOptions(for: linearTranslation), id: \.self) { opt in
+                        Text(actionDescription(opt)).tag(opt)
+                    }
                 }
+                .onChange(of: linearCWAction) { _ in save() }
             }
-            .onChange(of: linearCWAction) { _ in save() }
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
