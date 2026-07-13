@@ -266,7 +266,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 旋转中按 ↑/↓ 增减 1.0x，按 ←/→ 增减 0.1x，按数字键 2-9 直接相乘。"
+            "value" : " 旋转中按 ↑/↓ 增减 1.0x，按 ←/→ 增减 0.1x，按数字键 2-9 直接相乘。"
           }
         }
       }
@@ -277,7 +277,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 在旋钮上旋转时，按下键盘“C”键可以直接呼出应用内置定制面板。"
+            "value" : " 在旋转旋钮时，按下键盘“C”键可以直接呼出应用内置定制面板。"
           }
         }
       }
@@ -1004,6 +1004,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切换控制模式"
+          }
+        }
+      }
+    },
+    "menu.knobPanel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快捷旋钮面板"
           }
         }
       }

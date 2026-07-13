@@ -150,6 +150,14 @@ class StatusBarController: ObservableObject {
         toggleMenuItem = toggleItem
         menu?.addItem(toggleItem)
         
+        let knobPanelItem = NSMenuItem(
+            title: String(localized: "menu.knobPanel", defaultValue: "Shortcut Knob Panel"),
+            action: #selector(openKnobPanel),
+            keyEquivalent: ""
+        )
+        knobPanelItem.target = self
+        menu?.addItem(knobPanelItem)
+        
         menu?.addItem(NSMenuItem.separator())
         
         let settingsItem = NSMenuItem(
@@ -340,6 +348,11 @@ class StatusBarController: ObservableObject {
     @objc private func toggleMode() {
         PKLogger.statusBar.info("toggleMode menu item clicked")
         onToggleHotkey?()
+    }
+    
+    @objc private func openKnobPanel() {
+        PKLogger.statusBar.info("openKnobPanel menu item clicked")
+        KnobPanelWindowController.shared.show()
     }
     
     @objc func openSettings() {
