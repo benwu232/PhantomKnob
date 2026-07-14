@@ -200,7 +200,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第一步：设备检测与简单旋钮"
+            "value" : "第一步：设备检测与基本旋钮操作"
           }
         }
       }
@@ -343,7 +343,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第二步：三种旋钮对比与深度定制"
+            "value" : "第二步：进阶旋钮使用与定制"
           }
         }
       }
@@ -623,6 +623,17 @@
         }
       }
     },
+    "hud.doubleInnerRadius.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "划分“高灵敏度内环”与“低灵敏度外环”的半径分界线。手指旋划半径超过此值时，自动切换为精细调节（通常为 0.1 倍速）。"
+          }
+        }
+      }
+    },
     "hud.doubleOuter" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -678,6 +689,39 @@
         }
       }
     },
+    "hud.knobType.help.double" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动双档模式。手指在内环旋转为正常灵敏度，在外环旋转自动切换为精细微调。"
+          }
+        }
+      }
+    },
+    "hud.knobType.help.linear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "动态灵敏度模式。旋转速度根据手指离旋钮中心的距离连续平滑变化，拉得越远，旋转速度越快。"
+          }
+        }
+      }
+    },
+    "hud.knobType.help.single" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "传统的单点触控模式，模拟标准的物理旋钮，灵敏度恒定。"
+          }
+        }
+      }
+    },
     "hud.linear" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -711,6 +755,28 @@
         }
       }
     },
+    "hud.linearMaxRadius.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无级变速灵敏度随距离线性增长的上限边界。当手指拉到该半径之外时，旋划速度达到最大倍率，不再继续随距离增加。"
+          }
+        }
+      }
+    },
+    "hud.maxRadiusTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大显示半径"
+          }
+        }
+      }
+    },
     "hud.maxScale" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -728,7 +794,18 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "旋钮最小半径"
+            "value" : "最小显示半径"
+          }
+        }
+      }
+    },
+    "hud.minRadius.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手指触发旋转的最小距离阈值（单位：mm）。小于该半径的微小晃动不会被识别，能有效防止在旋钮中心附近的指针抖动或突变。"
           }
         }
       }
@@ -805,7 +882,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "灵敏度(旋钮旋转一度对应的输出变化量)范围"
+            "value" : "旋钮速度(旋钮变化一度对应的输出值变化)范围"
           }
         }
       }
@@ -849,7 +926,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "灵敏度(旋钮旋转一度对应的输出的变化量)"
+            "value" : "旋钮速度(旋钮变化一度对应的输出值变化)"
           }
         }
       }
@@ -1036,7 +1113,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "快捷旋钮...\t双击鼠标"
+            "value" : "快捷旋钮...           \t双击鼠标"
           }
         }
       }
