@@ -822,9 +822,12 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(String(localized: "hud.doubleOuterScaleLabel", defaultValue: "外环速度:"))
-                        .font(.hudLabel)
-                        .foregroundColor(.hudSecondary)
+                    HStack(spacing: 6) {
+                        Text(String(localized: "hud.doubleOuterScaleLabel", defaultValue: "外环速度:"))
+                            .font(.hudLabel)
+                            .foregroundColor(.hudSecondary)
+                        HUDHelpButton(content: String(localized: "hud.unitPerDegree.help", defaultValue: "Event output change per degree of clockwise rotation."))
+                    }
                     Spacer()
                     TextField("", text: $doubleOuterScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -844,9 +847,12 @@ struct CustomizerHUDView: View {
                 }
                 
                 HStack {
-                    Text(String(localized: "hud.doubleInnerScaleLabel", defaultValue: "内环速度:"))
-                        .font(.hudLabel)
-                        .foregroundColor(.hudSecondary)
+                    HStack(spacing: 6) {
+                        Text(String(localized: "hud.doubleInnerScaleLabel", defaultValue: "内环速度:"))
+                            .font(.hudLabel)
+                            .foregroundColor(.hudSecondary)
+                        HUDHelpButton(content: String(localized: "hud.unitPerDegree.help", defaultValue: "Event output change per degree of clockwise rotation."))
+                    }
                     Spacer()
                     TextField("", text: $doubleInnerScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -911,9 +917,12 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "最小半径对应速度:"))
-                        .font(.hudLabel)
-                        .foregroundColor(.hudSecondary)
+                    HStack(spacing: 6) {
+                        Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "最小半径对应速度:"))
+                            .font(.hudLabel)
+                            .foregroundColor(.hudSecondary)
+                        HUDHelpButton(content: String(localized: "hud.unitPerDegree.help", defaultValue: "Event output change per degree of clockwise rotation."))
+                    }
                     Spacer()
                     TextField("", text: $linearMaxScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
@@ -932,9 +941,12 @@ struct CustomizerHUDView: View {
                         }
                 }
                 HStack {
-                    Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "最大半径对应速度:"))
-                        .font(.hudLabel)
-                        .foregroundColor(.hudSecondary)
+                    HStack(spacing: 6) {
+                        Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "最大半径对应速度:"))
+                            .font(.hudLabel)
+                            .foregroundColor(.hudSecondary)
+                        HUDHelpButton(content: String(localized: "hud.unitPerDegree.help", defaultValue: "Event output change per degree of clockwise rotation."))
+                    }
                     Spacer()
                     TextField("", text: $linearMinScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
