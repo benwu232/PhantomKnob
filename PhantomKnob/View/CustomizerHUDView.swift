@@ -734,6 +734,9 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
+                    Text("↳")
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary.opacity(0.5))
                     Text(String(localized: "hud.clockwiseAction", defaultValue: "Clockwise Action"))
                         .font(.hudLabel)
                         .foregroundColor(.hudSecondary)
@@ -746,6 +749,7 @@ struct CustomizerHUDView: View {
                 }
                 .onChange(of: singleCWAction) { _ in save() }
             }
+            .padding(.leading, 12)
             
             HStack {
                 Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
@@ -794,6 +798,9 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
+                    Text("↳")
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary.opacity(0.5))
                     Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
                         .font(.hudLabel)
                         .foregroundColor(.hudSecondary)
@@ -806,6 +813,7 @@ struct CustomizerHUDView: View {
                 }
                 .onChange(of: doubleInnerCWAction) { _ in save() }
             }
+            .padding(.leading, 12)
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -878,6 +886,9 @@ struct CustomizerHUDView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
+                    Text("↳")
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary.opacity(0.5))
                     Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
                         .font(.hudLabel)
                         .foregroundColor(.hudSecondary)
@@ -890,6 +901,7 @@ struct CustomizerHUDView: View {
                 }
                 .onChange(of: linearCWAction) { _ in save() }
             }
+            .padding(.leading, 12)
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
