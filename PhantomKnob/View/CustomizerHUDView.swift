@@ -733,9 +733,12 @@ struct CustomizerHUDView: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "hud.clockwiseAction", defaultValue: "Clockwise Action"))
-                    .font(.hudLabel)
-                    .foregroundColor(.hudSecondary)
+                HStack(spacing: 6) {
+                    Text(String(localized: "hud.clockwiseAction", defaultValue: "Clockwise Action"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    HUDHelpButton(content: String(localized: "hud.clockwiseAction.help", defaultValue: "Event triggered when rotating the knob clockwise."))
+                }
                 Picker("", selection: $singleCWAction) {
                     ForEach(directionOptions(for: singleTranslation), id: \.self) { opt in
                         Text(actionDescription(opt)).tag(opt)
@@ -790,9 +793,12 @@ struct CustomizerHUDView: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
-                    .font(.hudLabel)
-                    .foregroundColor(.hudSecondary)
+                HStack(spacing: 6) {
+                    Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    HUDHelpButton(content: String(localized: "hud.clockwiseAction.help", defaultValue: "Event triggered when rotating the knob clockwise."))
+                }
                 Picker("", selection: $doubleInnerCWAction) {
                     ForEach(directionOptions(for: doubleInnerTranslation), id: \.self) { opt in
                         Text(actionDescription(opt)).tag(opt)
@@ -871,9 +877,12 @@ struct CustomizerHUDView: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
-                    .font(.hudLabel)
-                    .foregroundColor(.hudSecondary)
+                HStack(spacing: 6) {
+                    Text(String(localized: "hud.clockwiseActionPicker", defaultValue: "Clockwise Action"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    HUDHelpButton(content: String(localized: "hud.clockwiseAction.help", defaultValue: "Event triggered when rotating the knob clockwise."))
+                }
                 Picker("", selection: $linearCWAction) {
                     ForEach(directionOptions(for: linearTranslation), id: \.self) { opt in
                         Text(actionDescription(opt)).tag(opt)
