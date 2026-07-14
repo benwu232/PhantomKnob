@@ -715,9 +715,12 @@ struct CustomizerHUDView: View {
     private var singleBehaviorForm: some View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "hud.outputTranslation", defaultValue: "Output Translation"))
-                    .font(.hudLabel)
-                    .foregroundColor(.hudSecondary)
+                HStack(spacing: 6) {
+                    Text(String(localized: "hud.outputTranslation", defaultValue: "Output Translation"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    HUDHelpButton(content: String(localized: "hud.outputTranslation.help", defaultValue: "The output of the knob will be mapped to existing events to control the computer."))
+                }
                 Picker("", selection: $singleTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
@@ -769,9 +772,12 @@ struct CustomizerHUDView: View {
     private var doubleBehaviorForm: some View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"))
-                    .font(.hudLabel)
-                    .foregroundColor(.hudSecondary)
+                HStack(spacing: 6) {
+                    Text(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    HUDHelpButton(content: String(localized: "hud.outputTranslation.help", defaultValue: "The output of the knob will be mapped to existing events to control the computer."))
+                }
                 Picker("", selection: $doubleInnerTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
@@ -847,9 +853,12 @@ struct CustomizerHUDView: View {
     private var linearBehaviorForm: some View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"))
-                    .font(.hudLabel)
-                    .foregroundColor(.hudSecondary)
+                HStack(spacing: 6) {
+                    Text(String(localized: "hud.outputTranslationPicker", defaultValue: "Output Translation"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    HUDHelpButton(content: String(localized: "hud.outputTranslation.help", defaultValue: "The output of the knob will be mapped to existing events to control the computer."))
+                }
                 Picker("", selection: $linearTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
