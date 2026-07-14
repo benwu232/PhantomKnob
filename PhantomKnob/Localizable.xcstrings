@@ -695,7 +695,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自动双档模式。手指在内环旋转为正常灵敏度，在外环旋转自动切换为精细微调。"
+            "value" : "旋钮的颜色、速度等分为两档，对应不同的半径范围。"
           }
         }
       }
@@ -706,7 +706,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "动态灵敏度模式。旋转速度根据手指离旋钮中心的距离连续平滑变化，拉得越远，旋转速度越快。"
+            "value" : "旋钮不再分级，速度随旋钮的半径平滑变化。"
           }
         }
       }
@@ -717,7 +717,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "传统的单点触控模式，模拟标准的物理旋钮，灵敏度恒定。"
+            "value" : "基本旋钮模式，模拟实体旋钮。"
           }
         }
       }
@@ -805,7 +805,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "手指触发旋转的最小距离阈值（单位：mm）。小于该半径的微小晃动不会被识别，能有效防止在旋钮中心附近的指针抖动或突变。"
+            "value" : "旋钮的最小半径(单位：mm)。小于该半径的旋钮不被识别，以避免误触发。"
           }
         }
       }
@@ -839,6 +839,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "映射方式"
+          }
+        }
+      }
+    },
+    "hud.outputTranslation.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旋钮的输出将映射为已有的事件，以便控制电脑。"
           }
         }
       }
