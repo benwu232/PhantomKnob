@@ -748,6 +748,7 @@ struct CustomizerHUDView: View {
                     }
                 }
                 .onChange(of: singleCWAction) { _ in save() }
+                .padding(.leading, 12)
             }
             .padding(.leading, 12)
             
@@ -812,6 +813,7 @@ struct CustomizerHUDView: View {
                     }
                 }
                 .onChange(of: doubleInnerCWAction) { _ in save() }
+                .padding(.leading, 12)
             }
             .padding(.leading, 12)
             
@@ -900,6 +902,7 @@ struct CustomizerHUDView: View {
                     }
                 }
                 .onChange(of: linearCWAction) { _ in save() }
+                .padding(.leading, 12)
             }
             .padding(.leading, 12)
             
