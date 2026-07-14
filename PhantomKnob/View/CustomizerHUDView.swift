@@ -152,22 +152,43 @@ struct CustomizerHUDView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // ① 旋钮类型
                     VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 6) {
-                            Text(String(localized: "hud.knobType", defaultValue: "旋钮类型"))
-                                .font(.hudTitle)
-                                .foregroundColor(.hudTitle)
-                            HUDHelpButton(content: knobTypeHelpContent)
+                        Text(String(localized: "hud.knobType", defaultValue: "旋钮类型"))
+                            .font(.hudTitle)
+                            .foregroundColor(.hudTitle)
+                        
+                        HStack(spacing: 2) {
+                            ForEach([KnobConfigType.single, .double, .linear], id: \.self) { type in
+                                let isSelected = configType == type
+                                HStack(spacing: 4) {
+                                    Text(typeDisplayName(type))
+                                        .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                                        .foregroundColor(isSelected ? .white : .white.opacity(0.7))
+                                    
+                                    HUDHelpButton(
+                                        content: typeHelpContent(type),
+                                        iconName: "exclamationmark.circle"
+                                    )
+                                }
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 24)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(isSelected ? Color.white.opacity(0.12) : Color.clear)
+                                )
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    if configType != type {
+                                        withAnimation(.easeInOut(duration: 0.15)) {
+                                            configType = type
+                                            save()
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        Picker("", selection: $configType) {
-                            Text(String(localized: "hud.single", defaultValue: "Single Knob")).tag(KnobConfigType.single)
-                            Text(String(localized: "hud.double", defaultValue: "Double-Ring")).tag(KnobConfigType.double)
-                            Text(String(localized: "hud.linear", defaultValue: "Variable Speed")).tag(KnobConfigType.linear)
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .onChange(of: configType) { _ in
-                            // 切换类型时，自动将当前公共响应半径带入新类型并保存
-                            save()
-                        }
+                        .padding(2)
+                        .background(Color.white.opacity(0.06))
+                        .cornerRadius(6)
                     }
                     
                     // ② 旋钮外观
@@ -1165,14 +1186,25 @@ struct CustomizerHUDView: View {
         return nil
     }
     
-    private var knobTypeHelpContent: String {
-        switch configType {
+    private func typeDisplayName(_ type: KnobConfigType) -> String {
+        switch type {
         case .single:
-            return String(localized: "hud.knobType.help.single", defaultValue: "Standard single touch mode, simulating a traditional physical knob with constant sensitivity.")
+            return String(localized: "hud.single", defaultValue: "Single Knob")
         case .double:
-            return String(localized: "hud.knobType.help.double", defaultValue: "Automatic dual-gear mode. Rotating inside the inner ring uses normal sensitivity, while rotating outside automatically switches to fine tuning.")
+            return String(localized: "hud.double", defaultValue: "Double-Ring")
         case .linear:
-            return String(localized: "hud.knobType.help.linear", defaultValue: "Dynamic sensitivity mode. Rotation speed scales continuously based on finger distance from the center; pulling further increases speed.")
+            return String(localized: "hud.linear", defaultValue: "Variable Speed")
+        }
+    }
+    
+    private func typeHelpContent(_ type: KnobConfigType) -> String {
+        switch type {
+        case .single:
+            return String(localized: "hud.knobType.help.single", defaultValue: "Basic knob mode, simulating a physical knob.")
+        case .double:
+            return String(localized: "hud.knobType.help.double", defaultValue: "The knob's color, speed, etc. are divided into two levels, corresponding to different radius ranges.")
+        case .linear:
+            return String(localized: "hud.knobType.help.linear", defaultValue: "The knob is no longer graded, and the speed changes smoothly with the radius of the knob.")
         }
     }
 
