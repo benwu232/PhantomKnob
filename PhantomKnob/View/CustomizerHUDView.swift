@@ -1195,12 +1195,13 @@ struct CustomizerHUDView: View {
 
 struct HUDHelpButton: View {
     let content: String
+    var iconName: String = "info.circle"
     
     @State private var isPresented = false
     @State private var hoverWorkItem: DispatchWorkItem?
     
     var body: some View {
-        Image(systemName: "info.circle")
+        Image(systemName: iconName)
             .font(.system(size: 11))
             .foregroundColor(.white)
             .opacity(isPresented ? 0.8 : 0.45)
