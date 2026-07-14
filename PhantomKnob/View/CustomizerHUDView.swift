@@ -1230,13 +1230,14 @@ struct HUDHelpButton: View {
             .popover(isPresented: $isPresented, arrowEdge: .trailing) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(content)
-                        .font(.system(size: 11))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.white)
+                        .lineSpacing(3.0)
                         .multilineTextAlignment(.leading)
                 }
-                .padding(10)
+                .padding(12)
                 .frame(width: 220)
-                .background(VisualEffectView(material: .hudWindow, blendingMode: .withinWindow).cornerRadius(8))
+                .preferredColorScheme(.dark)
             }
     }
 }
