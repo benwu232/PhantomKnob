@@ -753,9 +753,12 @@ struct CustomizerHUDView: View {
             .padding(.leading, 12)
             
             HStack {
-                Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
-                    .font(.hudLabel)
-                    .foregroundColor(.hudSecondary)
+                HStack(spacing: 6) {
+                    Text(String(localized: "hud.unitPerDegree", defaultValue: "Unit per degree"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    HUDHelpButton(content: String(localized: "hud.unitPerDegree.help", defaultValue: "Event output change per degree of clockwise rotation."))
+                }
                 Spacer()
                 TextField("", text: $singleScaleText)
                     .textFieldStyle(PlainTextFieldStyle())
