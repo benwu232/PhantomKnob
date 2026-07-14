@@ -152,9 +152,12 @@ struct CustomizerHUDView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // ① 旋钮类型
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(String(localized: "hud.knobType", defaultValue: "旋钮类型"))
-                            .font(.hudTitle)
-                            .foregroundColor(.hudTitle)
+                        HStack(spacing: 6) {
+                            Text(String(localized: "hud.knobType", defaultValue: "旋钮类型"))
+                                .font(.hudTitle)
+                                .foregroundColor(.hudTitle)
+                            HUDHelpButton(content: knobTypeHelpContent)
+                        }
                         Picker("", selection: $configType) {
                             Text(String(localized: "hud.single", defaultValue: "Single Knob")).tag(KnobConfigType.single)
                             Text(String(localized: "hud.double", defaultValue: "Double-Ring")).tag(KnobConfigType.double)
@@ -176,9 +179,12 @@ struct CustomizerHUDView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             // 最小响应半径
                             VStack(alignment: .leading, spacing: 6) {
-                                Text(String(localized: "hud.minRadius", defaultValue: "最小响应半径"))
-                                    .font(.hudLabel)
-                                    .foregroundColor(.hudSecondary)
+                                HStack(spacing: 6) {
+                                    Text(String(localized: "hud.minRadius", defaultValue: "最小响应半径"))
+                                        .font(.hudLabel)
+                                        .foregroundColor(.hudSecondary)
+                                    HUDHelpButton(content: String(localized: "hud.minRadius.help", defaultValue: "The minimum effective radius (in mm) for gesture activation. Slight finger movements inside this range are ignored to prevent sudden value jumps near the center."))
+                                }
                                 HStack(spacing: 8) {
                                     Slider(value: $commonMinRadius, in: 5.0...15.0, step: 1.0)
                                         .frame(width: 260)
@@ -196,9 +202,12 @@ struct CustomizerHUDView: View {
                             // 内外环分界
                             if configType == .double {
                                 VStack(alignment: .leading, spacing: 6) {
-                                    Text(String(localized: "hud.doubleInnerRadiusLabel", defaultValue: "内外环分界:"))
-                                        .font(.hudLabel)
-                                        .foregroundColor(.hudSecondary)
+                                    HStack(spacing: 6) {
+                                        Text(String(localized: "hud.doubleInnerRadiusLabel", defaultValue: "内外环分界:"))
+                                            .font(.hudLabel)
+                                            .foregroundColor(.hudSecondary)
+                                        HUDHelpButton(content: String(localized: "hud.doubleInnerRadius.help", defaultValue: "The boundary radius dividing the normal inner ring and the fine-tuning outer ring. Exceeding this radius automatically activates fine tuning (usually 0.1x speed)."))
+                                    }
                                     HStack(spacing: 8) {
                                         Slider(value: $doubleInnerRadiusMax, in: 10.0...40.0, step: 1.0)
                                             .frame(width: 260)
@@ -218,9 +227,12 @@ struct CustomizerHUDView: View {
                             // 最大显示半径
                             if configType == .linear {
                                 VStack(alignment: .leading, spacing: 6) {
-                                    Text(String(localized: "hud.maxRadiusTitle", defaultValue: "最大显示半径"))
-                                        .font(.hudLabel)
-                                        .foregroundColor(.hudSecondary)
+                                    HStack(spacing: 6) {
+                                        Text(String(localized: "hud.maxRadiusTitle", defaultValue: "最大显示半径"))
+                                            .font(.hudLabel)
+                                            .foregroundColor(.hudSecondary)
+                                        HUDHelpButton(content: String(localized: "hud.linearMaxRadius.help", defaultValue: "The maximum radius for sensitivity scaling. Beyond this radius, the sensitivity stays at the maximum multiplier and does not increase further."))
+                                    }
                                     HStack(spacing: 8) {
                                         Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
                                             .frame(width: 260)
@@ -1151,6 +1163,17 @@ struct CustomizerHUDView: View {
             return icon
         }
         return nil
+    }
+    
+    private var knobTypeHelpContent: String {
+        switch configType {
+        case .single:
+            return String(localized: "hud.knobType.help.single", defaultValue: "Standard single touch mode, simulating a traditional physical knob with constant sensitivity.")
+        case .double:
+            return String(localized: "hud.knobType.help.double", defaultValue: "Automatic dual-gear mode. Rotating inside the inner ring uses normal sensitivity, while rotating outside automatically switches to fine tuning.")
+        case .linear:
+            return String(localized: "hud.knobType.help.linear", defaultValue: "Dynamic sensitivity mode. Rotation speed scales continuously based on finger distance from the center; pulling further increases speed.")
+        }
     }
 
     private func metadataRow(label: String, value: String) -> some View {
