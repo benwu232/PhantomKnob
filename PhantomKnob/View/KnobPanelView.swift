@@ -11,23 +11,16 @@ struct KnobPanelView: View {
                 .bold()
                 .foregroundColor(.white)
             
-            if !firstRunTutorialCompleted {
-                VStack(spacing: 8) {
-                    TutorialView()
-                        .frame(height: 140)
-                    
-                    Divider()
-                        .background(Color.white.opacity(0.15))
-                    
-                    mainControlLayout
-                }
-            } else {
-                mainControlLayout
-            }
+            mainControlLayout
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.top, 20)
         .padding(.bottom, 16)
+        .onAppear {
+            if !firstRunTutorialCompleted {
+                firstRunTutorialCompleted = true
+            }
+        }
         .overlay(
             HStack {
                 HUDCircleButton(icon: "xmark", color: .white.opacity(0.7)) {
