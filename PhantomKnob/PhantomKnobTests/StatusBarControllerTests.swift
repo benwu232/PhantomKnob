@@ -3,6 +3,21 @@ import XCTest
 @testable import PhantomKnob
 
 final class StatusBarControllerTests: XCTestCase {
+    private let suiteName = "com.phantomknob.PhantomKnobTests"
+    
+    override func setUp() {
+        super.setUp()
+        UserDefaults.app = UserDefaults(suiteName: suiteName) ?? .standard
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+    }
+    
+    override func tearDown() {
+        KnobPanelWindowController.shared.hide()
+        SettingsWindowController.shared.hide()
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+        UserDefaults.app = .standard
+        super.tearDown()
+    }
     
     func testStatusBarDoubleCickTogglesPanel() {
         let controller = StatusBarController()
@@ -180,46 +195,48 @@ final class StatusBarControllerTests: XCTestCase {
         // 1: versionMenuItem
         // 2: separator
         // 3: toggleItem (切换旋钮模式)
-        // 4: separator
-        // 5: settingsItem (设置)
-        // 6: separator
-        // 7: guideMenuItem (使用引导)
-        // 8: updateItem (检查升级)
-        // 9: feedbackItem (意见建议)
-        // 10: separator
-        // 11: debugToggleItem
-        // 12: separator
-        // 13: quitItem (退出)
+        // 4: knobPanelItem (快捷中控面板...)
+        // 5: separator
+        // 6: settingsItem (设置)
+        // 7: separator
+        // 8: guideMenuItem (使用引导)
+        // 9: updateItem (检查升级)
+        // 10: feedbackItem (意见建议)
+        // 11: separator
+        // 12: debugToggleItem
+        // 13: separator
+        // 14: quitItem (退出)
         
-        XCTAssertEqual(menu.items.count, 14)
+        XCTAssertEqual(menu.items.count, 15)
         
         XCTAssertNil(menu.items[0].action)
         XCTAssertNil(menu.items[1].action)
         XCTAssertTrue(menu.items[2].isSeparatorItem)
         XCTAssertEqual(menu.items[3].action, Selector(("toggleMode")))
-        XCTAssertTrue(menu.items[4].isSeparatorItem)
-        XCTAssertEqual(menu.items[5].action, Selector(("openSettings")))
-        XCTAssertTrue(menu.items[6].isSeparatorItem)
-        XCTAssertEqual(menu.items[7].action, Selector(("openGuide")))
-        XCTAssertEqual(menu.items[8].action, Selector(("checkForUpdates")))
-        XCTAssertEqual(menu.items[9].action, Selector(("sendFeedback")))
-        XCTAssertTrue(menu.items[10].isSeparatorItem)
-        XCTAssertEqual(menu.items[11].action, Selector(("debugToggleLicense")))
-        XCTAssertTrue(menu.items[12].isSeparatorItem)
-        XCTAssertEqual(menu.items[13].action, Selector(("quitApp")))
+        XCTAssertEqual(menu.items[4].action, Selector(("openKnobPanel")))
+        XCTAssertTrue(menu.items[5].isSeparatorItem)
+        XCTAssertEqual(menu.items[6].action, Selector(("openSettings")))
+        XCTAssertTrue(menu.items[7].isSeparatorItem)
+        XCTAssertEqual(menu.items[8].action, Selector(("openGuide")))
+        XCTAssertEqual(menu.items[9].action, Selector(("checkForUpdates")))
+        XCTAssertEqual(menu.items[10].action, Selector(("sendFeedback")))
+        XCTAssertTrue(menu.items[11].isSeparatorItem)
+        XCTAssertEqual(menu.items[12].action, Selector(("debugToggleLicense")))
+        XCTAssertTrue(menu.items[13].isSeparatorItem)
+        XCTAssertEqual(menu.items[14].action, Selector(("quitApp")))
     }
     
     func testStatusBarIconFreeModeAppendsSuffix() {
         let controller = StatusBarController()
         
         // 保存初始状态以供清理
-        let originalKey = UserDefaults.standard.string(forKey: "licenseKey")
-        let originalEmail = UserDefaults.standard.string(forKey: "licenseEmail")
-        let originalTrialStart = UserDefaults.standard.string(forKey: "trialStartDate")
+        let originalKey = UserDefaults.app.string(forKey: "licenseKey")
+        let originalEmail = UserDefaults.app.string(forKey: "licenseEmail")
+        let originalTrialStart = UserDefaults.app.string(forKey: "trialStartDate")
         
         // 强制进入 Licensed 状态
-        UserDefaults.standard.set("DEBUG_KEY", forKey: "licenseKey")
-        UserDefaults.standard.set("debug@example.com", forKey: "licenseEmail")
+        UserDefaults.app.set("DEBUG_KEY", forKey: "licenseKey")
+        UserDefaults.app.set("debug@example.com", forKey: "licenseEmail")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
         XCTAssertEqual(LicenseManager.shared.currentState, .licensed)
         
@@ -230,11 +247,11 @@ final class StatusBarControllerTests: XCTestCase {
         }
         
         // 强制进入 Free 状态
-        UserDefaults.standard.removeObject(forKey: "licenseKey")
-        UserDefaults.standard.removeObject(forKey: "licenseEmail")
+        UserDefaults.app.removeObject(forKey: "licenseKey")
+        UserDefaults.app.removeObject(forKey: "licenseEmail")
         let expiredDate = Date().addingTimeInterval(-20 * 24 * 60 * 60)
         let formatter = ISO8601DateFormatter()
-        UserDefaults.standard.set(formatter.string(from: expiredDate), forKey: "trialStartDate")
+        UserDefaults.app.set(formatter.string(from: expiredDate), forKey: "trialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
         XCTAssertEqual(LicenseManager.shared.currentState, .free)
         
@@ -245,9 +262,9 @@ final class StatusBarControllerTests: XCTestCase {
         }
         
         // 清理：恢复初始状态
-        UserDefaults.standard.set(originalKey, forKey: "licenseKey")
-        UserDefaults.standard.set(originalEmail, forKey: "licenseEmail")
-        UserDefaults.standard.set(originalTrialStart, forKey: "trialStartDate")
+        UserDefaults.app.set(originalKey, forKey: "licenseKey")
+        UserDefaults.app.set(originalEmail, forKey: "licenseEmail")
+        UserDefaults.app.set(originalTrialStart, forKey: "trialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
 }

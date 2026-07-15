@@ -56,7 +56,7 @@ class UserGuideViewModel: ObservableObject {
         self.audioService = audioService
         self.volumeVal = audioService.getVolume() ?? 0.5
         self.currentMultiplier = getControlPanelMultiplier()
-        self.isTouchpadDetected = UserDefaults.standard.bool(forKey: "userGuideTouchpadPracticed")
+        self.isTouchpadDetected = UserDefaults.app.bool(forKey: "userGuideTouchpadPracticed")
         setupBindings()
         
         let soundURL = URL(fileURLWithPath: "/System/Library/Sounds/Tink.aiff")
@@ -162,7 +162,7 @@ class UserGuideViewModel: ObservableObject {
             
             if accumulatedRotation >= 30.0 && !isTouchpadDetected {
                 isTouchpadDetected = true
-                UserDefaults.standard.set(true, forKey: "userGuideTouchpadPracticed")
+                UserDefaults.app.set(true, forKey: "userGuideTouchpadPracticed")
             }
         } else if currentStep == 2 {
             if hoveredKnob == .doubleKnob {
@@ -208,14 +208,14 @@ class UserGuideViewModel: ObservableObject {
     
     private func getControlPanelMultiplier() -> Double {
         let key = "knob_scale_override_com.phantomknob.controlpanel_ControlPanel___控制面板_zone_0"
-        let val = UserDefaults.standard.double(forKey: key)
+        let val = UserDefaults.app.double(forKey: key)
         return val > 0 ? val : 1.0
     }
     
     func completeGuide() {
-        UserDefaults.standard.set(skipOnNextStartup, forKey: "skipUserGuideOnStartup")
-        UserDefaults.standard.set(true, forKey: "firstRunUserGuideCompleted")
-        UserDefaults.standard.set(true, forKey: "firstRunTutorialCompleted") // Sync check key
+        UserDefaults.app.set(skipOnNextStartup, forKey: "skipUserGuideOnStartup")
+        UserDefaults.app.set(true, forKey: "firstRunUserGuideCompleted")
+        UserDefaults.app.set(true, forKey: "firstRunTutorialCompleted") // Sync check key
         UserGuideWindowController.shared.hide()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             KnobPanelWindowController.shared.show()
@@ -263,7 +263,7 @@ class UserGuideViewModel: ObservableObject {
     
     func resetState() {
         currentStep = 1
-        isTouchpadDetected = UserDefaults.standard.bool(forKey: "userGuideTouchpadPracticed")
+        isTouchpadDetected = UserDefaults.app.bool(forKey: "userGuideTouchpadPracticed")
         touchpadSamplesCount = 0
         volumeVal = audioService.getVolume() ?? 0.5
         rotationAngle = 0.0

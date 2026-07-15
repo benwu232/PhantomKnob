@@ -315,9 +315,12 @@ class StatusBarController: ObservableObject {
     }
     
     func handleStatusItemClick(event: NSEvent?) {
+        let isTesting = NSClassFromString("XCTestCase") != nil
         guard let ev = event else {
             if let menu = menu {
-                statusItem?.popUpMenu(menu)
+                if !isTesting {
+                    statusItem?.popUpMenu(menu)
+                }
             }
             return
         }
@@ -330,7 +333,9 @@ class StatusBarController: ObservableObject {
             pendingMenuWorkItem?.cancel()
             pendingMenuWorkItem = nil
             if let menu = menu {
-                statusItem?.popUpMenu(menu)
+                if !isTesting {
+                    statusItem?.popUpMenu(menu)
+                }
             }
             return
         }

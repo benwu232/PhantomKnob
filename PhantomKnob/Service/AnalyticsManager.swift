@@ -7,7 +7,7 @@ final class AnalyticsManager {
     private init() {}
     
     func initialize() {
-        guard !UserDefaults.standard.bool(forKey: "disableAnalytics") else { return }
+        guard !UserDefaults.app.bool(forKey: "disableAnalytics") else { return }
         let config = TelemetryManagerConfiguration(appID: "00000000-0000-0000-0000-000000000000")
         TelemetryManager.initialize(with: config)
         
@@ -15,7 +15,7 @@ final class AnalyticsManager {
     }
     
     func trackEvent(_ name: String, parameters: [String: String] = [:]) {
-        guard !UserDefaults.standard.bool(forKey: "disableAnalytics") else { return }
+        guard !UserDefaults.app.bool(forKey: "disableAnalytics") else { return }
         TelemetryManager.send(name, with: parameters)
     }
 }

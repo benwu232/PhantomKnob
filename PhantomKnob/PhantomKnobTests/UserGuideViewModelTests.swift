@@ -3,19 +3,17 @@ import XCTest
 @testable import PhantomKnob
 
 class UserGuideViewModelTests: XCTestCase {
+    private let suiteName = "com.phantomknob.PhantomKnobTests"
+    
     override func setUpWithError() throws {
         try super.setUpWithError()
-        UserDefaults.standard.removeObject(forKey: "userGuideTouchpadPracticed")
-        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
-        UserDefaults.standard.removeObject(forKey: "firstRunUserGuideCompleted")
-        UserDefaults.standard.removeObject(forKey: "firstRunTutorialCompleted")
+        UserDefaults.app = UserDefaults(suiteName: suiteName) ?? .standard
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
     }
 
     override func tearDownWithError() throws {
-        UserDefaults.standard.removeObject(forKey: "userGuideTouchpadPracticed")
-        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
-        UserDefaults.standard.removeObject(forKey: "firstRunUserGuideCompleted")
-        UserDefaults.standard.removeObject(forKey: "firstRunTutorialCompleted")
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+        UserDefaults.app = .standard
         try super.tearDownWithError()
     }
 
@@ -113,18 +111,18 @@ class UserGuideViewModelTests: XCTestCase {
         // 1. Test when skipOnNextStartup is true
         vm.skipOnNextStartup = true
         vm.completeGuide()
-        XCTAssertTrue(UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup"))
+        XCTAssertTrue(UserDefaults.app.bool(forKey: "skipUserGuideOnStartup"))
 
         // Reset
-        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
+        UserDefaults.app.removeObject(forKey: "skipUserGuideOnStartup")
 
         // 2. Test when skipOnNextStartup is false
         vm.skipOnNextStartup = false
         vm.completeGuide()
-        XCTAssertFalse(UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup"))
+        XCTAssertFalse(UserDefaults.app.bool(forKey: "skipUserGuideOnStartup"))
 
         // Clean up
-        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
+        UserDefaults.app.removeObject(forKey: "skipUserGuideOnStartup")
     }
 
     func testTouchpadCoordinatesValidationCounting() {

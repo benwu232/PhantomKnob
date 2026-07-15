@@ -30,6 +30,14 @@ class OverlayController: ObservableObject {
         self.featureGate = featureGate
     }
 
+    deinit {
+        if let p = panel {
+            DispatchQueue.main.async {
+                p.orderOut(nil)
+            }
+        }
+    }
+
     func show(at position: CGPoint, 
               targetName: String?, 
               scale: Double? = nil, 

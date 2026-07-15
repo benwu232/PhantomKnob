@@ -2,16 +2,28 @@ import XCTest
 @testable import PhantomKnob
 
 class AppLanguageManagerTests: XCTestCase {
+    private let suiteName = "com.phantomknob.PhantomKnobTests"
+    
     override func setUp() {
         super.setUp()
-        UserDefaults.standard.removeObject(forKey: "appLanguage")
-        UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        UserDefaults.app = UserDefaults(suiteName: suiteName) ?? .standard
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+        cleanArgumentDomain()
     }
     
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: "appLanguage")
-        UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        cleanArgumentDomain()
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+        UserDefaults.app = .standard
         super.tearDown()
+    }
+    
+    private func cleanArgumentDomain() {
+        var volatileDomain = UserDefaults.app.volatileDomain(forName: "NSArgumentDomain")
+        if volatileDomain["AppleLanguages"] != nil {
+            volatileDomain.removeValue(forKey: "AppleLanguages")
+            UserDefaults.app.setVolatileDomain(volatileDomain, forName: "NSArgumentDomain")
+        }
     }
     
     func testDefaultLanguageIsSystem() {
@@ -21,19 +33,33 @@ class AppLanguageManagerTests: XCTestCase {
     func testSetLanguageChangesUserDefaults() {
         AppLanguageManager.shared.currentLanguage = .english
         XCTAssertEqual(AppLanguageManager.shared.currentLanguage, .english)
-        XCTAssertEqual(UserDefaults.standard.string(forKey: "appLanguage"), "en")
+        XCTAssertEqual(UserDefaults.app.string(forKey: "appLanguage"), "en")
         
-        let appleLangs = UserDefaults.standard.stringArray(forKey: "AppleLanguages")
+        let appleLangs = UserDefaults.app.stringArray(forKey: "AppleLanguages")
         XCTAssertEqual(appleLangs, ["en"])
     }
     
     func testSetLanguageToSystemRemovesAppleLanguages() {
-        let originalAppleLangs = UserDefaults.standard.stringArray(forKey: "AppleLanguages")
+        let originalAppleLangs = UserDefaults.app.stringArray(forKey: "AppleLanguages")
         
         AppLanguageManager.shared.currentLanguage = .chinese
-        XCTAssertEqual(UserDefaults.standard.stringArray(forKey: "AppleLanguages"), ["zh-Hans"])
+        XCTAssertEqual(UserDefaults.app.stringArray(forKey: "AppleLanguages"), ["zh-Hans"])
         
         AppLanguageManager.shared.currentLanguage = .system
-        XCTAssertEqual(UserDefaults.standard.stringArray(forKey: "AppleLanguages"), originalAppleLangs)
+        XCTAssertEqual(UserDefaults.app.stringArray(forKey: "AppleLanguages"), originalAppleLangs)
+    }
+    
+    func testApplyLanguageOverrideOnStartupRemovesAppleLanguagesFromArgumentDomain() {
+        let mockDomain: [String: Any] = ["AppleLanguages": ["en"]]
+        UserDefaults.app.setVolatileDomain(mockDomain, forName: "NSArgumentDomain")
+        
+        let initialVolatile = UserDefaults.app.volatileDomain(forName: "NSArgumentDomain")
+        XCTAssertNotNil(initialVolatile["AppleLanguages"])
+        
+        AppLanguageManager.shared.applyLanguageOverrideOnStartup()
+        
+        let finalVolatile = UserDefaults.app.volatileDomain(forName: "NSArgumentDomain")
+        XCTAssertNil(finalVolatile["AppleLanguages"])
     }
 }
+

@@ -83,7 +83,7 @@ public final class CloudSyncManager {
         }
         // skipUserGuideOnStartup 本身在 KVS 中若无，可默认把本地的送过去
         if cloudStore.object(forKey: "skipUserGuideOnStartup") == nil {
-            let localVal = UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup")
+            let localVal = UserDefaults.app.bool(forKey: "skipUserGuideOnStartup")
             cloudStore.set(localVal, forKey: "skipUserGuideOnStartup")
             cloudStore.synchronize()
         }
@@ -105,8 +105,8 @@ public final class CloudSyncManager {
     
     private func syncLocalHotkeyToCloud() {
         guard !isSyncingFromCloud else { return }
-        let keyCode = UserDefaults.standard.integer(forKey: "globalHotkeyKeyCode")
-        let modifiers = UserDefaults.standard.integer(forKey: "globalHotkeyModifiers")
+        let keyCode = UserDefaults.app.integer(forKey: "globalHotkeyKeyCode")
+        let modifiers = UserDefaults.app.integer(forKey: "globalHotkeyModifiers")
         
         let cloudKeyCode = cloudStore.longLong(forKey: "globalHotkeyKeyCode")
         let cloudModifiers = cloudStore.longLong(forKey: "globalHotkeyModifiers")
@@ -129,7 +129,7 @@ public final class CloudSyncManager {
     
     private func syncLocalGeneralSettingsToCloud() {
         guard !isSyncingFromCloud else { return }
-        let localVal = UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup")
+        let localVal = UserDefaults.app.bool(forKey: "skipUserGuideOnStartup")
         let cloudVal = cloudStore.bool(forKey: "skipUserGuideOnStartup")
         if localVal != cloudVal {
             cloudStore.set(localVal, forKey: "skipUserGuideOnStartup")
@@ -187,22 +187,22 @@ public final class CloudSyncManager {
             } else if key == "globalHotkeyKeyCode" {
                 let val = cloudStore.longLong(forKey: key)
                 print("[CloudSyncDebug] Found hotkey keycode in cloudStore: \(val)")
-                if val != 0 && UserDefaults.standard.integer(forKey: "globalHotkeyKeyCode") != Int(val) {
-                    UserDefaults.standard.set(Int(val), forKey: "globalHotkeyKeyCode")
+                if val != 0 && UserDefaults.app.integer(forKey: "globalHotkeyKeyCode") != Int(val) {
+                    UserDefaults.app.set(Int(val), forKey: "globalHotkeyKeyCode")
                     needsNotifyHotkey = true
                 }
             } else if key == "globalHotkeyModifiers" {
                 let val = cloudStore.longLong(forKey: key)
                 print("[CloudSyncDebug] Found hotkey modifiers in cloudStore: \(val)")
-                if val != 0 && UserDefaults.standard.integer(forKey: "globalHotkeyModifiers") != Int(val) {
-                    UserDefaults.standard.set(Int(val), forKey: "globalHotkeyModifiers")
+                if val != 0 && UserDefaults.app.integer(forKey: "globalHotkeyModifiers") != Int(val) {
+                    UserDefaults.app.set(Int(val), forKey: "globalHotkeyModifiers")
                     needsNotifyHotkey = true
                 }
             } else if key == "skipUserGuideOnStartup" {
                 let val = cloudStore.bool(forKey: key)
                 print("[CloudSyncDebug] Found skipUserGuideOnStartup in cloudStore: \(val)")
-                if UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup") != val {
-                    UserDefaults.standard.set(val, forKey: "skipUserGuideOnStartup")
+                if UserDefaults.app.bool(forKey: "skipUserGuideOnStartup") != val {
+                    UserDefaults.app.set(val, forKey: "skipUserGuideOnStartup")
                 }
             }
         }

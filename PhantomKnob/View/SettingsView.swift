@@ -216,8 +216,8 @@ struct GeneralSettingsView: View {
                 .font(.system(size: 13))
 
                 Toggle(String(localized: "settings.startup.autoUpdate", defaultValue: "Automatically check for updates"), isOn: Binding(
-                    get: { UserDefaults.standard.object(forKey: "SUEnableAutomaticChecks") as? Bool ?? true },
-                    set: { UserDefaults.standard.set($0, forKey: "SUEnableAutomaticChecks") }
+                    get: { UserDefaults.app.object(forKey: "SUEnableAutomaticChecks") as? Bool ?? true },
+                    set: { UserDefaults.app.set($0, forKey: "SUEnableAutomaticChecks") }
                 ))
                 .toggleStyle(.checkbox)
                 .foregroundColor(.white.opacity(0.85))
@@ -332,17 +332,17 @@ struct GeneralSettingsView: View {
                     .foregroundColor(.white.opacity(0.5))
                 
                 Toggle(String(localized: "settings.crashReporting", defaultValue: "Send crash reports"), isOn: Binding(
-                    get: { !UserDefaults.standard.bool(forKey: "disableCrashReporting") },
-                    set: { UserDefaults.standard.set(!$0, forKey: "disableCrashReporting") }
+                    get: { !UserDefaults.app.bool(forKey: "disableCrashReporting") },
+                    set: { UserDefaults.app.set(!$0, forKey: "disableCrashReporting") }
                 ))
                 .toggleStyle(.checkbox)
                 .foregroundColor(.white.opacity(0.85))
                 .font(.system(size: 13))
 
                 Toggle(String(localized: "settings.analytics", defaultValue: "Share anonymous usage statistics"), isOn: Binding(
-                    get: { !UserDefaults.standard.bool(forKey: "disableAnalytics") },
+                    get: { !UserDefaults.app.bool(forKey: "disableAnalytics") },
                     set: { newValue in
-                        UserDefaults.standard.set(!newValue, forKey: "disableAnalytics")
+                        UserDefaults.app.set(!newValue, forKey: "disableAnalytics")
                         if newValue {
                             AnalyticsManager.shared.initialize()
                         }
@@ -372,7 +372,7 @@ struct GeneralSettingsView: View {
     }
 
     private func resetAndRedetect() {
-        UserDefaults.standard.removeObject(forKey: "com.phantomknob.detectionResult")
+        UserDefaults.app.removeObject(forKey: "com.phantomknob.detectionResult")
         SettingsWindowController.shared.hide()
         UserGuideWindowController.shared.show()
     }

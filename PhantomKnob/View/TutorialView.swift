@@ -19,7 +19,7 @@ class TutorialViewModel: ObservableObject {
     }
     
     func completeTutorial() {
-        UserDefaults.standard.set(true, forKey: "firstRunTutorialCompleted")
+        UserDefaults.app.set(true, forKey: "firstRunTutorialCompleted")
         KnobPanelWindowController.shared.hide()
     }
 }

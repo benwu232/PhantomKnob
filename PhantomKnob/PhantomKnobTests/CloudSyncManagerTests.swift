@@ -44,12 +44,12 @@ final class CloudSyncManagerTests: XCTestCase {
     private var mockStore: MockCloudStore!
     private var originalStore: CloudKeyValueStore!
     
+    private let suiteName = "com.phantomknob.PhantomKnobTests"
+    
     override func setUp() {
         super.setUp()
-        // 运行前清空相关的 UserDefaults
-        UserDefaults.standard.removeObject(forKey: "globalHotkeyKeyCode")
-        UserDefaults.standard.removeObject(forKey: "globalHotkeyModifiers")
-        UserDefaults.standard.removeObject(forKey: "skipUserGuideOnStartup")
+        UserDefaults.app = UserDefaults(suiteName: suiteName) ?? .standard
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
         
         mockStore = MockCloudStore()
         originalStore = CloudSyncManager.shared.cloudStore
@@ -58,6 +58,8 @@ final class CloudSyncManagerTests: XCTestCase {
     
     override func tearDown() {
         CloudSyncManager.shared.cloudStore = originalStore
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+        UserDefaults.app = .standard
         super.tearDown()
     }
     
@@ -122,8 +124,8 @@ final class CloudSyncManagerTests: XCTestCase {
             object: nil,
             queue: nil
         ) { _ in
-            XCTAssertEqual(UserDefaults.standard.integer(forKey: "globalHotkeyKeyCode"), 18)
-            XCTAssertEqual(UserDefaults.standard.integer(forKey: "globalHotkeyModifiers"), 256)
+            XCTAssertEqual(UserDefaults.app.integer(forKey: "globalHotkeyKeyCode"), 18)
+            XCTAssertEqual(UserDefaults.app.integer(forKey: "globalHotkeyModifiers"), 256)
             expectation.fulfill()
         }
         

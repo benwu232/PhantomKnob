@@ -20,6 +20,17 @@ final class CustomKnobTests: XCTestCase {
         try? FileManager.default.removeItem(at: tempMyKnobsURL)
         RuleLibrary.shared.myKnobsURL = originalMyKnobsURL
         RuleLibrary.shared.reload()
+        
+        // Clean up all open/visible test windows
+        for window in NSApp.windows {
+            if window.isVisible && window.title != "XCTest" && !window.className.contains("XC") {
+                window.orderOut(nil)
+            }
+        }
+        if NSColorPanel.shared.isVisible {
+            NSColorPanel.shared.orderOut(nil)
+        }
+        
         super.tearDown()
     }
 

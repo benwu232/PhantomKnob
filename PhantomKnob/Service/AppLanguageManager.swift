@@ -27,21 +27,21 @@ public class AppLanguageManager {
     
     public var currentLanguage: Language {
         get {
-            let val = UserDefaults.standard.string(forKey: languageKey) ?? "system"
+            let val = UserDefaults.app.string(forKey: languageKey) ?? "system"
             return Language(rawValue: val) ?? .system
         }
         set {
-            UserDefaults.standard.set(newValue.rawValue, forKey: languageKey)
+            UserDefaults.app.set(newValue.rawValue, forKey: languageKey)
             applyLanguageOverride(newValue)
         }
     }
     
     public func applyLanguageOverrideOnStartup() {
         // 移除命令行参数（如 Xcode 启动时传递的 -AppleLanguages）对语言的覆盖
-        var volatileDomain = UserDefaults.standard.volatileDomain(forName: "NSArgumentDocmain")
+        var volatileDomain = UserDefaults.app.volatileDomain(forName: "NSArgumentDomain")
         if volatileDomain["AppleLanguages"] != nil {
             volatileDomain.removeValue(forKey: "AppleLanguages")
-            UserDefaults.standard.setVolatileDomain(volatileDomain, forName: "NSArgumentDomain")
+            UserDefaults.app.setVolatileDomain(volatileDomain, forName: "NSArgumentDomain")
         }
         
         let lang = currentLanguage
@@ -51,13 +51,13 @@ public class AppLanguageManager {
     private func applyLanguageOverride(_ language: Language) {
         switch language {
         case .system:
-            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+            UserDefaults.app.removeObject(forKey: "AppleLanguages")
         case .english:
-            UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
+            UserDefaults.app.set(["en"], forKey: "AppleLanguages")
         case .chinese:
-            UserDefaults.standard.set(["zh-Hans"], forKey: "AppleLanguages")
+            UserDefaults.app.set(["zh-Hans"], forKey: "AppleLanguages")
         }
-        UserDefaults.standard.synchronize()
+        UserDefaults.app.synchronize()
     }
     
     public func relaunchApp() {

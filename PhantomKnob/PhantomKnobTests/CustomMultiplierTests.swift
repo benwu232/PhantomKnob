@@ -2,17 +2,18 @@ import XCTest
 @testable import PhantomKnob
 
 final class CustomMultiplierTests: XCTestCase {
+    private let suiteName = "com.phantomknob.PhantomKnobTests"
+    
     override func setUp() {
         super.setUp()
-        // Clear all UserDefaults settings keys starting with knob_scale_override
-        let defaults = UserDefaults.standard
-        let dictionary = defaults.dictionaryRepresentation()
-        for key in dictionary.keys {
-            if key.hasPrefix("knob_scale_override_") {
-                defaults.removeObject(forKey: key)
-            }
-        }
-        defaults.synchronize()
+        UserDefaults.app = UserDefaults(suiteName: suiteName) ?? .standard
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+    }
+    
+    override func tearDown() {
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+        UserDefaults.app = .standard
+        super.tearDown()
     }
 
     func testPrecisionRoundingAndMinimumClamp() {
@@ -49,23 +50,23 @@ final class CustomMultiplierTests: XCTestCase {
         let key0 = "knob_scale_override_com.test.app_AXSlider_volume_Volume_zone_0"
         let key1 = "knob_scale_override_com.test.app_AXSlider_volume_Volume_zone_1"
         
-        UserDefaults.standard.set(3.5, forKey: key0)
-        UserDefaults.standard.set(1.5, forKey: key1)
+        UserDefaults.app.set(3.5, forKey: key0)
+        UserDefaults.app.set(1.5, forKey: key1)
         
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key0), 3.5)
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key1), 1.5)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key0), 3.5)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key1), 1.5)
     }
 
     func testSafeResetToOne() {
         let key = "knob_scale_override_com.test.app_AXSlider_volume_Volume_zone_0"
         
         // Custom value set
-        UserDefaults.standard.set(5.0, forKey: key)
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 5.0)
+        UserDefaults.app.set(5.0, forKey: key)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key), 5.0)
         
         // Safe Reset key 1 -> Set to 1.0 instead of deleting
-        UserDefaults.standard.set(1.0, forKey: key)
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 1.0)
+        UserDefaults.app.set(1.0, forKey: key)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key), 1.0)
     }
 
     func testDirectKeyPressCustomMultiplierPersistence() {
@@ -94,19 +95,19 @@ final class CustomMultiplierTests: XCTestCase {
         manager.handleDirectKeyPress(keyCode: 20)
         
         let key = "knob_scale_override_com.test.directkey_AXSlider_volume_Volume_zone_0"
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 3.0)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key), 3.0)
         
         // Arrow Right -> keycode 124 (+0.1)
         manager.handleDirectKeyPress(keyCode: 124)
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 3.1)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key), 3.1)
         
         // Arrow Down -> keycode 125 (-1.0)
         manager.handleDirectKeyPress(keyCode: 125)
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 2.1)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key), 2.1)
         
         // Key 1 -> keycode 18 (reset to 1.0)
         manager.handleDirectKeyPress(keyCode: 18)
-        XCTAssertEqual(UserDefaults.standard.double(forKey: key), 1.0)
+        XCTAssertEqual(UserDefaults.app.double(forKey: key), 1.0)
     }
 
     func testOneFingerContinuationLocksMultiplier() {

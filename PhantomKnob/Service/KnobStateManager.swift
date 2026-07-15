@@ -906,7 +906,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 if let defaultScale = defaultBaseScale {
                     if let target = currentTarget {
                         let key = persistentKey(for: target, zoneIndex: currentZoneIndex)
-                        if let overrideValue = UserDefaults.standard.object(forKey: key) as? Double {
+                        if let overrideValue = UserDefaults.app.object(forKey: key) as? Double {
                             baseScale = overrideValue
                         } else {
                             baseScale = defaultScale
@@ -1210,7 +1210,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             defaultBaseScale = 1.0
         }
         
-        if let overrideValue = UserDefaults.standard.object(forKey: key) as? Double {
+        if let overrideValue = UserDefaults.app.object(forKey: key) as? Double {
             currentVal = overrideValue
         } else {
             currentVal = defaultBaseScale
@@ -1231,7 +1231,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
         
         if let nextVal = updatedVal {
-            UserDefaults.standard.set(nextVal, forKey: key)
+            UserDefaults.app.set(nextVal, forKey: key)
             self.lastResolvedBaseScale = nextVal
             
             // Post notification for scale updates
