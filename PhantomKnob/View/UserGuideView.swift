@@ -423,7 +423,7 @@ struct UserGuideView: View {
                         .foregroundColor(.blue)
                         .frame(width: 24)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(String(localized: "guide.step3.feature1.title", defaultValue: "Global Toggle Shortcut: ⌘ ⌥ R (Command + Option + R)"))
+                        Text(String(localized: "guide.step3.feature1.title", defaultValue: "Global Toggle Shortcut: ⌘ ⌥ O (Command + Option + O)"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
                         Text(String(localized: "guide.step3.feature1.desc", defaultValue: "Press the shortcut or enable it from the menu bar to control any slider, stepper, or dial with gestures."))

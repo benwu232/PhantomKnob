@@ -39,7 +39,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "PhantomKnob 必须在有触控板的Mac系统（如MacBook内置触控板或外接妙控板）上运行。程序即将退出。"
+            "value" : "PhantomKnob 必须在有触控板的Mac系统（如MacBook内置触控板或外接妙控板）上运行。未检测到触控板，即将退出。"
           }
         }
       }
@@ -402,7 +402,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全局激活热键：⌘ ⌥ R (Command + Option + R)。可在设置中修改。"
+            "value" : "全局激活热键：⌘ ⌥ O (Command + Option + O)。可在设置中修改。"
           }
         }
       }
