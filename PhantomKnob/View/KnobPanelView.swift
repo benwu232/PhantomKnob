@@ -15,7 +15,7 @@ struct KnobPanelView: View {
                 Spacer()
                 
                 Text(String(localized: "panel.title", defaultValue: "PhantomKnob 快捷面板"))
-                    .font(.headline)
+                    .font(.title3)
                     .bold()
                     .foregroundColor(.white)
                 
@@ -31,10 +31,11 @@ struct KnobPanelView: View {
             .padding(.horizontal, 16)
             .padding(.top, 16)
             
-            Spacer(minLength: 16)
+            Spacer()
             
             mainControlLayout
-                .padding(.bottom, 24)
+            
+            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
