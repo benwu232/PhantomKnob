@@ -1,8 +1,8 @@
-# 切换默认全局热键为 Command + Option + O 实现计划
+# 切换默认全局热键为 Command + Option + Q 实现计划
 
 > **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [ ]`）语法来跟踪进度。
 
-**目标：** 将 PhantomKnob 的默认激活快捷键从 `⌘⌥R` 改为 `⌘⌥O`，以减少按键冲突，并提供更直观的按键签名（'O' 看起来像旋钮）。
+**目标：** 将 PhantomKnob 的默认激活快捷键从 `⌘⌥R` 改为 `⌘⌥Q`，以减少按键冲突。
 
 **架构：** 
 - 修改 `HotkeySettings.swift` 中的默认键码值。
@@ -17,11 +17,11 @@
 ### 任务 1：添加单元测试并验证失败
 
 **文件：**
-- 创建：`PhantomKnob/PhantomKnobTests/HotkeySettingsTests.swift`
+- 修改：`PhantomKnob/PhantomKnobTests/HotkeySettingsTests.swift`
 
-- [ ] **步骤 1：创建单元测试文件**
+- [ ] **步骤 1：修改单元测试文件**
 
-在 `PhantomKnob/PhantomKnobTests/HotkeySettingsTests.swift` 中编写测试以验证新的默认键码（31）和修饰键（Command + Option）：
+在 `PhantomKnob/PhantomKnobTests/HotkeySettingsTests.swift` 中编写测试以验证新的默认键码（12）和修饰键（Command + Option）：
 
 ```swift
 import XCTest
@@ -29,8 +29,8 @@ import XCTest
 
 final class HotkeySettingsTests: XCTestCase {
     func testDefaultHotkeyValues() {
-        // 'O' 键的 keyCode 是 31
-        XCTAssertEqual(HotkeySettings.defaultKeyCode, 31)
+        // 'Q' 键的 keyCode 是 12
+        XCTAssertEqual(HotkeySettings.defaultKeyCode, 12)
         XCTAssertEqual(HotkeySettings.defaultModifiers, [.command, .option])
     }
 }
@@ -39,7 +39,7 @@ final class HotkeySettingsTests: XCTestCase {
 - [ ] **步骤 2：运行测试验证失败**
 
 运行：`xcodebuild -project PhantomKnob.xcodeproj -scheme PhantomKnobTests -sdk macosx -destination 'platform=macOS' test -only-testing PhantomKnobTests/HotkeySettingsTests`
-预期：测试失败（或者是编译错误，因为目前 `defaultKeyCode` 还是 15）。
+预期：测试失败（或者是编译错误，因为目前 `defaultKeyCode` 还是 31）。
 
 - [ ] **步骤 3：Commit**
 
@@ -57,15 +57,15 @@ git commit -m "test: add HotkeySettings default values test (expect fail)"
 
 - [ ] **步骤 1：修改默认键码定义**
 
-在 `PhantomKnob/Model/HotkeySettings.swift` 中，将 `defaultKeyCode` 的值从 `15` 改为 `31`。
+在 `PhantomKnob/Model/HotkeySettings.swift` 中，将 `defaultKeyCode` 的值从 `31` 改为 `12`。
 
 ```swift
 <<<<
-    // Default value: ⌘⌥R (keyCode=15, command|option)
-    static let defaultKeyCode: UInt16 = 15
-====
     // Default value: ⌘⌥O (keyCode=31, command|option)
     static let defaultKeyCode: UInt16 = 31
+====
+    // Default value: ⌘⌥Q (keyCode=12, command|option)
+    static let defaultKeyCode: UInt16 = 12
 >>>>
 ```
 
@@ -78,7 +78,7 @@ git commit -m "test: add HotkeySettings default values test (expect fail)"
 
 ```bash
 git add PhantomKnob/Model/HotkeySettings.swift
-git commit -m "feat: change default hotkey to Command + Option + O"
+git commit -m "feat: change default hotkey to Command + Option + Q"
 ```
 
 ---
@@ -91,13 +91,13 @@ git commit -m "feat: change default hotkey to Command + Option + O"
 
 - [ ] **步骤 1：修改 UserGuideView.swift 默认文案**
 
-在 `PhantomKnob/View/UserGuideView.swift` 中，将 fallback 默认文本更新为 `⌘ ⌥ O (Command + Option + O)`。
+在 `PhantomKnob/View/UserGuideView.swift` 中，将 fallback 默认文本更新为 `⌘ ⌥ Q (Command + Option + Q)`。
 
 ```swift
 <<<<
-                        Text(String(localized: "guide.step3.feature1.title", defaultValue: "Global Toggle Shortcut: ⌘ ⌥ R (Command + Option + R)"))
-====
                         Text(String(localized: "guide.step3.feature1.title", defaultValue: "Global Toggle Shortcut: ⌘ ⌥ O (Command + Option + O)"))
+====
+                        Text(String(localized: "guide.step3.feature1.title", defaultValue: "Global Toggle Shortcut: ⌘ ⌥ Q (Command + Option + Q)"))
 >>>>
 ```
 
@@ -107,9 +107,9 @@ git commit -m "feat: change default hotkey to Command + Option + O"
 
 ```json
 <<<<
-            "value" : "全局激活热键：⌘ ⌥ R (Command + Option + R)。可在设置中修改。"
-====
             "value" : "全局激活热键：⌘ ⌥ O (Command + Option + O)。可在设置中修改。"
+====
+            "value" : "全局激活热键：⌘ ⌥ Q (Command + Option + Q)。可在设置中修改。"
 >>>>
 ```
 
@@ -122,7 +122,7 @@ git commit -m "feat: change default hotkey to Command + Option + O"
 
 ```bash
 git add PhantomKnob/View/UserGuideView.swift PhantomKnob/Localizable.xcstrings
-git commit -m "ui: update user guide text and localizations for ⌘⌥O shortcut"
+git commit -m "ui: update user guide text and localizations for ⌘⌥Q shortcut"
 ```
 
 ---
@@ -134,23 +134,23 @@ git commit -m "ui: update user guide text and localizations for ⌘⌥O shortcut
 
 - [ ] **步骤 1：修改 CONTEXT.md 引用**
 
-在 `CONTEXT.md` 中，将所有 `⌘⌥R` 和 `Command + Option + R` 替换为 `⌘⌥O` 和 `Command + Option + O`。
+在 `CONTEXT.md` 中，将所有 `⌘⌥O` 和 `Command + Option + O` 替换为 `⌘⌥Q` 和 `Command + Option + Q`。
 
 ```markdown
 <<<<
-**Activation:** Hotkey (`⌘⌥R` by default, customizable in settings)
-====
 **Activation:** Hotkey (`⌘⌥O` by default, customizable in settings)
+====
+**Activation:** Hotkey (`⌘⌥Q` by default, customizable in settings)
 >>>>
 ```
 
 ```markdown
 <<<<
 ### Default
-`⌘⌥R` (Command + Option + R)
+`⌘⌥O` (Command + Option + O)
 ====
 ### Default
-`⌘⌥O` (Command + Option + O)
+`⌘⌥Q` (Command + Option + Q)
 >>>>
 ```
 
