@@ -158,6 +158,8 @@ struct RadialKnobControlView: View {
                     .font(.system(size: 28))
                     .foregroundColor(isFocused ? .blue : .white.opacity(0.8))
             }
+            .scaleEffect(isFocused ? 1.20 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isFocused)
             
             Text(title)
                 .font(.system(size: 13, weight: .bold))
@@ -169,7 +171,5 @@ struct RadialKnobControlView: View {
                     .foregroundColor(.white.opacity(0.6))
             }
         }
-        .scaleEffect(isFocused ? 1.15 : 1.0)
-        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isFocused)
     }
 }
