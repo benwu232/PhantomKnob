@@ -1,22 +1,21 @@
-# 快捷面板标题栏位置优化实现计划
+# 快捷面板标题大小与旋钮垂直居中优化计划
 
 > **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [ ]`）语法来跟踪进度。
 
-**目标：** 将快捷面板的 title 移动到最上方的 Header 栏（与关闭和固定按钮水平对齐），建立标准的顶部标题栏布局。
+**目标：** 增大标题字号为 title3 并使旋钮在面板剩余空间垂直居中。
 
 **架构：**
-- 修改 KnobPanelView 结构，将标题与 HUD 按钮整合在同一个顶部 HStack 标题栏中。
-- 保证布局的呼吸感和毛玻璃面板通透感，不引入不必要的多余视图。
+- 修改 KnobPanelView 结构，改用 title3 字号，并在主布局上下配置 Spacer() 实现垂直居中。
 
 ---
 
-### 任务 1：重构 KnobPanelView 顶端 Header Bar
+### 任务 1：调整 KnobPanelView 细节样式与间距
 
 **文件：**
 - 修改：`PhantomKnob/View/KnobPanelView.swift`
 
-- [ ] **步骤 1：重构 KnobPanelView body**
-  修改 `PhantomKnob/View/KnobPanelView.swift`，将 Text 标题移入顶部 HStack 中，移除底部的 overlay：
+- [ ] **步骤 1：调整样式代码**
+  修改 `PhantomKnob/View/KnobPanelView.swift`：
   ```swift
       var body: some View {
           VStack(spacing: 0) {
@@ -29,7 +28,7 @@
                   Spacer()
                   
                   Text(String(localized: "panel.title", defaultValue: "PhantomKnob 快捷面板"))
-                      .font(.headline)
+                      .font(.title3)
                       .bold()
                       .foregroundColor(.white)
                   
@@ -45,10 +44,11 @@
               .padding(.horizontal, 16)
               .padding(.top, 16)
               
-              Spacer(minLength: 16)
+              Spacer()
               
               mainControlLayout
-                  .padding(.bottom, 24)
+              
+              Spacer()
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .onAppear {
@@ -67,5 +67,5 @@
   运行：
   ```bash
   git add PhantomKnob/View/KnobPanelView.swift
-  git commit -m "feat: move title to top header bar alongside HUD buttons in KnobPanelView"
+  git commit -m "feat: increase panel title size to title3 and center knobs vertically"
   ```
