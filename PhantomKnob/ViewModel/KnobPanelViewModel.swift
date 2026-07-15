@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import AudioToolbox
 
 enum ControllableVariable {
     case volume
@@ -20,7 +21,7 @@ class ControlPanelViewModel: ObservableObject {
     @Published var brightnessVal: Float = 0.5
     @Published var backlightVal: Float = 0.3
     
-    @Published var focusedVariable: ControllableVariable? = nil
+    @Published var focusedVariable: ControllableVariable? = .volume
     @Published var isGestureActive = false
     @Published var rotationAngles: [ControllableVariable: Double] = [
         .volume: 0, .brightness: 0, .keyboardBacklight: 0
@@ -29,6 +30,10 @@ class ControlPanelViewModel: ObservableObject {
     private let audioService: AudioControlService
     private let brightnessService: DisplayBrightnessService
     private let backlightService: KeyboardBacklightService
+    
+    private var systemSoundID: SystemSoundID = 0
+    private var lastPlayTime: Double = 0
+    private var tickAccumulator: Double = 0.0
     
     init(
         audioService: AudioControlService = AudioControlService(),
@@ -40,6 +45,15 @@ class ControlPanelViewModel: ObservableObject {
         self.backlightService = backlightService
         
         refreshSystemValues()
+        
+        let soundURL = URL(fileURLWithPath: "/System/Library/Sounds/Tink.aiff")
+        AudioServicesCreateSystemSoundID(soundURL as CFURL, &systemSoundID)
+    }
+    
+    deinit {
+        if systemSoundID != 0 {
+            AudioServicesDisposeSystemSoundID(systemSoundID)
+        }
     }
     
     func refreshSystemValues() {
@@ -49,7 +63,35 @@ class ControlPanelViewModel: ObservableObject {
     }
     
     func setHoverTarget(_ target: ControllableVariable?) {
-        focusedVariable = target
+        if let target = target {
+            focusedVariable = target
+        }
+    }
+    
+    func selectNextVariable() {
+        switch focusedVariable {
+        case .volume:
+            focusedVariable = .brightness
+        case .brightness:
+            focusedVariable = .keyboardBacklight
+        case .keyboardBacklight:
+            focusedVariable = .volume
+        case nil:
+            focusedVariable = .volume
+        }
+    }
+    
+    func selectPrevVariable() {
+        switch focusedVariable {
+        case .volume:
+            focusedVariable = .keyboardBacklight
+        case .brightness:
+            focusedVariable = .volume
+        case .keyboardBacklight:
+            focusedVariable = .brightness
+        case nil:
+            focusedVariable = .volume
+        }
     }
     
     func receiveRotationDelta(_ deltaDegrees: Double) {
@@ -64,6 +106,7 @@ class ControlPanelViewModel: ObservableObject {
             if audioService.setVolume(newVal) {
                 volumeVal = newVal
                 rotationAngles[.volume, default: 0.0] += deltaDegrees
+                playFeedbackSound(abs(deltaDegrees))
             }
         case .brightness:
             let newVal = max(0.0, min(1.0, brightnessVal + deltaValue))
@@ -78,5 +121,28 @@ class ControlPanelViewModel: ObservableObject {
                 rotationAngles[.keyboardBacklight, default: 0.0] += deltaDegrees
             }
         }
+    }
+    
+    private func playFeedbackSound(_ absDeg: Double) {
+        let ticks = updateTickAccumulationAndGetTicks(absDeg)
+        let now = ProcessInfo.processInfo.systemUptime
+        if ticks > 0 && (now - lastPlayTime) >= 0.1 {
+            if systemSoundID != 0 {
+                AudioServicesPlaySystemSound(systemSoundID)
+            } else {
+                AudioServicesPlaySystemSound(1104)
+            }
+            lastPlayTime = now
+        }
+    }
+    
+    private func updateTickAccumulationAndGetTicks(_ delta: Double) -> Int {
+        tickAccumulator += delta
+        if tickAccumulator >= 1.0 {
+            let ticks = Int(tickAccumulator)
+            tickAccumulator -= Double(ticks)
+            return ticks
+        }
+        return 0
     }
 }
