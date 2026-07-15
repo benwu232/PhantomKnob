@@ -15,9 +15,10 @@ struct KnobPanelView: View {
                 Spacer()
                 
                 Text(String(localized: "panel.title", defaultValue: "PhantomKnob 快捷面板"))
-                    .font(.title3)
+                    .font(.title2)
                     .bold()
                     .foregroundColor(.white)
+                    .padding(.top, 6)
                 
                 Spacer()
                 
@@ -33,7 +34,15 @@ struct KnobPanelView: View {
             
             Spacer()
             
-            mainControlLayout
+            VStack(spacing: 20) {
+                mainControlLayout
+                
+                Text(String(localized: "panel.usage.hint", defaultValue: "提示：可通过鼠标悬停、键盘左右键或两指左右滑动来切换选择旋钮"))
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.45))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
             
             Spacer()
         }
