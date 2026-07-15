@@ -402,7 +402,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全局激活热键：⌘ ⌥ O (Command + Option + O)。可在设置中修改。"
+            "value" : "全局激活热键：⌘ ⌥ Q (Command + Option + Q)。可在设置中修改。"
           }
         }
       }
