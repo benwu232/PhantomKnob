@@ -5,9 +5,7 @@ struct ReleaseNotesView: View {
     let title: String
     let items: [String]
     
-    @State private var dontShowAgain = false
-    
-    var onDismiss: (Bool) -> Void
+    var onDismiss: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -53,15 +51,10 @@ struct ReleaseNotesView: View {
             
             // Footer
             HStack {
-                Toggle(String(localized: "release.dontShowAgain", defaultValue: "Don't show this version again"), isOn: $dontShowAgain)
-                    .toggleStyle(.checkbox)
-                    .foregroundColor(.white.opacity(0.7))
-                    .font(.system(size: 12))
-                
                 Spacer()
                 
                 Button(action: {
-                    onDismiss(dontShowAgain)
+                    onDismiss()
                 }) {
                     Text(String(localized: "release.button.gotIt", defaultValue: "Got it"))
                         .font(.system(size: 13, weight: .semibold))
@@ -92,7 +85,7 @@ struct ReleaseNotesView_Previews: PreviewProvider {
                 "⚡ Three knob modes: Fixed, Double-Ring, and Variable Speed",
                 "🔧 Full customization with Customizer HUD"
             ]
-        ) { _ in }
+        ) {}
         .background(Color.black.opacity(0.8))
     }
 }
