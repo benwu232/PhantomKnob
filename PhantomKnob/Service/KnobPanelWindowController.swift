@@ -28,53 +28,68 @@ class KnobPanelWindow: NSWindow {
     }
     
     override func scrollWheel(with event: NSEvent) {
-        let phase = event.phase
-        let momentumPhase = event.momentumPhase
-        
-        let deltaX = event.scrollingDeltaX
-        let deltaY = event.scrollingDeltaY
-        
-        // 判断是否是水平扫动
+        let intercepted = handleScrollWheelGesture(
+            phase: event.phase,
+            momentumPhase: event.momentumPhase,
+            deltaX: event.scrollingDeltaX,
+            deltaY: event.scrollingDeltaY
+        )
+        if !intercepted {
+            super.scrollWheel(with: event)
+        }
+    }
+    
+    @discardableResult
+    internal func handleScrollWheelGesture(
+        phase: NSEvent.Phase,
+        momentumPhase: NSEvent.Phase,
+        deltaX: CGFloat,
+        deltaY: CGFloat,
+        systemTime: Double = Date().timeIntervalSince1970
+    ) -> Bool {
         let isHorizontal = abs(deltaX) > abs(deltaY) && abs(deltaX) > 2.0
         
+        // 1. 无条件响应手势周期的开始与结束重置
+        if !phase.isEmpty {
+            if phase == .began {
+                hasSwipedInCurrentGesture = false
+            }
+            if phase == .ended || phase == .cancelled {
+                hasSwipedInCurrentGesture = false
+            }
+        }
+        
+        // 2. 如果是惯性滚动，直接拦截（水平）或转发（垂直）而不切换焦点
+        if !momentumPhase.isEmpty {
+            return isHorizontal
+        }
+        
+        // 3. 处理正常的滚动/扫动切换
         if isHorizontal {
             if !phase.isEmpty {
-                // 有 phase 信息，说明是触控板或支持手势的设备
-                if momentumPhase.isEmpty || momentumPhase == .none {
-                    if phase == .began {
-                        hasSwipedInCurrentGesture = false
-                    }
-                    
-                    if !hasSwipedInCurrentGesture && abs(deltaX) > 3.0 {
-                        if deltaX > 0 {
-                            ControlPanelViewModel.shared.selectNextVariable()
-                        } else if deltaX < 0 {
-                            ControlPanelViewModel.shared.selectPrevVariable()
-                        }
-                        hasSwipedInCurrentGesture = true
-                    }
-                    
-                    if phase == .ended || phase == .cancelled {
-                        hasSwipedInCurrentGesture = false
-                    }
-                }
-            } else {
-                // 没有 phase 信息 (例如传统鼠标的水平滚轮)，回退到时间防抖
-                let now = Date().timeIntervalSince1970
-                if now - lastSwipeTime > 0.4 {
+                // 有 phase 信息的触控板/手势设备
+                if !hasSwipedInCurrentGesture && abs(deltaX) > 3.0 {
                     if deltaX > 0 {
                         ControlPanelViewModel.shared.selectNextVariable()
                     } else if deltaX < 0 {
                         ControlPanelViewModel.shared.selectPrevVariable()
                     }
-                    lastSwipeTime = now
+                    hasSwipedInCurrentGesture = true
+                }
+            } else {
+                // 没有 phase 信息的普通鼠标物理水平滚轮，退化到时间防抖
+                if systemTime - lastSwipeTime > 0.4 {
+                    if deltaX > 0 {
+                        ControlPanelViewModel.shared.selectNextVariable()
+                    } else if deltaX < 0 {
+                        ControlPanelViewModel.shared.selectPrevVariable()
+                    }
+                    lastSwipeTime = systemTime
                 }
             }
-            // 拦截水平滚动，不向后传递
-            return
-        } else {
-            super.scrollWheel(with: event)
+            return true
         }
+        return false
     }
 }
 

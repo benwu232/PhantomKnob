@@ -81,25 +81,63 @@ class KnobPanelWindowControllerTests: XCTestCase {
         let viewModel = ControlPanelViewModel.shared
         viewModel.focusedVariable = .volume
         
-        if let window = controller.window {
-            // 模拟向右轻扫的 scrollWheel 事件 (deltaX > 2.0)
-            let cgEventRight = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 2, wheel1: 0, wheel2: 5, wheel3: 0)
-            if let cg = cgEventRight, let ev = NSEvent(cgEvent: cg) {
-                window.scrollWheel(with: ev)
-                XCTAssertEqual(viewModel.focusedVariable, .brightness)
-            }
+        if let window = controller.window as? KnobPanelWindow {
+            // 模拟退化防抖时间逻辑：第一次右滑 (deltaX: 5.0)
+            window.handleScrollWheelGesture(phase: [], momentumPhase: [], deltaX: 5.0, deltaY: 0.0, systemTime: 1000.0)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
             
-            // 模拟向左轻扫的 scrollWheel 事件 (deltaX < -2.0)
-            let cgEventLeft = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 2, wheel1: 0, wheel2: -5, wheel3: 0)
-            if let cg = cgEventLeft, let ev = NSEvent(cgEvent: cg) {
-                let exp = XCTestExpectation(description: "wait for swipe throttle")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    window.scrollWheel(with: ev)
-                    XCTAssertEqual(viewModel.focusedVariable, .volume)
-                    exp.fulfill()
-                }
-                wait(for: [exp], timeout: 1.0)
-            }
+            // 模拟退化防抖时间逻辑：0.2s 后左滑 (不足 0.4s，被防抖拦截)
+            // 1000.2 - 1000.0 = 0.2s，不满足。所以不应该被触发切换，仍为 brightness
+            window.handleScrollWheelGesture(phase: [], momentumPhase: [], deltaX: -5.0, deltaY: 0.0, systemTime: 1000.2)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            
+            // 模拟退化防抖时间逻辑：0.5s 后左滑 (超过 0.4s，允许触发)
+            window.handleScrollWheelGesture(phase: [], momentumPhase: [], deltaX: -5.0, deltaY: 0.0, systemTime: 1000.7)
+            XCTAssertEqual(viewModel.focusedVariable, .volume)
+        }
+        controller.hide()
+    }
+    
+    func testWindowScrollWheelGestureLifecycleAndMomentum() {
+        let controller = KnobPanelWindowController.shared
+        controller.show()
+        
+        let viewModel = ControlPanelViewModel.shared
+        viewModel.focusedVariable = .volume
+        
+        if let window = controller.window as? KnobPanelWindow {
+            // 测试场景 1：一次完整的手势滑动，多次事件只触发一次切换
+            // 第一步：.began 阶段，deltaX 较小，不触发切换
+            window.handleScrollWheelGesture(phase: .began, momentumPhase: [], deltaX: 0.5, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .volume)
+            
+            // 第二步：.changed 阶段，deltaX 大于阈值，触发切换到 brightness
+            window.handleScrollWheelGesture(phase: .changed, momentumPhase: [], deltaX: 4.0, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            
+            // 第三步：.changed 阶段，又来了一个大 deltaX 事件，但不应再次触发切换（锁定了）
+            window.handleScrollWheelGesture(phase: .changed, momentumPhase: [], deltaX: 5.0, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            
+            // 第四步：.ended 阶段，deltaX 变小 (0.1)，重置锁定状态
+            window.handleScrollWheelGesture(phase: .ended, momentumPhase: [], deltaX: 0.1, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            
+            // 测试场景 2：紧接着惯性滚动阶段，delta 很大，但不应触发切换
+            window.handleScrollWheelGesture(phase: [], momentumPhase: .began, deltaX: 4.5, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            
+            window.handleScrollWheelGesture(phase: [], momentumPhase: .changed, deltaX: 5.0, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            
+            window.handleScrollWheelGesture(phase: [], momentumPhase: .ended, deltaX: 0.5, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            
+            // 测试场景 3：下一次新滑动手势开始，左滑
+            window.handleScrollWheelGesture(phase: .began, momentumPhase: [], deltaX: -0.5, deltaY: 0.0)
+            window.handleScrollWheelGesture(phase: .changed, momentumPhase: [], deltaX: -4.0, deltaY: 0.0)
+            XCTAssertEqual(viewModel.focusedVariable, .volume)
+            window.handleScrollWheelGesture(phase: .ended, momentumPhase: [], deltaX: -0.1, deltaY: 0.0)
         }
         controller.hide()
     }
