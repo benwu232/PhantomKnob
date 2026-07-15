@@ -3,8 +3,8 @@ import XCTest
 
 final class HotkeySettingsTests: XCTestCase {
     func testDefaultHotkeyValues() {
-        // 'Q' 键的 keyCode 是 12
-        XCTAssertEqual(HotkeySettings.defaultKeyCode, 12)
+        // 'K' 键的 keyCode 是 40
+        XCTAssertEqual(HotkeySettings.defaultKeyCode, 40)
         XCTAssertEqual(HotkeySettings.defaultModifiers, [.command, .option])
     }
 }
