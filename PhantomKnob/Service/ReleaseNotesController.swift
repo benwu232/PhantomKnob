@@ -10,14 +10,24 @@ final class ReleaseNotesController: NSObject, NSWindowDelegate {
     
     private var window: ReleaseNotesWindow?
     
+    var isVisible: Bool {
+        return window?.isVisible ?? false
+    }
+    
     func showIfNeeded() {
         // 1. Skip if user guide onboarding isn't completed
-        let guideCompleted = UserDefaults.standard.bool(forKey: "firstRunUserGuideCompleted")
+        let guideCompleted = UserDefaults.app.bool(forKey: "firstRunUserGuideCompleted")
         guard guideCompleted else { return }
         
         // 2. Check version changes
         let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        let lastSeenVersion = UserDefaults.standard.string(forKey: "lastSeenReleaseNotesVersion") ?? ""
+        
+        // If lastSeenVersion is nil, user is running the app/feature for the first time.
+        // We register the current version as read and skip showing.
+        guard let lastSeenVersion = UserDefaults.app.string(forKey: "lastSeenReleaseNotesVersion") else {
+            UserDefaults.app.set(currentVersion, forKey: "lastSeenReleaseNotesVersion")
+            return
+        }
         
         guard currentVersion != lastSeenVersion else { return }
         
@@ -61,10 +71,8 @@ final class ReleaseNotesController: NSObject, NSWindowDelegate {
         
         win.contentView = visualEffectView
         
-        let view = ReleaseNotesView(version: version, title: title, items: items) { [weak self] dontShowAgain in
-            if dontShowAgain {
-                UserDefaults.standard.set(version, forKey: "lastSeenReleaseNotesVersion")
-            }
+        let view = ReleaseNotesView(version: version, title: title, items: items) { [weak self] in
+            UserDefaults.app.set(version, forKey: "lastSeenReleaseNotesVersion")
             self?.hide()
         }
         
@@ -98,6 +106,8 @@ final class ReleaseNotesController: NSObject, NSWindowDelegate {
     }
     
     func windowDidResignKey(_ notification: Notification) {
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        UserDefaults.app.set(currentVersion, forKey: "lastSeenReleaseNotesVersion")
         hide()
     }
 }
