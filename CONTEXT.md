@@ -81,7 +81,7 @@ Visual representation of the knob in the demo page.
 ### Global Control Mode
 A feature that allows users to control any adjustable UI element (sliders, progress bars, scroll bars) via Knob gesture across all applications.
 
-**Activation:** Hotkey (`⌘⌥R` by default, customizable in settings)
+**Activation:** Hotkey (`⌘⌥O` by default, customizable in settings)
 
 **Architecture:**
 - **KnobStateManager**: Central state machine managing the entire control lifecycle
@@ -316,7 +316,7 @@ Fixed at gesture start position (mouse cursor location with offset to avoid occl
 ## Hotkey
 
 ### Default
-`⌘⌥R` (Command + Option + R)
+`⌘⌥O` (Command + Option + O)
 
 ### Conflict Detection
 On registration, check if hotkey is already in use by another app. If conflict detected, prompt user to choose different hotkey.
