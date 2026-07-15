@@ -1,81 +1,78 @@
-# 标题与引导提示语优化对齐计划
+# 聚焦旋钮动态放大优化计划
 
-> **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [ ]`）语法来跟踪进度。
+> **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [ ]`） syntax 来跟踪进度。
 
-**目标：** 依照 /grill-me 决策，进一步将标题调大为 title2 并下移 6pt，同时在旋钮下方添加 caption 引导说明。
+**目标：** 在聚焦时将旋钮 ZStack 图形弹性放大至 1.15 倍。
 
 **架构：**
-- 修改 KnobPanelView 顶端 Text 样式。
-- 在主布局下方堆叠 caption 操作说明文案。
+- 修改 KnobPanelView 里的 RadialKnobControlView，为 ZStack 容器添加 scaleEffect 和 spring 动画。
 
 ---
 
-### 任务 1：微调标题并添加操作说明文案
+### 任务 1：为 RadialKnobControlView 添加聚焦缩放
 
 **文件：**
 - 修改：`PhantomKnob/View/KnobPanelView.swift`
 
-- [ ] **步骤 1：重构 KnobPanelView**
-  修改 `PhantomKnob/View/KnobPanelView.swift`：
+- [ ] **步骤 1：添加缩放动画代码**
+  修改 `PhantomKnob/View/KnobPanelView.swift` 中的 `RadialKnobControlView` body：
   ```swift
       var body: some View {
-          VStack(spacing: 0) {
-              // 顶部标题栏
-              HStack {
-                  HUDCircleButton(icon: "xmark", color: .white.opacity(0.7)) {
-                      KnobPanelWindowController.shared.hide()
+          VStack(spacing: 12) {
+              ZStack {
+                  // Glow circle
+                  Circle()
+                      .stroke(Color.blue.opacity(isFocused ? 0.3 : 0.05), lineWidth: 8)
+                      .frame(width: 120, height: 120)
+                      .blur(radius: isFocused ? 4 : 0)
+                  
+                  // Progress arc
+                  Circle()
+                      .trim(from: 0.0, to: CGFloat(value))
+                      .stroke(
+                          LinearGradient(
+                              colors: [Color.blue, Color.cyan],
+                              startPoint: .top,
+                              endPoint: .bottom
+                          ),
+                          style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                        )
+                      .frame(width: 104, height: 104)
+                      .rotationEffect(Angle(degrees: -90))
+                  
+                  // Inner dial circle
+                  Circle()
+                      .fill(Color.black.opacity(0.4))
+                      .frame(width: 90, height: 90)
+                      .shadow(radius: isFocused ? 8 : 2)
+                  
+                  // Indicator dot
+                  if isFocused && isGestureActive {
+                      Circle()
+                          .fill(Color.white.opacity(0.8))
+                          .frame(width: 6, height: 6)
+                          .offset(y: -38)
+                          .rotationEffect(Angle(degrees: angle))
                   }
                   
-                  Spacer()
-                  
-                  Text(String(localized: "panel.title", defaultValue: "PhantomKnob 快捷面板"))
-                      .font(.title2)
-                      .bold()
-                      .foregroundColor(.white)
-                      .padding(.top, 6)
-                  
-                  Spacer()
-                  
-                  HUDCircleButton(
-                      icon: viewModel.isPinned ? "pin.fill" : "pin",
-                      color: viewModel.isPinned ? .orange : .white.opacity(0.6)
-                  ) {
-                      viewModel.isPinned.toggle()
-                  }
+                  // Icon
+                  Image(systemName: icon)
+                      .font(.system(size: 28))
+                      .foregroundColor(isFocused ? .blue : .white.opacity(0.8))
               }
-              .padding(.horizontal, 16)
-              .padding(.top, 16)
+              .scaleEffect(isFocused ? 1.15 : 1.0)
+              .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isFocused)
               
-              Spacer()
-              
-              VStack(spacing: 20) {
-                  mainControlLayout
-                  
-                  Text(String(localized: "panel.usage.hint", defaultValue: "提示：可通过鼠标悬停、键盘左右键或两指左右滑动来切换选择旋钮"))
-                      .font(.caption)
-                      .foregroundColor(.white.opacity(0.45))
-                      .multilineTextAlignment(.center)
-                      .padding(.horizontal, 32)
-              }
-              
-              Spacer()
-          }
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .onAppear {
-              if !firstRunTutorialCompleted {
-                  firstRunTutorialCompleted = true
-              }
-          }
-      }
+              Text(title)
   ```
 
 - [ ] **步骤 2：运行测试验证**
   运行：`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -scheme PhantomKnob -destination 'platform=macOS' test`
-  预期：测试编译通过并全部通过。
+  预期：所有单元测试依然编译并通过。
 
 - [ ] **步骤 3：Commit**
   运行：
   ```bash
   git add PhantomKnob/View/KnobPanelView.swift
-  git commit -m "feat: make title font title2 with top offset and add instruction hint under knobs"
+  git commit -m "feat: apply spring-based scaleEffect to focused radial knobs"
   ```
