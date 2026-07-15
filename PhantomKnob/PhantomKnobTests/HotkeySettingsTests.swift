@@ -3,8 +3,8 @@ import XCTest
 
 final class HotkeySettingsTests: XCTestCase {
     func testDefaultHotkeyValues() {
-        // 'O' 键的 keyCode 是 31
-        XCTAssertEqual(HotkeySettings.defaultKeyCode, 31)
+        // 'Q' 键的 keyCode 是 12
+        XCTAssertEqual(HotkeySettings.defaultKeyCode, 12)
         XCTAssertEqual(HotkeySettings.defaultModifiers, [.command, .option])
     }
 }
