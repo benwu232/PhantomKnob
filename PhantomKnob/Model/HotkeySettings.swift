@@ -10,27 +10,27 @@ class HotkeySettings: ObservableObject {
     private static let keyCodeKey = "globalHotkeyKeyCode"
     private static let modifiersKey = "globalHotkeyModifiers"
 
-    // Default value: ⌘⌥R (keyCode=15, command|option)
-    static let defaultKeyCode: UInt16 = 15
+    // Default value: ⌘⌥O (keyCode=31, command|option)
+    static let defaultKeyCode: UInt16 = 31
     static let defaultModifiers: NSEvent.ModifierFlags = [.command, .option]
 
     @Published var keyCode: UInt16 {
         didSet {
-            UserDefaults.standard.set(Int(keyCode), forKey: Self.keyCodeKey)
+            UserDefaults.app.set(Int(keyCode), forKey: Self.keyCodeKey)
             NotificationCenter.default.post(name: .hotkeyDidChange, object: nil)
         }
     }
 
     @Published var modifiers: NSEvent.ModifierFlags {
         didSet {
-            UserDefaults.standard.set(modifiers.rawValue, forKey: Self.modifiersKey)
+            UserDefaults.app.set(modifiers.rawValue, forKey: Self.modifiersKey)
             NotificationCenter.default.post(name: .hotkeyDidChange, object: nil)
         }
     }
 
     private init() {
-        let savedKeyCode = UserDefaults.standard.integer(forKey: Self.keyCodeKey)
-        let savedModifiers = UserDefaults.standard.integer(forKey: Self.modifiersKey)
+        let savedKeyCode = UserDefaults.app.integer(forKey: Self.keyCodeKey)
+        let savedModifiers = UserDefaults.app.integer(forKey: Self.modifiersKey)
         if savedKeyCode != 0 {
             keyCode = UInt16(savedKeyCode)
             modifiers = NSEvent.ModifierFlags(rawValue: UInt(savedModifiers))
