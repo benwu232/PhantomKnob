@@ -4,6 +4,7 @@ import SwiftUI
 
 class KnobPanelWindow: NSWindow {
     private var lastSwipeTime: Double = 0
+    private var hasSwipedInCurrentGesture: Bool = false
     
     override var canBecomeKey: Bool {
         return true
@@ -27,19 +28,50 @@ class KnobPanelWindow: NSWindow {
     }
     
     override func scrollWheel(with event: NSEvent) {
+        let phase = event.phase
+        let momentumPhase = event.momentumPhase
+        
         let deltaX = event.scrollingDeltaX
         let deltaY = event.scrollingDeltaY
         
-        if abs(deltaX) > abs(deltaY) && abs(deltaX) > 2.0 {
-            let now = ProcessInfo.processInfo.systemUptime
-            if now - lastSwipeTime > 0.4 {
-                if deltaX > 0 {
-                    ControlPanelViewModel.shared.selectNextVariable()
-                } else if deltaX < 0 {
-                    ControlPanelViewModel.shared.selectPrevVariable()
+        // 判断是否是水平扫动
+        let isHorizontal = abs(deltaX) > abs(deltaY) && abs(deltaX) > 2.0
+        
+        if isHorizontal {
+            if !phase.isEmpty {
+                // 有 phase 信息，说明是触控板或支持手势的设备
+                if momentumPhase.isEmpty || momentumPhase == .none {
+                    if phase == .began {
+                        hasSwipedInCurrentGesture = false
+                    }
+                    
+                    if !hasSwipedInCurrentGesture && abs(deltaX) > 3.0 {
+                        if deltaX > 0 {
+                            ControlPanelViewModel.shared.selectNextVariable()
+                        } else if deltaX < 0 {
+                            ControlPanelViewModel.shared.selectPrevVariable()
+                        }
+                        hasSwipedInCurrentGesture = true
+                    }
+                    
+                    if phase == .ended || phase == .cancelled {
+                        hasSwipedInCurrentGesture = false
+                    }
                 }
-                lastSwipeTime = now
+            } else {
+                // 没有 phase 信息 (例如传统鼠标的水平滚轮)，回退到时间防抖
+                let now = Date().timeIntervalSince1970
+                if now - lastSwipeTime > 0.4 {
+                    if deltaX > 0 {
+                        ControlPanelViewModel.shared.selectNextVariable()
+                    } else if deltaX < 0 {
+                        ControlPanelViewModel.shared.selectPrevVariable()
+                    }
+                    lastSwipeTime = now
+                }
             }
+            // 拦截水平滚动，不向后传递
+            return
         } else {
             super.scrollWheel(with: event)
         }
