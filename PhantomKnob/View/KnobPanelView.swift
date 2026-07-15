@@ -5,28 +5,22 @@ struct KnobPanelView: View {
     @AppStorage("firstRunTutorialCompleted") private var firstRunTutorialCompleted = false
     
     var body: some View {
-        VStack(spacing: 12) {
-            Text(String(localized: "panel.title", defaultValue: "PhantomKnob 快捷面板"))
-                .font(.title2)
-                .bold()
-                .foregroundColor(.white)
-            
-            mainControlLayout
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 20)
-        .padding(.bottom, 16)
-        .onAppear {
-            if !firstRunTutorialCompleted {
-                firstRunTutorialCompleted = true
-            }
-        }
-        .overlay(
+        VStack(spacing: 0) {
+            // 顶部标题栏
             HStack {
                 HUDCircleButton(icon: "xmark", color: .white.opacity(0.7)) {
                     KnobPanelWindowController.shared.hide()
                 }
+                
                 Spacer()
+                
+                Text(String(localized: "panel.title", defaultValue: "PhantomKnob 快捷面板"))
+                    .font(.headline)
+                    .bold()
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
                 HUDCircleButton(
                     icon: viewModel.isPinned ? "pin.fill" : "pin",
                     color: viewModel.isPinned ? .orange : .white.opacity(0.6)
@@ -34,10 +28,20 @@ struct KnobPanelView: View {
                     viewModel.isPinned.toggle()
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 14),
-            alignment: .top
-        )
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            
+            Spacer(minLength: 16)
+            
+            mainControlLayout
+                .padding(.bottom, 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            if !firstRunTutorialCompleted {
+                firstRunTutorialCompleted = true
+            }
+        }
     }
     
     private var mainControlLayout: some View {
