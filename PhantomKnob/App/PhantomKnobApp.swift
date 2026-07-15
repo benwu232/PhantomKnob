@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import os
 #if canImport(Sentry)
 import Sentry
@@ -9,6 +10,7 @@ class AppState: ObservableObject {
     let statusBarController: StatusBarController
     
     init() {
+
         #if canImport(Sentry)
         SentrySDK.start { options in
             options.dsn = "YOUR_SENTRY_DSN"
@@ -17,7 +19,7 @@ class AppState: ObservableObject {
             options.enableAutoSessionTracking = true
             options.attachStacktrace = true
             options.beforeSend = { event in
-                let optOut = UserDefaults.standard.bool(forKey: "disableCrashReporting")
+                let optOut = UserDefaults.app.bool(forKey: "disableCrashReporting")
                 return optOut ? nil : event
             }
         }
@@ -48,11 +50,11 @@ class AppState: ObservableObject {
         // 挂载云同步服务（当前仅保留本地持久化，已停用 iCloud KVS 同步）
         // CloudSyncManager.shared.start()
         
-        let skipGuide = UserDefaults.standard.bool(forKey: "skipUserGuideOnStartup")
+        let skipGuide = UserDefaults.app.bool(forKey: "skipUserGuideOnStartup")
         if !skipGuide {
             UserGuideWindowController.shared.show()
         } else {
-            let tutorialCompleted = UserDefaults.standard.bool(forKey: "firstRunTutorialCompleted")
+            let tutorialCompleted = UserDefaults.app.bool(forKey: "firstRunTutorialCompleted")
             if !tutorialCompleted {
                 KnobPanelWindowController.shared.show()
             }
@@ -77,6 +79,17 @@ struct PhantomKnobApp: App {
     @StateObject private var appState = AppState()
     
     init() {
+        if NSClassFromString("XCTestCase") == nil {
+            if !HardwareDetector.isTrackpadConnected() {
+                let alert = NSAlert()
+                alert.messageText = String(localized: "startup.noTrackpad.title", defaultValue: "No Trackpad Detected")
+                alert.informativeText = String(localized: "startup.noTrackpad.message", defaultValue: "PhantomKnob requires a trackpad (MacBook trackpad or Magic Trackpad) to perform knob gestures. The application will now exit.")
+                alert.alertStyle = .critical
+                alert.addButton(withTitle: String(localized: "startup.noTrackpad.quit", defaultValue: "Quit"))
+                alert.runModal()
+                exit(0)
+            }
+        }
         AppLanguageManager.shared.applyLanguageOverrideOnStartup()
     }
     
