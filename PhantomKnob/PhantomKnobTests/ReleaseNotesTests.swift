@@ -18,4 +18,46 @@ final class ReleaseNotesTests: XCTestCase {
         XCTAssertEqual(notes?.items[2], "⚡ Three knob modes: Fixed, Double-Ring, and Variable Speed")
         XCTAssertEqual(notes?.items[3], "🔧 Full customization with Customizer HUD")
     }
+    
+    func testReleaseNotesFirstLaunchAndUpgrade() {
+        let suiteName = "ReleaseNotesTestsSuite"
+        UserDefaults.app = UserDefaults(suiteName: suiteName) ?? .standard
+        UserDefaults.app.removePersistentDomain(forName: suiteName)
+        
+        defer {
+            UserDefaults.app.removePersistentDomain(forName: suiteName)
+            UserDefaults.app = .standard
+        }
+        
+        let controller = ReleaseNotesController.shared
+        
+        // 1. Initially lastSeenReleaseNotesVersion is nil
+        XCTAssertNil(UserDefaults.app.string(forKey: "lastSeenReleaseNotesVersion"))
+        
+        // Guide completed must be true for ReleaseNotes to be evaluated
+        UserDefaults.app.set(true, forKey: "firstRunUserGuideCompleted")
+        
+        // Call showIfNeeded
+        controller.showIfNeeded()
+        
+        // Verify it did not show and directly marked current version as seen
+        XCTAssertFalse(controller.isVisible)
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        XCTAssertEqual(UserDefaults.app.string(forKey: "lastSeenReleaseNotesVersion"), currentVersion)
+        
+        // 2. Upgrade Scenario: set lastSeen to older version
+        UserDefaults.app.set("0.9", forKey: "lastSeenReleaseNotesVersion")
+        
+        // Call showIfNeeded
+        controller.showIfNeeded()
+        
+        // Verify it displays the release notes window now
+        XCTAssertTrue(controller.isVisible)
+        
+        // Dismiss the release notes
+        controller.hide()
+        
+        // Verify it is closed
+        XCTAssertFalse(controller.isVisible)
+    }
 }
