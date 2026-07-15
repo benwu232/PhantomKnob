@@ -3,6 +3,8 @@ import SwiftUI
 
 
 class KnobPanelWindow: NSWindow {
+    private var lastSwipeTime: Double = 0
+    
     override var canBecomeKey: Bool {
         return true
     }
@@ -21,6 +23,25 @@ class KnobPanelWindow: NSWindow {
             }
         } else {
             super.keyDown(with: event)
+        }
+    }
+    
+    override func scrollWheel(with event: NSEvent) {
+        let deltaX = event.scrollingDeltaX
+        let deltaY = event.scrollingDeltaY
+        
+        if abs(deltaX) > abs(deltaY) && abs(deltaX) > 2.0 {
+            let now = ProcessInfo.processInfo.systemUptime
+            if now - lastSwipeTime > 0.4 {
+                if deltaX > 0 {
+                    ControlPanelViewModel.shared.selectNextVariable()
+                } else if deltaX < 0 {
+                    ControlPanelViewModel.shared.selectPrevVariable()
+                }
+                lastSwipeTime = now
+            }
+        } else {
+            super.scrollWheel(with: event)
         }
     }
 }

@@ -73,4 +73,34 @@ class KnobPanelWindowControllerTests: XCTestCase {
         }
         controller.hide()
     }
+    
+    func testWindowScrollWheelSwipeFocusSwitching() {
+        let controller = KnobPanelWindowController.shared
+        controller.show()
+        
+        let viewModel = ControlPanelViewModel.shared
+        viewModel.focusedVariable = .volume
+        
+        if let window = controller.window {
+            // 模拟向右轻扫的 scrollWheel 事件 (deltaX > 2.0)
+            let cgEventRight = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 2, wheel1: 0, wheel2: 5, wheel3: 0)
+            if let cg = cgEventRight, let ev = NSEvent(cgEvent: cg) {
+                window.scrollWheel(with: ev)
+                XCTAssertEqual(viewModel.focusedVariable, .brightness)
+            }
+            
+            // 模拟向左轻扫的 scrollWheel 事件 (deltaX < -2.0)
+            let cgEventLeft = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 2, wheel1: 0, wheel2: -5, wheel3: 0)
+            if let cg = cgEventLeft, let ev = NSEvent(cgEvent: cg) {
+                let exp = XCTestExpectation(description: "wait for swipe throttle")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    window.scrollWheel(with: ev)
+                    XCTAssertEqual(viewModel.focusedVariable, .volume)
+                    exp.fulfill()
+                }
+                wait(for: [exp], timeout: 1.0)
+            }
+        }
+        controller.hide()
+    }
 }
