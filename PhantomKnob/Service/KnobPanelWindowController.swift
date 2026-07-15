@@ -6,12 +6,29 @@ class KnobPanelWindow: NSWindow {
     override var canBecomeKey: Bool {
         return true
     }
+    
+    override func keyDown(with event: NSEvent) {
+        let keyCode = event.keyCode
+        if keyCode == 123 { // Left arrow
+            ControlPanelViewModel.shared.selectPrevVariable()
+        } else if keyCode == 124 { // Right arrow
+            ControlPanelViewModel.shared.selectNextVariable()
+        } else if keyCode == 48 { // Tab key
+            if event.modifierFlags.contains(.shift) {
+                ControlPanelViewModel.shared.selectPrevVariable()
+            } else {
+                ControlPanelViewModel.shared.selectNextVariable()
+            }
+        } else {
+            super.keyDown(with: event)
+        }
+    }
 }
 
 class KnobPanelWindowController: NSObject, NSWindowDelegate {
     static let shared = KnobPanelWindowController()
     
-    private var window: KnobPanelWindow?
+    var window: KnobPanelWindow?
     private var localClickMonitor: Any?
     var isPinned: Bool = false
     
@@ -85,6 +102,7 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
         win.level = .floating
         win.hidesOnDeactivate = true
         win.delegate = self
+        win.isMovableByWindowBackground = true
         
         // 毛玻璃特效
         let visualEffectView = NSVisualEffectView(frame: NSRect(origin: .zero, size: contentRect.size))
