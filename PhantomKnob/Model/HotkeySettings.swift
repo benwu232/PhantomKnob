@@ -10,8 +10,8 @@ class HotkeySettings: ObservableObject {
     private static let keyCodeKey = "globalHotkeyKeyCode"
     private static let modifiersKey = "globalHotkeyModifiers"
 
-    // Default value: ⌘⌥O (keyCode=31, command|option)
-    static let defaultKeyCode: UInt16 = 31
+    // Default value: ⌘⌥Q (keyCode=12, command|option)
+    static let defaultKeyCode: UInt16 = 12
     static let defaultModifiers: NSEvent.ModifierFlags = [.command, .option]
 
     @Published var keyCode: UInt16 {
