@@ -6,6 +6,11 @@ struct KnobPanelView: View {
     
     var body: some View {
         VStack(spacing: 12) {
+            Text(String(localized: "panel.title", defaultValue: "PhantomKnob 快捷面板"))
+                .font(.title2)
+                .bold()
+                .foregroundColor(.white)
+            
             if !firstRunTutorialCompleted {
                 VStack(spacing: 8) {
                     TutorialView()
@@ -21,7 +26,7 @@ struct KnobPanelView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, 28)
+        .padding(.top, 20)
         .padding(.bottom, 16)
         .overlay(
             HStack {

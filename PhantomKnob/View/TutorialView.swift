@@ -32,25 +32,10 @@ struct TutorialView: View {
         VStack(spacing: 20) {
             if tutorialVM.currentStep == 1 {
                 VStack(spacing: 16) {
-                    Text(String(localized: "tutorial.step1.title", defaultValue: "Welcome to Phantom Knob!"))
+                    Text(String(localized: "tutorial.step1.title", defaultValue: "PhantomKnob 快捷面板"))
                         .font(.title)
                         .bold()
                         .foregroundColor(.white)
-                    
-                    Text(String(localized: "tutorial.step1.description", defaultValue: "Adjust volume, screen brightness, and keyboard backlight by rotating two fingers on your trackpad."))
-                        .font(.body)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.white.opacity(0.8))
-                    
-                    Text(String(localized: "tutorial.step1.hotkey", defaultValue: "Double-click the menu bar icon or press ⌥Space to toggle the control panel."))
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.6))
-                    
-                    Button(String(localized: "tutorial.step1.button", defaultValue: "Start Onboarding")) {
-                        tutorialVM.nextStep()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
                 }
             } else if tutorialVM.currentStep == 2 {
                 VStack(spacing: 16) {
@@ -104,6 +89,11 @@ struct TutorialView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("KnobPanelDidRotate"))) { notification in
             if let delta = notification.userInfo?["delta"] as? Double {
                 tutorialVM.registerRotation(delta)
+            }
+        }
+        .onAppear {
+            if tutorialVM.currentStep == 1 {
+                tutorialVM.nextStep()
             }
         }
     }
