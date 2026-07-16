@@ -40,19 +40,19 @@ class HotkeySettings: ObservableObject {
         }
     }
 
-    /// Format the hotkey as a readable string, e.g. "⌘⌥R"
+    /// Format the hotkey as a readable string, e.g. "⌘ + ⌥ + K"
     var displayString: String {
-        var parts = ""
-        if modifiers.contains(.control) { parts += "⌃" }
-        if modifiers.contains(.option)  { parts += "⌥" }
-        if modifiers.contains(.shift)   { parts += "⇧" }
-        if modifiers.contains(.command) { parts += "⌘" }
+        var parts: [String] = []
+        if modifiers.contains(.control) { parts.append("⌃") }
+        if modifiers.contains(.option)  { parts.append("⌥") }
+        if modifiers.contains(.shift)   { parts.append("⇧") }
+        if modifiers.contains(.command) { parts.append("⌘") }
         if let char = keyCodeToChar(keyCode) {
-            parts += char.uppercased()
+            parts.append(char.uppercased())
         } else {
-            parts += "[\(keyCode)]"
+            parts.append("[\(keyCode)]")
         }
-        return parts
+        return parts.joined(separator: " + ")
     }
 
     /// The lowercase character to be used as a menu key equivalent.

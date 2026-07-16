@@ -22,11 +22,11 @@ struct HotkeyRecorderView: View {
                     .font(.system(size: 13, design: .monospaced))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(Color(nsColor: .controlBackgroundColor))
+                    .background(Color.white.opacity(0.08))
                     .cornerRadius(5)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
                 Button("修改…") { startRecording() }
                     .buttonStyle(.borderless)

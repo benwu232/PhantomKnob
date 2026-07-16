@@ -75,7 +75,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        win.isMovableByWindowBackground = true
+                win.isMovableByWindowBackground = true
+        win.appearance = NSAppearance(named: .darkAqua)
         
         win.backgroundColor = .clear
         win.isOpaque = false

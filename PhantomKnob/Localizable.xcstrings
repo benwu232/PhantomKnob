@@ -204,7 +204,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第一步：设备检测与基本旋钮操作"
+            "value" : "设备检测与基本旋钮操作"
           }
         }
       }
@@ -281,7 +281,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " 在旋转旋钮时，按下键盘“C”键可以直接呼出应用内置定制面板。"
+            "value" : " 旋转旋钮时按下 C 键，显示当前旋钮的“自定义”面板"
           }
         }
       }
@@ -347,7 +347,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第二步：进阶旋钮使用与定制"
+            "value" : "进阶旋钮使用与定制"
           }
         }
       }
@@ -479,7 +479,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "第三步：开启全局旋钮控制"
+            "value" : "辅助功能介绍"
           }
         }
       }
@@ -1199,24 +1199,13 @@
         }
       }
     },
-    "guide.welcome.headline" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "欢迎使用 PhantomKnob"
-          }
-        }
-      }
-    },
     "guide.welcome.intro" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "利用自然的手势双指旋转，像使用物理旋钮一样精确控制\n视频或音频编辑器中的滑块和表盘。"
+            "value" : "PhantomKnob使用创新的技术，\n把旋钮手势引入您的触控板，\n给您带来全新体验。"         
           }
         }
       }
@@ -1238,7 +1227,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "欢迎使用"
+            "value" : "欢迎使用 PhantomKnob"
           }
         }
       }
@@ -1370,7 +1359,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "全局控制开关快捷键，快速切换激活状态"
+            "value" : "全局切换激活状态快捷键"
           }
         }
       }
@@ -1392,7 +1381,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "临时旁路手势，以使用原生的触控板双指滚动或缩放"
+            "value" : "按下时，临时切换激活状态"
           }
         }
       }
@@ -1414,7 +1403,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在手势旋转过程中按下，直接呼出当前旋钮的“自定义”面板"
+            "value" : "旋转旋钮时按下 C 键，显示当前旋钮的“自定义”面板"
           }
         }
       }
@@ -1436,7 +1425,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "设定旋转速度为基本设置 of 2.0 倍 - 9.0 倍"
+            "value" : "设定旋转速度为基本设置的 2.0 倍 - 9.0 倍"
           }
         }
       }

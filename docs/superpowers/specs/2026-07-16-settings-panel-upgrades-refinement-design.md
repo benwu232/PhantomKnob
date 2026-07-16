@@ -9,7 +9,9 @@
 3. **辅助权限状态瞬时刷新与图标固定**：
    * 监听应用焦点的唤醒事件，保证用户从系统设置（System Settings）授予辅助功能权限切回 PhantomKnob 时，设置面板上的“未授权”状态瞬间更新为“已授权”，消除页面延迟与感知卡顿。
    * 将辅助功能卡片头部图标改为固定的静态图标 `accessibility`，以与其他卡片的静态风格保持一致，仅保留其文字和颜色的红/绿动态状态。
-4. **语言选择项本地化展示**：在语言选择下拉框中，将“英文”和“简体中文”选项改为本地化文本（`language.english` 和 `language.chinese`），使其在中文环境下显示为“英文”/“简体中文”，在英文环境下显示为“English”/“Simplified Chinese”。
+4. **语言选择项及面板英文项完全汉化**：
+   * 在语言选择下拉框中，将“英文”和“简体中文”选项改为本地化文本（`language.english` 和 `language.chinese`），使其在中文环境下显示为“英文”/“简体中文”。
+   * 补全设置面板内因未提供本地化 key 而在中文下仍回退显示为英文的若干文本（“Privacy”、“Send crash reports”、“Share anonymous usage statistics” 和 “Automatically check for updates”），使其中文翻译完全补全。
 5. **“启动”和“隐私”卡片左对齐拉伸**：为“启动”与“隐私”设置卡片添加 `.frame(maxWidth: .infinity, alignment: .leading)`，使其中的 Checkbox 选项统一向左对齐，并让卡片宽度自动拉伸填满，与上方的热键、语言卡片对齐风格保持一致。
 6. **保留并稳固崩溃日志/匿名统计卡片**：确认 Sentry 与 TelemetryDeck 遥测功能的正常启用，并维护其 opt-out 逻辑正常。
 
@@ -34,7 +36,7 @@
 
 ### 2.2 动态监测并自动刷新辅助功能状态与图标固定
 * **实现逻辑**：
-  在 `GeneralSettingsView` 容器的外部 `VStack` 底部（或 `.onAppear` 同层）附加 `.onReceive` 监听器，监听来自系统通知中心的 **`NSApplication.didBecomeActiveNotification`**：
+  在 `GeneralSettingsView` 容器 of `SettingsView.swift` 底部（或 `.onAppear` 同层）附加 `.onReceive` 监听器，监听来自系统通知中心的 **`NSApplication.didBecomeActiveNotification`**：
   ```swift
   .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
       hasAccessibilityPermission = AXIsProcessTrusted()
@@ -45,7 +47,7 @@
   * 在 `Accessibility Section Card` 头部，将 `Image(systemName: hasAccessibilityPermission ? "checkmark.shield" : "hand.raised.badge.ellipsis")` 修改为固定的静态图标 `Image(systemName: "accessibility")`。
   * 保留其颜色指示逻辑 `.foregroundColor(hasAccessibilityPermission ? .green : .red)`。
 
-### 2.3 语言选择本地化
+### 2.3 语言选择本地化与英文项汉化
 * **语言展示名称修改**：
   在 [AppLanguageManager.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Service/AppLanguageManager.swift) 中，将 `displayName` 属性修改为：
   ```swift
@@ -61,9 +63,13 @@
   }
   ```
 * **本地化资源配置**：
-  在 [Localizable.xcstrings](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Localizable.xcstrings) 中新增以下键值：
+  在 [Localizable.xcstrings](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Localizable.xcstrings) 中新增以下键值及中文翻译：
   * `language.english` -> 英文: `"English"`, 中文: `"英文"`
   * `language.chinese` -> 英文: `"Simplified Chinese"`, 中文: `"简体中文"`
+  * `settings.section.privacy` -> 英文: `"Privacy"`, 中文: `"隐私设置"`
+  * `settings.crashReporting` -> 英文: `"Send crash reports"`, 中文: `"发送崩溃报告"`
+  * `settings.analytics` -> 英文: `"Share anonymous usage statistics"`, 中文: `"允许使用匿名统计信息"`
+  * `settings.startup.autoUpdate` -> 英文: `"Automatically check for updates"`, 中文: `"自动检查更新"`
 
 ### 2.4 “启动”和“隐私”卡片左对齐拉伸
 * **卡片宽度与内容对齐**：
@@ -84,7 +90,8 @@
 2. **辅助功能卡片头部图标验证**：确认图标在授权前后均保持为 `accessibility`（轮椅人像图标），仅颜色发生绿/红变化。
 3. **“启动”和“隐私”卡片布局验证**：确认该两个卡片的背景宽度延伸填满，且里面的复选框靠左对齐。
 4. **语言选择列表验证**：切换至中文环境，确认下拉菜单选项显示为“系统默认”、“英文”、“简体中文”；切换至英文环境，确认选项显示为“System Default”、“English”、“Simplified Chinese”。
-5. **权限动态重加载**：
+5. **英文项完全汉化验证**：切换至中文环境，确认“隐私”、“发送崩溃报告”、“允许使用匿名统计信息”以及“自动检查更新”已完全显示为中文，无任何遗留英文单词。
+6. **权限动态重加载**：
    * 在未授权辅助功能权限时打开设置面板，卡片应正确高亮警告红边框。
-   * 点击按钮跳转到“系统设置”，勾选授予权限。
+   * 点击按钮跳转到“系统设置”，勾选授予权限.
    * 切换回 PhantomKnob 的设置面板，**验证卡片是否自动刷新为绿色（已授权状态）**，无需重新打开设置面板。
