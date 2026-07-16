@@ -2,6 +2,19 @@ import XCTest
 
 @testable import PhantomKnob
 
+class MockAudioControlService: AudioControlService {
+    var mockVolume: Float = 0.5
+    
+    override func getVolume() -> Float? {
+        return mockVolume
+    }
+    
+    override func setVolume(_ volume: Float) -> Bool {
+        mockVolume = max(0.0, min(1.0, volume))
+        return true
+    }
+}
+
 class UserGuideViewModelTests: XCTestCase {
     private let suiteName = "com.phantomknob.PhantomKnobTests"
     
@@ -18,7 +31,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testUserGuideStepTransitionsAndRotationUnlock() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         XCTAssertEqual(vm.currentStep, 1)
         XCTAssertFalse(vm.isTouchpadDetected)
 
@@ -61,7 +74,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testFiveStepTransitionsAndTargetStepReset() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         XCTAssertEqual(vm.currentStep, 1)
 
         // Step 1 -> Step 2
@@ -92,7 +105,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testTickSoundAccumulation() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         XCTAssertEqual(vm.getTickAccumulator(), 0.0)
 
         // 累计不到 1°，不触发 Tick 消费
@@ -107,7 +120,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testGestureActiveBinding() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         XCTAssertFalse(vm.isGestureActive)
 
         let expectation = XCTestExpectation(description: "isGestureActive becomes true")
@@ -136,12 +149,12 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testSkipOnNextStartupDefaultsToFalse() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         XCTAssertFalse(vm.skipOnNextStartup)
     }
 
     func testCompleteGuideSavesSkipPreference() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
 
         // 1. Test when skipOnNextStartup is true
         vm.skipOnNextStartup = true
@@ -161,7 +174,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testTouchpadCoordinatesValidationCounting() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         vm.currentStep = 2
         XCTAssertEqual(vm.touchpadSamplesCount, 0)
         XCTAssertFalse(vm.isTouchpadDetected)
@@ -189,7 +202,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testKeyboardMultiplierNotification() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         vm.currentStep = 3
         vm.currentMultiplier = 1.0
 
@@ -202,7 +215,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testRotationUpdatesDoubleAndLinearKnobsWithMultiplier() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         vm.currentStep = 3
         vm.currentMultiplier = 2.0
 
@@ -220,7 +233,7 @@ class UserGuideViewModelTests: XCTestCase {
     }
 
     func testRadiusBasedBaseMultipliers() {
-        let vm = UserGuideViewModel(audioService: AudioControlService())
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
         vm.currentStep = 3
 
         let doubleKey = RuleKey(

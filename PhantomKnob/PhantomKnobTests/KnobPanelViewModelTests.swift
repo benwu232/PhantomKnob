@@ -4,7 +4,7 @@ import XCTest
 class KnobPanelViewModelTests: XCTestCase {
     func testViewModelHoverAndGestureRouting() {
         let viewModel = ControlPanelViewModel(
-            audioService: AudioControlService(),
+            audioService: MockAudioControlService(),
             brightnessService: DisplayBrightnessService(),
             backlightService: KeyboardBacklightService()
         )
