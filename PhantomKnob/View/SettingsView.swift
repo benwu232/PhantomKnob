@@ -100,6 +100,7 @@ struct SettingsView: View {
         }
         .frame(width: 560, height: 440)
         .foregroundColor(.white)
+        .preferredColorScheme(.dark)
         .onAppear {
             isPinned = SettingsWindowController.shared.isPinned
         }
@@ -112,10 +113,65 @@ struct GeneralSettingsView: View {
     @State private var hasAccessibilityPermission = AXIsProcessTrusted()
     @AppStorage("skipUserGuideOnStartup") private var skipUserGuideOnStartup = false
     @State private var launchAtLogin = false
-    @State private var isTouchpadDetected = UserDefaults.app.bool(forKey: "userGuideTouchpadPracticed")
 
     var body: some View {
         VStack(spacing: 14) {
+            // -- Language Section Card --
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 6) {
+                    Image(systemName: "globe")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 12, weight: .semibold))
+                    Text(String(localized: "settings.section.language", defaultValue: "Language"))
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.5))
+                }
+                
+                HStack {
+                    Text(String(localized: "settings.language.title", defaultValue: "Language"))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Picker("", selection: Binding(
+                        get: { AppLanguageManager.shared.currentLanguage },
+                        set: { newLanguage in
+                            let oldLanguage = AppLanguageManager.shared.currentLanguage
+                            guard newLanguage != oldLanguage else { return }
+                            
+                            AppLanguageManager.shared.currentLanguage = newLanguage
+                            
+                            // Prompt user to restart
+                            let alert = NSAlert()
+                            alert.messageText = String(localized: "settings.language.alert.title", defaultValue: "Change Language")
+                            alert.informativeText = String(localized: "settings.language.alert.message", defaultValue: "PhantomKnob must restart to apply the new language settings. Would you like to restart now?")
+                            alert.alertStyle = .informational
+                            alert.addButton(withTitle: String(localized: "settings.language.alert.restartNow", defaultValue: "Restart Now"))
+                            alert.addButton(withTitle: String(localized: "settings.language.alert.later", defaultValue: "Later"))
+                            
+                            let response = alert.runModal()
+                            if response == .alertFirstButtonReturn {
+                                AppLanguageManager.shared.relaunchApp()
+                            }
+                        }
+                    )) {
+                        ForEach(AppLanguageManager.Language.allCases) { lang in
+                            Text(lang.displayName).tag(lang)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 150)
+                }
+            }
+            .padding(12)
+            .background(Color.white.opacity(0.04))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
+
             // -- Hotkey Section Card --
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 6) {
@@ -270,114 +326,6 @@ struct GeneralSettingsView: View {
                     .stroke(Color.white.opacity(0.06), lineWidth: 1)
             )
 
-            // -- Language Section Card --
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 6) {
-                    Image(systemName: "globe")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 12, weight: .semibold))
-                    Text(String(localized: "settings.section.language", defaultValue: "Language"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.5))
-                }
-                
-                HStack {
-                    Text(String(localized: "settings.language.title", defaultValue: "Language"))
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Picker("", selection: Binding(
-                        get: { AppLanguageManager.shared.currentLanguage },
-                        set: { newLanguage in
-                            let oldLanguage = AppLanguageManager.shared.currentLanguage
-                            guard newLanguage != oldLanguage else { return }
-                            
-                            AppLanguageManager.shared.currentLanguage = newLanguage
-                            
-                            // Prompt user to restart
-                            let alert = NSAlert()
-                            alert.messageText = String(localized: "settings.language.alert.title", defaultValue: "Change Language")
-                            alert.informativeText = String(localized: "settings.language.alert.message", defaultValue: "PhantomKnob must restart to apply the new language settings. Would you like to restart now?")
-                            alert.alertStyle = .informational
-                            alert.addButton(withTitle: String(localized: "settings.language.alert.restartNow", defaultValue: "Restart Now"))
-                            alert.addButton(withTitle: String(localized: "settings.language.alert.later", defaultValue: "Later"))
-                            
-                            let response = alert.runModal()
-                            if response == .alertFirstButtonReturn {
-                                AppLanguageManager.shared.relaunchApp()
-                            }
-                        }
-                    )) {
-                        ForEach(AppLanguageManager.Language.allCases) { lang in
-                            Text(lang.displayName).tag(lang)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 150)
-                }
-            }
-            .padding(12)
-            .background(Color.white.opacity(0.04))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-            )
-
-            // -- Trackpad Diagnostics Section Card --
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 6) {
-                    Image(systemName: "hand.draw")
-                        .foregroundColor(.orange)
-                        .font(.system(size: 12, weight: .semibold))
-                    Text(String(localized: "settings.section.trackpad", defaultValue: "Trackpad"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.5))
-                }
-                
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(isTouchpadDetected
-                             ? String(localized: "settings.trackpad.verified", defaultValue: "Trackpad Verified")
-                             : String(localized: "settings.trackpad.title", defaultValue: "Redetect Trackpad"))
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.white)
-                        Text(isTouchpadDetected
-                             ? String(localized: "settings.trackpad.verified.desc", defaultValue: "Your trackpad has been tested and supports knob gestures")
-                             : String(localized: "settings.trackpad.subtitle", defaultValue: "Restart trackpad detection if you changed devices"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.5))
-                    }
-                    Spacer()
-                    
-                    Button(action: {
-                        resetAndRedetect()
-                    }) {
-                        Text(String(localized: "settings.trackpad.button", defaultValue: "Redetect…"))
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(6)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.white.opacity(0.15), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(12)
-            .background(Color.white.opacity(0.04))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-            )
-
             // -- Privacy Section Card --
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 6) {
@@ -421,21 +369,16 @@ struct GeneralSettingsView: View {
         .onAppear {
             hasAccessibilityPermission = AXIsProcessTrusted()
             launchAtLogin = LaunchAtLoginService.shared.isEnabled
-            isTouchpadDetected = UserDefaults.app.bool(forKey: "userGuideTouchpadPracticed")
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            hasAccessibilityPermission = AXIsProcessTrusted()
+            launchAtLogin = LaunchAtLoginService.shared.isEnabled
         }
     }
 
     private func openAccessibilityPreferences() {
         let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
         NSWorkspace.shared.open(url)
-    }
-
-    private func resetAndRedetect() {
-        UserDefaults.app.removeObject(forKey: "com.phantomknob.detectionResult")
-        UserDefaults.app.removeObject(forKey: "userGuideTouchpadPracticed")
-        isTouchpadDetected = false
-        SettingsWindowController.shared.hide()
-        UserGuideWindowController.shared.show()
     }
 }
 
@@ -470,7 +413,7 @@ struct AboutView: View {
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
             VStack(spacing: 4) {
-                Text("Phantom Knob")
+                Text("PhantomKnob")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
                 Text(versionString)
