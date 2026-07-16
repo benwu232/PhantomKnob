@@ -535,9 +535,9 @@ struct UserGuideView: View {
             Spacer()
             Image(nsImage: NSImage(named: "NSApplicationIcon") ?? NSImage())
                 .resizable()
-                .frame(width: 96, height: 96)
-                .cornerRadius(20)
-                .shadow(color: Color.black.opacity(0.2), radius: 8, y: 4)
+                .frame(width: 120, height: 120)
+                .cornerRadius(24)
+                .shadow(color: Color.black.opacity(0.2), radius: 10, y: 5)
             
             Text(String(localized: "guide.welcome.intro", defaultValue: "Use natural two-finger rotation gestures to precisely control\nsliders and dials in video or audio editors, just like a physical dial."))
                 .font(.system(size: 13))
