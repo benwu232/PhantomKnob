@@ -22,9 +22,13 @@ class UserGuideViewModelTests: XCTestCase {
         XCTAssertEqual(vm.currentStep, 1)
         XCTAssertFalse(vm.isTouchpadDetected)
 
-        // Step 1 nextStep is blocked without touchpad detection
+        // Step 1 Welcome page -> nextStep should succeed immediately to Step 2
         vm.nextStep()
-        XCTAssertEqual(vm.currentStep, 1)
+        XCTAssertEqual(vm.currentStep, 2)
+
+        // Step 2 nextStep is blocked without touchpad detection
+        vm.nextStep()
+        XCTAssertEqual(vm.currentStep, 2)
 
         // Simulate touchpad touch coordinates (samples count increments)
         for _ in 1...3 {
@@ -34,7 +38,7 @@ class UserGuideViewModelTests: XCTestCase {
                 userInfo: ["points": [0: CGPoint.zero]]
             )
         }
-        // Touch alone should NOT unlock step 1
+        // Touch alone should NOT unlock step 2
         XCTAssertFalse(vm.isTouchpadDetected)
 
         // Simulate rotation to 30 degrees while hovered
@@ -42,18 +46,49 @@ class UserGuideViewModelTests: XCTestCase {
         vm.registerRotation(30.0)
         XCTAssertTrue(vm.isTouchpadDetected)
 
-        // Now nextStep succeeds
+        // Now nextStep succeeds to Step 3
         vm.nextStep()
-        XCTAssertEqual(vm.currentStep, 2)
+        XCTAssertEqual(vm.currentStep, 3)
 
-        // Test Step 2 rotation
+        // Test Step 3 rotation
         vm.hoveredKnob = .doubleKnob
         vm.registerRotation(20.0)
         XCTAssertEqual(vm.doubleKnobAngle, -20.0)
         XCTAssertEqual(vm.doubleKnobVal, 60.0, accuracy: 0.01)  // 50 + (20 * 0.5 * 1.0)
 
         vm.nextStep()
+        XCTAssertEqual(vm.currentStep, 4)
+    }
+
+    func testFiveStepTransitionsAndTargetStepReset() {
+        let vm = UserGuideViewModel(audioService: AudioControlService())
+        XCTAssertEqual(vm.currentStep, 1)
+
+        // Step 1 -> Step 2
+        vm.nextStep()
+        XCTAssertEqual(vm.currentStep, 2)
+
+        // Step 2 -> Step 2 (blocked)
+        vm.nextStep()
+        XCTAssertEqual(vm.currentStep, 2)
+
+        // Unblock Step 2
+        vm.isTouchpadDetected = true
+        vm.nextStep()
         XCTAssertEqual(vm.currentStep, 3)
+
+        // Step 3 -> Step 4
+        vm.nextStep()
+        XCTAssertEqual(vm.currentStep, 4)
+
+        // Step 4 -> Step 5
+        vm.nextStep()
+        XCTAssertEqual(vm.currentStep, 5)
+
+        // Reset to Step 5 via notification
+        UserGuideWindowController.shared.initialStep = 5
+        NotificationCenter.default.post(name: NSNotification.Name("UserGuideWindowDidShow"), object: nil)
+        XCTAssertEqual(vm.currentStep, 5)
     }
 
     func testTickSoundAccumulation() {
@@ -127,6 +162,7 @@ class UserGuideViewModelTests: XCTestCase {
 
     func testTouchpadCoordinatesValidationCounting() {
         let vm = UserGuideViewModel(audioService: AudioControlService())
+        vm.currentStep = 2
         XCTAssertEqual(vm.touchpadSamplesCount, 0)
         XCTAssertFalse(vm.isTouchpadDetected)
 
@@ -154,7 +190,7 @@ class UserGuideViewModelTests: XCTestCase {
 
     func testKeyboardMultiplierNotification() {
         let vm = UserGuideViewModel(audioService: AudioControlService())
-        vm.currentStep = 2
+        vm.currentStep = 3
         vm.currentMultiplier = 1.0
 
         NotificationCenter.default.post(
@@ -167,7 +203,7 @@ class UserGuideViewModelTests: XCTestCase {
 
     func testRotationUpdatesDoubleAndLinearKnobsWithMultiplier() {
         let vm = UserGuideViewModel(audioService: AudioControlService())
-        vm.currentStep = 2
+        vm.currentStep = 3
         vm.currentMultiplier = 2.0
 
         // Test Double Knob
@@ -185,7 +221,7 @@ class UserGuideViewModelTests: XCTestCase {
 
     func testRadiusBasedBaseMultipliers() {
         let vm = UserGuideViewModel(audioService: AudioControlService())
-        vm.currentStep = 2
+        vm.currentStep = 3
 
         let doubleKey = RuleKey(
             bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel",

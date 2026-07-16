@@ -74,9 +74,9 @@ class UserGuideViewModel: ObservableObject {
         NotificationCenter.default.publisher(for: NSNotification.Name("TouchpadCoordinatesValidated"))
             .sink { [weak self] notification in
                 guard let self = self else { return }
-                if self.currentStep == 1 {
+                if self.currentStep == 2 {
                     self.touchpadSamplesCount += 1
-                } else if self.currentStep == 2 {
+                } else if self.currentStep == 3 {
                     if let points = notification.userInfo?["points"] as? [Int: CGPoint] {
                         self.processTouchPoints(points)
                     }
@@ -97,7 +97,7 @@ class UserGuideViewModel: ObservableObject {
         // Base scale (multiplier) update binding
         NotificationCenter.default.publisher(for: NSNotification.Name("KnobBaseScaleDidUpdate"))
             .sink { [weak self] notification in
-                guard let self = self, self.currentStep == 2 else { return }
+                guard let self = self, self.currentStep == 3 else { return }
                 if let scale = notification.userInfo?["scale"] as? Double {
                     self.currentMultiplier = scale
                 }
@@ -126,21 +126,24 @@ class UserGuideViewModel: ObservableObject {
             
         NotificationCenter.default.publisher(for: NSNotification.Name("UserGuideWindowDidShow"))
             .sink { [weak self] _ in
-                self?.resetState()
+                let targetStep = UserGuideWindowController.shared.initialStep
+                self?.resetState(targetStep: targetStep)
             }
             .store(in: &cancellables)
     }
     
     func nextStep() {
-        if currentStep == 1 && !isTouchpadDetected { return }
-        currentStep += 1
+        if currentStep == 2 && !isTouchpadDetected { return }
+        if currentStep < 5 {
+            currentStep += 1
+        }
     }
     
     func registerRotation(_ degrees: Double) {
         let absDeg = abs(degrees)
         accumulatedRotation += absDeg // Compatibility for test
         
-        if currentStep == 1 {
+        if currentStep == 2 {
             guard hovered else { return }
             
             // Update visual rotation angle
@@ -164,7 +167,7 @@ class UserGuideViewModel: ObservableObject {
                 isTouchpadDetected = true
                 UserDefaults.app.set(true, forKey: "userGuideTouchpadPracticed")
             }
-        } else if currentStep == 2 {
+        } else if currentStep == 3 {
             if hoveredKnob == .doubleKnob {
                 doubleKnobAngle -= degrees
                 let sensitivity = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
@@ -261,8 +264,8 @@ class UserGuideViewModel: ObservableObject {
         }
     }
     
-    func resetState() {
-        currentStep = 1
+    func resetState(targetStep: Int = 1) {
+        currentStep = targetStep
         isTouchpadDetected = UserDefaults.app.bool(forKey: "userGuideTouchpadPracticed")
         touchpadSamplesCount = 0
         volumeVal = audioService.getVolume() ?? 0.5

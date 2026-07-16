@@ -13,12 +13,15 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
     private var window: UserGuideWindow?
     private var localClickMonitor: Any?
     var isPinned: Bool = false
+    var initialStep: Int = 1
     
     var isVisible: Bool {
         return window?.isVisible ?? false
     }
     
-    func show() {
+    func show(step: Int? = nil) {
+        self.initialStep = step ?? 1
+        
         if window == nil {
             createWindow()
         }
