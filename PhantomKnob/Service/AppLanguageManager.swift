@@ -18,9 +18,9 @@ public class AppLanguageManager {
             case .system:
                 return String(localized: "language.system", defaultValue: "System Default")
             case .english:
-                return "English"
+                return String(localized: "language.english", defaultValue: "English")
             case .chinese:
-                return "简体中文"
+                return String(localized: "language.chinese", defaultValue: "Simplified Chinese")
             }
         }
     }

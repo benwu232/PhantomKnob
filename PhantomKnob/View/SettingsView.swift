@@ -207,7 +207,7 @@ struct GeneralSettingsView: View {
             // -- Accessibility Section Card --
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 6) {
-                    Image(systemName: hasAccessibilityPermission ? "checkmark.shield" : "hand.raised.badge.ellipsis")
+                    Image(systemName: "accessibility")
                         .foregroundColor(hasAccessibilityPermission ? .green : .red)
                         .font(.system(size: 12, weight: .semibold))
                     Text(String(localized: "settings.section.accessibility", defaultValue: "Accessibility Permission"))
@@ -319,6 +319,7 @@ struct GeneralSettingsView: View {
                 }
             }
             .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.white.opacity(0.04))
             .cornerRadius(12)
             .overlay(
@@ -359,6 +360,7 @@ struct GeneralSettingsView: View {
                 .font(.system(size: 13))
             }
             .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.white.opacity(0.04))
             .cornerRadius(12)
             .overlay(
