@@ -1247,6 +1247,28 @@
         }
       }
     },
+    "settings.analytics" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许使用匿名统计信息"
+          }
+        }
+      }
+    },
+    "settings.crashReporting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送崩溃报告"
+          }
+        }
+      }
+    },
     "settings.hotkey.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1357,6 +1379,17 @@
         }
       }
     },
+    "settings.section.privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私设置"
+          }
+        }
+      }
+    },
     "settings.section.startup" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1375,6 +1408,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "触控板"
+          }
+        }
+      }
+    },
+    "settings.startup.autoUpdate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动检查更新"
           }
         }
       }
