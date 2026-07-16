@@ -11,9 +11,6 @@ struct UserGuideView: View {
                     Text(String(localized: "guide.stepWelcome.title", defaultValue: "Welcome"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
-                    Text(String(localized: "guide.stepWelcome.subtitle", defaultValue: "Discover how to use trackpad gestures to control sliders"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.6))
                 } else if viewModel.currentStep == 2 {
                     Text(String(localized: "guide.step1.title", defaultValue: "Step 1: Detect & Rotate"))
                         .font(.system(size: 20, weight: .bold))
@@ -534,13 +531,20 @@ struct UserGuideView: View {
     
     // MARK: - Step 1: Welcome & Intro
     private var welcomeView: some View {
-        VStack {
+        VStack(spacing: 24) {
             Spacer()
             Image(nsImage: NSImage(named: "NSApplicationIcon") ?? NSImage())
                 .resizable()
                 .frame(width: 96, height: 96)
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.2), radius: 8, y: 4)
+            
+            Text(String(localized: "guide.welcome.intro", defaultValue: "Use natural two-finger rotation gestures to precisely control\nsliders and dials in video or audio editors, just like a physical dial."))
+                .font(.system(size: 13))
+                .foregroundColor(.white.opacity(0.75))
+                .multilineTextAlignment(.center)
+                .lineSpacing(5)
+                .padding(.horizontal, 40)
             Spacer()
         }
     }
