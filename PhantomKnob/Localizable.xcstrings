@@ -1188,6 +1188,281 @@
         }
       }
     },
+    "menu.shortcutsGuide" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快捷键与操作速查…"
+          }
+        }
+      }
+    },
+    "guide.welcome.headline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎使用 PhantomKnob"
+          }
+        }
+      }
+    },
+    "guide.welcome.intro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "利用自然的手势双指旋转，像使用物理旋钮一样精确控制\n视频或音频编辑器中的滑块和表盘。"
+          }
+        }
+      }
+    },
+    "guide.welcome.start" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始新手引导"
+          }
+        }
+      }
+    },
+    "guide.stepWelcome.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎使用"
+          }
+        }
+      }
+    },
+    "guide.stepWelcome.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "了解如何使用触控板手势控制滑块"
+          }
+        }
+      }
+    },
+    "guide.stepShortcuts.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "快捷键与操作速查"
+          }
+        }
+      }
+    },
+    "guide.stepShortcuts.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触控板手势交互与键盘辅助键快速参考手册"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.section.statusbar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状态栏图标操作"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.statusbar.click" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "单 击"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.statusbar.click.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启 / 关闭全局手势控制（切换旋钮状态）"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.statusbar.doubleClick" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双 击"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.statusbar.doubleClick.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示 / 隐藏快捷按钮面板"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.statusbar.rightClick" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右 键 / Ctrl+单击"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.statusbar.rightClick.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开系统菜单（包含设置、使用引导等）"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.section.keyboard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键盘快捷键"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.keyboard.toggle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局控制开关快捷键，快速切换激活状态"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.keyboard.bypass" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住 Option 键"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.keyboard.bypass.desc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时旁路手势，以使用原生的触控板双指滚动或缩放"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.section.auxiliary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手势旋转时的辅助按键"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.auxiliary.cKey" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在手势旋转过程中按下，直接呼出当前旋钮的“自定义”面板"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.auxiliary.key1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置旋转速度为基本设置的 1.0 倍"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.auxiliary.key2to9" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设定旋转速度为基本设置 of 2.0 倍 - 9.0 倍"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.auxiliary.arrowsVertical" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以 1.0 倍为步长调整（增加 / 减少）旋转速度"
+          }
+        }
+      }
+    },
+    "guide.shortcuts.auxiliary.arrowsHorizontal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以 0.1 倍为步长调整（增加 / 减少）旋转速度"
+          }
+        }
+      }
+    },
     "PhantomKnob" : {
       "comment" : "The name of the app.",
       "isCommentAutoGenerated" : true
@@ -1275,7 +1550,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "激活 / 关闭旋钮控制模式"
+            "value" : "激活 / 关闭旋钮控制模式（或单击状态栏图标）"
           }
         }
       }

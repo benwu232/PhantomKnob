@@ -187,6 +187,14 @@ class StatusBarController: ObservableObject {
         guideMenuItem.target = self
         menu?.addItem(guideMenuItem)
         
+        let shortcutsMenuItem = NSMenuItem(
+            title: String(localized: "menu.shortcutsGuide", defaultValue: "Shortcuts & Operations…"),
+            action: #selector(openShortcutsGuide),
+            keyEquivalent: ""
+        )
+        shortcutsMenuItem.target = self
+        menu?.addItem(shortcutsMenuItem)
+        
         let updateItem = NSMenuItem(
             title: String(localized: "menu.checkUpdates", defaultValue: "Check for Updates…"),
             action: #selector(checkForUpdates),
@@ -380,6 +388,10 @@ class StatusBarController: ObservableObject {
     
     @objc private func openGuide() {
         UserGuideWindowController.shared.show()
+    }
+    
+    @objc private func openShortcutsGuide() {
+        UserGuideWindowController.shared.show(step: 5)
     }
     
     @objc private func checkForUpdates() {

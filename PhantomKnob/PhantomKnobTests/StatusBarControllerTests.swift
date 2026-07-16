@@ -200,14 +200,15 @@ final class StatusBarControllerTests: XCTestCase {
         // 6: settingsItem (设置)
         // 7: separator
         // 8: guideMenuItem (使用引导)
-        // 9: updateItem (检查升级)
-        // 10: feedbackItem (意见建议)
-        // 11: separator
-        // 12: debugToggleItem
-        // 13: separator
-        // 14: quitItem (退出)
+        // 9: shortcutsMenuItem (快捷键与操作速查)
+        // 10: updateItem (检查升级)
+        // 11: feedbackItem (意见建议)
+        // 12: separator
+        // 13: debugToggleItem
+        // 14: separator
+        // 15: quitItem (退出)
         
-        XCTAssertEqual(menu.items.count, 15)
+        XCTAssertEqual(menu.items.count, 16)
         
         XCTAssertNil(menu.items[0].action)
         XCTAssertNil(menu.items[1].action)
@@ -218,12 +219,13 @@ final class StatusBarControllerTests: XCTestCase {
         XCTAssertEqual(menu.items[6].action, Selector(("openSettings")))
         XCTAssertTrue(menu.items[7].isSeparatorItem)
         XCTAssertEqual(menu.items[8].action, Selector(("openGuide")))
-        XCTAssertEqual(menu.items[9].action, Selector(("checkForUpdates")))
-        XCTAssertEqual(menu.items[10].action, Selector(("sendFeedback")))
-        XCTAssertTrue(menu.items[11].isSeparatorItem)
-        XCTAssertEqual(menu.items[12].action, Selector(("debugToggleLicense")))
-        XCTAssertTrue(menu.items[13].isSeparatorItem)
-        XCTAssertEqual(menu.items[14].action, Selector(("quitApp")))
+        XCTAssertEqual(menu.items[9].action, Selector(("openShortcutsGuide")))
+        XCTAssertEqual(menu.items[10].action, Selector(("checkForUpdates")))
+        XCTAssertEqual(menu.items[11].action, Selector(("sendFeedback")))
+        XCTAssertTrue(menu.items[12].isSeparatorItem)
+        XCTAssertEqual(menu.items[13].action, Selector(("debugToggleLicense")))
+        XCTAssertTrue(menu.items[14].isSeparatorItem)
+        XCTAssertEqual(menu.items[15].action, Selector(("quitApp")))
     }
     
     func testStatusBarIconFreeModeAppendsSuffix() {
