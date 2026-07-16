@@ -18,6 +18,23 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         return window?.isVisible ?? false
     }
     
+    var isPinned: Bool = false {
+        didSet {
+            updateWindowLevelAndBehavior()
+        }
+    }
+    
+    private func updateWindowLevelAndBehavior() {
+        guard let win = window else { return }
+        if isPinned {
+            win.hidesOnDeactivate = false
+            removeClickMonitor()
+        } else {
+            win.hidesOnDeactivate = true
+            setupClickMonitor()
+        }
+    }
+    
     func show() {
         if window == nil {
             createWindow()
@@ -29,7 +46,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-        setupClickMonitor()
+        
+        updateWindowLevelAndBehavior()
         
         NotificationCenter.default.post(name: NSNotification.Name("SettingsPanelDidShow"), object: nil)
     }
@@ -44,8 +62,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     }
     
     private func createWindow() {
-        let width: CGFloat = 480
-        let height: CGFloat = 360 // Accommodate tabs and custom content
+        let width: CGFloat = 560
+        let height: CGFloat = 440 // Accommodate tabs and custom content
         let screenFrame = NSScreen.main?.visibleFrame ?? .zero
         let originX = screenFrame.origin.x + (screenFrame.width - width) / 2
         let originY = screenFrame.origin.y + (screenFrame.height - height) / 2
@@ -57,6 +75,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
+        win.isMovableByWindowBackground = true
         
         win.backgroundColor = .clear
         win.isOpaque = false
@@ -88,6 +107,9 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         removeClickMonitor()
         localClickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
             guard let self = self, let win = self.window else { return event }
+            if self.isPinned {
+                return event
+            }
             let clickLocation = NSEvent.mouseLocation
             let windowFrame = win.frame
             if !NSPointInRect(clickLocation, windowFrame) {
@@ -109,6 +131,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     // MARK: - NSWindowDelegate
     
     func windowDidResignKey(_ notification: Notification) {
-        hide()
+        if !isPinned {
+            hide()
+        }
     }
 }
