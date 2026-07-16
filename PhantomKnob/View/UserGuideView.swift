@@ -534,51 +534,13 @@ struct UserGuideView: View {
     
     // MARK: - Step 1: Welcome & Intro
     private var welcomeView: some View {
-        VStack(spacing: 24) {
+        VStack {
             Spacer()
             Image(nsImage: NSImage(named: "NSApplicationIcon") ?? NSImage())
                 .resizable()
-                .frame(width: 80, height: 80)
-                .cornerRadius(18)
-                .shadow(color: Color.black.opacity(0.2), radius: 6, y: 3)
-            
-            VStack(spacing: 8) {
-                Text(String(localized: "guide.welcome.headline", defaultValue: "Welcome to PhantomKnob"))
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundColor(.white)
-                
-                Text(String(localized: "guide.welcome.intro", defaultValue: "Use natural two-finger rotation gestures to precisely control\nsliders and dials in video or audio editors, just like a physical dial."))
-                    .font(.system(size: 13))
-                    .foregroundColor(.white.opacity(0.75))
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(5)
-                    .padding(.horizontal, 40)
-            }
-            
-            Spacer()
-            
-            Button(action: {
-                withAnimation {
-                    viewModel.nextStep()
-                }
-            }) {
-                Text(String(localized: "guide.welcome.start", defaultValue: "Start Onboarding Guide"))
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.blue, Color.cyan],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(8)
-                    .shadow(color: Color.blue.opacity(0.3), radius: 4, y: 2)
-            }
-            .buttonStyle(.plain)
-            
+                .frame(width: 96, height: 96)
+                .cornerRadius(20)
+                .shadow(color: Color.black.opacity(0.2), radius: 8, y: 4)
             Spacer()
         }
     }
