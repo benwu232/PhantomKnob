@@ -220,9 +220,6 @@ class UserGuideViewModel: ObservableObject {
         UserDefaults.app.set(true, forKey: "firstRunUserGuideCompleted")
         UserDefaults.app.set(true, forKey: "firstRunTutorialCompleted") // Sync check key
         UserGuideWindowController.shared.hide()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            KnobPanelWindowController.shared.show()
-        }
     }
     
     private func processTouchPoints(_ points: [Int: CGPoint]) {
