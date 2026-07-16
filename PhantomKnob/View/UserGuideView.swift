@@ -8,24 +8,38 @@ struct UserGuideView: View {
             // Header
             VStack(spacing: 4) {
                 if viewModel.currentStep == 1 {
+                    Text(String(localized: "guide.stepWelcome.title", defaultValue: "Welcome"))
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                    Text(String(localized: "guide.stepWelcome.subtitle", defaultValue: "Discover how to use trackpad gestures to control sliders"))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                } else if viewModel.currentStep == 2 {
                     Text(String(localized: "guide.step1.title", defaultValue: "Step 1: Detect & Rotate"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text(String(localized: "guide.step1.subtitle", defaultValue: "Verify your trackpad and practice the rotation gesture"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
-                } else if viewModel.currentStep == 2 {
+                } else if viewModel.currentStep == 3 {
                     Text(String(localized: "guide.step2.title", defaultValue: "Step 2: Advanced Knobs"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text(String(localized: "guide.step2.subtitle", defaultValue: "Practice double-ring and variable speed knobs, adjust speed, and try customizer"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
-                } else {
+                } else if viewModel.currentStep == 4 {
                     Text(String(localized: "guide.step3.title", defaultValue: "Step 3: Go Global"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text(String(localized: "guide.step3.subtitle", defaultValue: "Master shortcuts and discover supported apps"))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white.opacity(0.6))
+                } else {
+                    Text(String(localized: "guide.stepShortcuts.title", defaultValue: "Shortcuts & Operations Guide"))
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                    Text(String(localized: "guide.stepShortcuts.subtitle", defaultValue: "Quick reference manual for system gestures and shortcuts"))
                         .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.6))
                 }
@@ -39,11 +53,15 @@ struct UserGuideView: View {
             // Content
             Group {
                 if viewModel.currentStep == 1 {
-                    step1View
+                    welcomeView
                 } else if viewModel.currentStep == 2 {
+                    step1View
+                } else if viewModel.currentStep == 3 {
                     step2View
-                } else {
+                } else if viewModel.currentStep == 4 {
                     step3View
+                } else {
+                    shortcutsView
                 }
             }
             .frame(maxHeight: .infinity)
@@ -72,7 +90,7 @@ struct UserGuideView: View {
                 
                 Spacer()
                 
-                if viewModel.currentStep < 3 {
+                if viewModel.currentStep < 5 {
                     Button(action: {
                         withAnimation {
                             viewModel.nextStep()
@@ -88,7 +106,7 @@ struct UserGuideView: View {
                         .padding(.vertical, 8)
                         .background(
                             LinearGradient(
-                                colors: viewModel.currentStep == 1 && !viewModel.isTouchpadDetected
+                                colors: viewModel.currentStep == 2 && !viewModel.isTouchpadDetected
                                     ? [Color(white: 1.0, opacity: 0.1), Color(white: 1.0, opacity: 0.1)]
                                     : [Color.blue, Color.cyan],
                                 startPoint: .leading,
@@ -96,9 +114,9 @@ struct UserGuideView: View {
                             )
                         )
                         .cornerRadius(8)
-                        .shadow(color: Color.blue.opacity(viewModel.currentStep == 1 && !viewModel.isTouchpadDetected ? 0 : 0.3), radius: 4, y: 2)
+                        .shadow(color: Color.blue.opacity(viewModel.currentStep == 2 && !viewModel.isTouchpadDetected ? 0 : 0.3), radius: 4, y: 2)
                     }
-                    .disabled(viewModel.currentStep == 1 && !viewModel.isTouchpadDetected)
+                    .disabled(viewModel.currentStep == 2 && !viewModel.isTouchpadDetected)
                     .buttonStyle(.plain)
                 } else {
                     Button(action: {
@@ -511,6 +529,130 @@ struct UserGuideView: View {
                 .font(.system(size: 12))
                 .foregroundColor(.white.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+    
+    // MARK: - Step 1: Welcome & Intro
+    private var welcomeView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            Image(nsImage: NSImage(named: "NSApplicationIcon") ?? NSImage())
+                .resizable()
+                .frame(width: 80, height: 80)
+                .cornerRadius(18)
+                .shadow(color: Color.black.opacity(0.2), radius: 6, y: 3)
+            
+            VStack(spacing: 8) {
+                Text(String(localized: "guide.welcome.headline", defaultValue: "Welcome to PhantomKnob"))
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.white)
+                
+                Text(String(localized: "guide.welcome.intro", defaultValue: "Use natural two-finger rotation gestures to precisely control\nsliders and dials in video or audio editors, just like a physical dial."))
+                    .font(.system(size: 13))
+                    .foregroundColor(.white.opacity(0.75))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(5)
+                    .padding(.horizontal, 40)
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation {
+                    viewModel.nextStep()
+                }
+            }) {
+                Text(String(localized: "guide.welcome.start", defaultValue: "Start Onboarding Guide"))
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 10)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.blue, Color.cyan],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(8)
+                    .shadow(color: Color.blue.opacity(0.3), radius: 4, y: 2)
+            }
+            .buttonStyle(.plain)
+            
+            Spacer()
+        }
+    }
+
+    // MARK: - Step 5: Shortcuts Reference
+    private var shortcutsView: some View {
+        ScrollView(showsIndicators: true) {
+            VStack(alignment: .leading, spacing: 20) {
+                
+                // Status Bar Icon Operations
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(String(localized: "guide.shortcuts.section.statusbar", defaultValue: "Status Bar Icon Operations"))
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.blue)
+                    
+                    shortcutRow(key: String(localized: "guide.shortcuts.statusbar.click", defaultValue: "Single Click"), desc: String(localized: "guide.shortcuts.statusbar.click.desc", defaultValue: "Toggle global gesture control mode (activate/deactivate)"))
+                    shortcutRow(key: String(localized: "guide.shortcuts.statusbar.doubleClick", defaultValue: "Double Click"), desc: String(localized: "guide.shortcuts.statusbar.doubleClick.desc", defaultValue: "Show/hide the shortcut button panel (Control Panel)"))
+                    shortcutRow(key: String(localized: "guide.shortcuts.statusbar.rightClick", defaultValue: "Right Click / Ctrl+Click"), desc: String(localized: "guide.shortcuts.statusbar.rightClick.desc", defaultValue: "Open app system menu (Settings, User Guide, etc.)"))
+                }
+                .padding(12)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(8)
+                
+                // Keyboard Shortcuts
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(String(localized: "guide.shortcuts.section.keyboard", defaultValue: "Keyboard Shortcuts"))
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.orange)
+                    
+                    shortcutRow(key: "⌘ ⌥ K", desc: String(localized: "guide.shortcuts.keyboard.toggle", defaultValue: "Global control switch shortcut — toggle active state instantly"))
+                    shortcutRow(key: String(localized: "guide.shortcuts.keyboard.bypass", defaultValue: "Hold Option Key"), desc: String(localized: "guide.shortcuts.keyboard.bypass.desc", defaultValue: "Temporarily bypass gestures to use native trackpad scroll or zoom"))
+                }
+                .padding(12)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(8)
+
+                // Auxiliary Keys During Rotation
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(String(localized: "guide.shortcuts.section.auxiliary", defaultValue: "Auxiliary Keys (Active During Rotation)"))
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.green)
+                    
+                    shortcutRow(key: "C", desc: String(localized: "guide.shortcuts.auxiliary.cKey", defaultValue: "Press during gesture rotation to directly show the Customizer panel"))
+                    shortcutRow(key: "1", desc: String(localized: "guide.shortcuts.auxiliary.key1", defaultValue: "Reset rotation speed to 1.0x of the base speed setting"))
+                    shortcutRow(key: "2 - 9", desc: String(localized: "guide.shortcuts.auxiliary.key2to9", defaultValue: "Set rotation speed multiplier to 2.0x ~ 9.0x of the base speed setting"))
+                    shortcutRow(key: "↑ / ↓", desc: String(localized: "guide.shortcuts.auxiliary.arrowsVertical", defaultValue: "Increase/decrease rotation speed multiplier by 1.0x"))
+                    shortcutRow(key: "← / →", desc: String(localized: "guide.shortcuts.auxiliary.arrowsHorizontal", defaultValue: "Increase/decrease rotation speed multiplier by 0.1x"))
+                }
+                .padding(12)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(8)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+        }
+    }
+
+    private func shortcutRow(key: String, desc: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text(key)
+                .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(Color.white.opacity(0.12))
+                .cornerRadius(4)
+                .frame(width: 140, alignment: .leading)
+            
+            Text(desc)
+                .font(.system(size: 12))
+                .foregroundColor(.white.opacity(0.7))
+                .fixedSize(horizontal: false, vertical: true)
+            
+            Spacer()
         }
     }
 }
