@@ -8,7 +8,7 @@ struct ParentNodeInfo: Codable, Hashable, Equatable {
 }
 
 /// 规则库中唯一标识一条规则的 key。
-struct RuleKey: Codable, Hashable {
+struct KnobKey: Codable, Hashable {
     let bundleID: String    // "com.apple.QuickTimePlayerX"
     let axRole: String      // "AXSlider"
     let identifier: String? // AXIdentifier，nil 表示匹配该 app 下所有同类控件
@@ -24,7 +24,7 @@ struct RuleKey: Codable, Hashable {
     }
 
     // 精确匹配
-    func matches(_ other: RuleKey) -> Bool {
+    func matches(_ other: KnobKey) -> Bool {
         bundleID == other.bundleID &&
         axRole == other.axRole &&
         (identifier == nil || identifier == other.identifier) &&
@@ -113,8 +113,8 @@ struct LinearKnobConfig: Codable, Equatable {
 }
 
 /// RuleLibrary 中存储的一条规则。
-struct ControlRule: Codable, Equatable {
-    let key: RuleKey
+struct Knob: Codable, Equatable {
+    let key: KnobKey
     var themeColor: String?
     var configType: KnobConfigType
     
@@ -136,7 +136,7 @@ struct ControlRule: Codable, Equatable {
         case translation, scaleConfig, invert, overlayStyle, rotationStyle
     }
 
-    init(key: RuleKey,
+    init(key: KnobKey,
          themeColor: String? = nil,
          configType: KnobConfigType = .single,
          singleConfig: SingleKnobConfig? = nil,
@@ -160,7 +160,7 @@ struct ControlRule: Codable, Equatable {
     }
 
     // 兼容原有测试与代码初始化签名
-    init(key: RuleKey,
+    init(key: KnobKey,
          translation: InputTranslation,
          scaleConfig: ScaleConfig = .fixed(1.0),
          themeColor: String? = nil,
@@ -186,8 +186,6 @@ struct ControlRule: Codable, Equatable {
         case .swipeHorizontal: defaultCWAction = oldInvert ? "swipeRight" : "swipeLeft"
         case .axWrite: defaultCWAction = oldInvert ? "decrease" : "increase"
         }
-        
-        // scaleValue is unused, deleted
         
         self.translation = translation
         self.scaleConfig = scaleConfig
@@ -222,7 +220,7 @@ struct ControlRule: Codable, Equatable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.key = try container.decode(RuleKey.self, forKey: .key)
+        self.key = try container.decode(KnobKey.self, forKey: .key)
         self.themeColor = try container.decodeIfPresent(String.self, forKey: .themeColor)
         self.extra = try container.decodeIfPresent([String: String].self, forKey: .extra)
         self.overlayStyle = try container.decodeIfPresent(String.self, forKey: .overlayStyle)
