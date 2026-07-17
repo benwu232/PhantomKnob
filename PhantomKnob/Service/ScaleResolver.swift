@@ -40,7 +40,7 @@ struct ScaleResolver {
         }
     }
 
-    static func resolveLinear(radius: Double, config: ScaleConfigLinear) -> Double? {
+    static func resolveCVK(radius: Double, config: ScaleConfigCVK) -> Double? {
         if radius < config.minRadius { return nil }
         if radius >= config.maxRadius { return config.minScale }
         let ratio = (radius - config.minRadius) / (config.maxRadius - config.minRadius)

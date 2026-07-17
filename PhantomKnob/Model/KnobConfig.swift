@@ -40,7 +40,7 @@ struct RadiusZone: Codable, Equatable {
     let scale: Double
 }
 
-struct ScaleConfigLinear: Codable, Equatable {
+struct ScaleConfigCVK: Codable, Equatable {
     let minRadius: Double
     let maxRadius: Double
     let minScale: Double
@@ -52,13 +52,13 @@ struct ScaleConfigLinear: Codable, Equatable {
 enum ScaleConfig: Codable, Equatable {
     case fixed(Double)
     case zones([RadiusZone])
-    case linear(ScaleConfigLinear)
+    case cvk(ScaleConfigCVK)
 }
 
 enum KnobConfigType: String, Codable {
     case single
     case double
-    case linear
+    case cvk
 }
 
 struct SingleKnobConfig: Codable, Equatable {
@@ -83,7 +83,7 @@ struct DoubleKnobConfig: Codable, Equatable {
     var outer: VirtualKnobConfig
 }
 
-struct LinearKnobConfig: Codable, Equatable {
+struct CVKKnobConfig: Codable, Equatable {
     var minRadius: Double
     var maxRadius: Double
     var minScale: Double
@@ -120,7 +120,7 @@ struct Knob: Codable, Equatable {
     
     var singleConfig: SingleKnobConfig?
     var doubleConfig: DoubleKnobConfig?
-    var linearConfig: LinearKnobConfig?
+    var cvkConfig: CVKKnobConfig?
     
     var extra: [String: String]?
     
@@ -132,7 +132,7 @@ struct Knob: Codable, Equatable {
     var rotationStyle: String?
 
     enum CodingKeys: String, CodingKey {
-        case key, themeColor, configType, singleConfig, doubleConfig, linearConfig, extra
+        case key, themeColor, configType, singleConfig, doubleConfig, cvkConfig, extra
         case translation, scaleConfig, invert, overlayStyle, rotationStyle
     }
 
@@ -141,14 +141,14 @@ struct Knob: Codable, Equatable {
          configType: KnobConfigType = .single,
          singleConfig: SingleKnobConfig? = nil,
          doubleConfig: DoubleKnobConfig? = nil,
-         linearConfig: LinearKnobConfig? = nil,
+         cvkConfig: CVKKnobConfig? = nil,
          extra: [String: String]? = nil) {
         self.key = key
         self.themeColor = themeColor
         self.configType = configType
         self.singleConfig = singleConfig
         self.doubleConfig = doubleConfig
-        self.linearConfig = linearConfig
+        self.cvkConfig = cvkConfig
         self.extra = extra
         
         // 自动映射兼容旧字段
@@ -200,9 +200,9 @@ struct Knob: Codable, Equatable {
                 inner: VirtualKnobConfig(minRadius: innerZone.minRadius, maxRadius: innerZone.maxRadius, margin: innerZone.margin, unitPerDegree: innerZone.scale, translation: translation, clockwiseAction: defaultCWAction),
                 outer: VirtualKnobConfig(minRadius: outerZone.minRadius, maxRadius: outerZone.maxRadius, margin: outerZone.margin, unitPerDegree: outerZone.scale, translation: translation, clockwiseAction: defaultCWAction)
             )
-        case .linear(let config):
-            self.configType = .linear
-            self.linearConfig = LinearKnobConfig(
+        case .cvk(let config):
+            self.configType = .cvk
+            self.cvkConfig = CVKKnobConfig(
                 minRadius: config.minRadius,
                 maxRadius: config.maxRadius,
                 minScale: config.minScale,
@@ -231,7 +231,7 @@ struct Knob: Codable, Equatable {
             self.configType = parsedType
             self.singleConfig = try container.decodeIfPresent(SingleKnobConfig.self, forKey: .singleConfig)
             self.doubleConfig = try container.decodeIfPresent(DoubleKnobConfig.self, forKey: .doubleConfig)
-            self.linearConfig = try container.decodeIfPresent(LinearKnobConfig.self, forKey: .linearConfig)
+            self.cvkConfig = try container.decodeIfPresent(CVKKnobConfig.self, forKey: .cvkConfig)
             
             // 还原向下兼容字段给旧调用者使用
             let decodedTrans = try container.decodeIfPresent(InputTranslation.self, forKey: .translation)
@@ -249,10 +249,10 @@ struct Knob: Codable, Equatable {
                     RadiusZone(minRadius: double.outer.minRadius, maxRadius: double.outer.maxRadius, margin: double.outer.margin, scale: double.outer.unitPerDegree)
                 ])
                 self.invert = decodedInvert ?? (double.inner.clockwiseAction == "arrowDown" || double.inner.clockwiseAction == "arrowLeft" || double.inner.clockwiseAction == "scrollDown" || double.inner.clockwiseAction == "scrollLeft" || double.inner.clockwiseAction == "swipeDown" || double.inner.clockwiseAction == "swipeLeft" || double.inner.clockwiseAction == "decrease")
-            } else if let linear = self.linearConfig {
-                self.translation = decodedTrans ?? linear.translation
-                self.scaleConfig = decodedScale ?? .linear(ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale))
-                self.invert = decodedInvert ?? (linear.clockwiseAction == "arrowDown" || linear.clockwiseAction == "arrowLeft" || linear.clockwiseAction == "scrollDown" || linear.clockwiseAction == "scrollLeft" || linear.clockwiseAction == "swipeDown" || linear.clockwiseAction == "swipeLeft" || linear.clockwiseAction == "decrease")
+            } else if let cvk = self.cvkConfig {
+                self.translation = decodedTrans ?? cvk.translation
+                self.scaleConfig = decodedScale ?? .cvk(ScaleConfigCVK(minRadius: cvk.minRadius, maxRadius: cvk.maxRadius, minScale: cvk.minScale, maxScale: cvk.maxScale))
+                self.invert = decodedInvert ?? (cvk.clockwiseAction == "arrowDown" || cvk.clockwiseAction == "arrowLeft" || cvk.clockwiseAction == "scrollDown" || cvk.clockwiseAction == "scrollLeft" || cvk.clockwiseAction == "swipeDown" || cvk.clockwiseAction == "swipeLeft" || cvk.clockwiseAction == "decrease")
             } else {
                 self.translation = decodedTrans
                 self.scaleConfig = decodedScale
@@ -289,9 +289,9 @@ struct Knob: Codable, Equatable {
                     inner: VirtualKnobConfig(minRadius: innerZone.minRadius, maxRadius: innerZone.maxRadius, margin: innerZone.margin, unitPerDegree: innerZone.scale, translation: oldTrans, clockwiseAction: defaultCWAction),
                     outer: VirtualKnobConfig(minRadius: outerZone.minRadius, maxRadius: outerZone.maxRadius, margin: outerZone.margin, unitPerDegree: outerZone.scale, translation: oldTrans, clockwiseAction: defaultCWAction)
                 )
-            case .linear(let config):
-                self.configType = .linear
-                self.linearConfig = LinearKnobConfig(
+            case .cvk(let config):
+                self.configType = .cvk
+                self.cvkConfig = CVKKnobConfig(
                     minRadius: config.minRadius,
                     maxRadius: config.maxRadius,
                     minScale: config.minScale,
@@ -314,7 +314,7 @@ extension ScaleConfig {
     private enum CodingKeys: String, CodingKey {
         case fixed
         case zones
-        case linear
+        case cvk
     }
 
     init(from decoder: Decoder) throws {
@@ -323,8 +323,8 @@ extension ScaleConfig {
             self = .fixed(val)
         } else if let zones = try? container.decode([RadiusZone].self, forKey: .zones) {
             self = .zones(zones)
-        } else if let linear = try? container.decode(ScaleConfigLinear.self, forKey: .linear) {
-            self = .linear(linear)
+        } else if let cvk = try? container.decode(ScaleConfigCVK.self, forKey: .cvk) {
+            self = .cvk(cvk)
         } else {
             self = .fixed(1.0)
         }
@@ -337,8 +337,8 @@ extension ScaleConfig {
             try container.encode(val, forKey: .fixed)
         case .zones(let zones):
             try container.encode(zones, forKey: .zones)
-        case .linear(let linear):
-            try container.encode(linear, forKey: .linear)
+        case .cvk(let cvk):
+            try container.encode(cvk, forKey: .cvk)
         }
     }
 
@@ -346,7 +346,7 @@ extension ScaleConfig {
         switch self {
         case .fixed(let s): return s
         case .zones(let zones): return zones.first?.scale ?? 1.0
-        case .linear(let linear): return linear.minScale
+        case .cvk(let cvk): return cvk.minScale
         }
     }
 }
