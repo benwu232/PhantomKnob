@@ -1,7 +1,7 @@
 import XCTest
 @testable import PhantomKnob
 
-final class ControlTests: XCTestCase {
+final class DemoSliderTargetTests: XCTestCase {
     
     func testInitialValue() {
         let target = DemoSliderTarget()

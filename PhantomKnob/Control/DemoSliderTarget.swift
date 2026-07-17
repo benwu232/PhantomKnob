@@ -6,10 +6,10 @@ class DemoSliderTarget {
     let maxValue: Double = 100
     let displayName: String = "演示数值"
     
-    private let sensitivity: Double = 0.5
+    private let knobSpeed: Double = 0.5
     
     func applyDelta(_ deltaAngle: Double) -> Double {
-        let newValue = value + deltaAngle * sensitivity
+        let newValue = value + deltaAngle * knobSpeed
         value = newValue.clamped(to: minValue...maxValue)
         return value
     }

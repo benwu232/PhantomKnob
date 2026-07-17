@@ -97,8 +97,8 @@ class ControlPanelViewModel: ObservableObject {
     func receiveRotationDelta(_ deltaDegrees: Double) {
         let target = focusedVariable ?? .volume
         
-        let sensitivity: Float = 0.005
-        let deltaValue = Float(deltaDegrees) * sensitivity
+        let knobSpeed: Float = 0.005
+        let deltaValue = Float(deltaDegrees) * knobSpeed
         
         switch target {
         case .volume:

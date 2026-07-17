@@ -154,8 +154,8 @@ class UserGuideViewModel: ObservableObject {
             let knob = KnobCustomizer.shared.knob(for: volumeKey)
             let scale = knob?.singleConfig?.unitPerDegree ?? 1.0
             
-            let sensitivity: Float = Float(0.005 * scale)
-            let deltaValue = Float(degrees) * sensitivity
+            let knobSpeed: Float = Float(0.005 * scale)
+            let deltaValue = Float(degrees) * knobSpeed
             let newVal = max(0.0, min(1.0, volumeVal + deltaValue))
             if audioService.setVolume(newVal) {
                 volumeVal = newVal
@@ -170,13 +170,13 @@ class UserGuideViewModel: ObservableObject {
         } else if currentStep == 3 {
             if hoveredKnob == .doubleKnob {
                 doubleKnobAngle -= degrees
-                let sensitivity = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
-                let deltaValue = degrees * sensitivity
+                let knobSpeed = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
+                let deltaValue = degrees * knobSpeed
                 doubleKnobVal = max(0.0, min(100.0, doubleKnobVal + deltaValue))
             } else if hoveredKnob == .linearKnob {
                 linearKnobAngle -= degrees
-                let sensitivity = 0.5 * linearKnobBaseMultiplier * currentMultiplier
-                let deltaValue = degrees * sensitivity
+                let knobSpeed = 0.5 * linearKnobBaseMultiplier * currentMultiplier
+                let deltaValue = degrees * knobSpeed
                 linearKnobVal = max(0.0, min(100.0, linearKnobVal + deltaValue))
             }
         }

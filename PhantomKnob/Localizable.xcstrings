@@ -1205,7 +1205,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "PhantomKnob使用创新的技术，\n把旋钮手势引入您的触控板，\n给您带来全新体验。"         
+            "value" : "PhantomKnob使用创新技术，\n把旋钮手势引入您的触控板，\n给您带来全新体验。"         
           }
         }
       }

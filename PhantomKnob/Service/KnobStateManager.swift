@@ -71,7 +71,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         overlayController: OverlayController,
         statusBarController: StatusBarController,
         touchHandler: GlobalTouchHandler,
-        sensitivityConfig: SensitivityConfig = SensitivityConfig(),
         featureGate: FeatureGate = .shared
     ) {
         self.targetDetector = targetDetector
