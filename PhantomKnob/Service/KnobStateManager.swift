@@ -402,8 +402,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 isDeadzone: false,
                 scale: self.lastResolvedBaseScale,
                 themeColor: color,
-                outerThemeColor: knob.linearConfig?.outerThemeColor,
-                innerThemeColor: knob.linearConfig?.innerThemeColor,
+                outerThemeColor: knob.cvkConfig?.outerThemeColor,
+                innerThemeColor: knob.cvkConfig?.innerThemeColor,
                 configType: knob.configType
             )
             return
@@ -447,8 +447,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 themeColor: color,
                 overlayStyle: knob.overlayStyle,
                 rotationStyle: knob.rotationStyle,
-                outerThemeColor: knob.linearConfig?.outerThemeColor,
-                innerThemeColor: knob.linearConfig?.innerThemeColor,
+                outerThemeColor: knob.cvkConfig?.outerThemeColor,
+                innerThemeColor: knob.cvkConfig?.innerThemeColor,
                 configType: knob.configType
             )
         }
