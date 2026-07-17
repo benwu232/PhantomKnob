@@ -5,7 +5,7 @@ struct AppSettings: Codable {
     var activeScheme: String = "fixed"
     var enableKeyboardNumberMultiplier: Bool = true
     var fixed: FixedSchemeConfig = FixedSchemeConfig()
-    var linear: ScaleConfigLinear = ScaleConfigLinear(minRadius: 10.0, maxRadius: 35.0, minScale: 0.2, maxScale: 1.0)
+    var cvk: ScaleConfigCVK = ScaleConfigCVK(minRadius: 10.0, maxRadius: 35.0, minScale: 0.2, maxScale: 1.0)
 
     var defaultThemeColor: String = "#0A84FF"
     var defaultOverlayStyle: String = "hud"

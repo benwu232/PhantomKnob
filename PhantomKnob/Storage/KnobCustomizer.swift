@@ -211,9 +211,9 @@ final class KnobCustomizer {
               "displayName": "MainTimeLineRoot",
               "bundleID": "com.lemon.lvoverseas"
             },
-            "configType": "linear",
+            "configType": "cvk",
             "themeColor": "#FFFFFF",
-            "linearConfig": {
+            "cvkConfig": {
               "clockwiseAction": "arrowRight",
               "minRadius": 10.0,
               "minScale": 1.0,
@@ -504,10 +504,10 @@ final class KnobCustomizer {
             "key": {
               "bundleID": "com.phantomknob.controlpanel",
               "axRole": "ControlPanel",
-              "identifier": "LinearKnob"
+              "identifier": "CVKKnob"
             },
-            "configType": "linear",
-            "linearConfig": {
+            "configType": "cvk",
+            "cvkConfig": {
               "minRadius": 10.0,
               "maxRadius": 40.0,
               "minScale": 0.1,

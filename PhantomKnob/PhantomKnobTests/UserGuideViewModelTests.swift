@@ -214,7 +214,7 @@ class UserGuideViewModelTests: XCTestCase {
         XCTAssertEqual(vm.currentMultiplier, 2.5)
     }
 
-    func testRotationUpdatesDoubleAndLinearKnobsWithMultiplier() {
+    func testRotationUpdatesDoubleAndCVKKnobsWithMultiplier() {
         let vm = UserGuideViewModel(audioService: MockAudioControlService())
         vm.currentStep = 3
         vm.currentMultiplier = 2.0
@@ -226,10 +226,10 @@ class UserGuideViewModelTests: XCTestCase {
         XCTAssertEqual(vm.doubleKnobVal, 60.0, accuracy: 0.01)  // 50.0 + (10.0 * 0.5 * 2.0)
 
         // Test Linear Knob
-        vm.hoveredKnob = .linearKnob
+        vm.hoveredKnob = .cvkKnob
         vm.registerRotation(-20.0)
-        XCTAssertEqual(vm.linearKnobAngle, 20.0)
-        XCTAssertEqual(vm.linearKnobVal, 30.0, accuracy: 0.01)  // 50.0 - (20.0 * 0.5 * 2.0)
+        XCTAssertEqual(vm.cvkKnobAngle, 20.0)
+        XCTAssertEqual(vm.cvkKnobVal, 30.0, accuracy: 0.01)  // 50.0 - (20.0 * 0.5 * 2.0)
     }
 
     func testRadiusBasedBaseMultipliers() {
@@ -282,18 +282,18 @@ class UserGuideViewModelTests: XCTestCase {
         // 模拟无级变速旋钮插值
         let linearKey = KnobKey(
             bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel",
-            identifier: "LinearKnob")
-        let linearConfig = KnobCustomizer.shared.knob(for: linearKey)?.linearConfig
-        let minR = linearConfig?.minRadius ?? 10.0
-        let maxR = linearConfig?.maxRadius ?? 30.0
-        let minScale = linearConfig?.minScale ?? 0.1
-        let maxScale = linearConfig?.maxScale ?? 5.0
+            identifier: "CVKKnob")
+        let cvkConfig = KnobCustomizer.shared.knob(for: linearKey)?.cvkConfig
+        let minR = cvkConfig?.minRadius ?? 10.0
+        let maxR = cvkConfig?.maxRadius ?? 30.0
+        let minScale = cvkConfig?.minScale ?? 0.1
+        let maxScale = cvkConfig?.maxScale ?? 5.0
 
         let pointsMid = [
             0: CGPoint(x: 100, y: 100),
             1: CGPoint(x: 140, y: 100),  // 间距 40, 半径 = 20.0
         ]
-        vm.hoveredKnob = .linearKnob
+        vm.hoveredKnob = .cvkKnob
         NotificationCenter.default.post(
             name: NSNotification.Name("TouchpadCoordinatesValidated"),
             object: nil,
@@ -304,12 +304,12 @@ class UserGuideViewModelTests: XCTestCase {
         let expectedMultiplier = maxScale - expectedRatio * (maxScale - minScale)
         let expectedDiameter = OverlayController.calculateDiameter(for: 20.0)
 
-        XCTAssertEqual(vm.linearKnobBaseMultiplier, expectedMultiplier, accuracy: 0.05)
-        XCTAssertEqual(vm.linearKnobDiameter, expectedDiameter, accuracy: 0.05)
+        XCTAssertEqual(vm.cvkKnobBaseMultiplier, expectedMultiplier, accuracy: 0.05)
+        XCTAssertEqual(vm.cvkKnobDiameter, expectedDiameter, accuracy: 0.05)
 
         // Hover out resets diameter to 120
         vm.hoveredKnob = .none
         XCTAssertEqual(vm.doubleKnobDiameter, 120.0)
-        XCTAssertEqual(vm.linearKnobDiameter, 120.0)
+        XCTAssertEqual(vm.cvkKnobDiameter, 120.0)
     }
 }

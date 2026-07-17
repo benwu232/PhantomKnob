@@ -7,7 +7,7 @@ enum HoveredKnobType: String {
     case none
     case volumeKnob
     case doubleKnob
-    case linearKnob
+    case cvkKnob
 }
 
 class UserGuideViewModel: ObservableObject {
@@ -27,15 +27,15 @@ class UserGuideViewModel: ObservableObject {
     
     // Step 2 states: Double/Linear comparison, multipliers, C key customization
     @Published var doubleKnobVal: Double = 50.0
-    @Published var linearKnobVal: Double = 50.0
+    @Published var cvkKnobVal: Double = 50.0
     @Published var doubleKnobAngle: Double = 0.0
-    @Published var linearKnobAngle: Double = 0.0
+    @Published var cvkKnobAngle: Double = 0.0
     @Published var hoveredKnob: HoveredKnobType = .none
     @Published var currentMultiplier: Double = 1.0
     @Published var doubleKnobBaseMultiplier: Double = 1.0
-    @Published var linearKnobBaseMultiplier: Double = 1.0
+    @Published var cvkKnobBaseMultiplier: Double = 1.0
     @Published var doubleKnobDiameter: CGFloat = 120.0
-    @Published var linearKnobDiameter: CGFloat = 120.0
+    @Published var cvkKnobDiameter: CGFloat = 120.0
     
     @Published var isGestureActive: Bool = false
     @Published var skipOnNextStartup: Bool = false
@@ -110,7 +110,7 @@ class UserGuideViewModel: ObservableObject {
                 self?.isGestureActive = active
                 if !active {
                     self?.doubleKnobDiameter = 120.0
-                    self?.linearKnobDiameter = 120.0
+                    self?.cvkKnobDiameter = 120.0
                 }
             }
             .store(in: &cancellables)
@@ -119,7 +119,7 @@ class UserGuideViewModel: ObservableObject {
             .sink { [weak self] type in
                 if type == .none {
                     self?.doubleKnobDiameter = 120.0
-                    self?.linearKnobDiameter = 120.0
+                    self?.cvkKnobDiameter = 120.0
                 }
             }
             .store(in: &cancellables)
@@ -173,11 +173,11 @@ class UserGuideViewModel: ObservableObject {
                 let knobSpeed = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
                 let deltaValue = degrees * knobSpeed
                 doubleKnobVal = max(0.0, min(100.0, doubleKnobVal + deltaValue))
-            } else if hoveredKnob == .linearKnob {
-                linearKnobAngle -= degrees
-                let knobSpeed = 0.5 * linearKnobBaseMultiplier * currentMultiplier
+            } else if hoveredKnob == .cvkKnob {
+                cvkKnobAngle -= degrees
+                let knobSpeed = 0.5 * cvkKnobBaseMultiplier * currentMultiplier
                 let deltaValue = degrees * knobSpeed
-                linearKnobVal = max(0.0, min(100.0, linearKnobVal + deltaValue))
+                cvkKnobVal = max(0.0, min(100.0, cvkKnobVal + deltaValue))
             }
         }
     }
@@ -241,22 +241,22 @@ class UserGuideViewModel: ObservableObject {
             doubleKnobBaseMultiplier = (radius > maxInner) ? scaleOuter : scaleInner
             
             doubleKnobDiameter = OverlayController.calculateDiameter(for: radius)
-            linearKnobDiameter = 120.0
-        } else if hoveredKnob == .linearKnob {
-            let linearKey = KnobKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "LinearKnob")
-            let knob = KnobCustomizer.shared.knob(for: linearKey)
-            let linearConfig = knob?.linearConfig
+            cvkKnobDiameter = 120.0
+        } else if hoveredKnob == .cvkKnob {
+            let cvkKey = KnobKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "CVKKnob")
+            let knob = KnobCustomizer.shared.knob(for: cvkKey)
+            let cvkConfig = knob?.cvkConfig
             
-            let minR = linearConfig?.minRadius ?? 10.0
-            let maxR = linearConfig?.maxRadius ?? 30.0
-            let minScale = linearConfig?.minScale ?? 0.1
-            let maxScale = linearConfig?.maxScale ?? 5.0
+            let minR = cvkConfig?.minRadius ?? 10.0
+            let maxR = cvkConfig?.maxRadius ?? 30.0
+            let minScale = cvkConfig?.minScale ?? 0.1
+            let maxScale = cvkConfig?.maxScale ?? 5.0
             
             let r = max(minR, min(maxR, radius))
             let ratio = (r - minR) / (maxR - minR)
             
-            linearKnobBaseMultiplier = maxScale - ratio * (maxScale - minScale)
-            linearKnobDiameter = OverlayController.calculateDiameter(for: radius)
+            cvkKnobBaseMultiplier = maxScale - ratio * (maxScale - minScale)
+            cvkKnobDiameter = OverlayController.calculateDiameter(for: radius)
             doubleKnobDiameter = 120.0
         }
     }
@@ -271,10 +271,10 @@ class UserGuideViewModel: ObservableObject {
         hovered = false
         hoveredKnob = .none
         doubleKnobVal = 50.0
-        linearKnobVal = 50.0
+        cvkKnobVal = 50.0
         doubleKnobAngle = 0.0
-        linearKnobAngle = 0.0
+        cvkKnobAngle = 0.0
         doubleKnobDiameter = 120.0
-        linearKnobDiameter = 120.0
+        cvkKnobDiameter = 120.0
     }
 }

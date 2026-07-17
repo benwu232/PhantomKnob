@@ -385,8 +385,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     renderRadius = knob.singleConfig?.minRadius ?? 16.0
                 case .double:
                     renderRadius = knob.doubleConfig?.outer.maxRadius ?? 24.0
-                case .linear:
-                    renderRadius = knob.linearConfig?.maxRadius ?? 24.0
+                case .cvk:
+                    renderRadius = knob.cvkConfig?.maxRadius ?? 24.0
                 }
             }
             
@@ -431,9 +431,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     RadiusZone(minRadius: double.outer.minRadius, maxRadius: double.outer.maxRadius, margin: double.outer.margin, scale: double.outer.unitPerDegree)
                 ])
             }
-        case .linear:
-            if let linear = knob.linearConfig {
-                self.activeScaleConfig = .linear(ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale))
+        case .cvk:
+            if let cvk = knob.cvkConfig {
+                self.activeScaleConfig = .cvk(ScaleConfigCVK(minRadius: cvk.minRadius, maxRadius: cvk.maxRadius, minScale: cvk.minScale, maxScale: cvk.maxScale))
             }
         }
         
@@ -632,8 +632,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             switch knobScaleConfig {
             case .fixed(let val):
                 if val == 1.0 {
-                    resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
-                        ? .linear(AppSettings.shared.linear)
+                    resolvedScaleConfig = AppSettings.shared.activeScheme == "cvk"
+                        ? .cvk(AppSettings.shared.cvk)
                         : .zones(AppSettings.shared.fixed.zones)
                 } else {
                     resolvedScaleConfig = .fixed(val)
@@ -659,16 +659,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     } else {
                         resolvedScaleConfig = .zones(AppSettings.shared.fixed.zones)
                     }
-                case .linear:
-                    if let l = r.linearConfig {
-                        resolvedScaleConfig = .linear(ScaleConfigLinear(minRadius: l.minRadius, maxRadius: l.maxRadius, minScale: l.minScale, maxScale: l.maxScale))
+                case .cvk:
+                    if let l = r.cvkConfig {
+                        resolvedScaleConfig = .cvk(ScaleConfigCVK(minRadius: l.minRadius, maxRadius: l.maxRadius, minScale: l.minScale, maxScale: l.maxScale))
                     } else {
-                        resolvedScaleConfig = .linear(AppSettings.shared.linear)
+                        resolvedScaleConfig = .cvk(AppSettings.shared.cvk)
                     }
                 }
             } else {
-                resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
-                    ? .linear(AppSettings.shared.linear)
+                resolvedScaleConfig = AppSettings.shared.activeScheme == "cvk"
+                    ? .cvk(AppSettings.shared.cvk)
                     : .zones(AppSettings.shared.fixed.zones)
             }
         }
@@ -705,8 +705,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     themeColor: color,
                     overlayStyle: knob?.overlayStyle,
                     rotationStyle: knob?.rotationStyle,
-                    outerThemeColor: knob?.linearConfig?.outerThemeColor,
-                    innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                    outerThemeColor: knob?.cvkConfig?.outerThemeColor,
+                    innerThemeColor: knob?.cvkConfig?.innerThemeColor,
                     configType: knob?.configType ?? .single
                 )
             }
@@ -745,10 +745,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                             } else {
                                 nextVal = nil
                             }
-                        case .linear:
-                            if let linear = knob.linearConfig {
-                                let config = ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale)
-                                nextVal = ScaleResolver.resolveLinear(radius: radius, config: config)
+                        case .cvk:
+                            if let cvk = knob.cvkConfig {
+                                let config = ScaleConfigCVK(minRadius: cvk.minRadius, maxRadius: cvk.maxRadius, minScale: cvk.minScale, maxScale: cvk.maxScale)
+                                nextVal = ScaleResolver.resolveCVK(radius: radius, config: config)
                             } else {
                                 nextVal = nil
                             }
@@ -778,8 +778,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                             isDeadzone: false,
                             scale: activeScale,
                             themeColor: color,
-                            outerThemeColor: knob?.linearConfig?.outerThemeColor,
-                            innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                            outerThemeColor: knob?.cvkConfig?.outerThemeColor,
+                            innerThemeColor: knob?.cvkConfig?.innerThemeColor,
                             configType: knob?.configType ?? .single
                         )
                     }
@@ -827,8 +827,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                             themeColor: color,
                             overlayStyle: knob?.overlayStyle,
                             rotationStyle: knob?.rotationStyle,
-                            outerThemeColor: knob?.linearConfig?.outerThemeColor,
-                            innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                            outerThemeColor: knob?.cvkConfig?.outerThemeColor,
+                            innerThemeColor: knob?.cvkConfig?.innerThemeColor,
                             configType: knob?.configType ?? .single
                         )
                     }
@@ -885,8 +885,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     resolvedZoneIndex = 0
                 case .zones(let zones):
                     defaultBaseScale = ScaleResolver.resolveHysteresis(radius: radius, zones: zones, currentZoneIndex: &resolvedZoneIndex)
-                case .linear(let config):
-                    defaultBaseScale = ScaleResolver.resolveLinear(radius: radius, config: config)
+                case .cvk(let config):
+                    defaultBaseScale = ScaleResolver.resolveCVK(radius: radius, config: config)
                     resolvedZoneIndex = 0
                 }
                 
@@ -935,8 +935,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     isDeadzone: true,
                     scale: self.lastResolvedBaseScale,
                     themeColor: color,
-                    outerThemeColor: knob?.linearConfig?.outerThemeColor,
-                    innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                    outerThemeColor: knob?.cvkConfig?.outerThemeColor,
+                    innerThemeColor: knob?.cvkConfig?.innerThemeColor,
                     configType: knob?.configType ?? .single
                 )
                 self.currentAngle = currentAngle
@@ -965,8 +965,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 isDeadzone: false,
                 scale: activeBaseScale,
                 themeColor: color,
-                outerThemeColor: knob?.linearConfig?.outerThemeColor,
-                innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                outerThemeColor: knob?.cvkConfig?.outerThemeColor,
+                innerThemeColor: knob?.cvkConfig?.innerThemeColor,
                 configType: knob?.configType ?? .single
             )
 
@@ -1023,12 +1023,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 return doubleConfig.outer.themeColor ?? knob.themeColor
             }
         }
-        if knob.configType == .linear, let linearConfig = knob.linearConfig, let r = radius {
-            let outerColor = linearConfig.outerThemeColor ?? knob.themeColor ?? "#FF9F0A"
-            let innerColor = linearConfig.innerThemeColor ?? knob.themeColor ?? "#30D158"
+        if knob.configType == .cvk, let cvkConfig = knob.cvkConfig, let r = radius {
+            let outerColor = cvkConfig.outerThemeColor ?? knob.themeColor ?? "#FF9F0A"
+            let innerColor = cvkConfig.innerThemeColor ?? knob.themeColor ?? "#30D158"
             
-            let minR = linearConfig.minRadius
-            let maxR = linearConfig.maxRadius
+            let minR = cvkConfig.minRadius
+            let maxR = cvkConfig.maxRadius
             let t: Double
             if r <= minR {
                 t = 1.0
@@ -1205,7 +1205,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             } else {
                 defaultBaseScale = 1.0
             }
-        case .linear:
+        case .cvk:
             defaultBaseScale = 1.0
         }
         
@@ -1254,8 +1254,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 isDeadzone: false,
                 scale: nextVal,
                 themeColor: color,
-                outerThemeColor: knob?.linearConfig?.outerThemeColor,
-                innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                outerThemeColor: knob?.cvkConfig?.outerThemeColor,
+                innerThemeColor: knob?.cvkConfig?.innerThemeColor,
                 configType: knob?.configType ?? .single
             )
         }
@@ -1414,11 +1414,11 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     let isDefaultCW = (activeKnob.clockwiseAction == "arrowUp" || activeKnob.clockwiseAction == "arrowRight" || activeKnob.clockwiseAction == "scrollUp" || activeKnob.clockwiseAction == "swipeUp" || activeKnob.clockwiseAction == "swipeRight" || activeKnob.clockwiseAction == "increase")
                     isInverted = !isDefaultCW
                 }
-            case .linear:
-                if let linear = knob.linearConfig {
-                    translation = linear.translation
-                    scale = ScaleResolver.resolveLinear(radius: radius, config: ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale)) ?? linear.minScale
-                    let isDefaultCW = (linear.clockwiseAction == "arrowUp" || linear.clockwiseAction == "arrowRight" || linear.clockwiseAction == "scrollUp" || linear.clockwiseAction == "swipeUp" || linear.clockwiseAction == "swipeRight" || linear.clockwiseAction == "increase")
+            case .cvk:
+                if let cvk = knob.cvkConfig {
+                    translation = cvk.translation
+                    scale = ScaleResolver.resolveCVK(radius: radius, config: ScaleConfigCVK(minRadius: cvk.minRadius, maxRadius: cvk.maxRadius, minScale: cvk.minScale, maxScale: cvk.maxScale)) ?? cvk.minScale
+                    let isDefaultCW = (cvk.clockwiseAction == "arrowUp" || cvk.clockwiseAction == "arrowRight" || cvk.clockwiseAction == "scrollUp" || cvk.clockwiseAction == "swipeUp" || cvk.clockwiseAction == "swipeRight" || cvk.clockwiseAction == "increase")
                     isInverted = !isDefaultCW
                 }
             }
@@ -1475,9 +1475,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     let activeKnob = isOuter ? double.outer : double.inner
                     translation = activeKnob.translation
                 }
-            case .linear:
-                if let linear = knob.linearConfig {
-                    translation = linear.translation
+            case .cvk:
+                if let cvk = knob.cvkConfig {
+                    translation = cvk.translation
                 }
             }
         }

@@ -15,8 +15,8 @@ struct CustomizerHUDView: View {
     @State private var lockedDiffIndex: Int? = nil    // 自动锁定的分叉点索引
     @State private var isFirstLoad: Bool = true
     
-    @State private var linearOuterColor: String = "#FF9F0A"
-    @State private var linearInnerColor: String = "#30D158"
+    @State private var cvkOuterColor: String = "#FF9F0A"
+    @State private var cvkInnerColor: String = "#30D158"
     @State private var isAdvancedExpanded: Bool = false
 
     private var currentKnobKey: KnobKey {
@@ -59,14 +59,14 @@ struct CustomizerHUDView: View {
     @State private var doubleOuterCWAction: String = "scrollUp"
     
     // 线性
-    @State private var linearMinRadius: Double = 10.0
-    @State private var linearMaxRadius: Double = 35.0
-    @State private var linearMinScale: Double = 0.1
-    @State private var linearMinScaleText: String = "0.1"
-    @State private var linearMaxScale: Double = 3.0
-    @State private var linearMaxScaleText: String = "3.0"
-    @State private var linearTranslation: InputTranslation = .scrollWheelVertical
-    @State private var linearCWAction: String = "scrollUp"
+    @State private var cvkMinRadius: Double = 10.0
+    @State private var cvkMaxRadius: Double = 35.0
+    @State private var cvkMinScale: Double = 0.1
+    @State private var cvkMinScaleText: String = "0.1"
+    @State private var cvkMaxScale: Double = 3.0
+    @State private var cvkMaxScaleText: String = "3.0"
+    @State private var cvkTranslation: InputTranslation = .scrollWheelVertical
+    @State private var cvkCWAction: String = "scrollUp"
     
     // 物理半径实时指示
     @State private var liveRadius: Double? = nil
@@ -157,7 +157,7 @@ struct CustomizerHUDView: View {
                             .foregroundColor(.hudTitle)
                         
                         HStack(spacing: 2) {
-                            ForEach([KnobConfigType.single, .double, .linear], id: \.self) { type in
+                            ForEach([KnobConfigType.single, .double, .cvk], id: \.self) { type in
                                 let isSelected = configType == type
                                 HStack(spacing: 4) {
                                     Text(typeDisplayName(type))
@@ -246,20 +246,20 @@ struct CustomizerHUDView: View {
                             }
                             
                             // 最大显示半径
-                            if configType == .linear {
+                            if configType == .cvk {
                                 VStack(alignment: .leading, spacing: 6) {
                                     HStack(spacing: 6) {
                                         Text(String(localized: "hud.maxRadiusTitle", defaultValue: "最大显示半径"))
                                             .font(.hudLabel)
                                             .foregroundColor(.hudSecondary)
-                                        HUDHelpButton(content: String(localized: "hud.linearMaxRadius.help", defaultValue: "The maximum radius for sensitivity scaling. Beyond this radius, the sensitivity stays at the maximum multiplier and does not increase further."))
+                                        HUDHelpButton(content: String(localized: "hud.cvkMaxRadius.help", defaultValue: "The maximum radius for speed scaling. Beyond this radius, the speed stays at the maximum multiplier and does not increase further."))
                                     }
                                     HStack(spacing: 8) {
-                                        Slider(value: $linearMaxRadius, in: 25.0...50.0, step: 1.0)
+                                        Slider(value: $cvkMaxRadius, in: 25.0...50.0, step: 1.0)
                                             .frame(width: 260)
-                                            .onChange(of: linearMaxRadius) { _ in save() }
+                                            .onChange(of: cvkMaxRadius) { _ in save() }
                                         Spacer()
-                                        Text("\(Int(linearMaxRadius)) mm")
+                                        Text("\(Int(cvkMaxRadius)) mm")
                                             .font(.hudValue)
                                             .foregroundColor(.hudTitle)
                                             .frame(width: 50, alignment: .trailing)
@@ -274,8 +274,8 @@ struct CustomizerHUDView: View {
                             singleAppearanceForm
                         case .double:
                             doubleAppearanceForm
-                        case .linear:
-                            linearAppearanceForm
+                        case .cvk:
+                            cvkAppearanceForm
                         }
                     }
                     
@@ -292,8 +292,8 @@ struct CustomizerHUDView: View {
                             singleBehaviorForm
                         case .double:
                             doubleBehaviorForm
-                        case .linear:
-                            linearBehaviorForm
+                        case .cvk:
+                            cvkBehaviorForm
                         }
                     }
                     
@@ -431,10 +431,10 @@ struct CustomizerHUDView: View {
                         self.doubleInnerThemeColor = hex
                     case .doubleOuter:
                         self.doubleOuterThemeColor = hex
-                    case .linearInner:
-                        self.linearInnerColor = hex
-                    case .linearOuter:
-                        self.linearOuterColor = hex
+                    case .cvkInner:
+                        self.cvkInnerColor = hex
+                    case .cvkOuter:
+                        self.cvkOuterColor = hex
                     }
                     save()
                 }
@@ -609,12 +609,12 @@ struct CustomizerHUDView: View {
         }
     }
     
-    private var linearAppearanceForm: some View {
+    private var cvkAppearanceForm: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 12) {
                 // 外圈配色
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "hud.linearOuterColor", defaultValue: "最大半径对应颜色"))
+                    Text(String(localized: "hud.cvkOuterColor", defaultValue: "最大半径对应颜色"))
                         .font(.hudLabel)
                         .foregroundColor(.hudSecondary)
                     
@@ -625,10 +625,10 @@ struct CustomizerHUDView: View {
                                 .frame(width: 16, height: 16)
                                 .overlay(
                                     Circle()
-                                        .stroke(Color.white, lineWidth: linearOuterColor == colorHex ? 1.5 : 0)
+                                        .stroke(Color.white, lineWidth: cvkOuterColor == colorHex ? 1.5 : 0)
                                 )
                                 .onTapGesture {
-                                    linearOuterColor = colorHex
+                                    cvkOuterColor = colorHex
                                     save()
                                 }
                         }
@@ -636,14 +636,14 @@ struct CustomizerHUDView: View {
                     
                     HStack(spacing: 8) {
                         Button(action: {
-                            activeColorTarget = .linearOuter
-                            NSColorPanel.shared.color = NSColor(Color(hex: linearOuterColor))
+                            activeColorTarget = .cvkOuter
+                            NSColorPanel.shared.color = NSColor(Color(hex: cvkOuterColor))
                             NSColorPanel.shared.orderFront(nil)
                         }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "paintpalette.fill")
                                     .font(.system(size: 11))
-                                    .foregroundColor(Color(hex: linearOuterColor))
+                                    .foregroundColor(Color(hex: cvkOuterColor))
                                 Text(String(localized: "hud.customOuterColor", defaultValue: "Custom outer color..."))
                                     .font(.system(size: 11))
                             }
@@ -653,7 +653,7 @@ struct CustomizerHUDView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         
-                        Text(linearOuterColor)
+                        Text(cvkOuterColor)
                             .font(.hudCode)
                             .foregroundColor(.hudMetadata)
                     }
@@ -661,7 +661,7 @@ struct CustomizerHUDView: View {
                 
                 // 内圈配色
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "hud.linearInnerColor", defaultValue: "最小半径对应颜色"))
+                    Text(String(localized: "hud.cvkInnerColor", defaultValue: "最小半径对应颜色"))
                         .font(.hudLabel)
                         .foregroundColor(.hudSecondary)
                     
@@ -672,10 +672,10 @@ struct CustomizerHUDView: View {
                                 .frame(width: 16, height: 16)
                                 .overlay(
                                     Circle()
-                                        .stroke(Color.white, lineWidth: linearInnerColor == colorHex ? 1.5 : 0)
+                                        .stroke(Color.white, lineWidth: cvkInnerColor == colorHex ? 1.5 : 0)
                                 )
                                 .onTapGesture {
-                                    linearInnerColor = colorHex
+                                    cvkInnerColor = colorHex
                                     save()
                                 }
                         }
@@ -683,14 +683,14 @@ struct CustomizerHUDView: View {
                     
                     HStack(spacing: 8) {
                         Button(action: {
-                            activeColorTarget = .linearInner
-                            NSColorPanel.shared.color = NSColor(Color(hex: linearInnerColor))
+                            activeColorTarget = .cvkInner
+                            NSColorPanel.shared.color = NSColor(Color(hex: cvkInnerColor))
                             NSColorPanel.shared.orderFront(nil)
                         }) {
                             HStack(spacing: 6) {
                                 Image(systemName: "paintpalette.fill")
                                     .font(.system(size: 11))
-                                    .foregroundColor(Color(hex: linearInnerColor))
+                                    .foregroundColor(Color(hex: cvkInnerColor))
                                 Text(String(localized: "hud.customInnerColor", defaultValue: "Custom inner color..."))
                                     .font(.system(size: 11))
                             }
@@ -700,7 +700,7 @@ struct CustomizerHUDView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         
-                        Text(linearInnerColor)
+                        Text(cvkInnerColor)
                             .font(.hudCode)
                             .foregroundColor(.hudMetadata)
                     }
@@ -875,7 +875,7 @@ struct CustomizerHUDView: View {
         }
     }
     
-    private var linearBehaviorForm: some View {
+    private var cvkBehaviorForm: some View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
@@ -884,13 +884,13 @@ struct CustomizerHUDView: View {
                         .foregroundColor(.hudSecondary)
                     HUDHelpButton(content: String(localized: "hud.outputTranslation.help", defaultValue: "The output of the knob will be mapped to existing events to control the computer."))
                 }
-                Picker("", selection: $linearTranslation) {
+                Picker("", selection: $cvkTranslation) {
                     ForEach(InputTranslation.allCases, id: \.self) { trans in
                         Text(transDescription(trans)).tag(trans)
                     }
                 }
-                .onChange(of: linearTranslation) { next in
-                    linearCWAction = defaultAction(for: next)
+                .onChange(of: cvkTranslation) { next in
+                    cvkCWAction = defaultAction(for: next)
                     save()
                 }
             }
@@ -905,12 +905,12 @@ struct CustomizerHUDView: View {
                         .foregroundColor(.hudSecondary)
                     HUDHelpButton(content: String(localized: "hud.clockwiseAction.help", defaultValue: "Event triggered when rotating the knob clockwise."))
                 }
-                Picker("", selection: $linearCWAction) {
-                    ForEach(directionOptions(for: linearTranslation), id: \.self) { opt in
+                Picker("", selection: $cvkCWAction) {
+                    ForEach(directionOptions(for: cvkTranslation), id: \.self) { opt in
                         Text(actionDescription(opt)).tag(opt)
                     }
                 }
-                .onChange(of: linearCWAction) { _ in save() }
+                .onChange(of: cvkCWAction) { _ in save() }
                 .padding(.leading, 12)
             }
             .padding(.leading, 12)
@@ -918,13 +918,13 @@ struct CustomizerHUDView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     HStack(spacing: 6) {
-                        Text(String(localized: "hud.linearInnerScaleLabel", defaultValue: "最小半径对应速度:"))
+                        Text(String(localized: "hud.cvkInnerScaleLabel", defaultValue: "最小半径对应速度:"))
                             .font(.hudLabel)
                             .foregroundColor(.hudSecondary)
                         HUDHelpButton(content: String(localized: "hud.unitPerDegree.help", defaultValue: "Event output change per degree of clockwise rotation."))
                     }
                     Spacer()
-                    TextField("", text: $linearMaxScaleText)
+                    TextField("", text: $cvkMaxScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -933,22 +933,22 @@ struct CustomizerHUDView: View {
                         .foregroundColor(.hudTitle)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
-                        .onChange(of: linearMaxScaleText) { next in
+                        .onChange(of: cvkMaxScaleText) { next in
                             if let val = Double(next) {
-                                linearMaxScale = val
+                                cvkMaxScale = val
                                 save()
                             }
                         }
                 }
                 HStack {
                     HStack(spacing: 6) {
-                        Text(String(localized: "hud.linearOuterScaleLabel", defaultValue: "最大半径对应速度:"))
+                        Text(String(localized: "hud.cvkOuterScaleLabel", defaultValue: "最大半径对应速度:"))
                             .font(.hudLabel)
                             .foregroundColor(.hudSecondary)
                         HUDHelpButton(content: String(localized: "hud.unitPerDegree.help", defaultValue: "Event output change per degree of clockwise rotation."))
                     }
                     Spacer()
-                    TextField("", text: $linearMinScaleText)
+                    TextField("", text: $cvkMinScaleText)
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -957,9 +957,9 @@ struct CustomizerHUDView: View {
                         .foregroundColor(.hudTitle)
                         .frame(width: 80)
                         .multilineTextAlignment(.trailing)
-                        .onChange(of: linearMinScaleText) { next in
+                        .onChange(of: cvkMinScaleText) { next in
                             if let val = Double(next) {
-                                linearMinScale = val
+                                cvkMinScale = val
                                 save()
                             }
                         }
@@ -999,16 +999,16 @@ struct CustomizerHUDView: View {
         self.doubleOuterCWAction = "scrollUp"
         self.doubleOuterThemeColor = "#FF9F0A"
         
-        self.linearMinRadius = 10.0
-        self.linearMaxRadius = 35.0
-        self.linearMinScale = 1.0
-        self.linearMinScaleText = "1.0"
-        self.linearMaxScale = 30.0
-        self.linearMaxScaleText = "30.0"
-        self.linearTranslation = .scrollWheelVertical
-        self.linearCWAction = "scrollUp"
-        self.linearOuterColor = "#FF9F0A"
-        self.linearInnerColor = "#30D158"
+        self.cvkMinRadius = 10.0
+        self.cvkMaxRadius = 35.0
+        self.cvkMinScale = 1.0
+        self.cvkMinScaleText = "1.0"
+        self.cvkMaxScale = 30.0
+        self.cvkMaxScaleText = "30.0"
+        self.cvkTranslation = .scrollWheelVertical
+        self.cvkCWAction = "scrollUp"
+        self.cvkOuterColor = "#FF9F0A"
+        self.cvkInnerColor = "#30D158"
         
         self.activeColorTarget = .global
     }
@@ -1053,17 +1053,17 @@ struct CustomizerHUDView: View {
                 self.doubleOuterCWAction = d.outer.clockwiseAction
                 self.doubleOuterThemeColor = d.outer.themeColor ?? "#FF9F0A"
             }
-            if let l = existing.linearConfig {
-                self.linearMinRadius = l.minRadius
-                self.linearMaxRadius = l.maxRadius
-                self.linearMinScale = l.minScale
-                self.linearMinScaleText = String(format: "%.4g", l.minScale)
-                self.linearMaxScale = l.maxScale
-                self.linearMaxScaleText = String(format: "%.4g", l.maxScale)
-                self.linearTranslation = l.translation
-                self.linearCWAction = l.clockwiseAction
-                self.linearOuterColor = l.outerThemeColor ?? existing.themeColor ?? "#FF9F0A"
-                self.linearInnerColor = l.innerThemeColor ?? existing.themeColor ?? "#30D158"
+            if let l = existing.cvkConfig {
+                self.cvkMinRadius = l.minRadius
+                self.cvkMaxRadius = l.maxRadius
+                self.cvkMinScale = l.minScale
+                self.cvkMinScaleText = String(format: "%.4g", l.minScale)
+                self.cvkMaxScale = l.maxScale
+                self.cvkMaxScaleText = String(format: "%.4g", l.maxScale)
+                self.cvkTranslation = l.translation
+                self.cvkCWAction = l.clockwiseAction
+                self.cvkOuterColor = l.outerThemeColor ?? existing.themeColor ?? "#FF9F0A"
+                self.cvkInnerColor = l.innerThemeColor ?? existing.themeColor ?? "#30D158"
             }
         }
         
@@ -1072,8 +1072,8 @@ struct CustomizerHUDView: View {
             self.commonMinRadius = self.singleMinRadius
         case .double:
             self.commonMinRadius = self.doubleInnerMinRadius
-        case .linear:
-            self.commonMinRadius = self.linearMinRadius
+        case .cvk:
+            self.commonMinRadius = self.cvkMinRadius
         }
         
         onLoadExisting?(self.configType, self.themeColor)
@@ -1088,7 +1088,7 @@ struct CustomizerHUDView: View {
         
         self.singleMinRadius = self.commonMinRadius
         self.doubleInnerMinRadius = self.commonMinRadius
-        self.linearMinRadius = self.commonMinRadius
+        self.cvkMinRadius = self.commonMinRadius
         
         var knob = Knob(key: currentKnobKey, themeColor: themeColor, configType: configType)
         
@@ -1107,19 +1107,19 @@ struct CustomizerHUDView: View {
             )
             knob.themeColor = doubleOuterThemeColor
             self.themeColor = doubleOuterThemeColor
-        case .linear:
-            knob.linearConfig = LinearKnobConfig(
-                minRadius: linearMinRadius,
-                maxRadius: linearMaxRadius,
-                minScale: linearMinScale,
-                maxScale: linearMaxScale,
-                translation: linearTranslation,
-                clockwiseAction: linearCWAction,
-                outerThemeColor: linearOuterColor,
-                innerThemeColor: linearInnerColor
+        case .cvk:
+            knob.cvkConfig = CVKKnobConfig(
+                minRadius: cvkMinRadius,
+                maxRadius: cvkMaxRadius,
+                minScale: cvkMinScale,
+                maxScale: cvkMaxScale,
+                translation: cvkTranslation,
+                clockwiseAction: cvkCWAction,
+                outerThemeColor: cvkOuterColor,
+                innerThemeColor: cvkInnerColor
             )
-            knob.themeColor = linearOuterColor
-            self.themeColor = linearOuterColor
+            knob.themeColor = cvkOuterColor
+            self.themeColor = cvkOuterColor
         }
         
         KnobCustomizer.shared.saveKnob(knob)
@@ -1240,8 +1240,8 @@ struct CustomizerHUDView: View {
             return String(localized: "hud.single", defaultValue: "Single Knob")
         case .double:
             return String(localized: "hud.double", defaultValue: "Double-Ring")
-        case .linear:
-            return String(localized: "hud.linear", defaultValue: "Variable Speed")
+        case .cvk:
+            return String(localized: "hud.cvk", defaultValue: "Variable Speed")
         }
     }
     
@@ -1251,8 +1251,8 @@ struct CustomizerHUDView: View {
             return String(localized: "hud.knobType.help.single", defaultValue: "Basic knob mode, simulating a physical knob.")
         case .double:
             return String(localized: "hud.knobType.help.double", defaultValue: "The knob's color, speed, etc. are divided into two levels, corresponding to different radius ranges.")
-        case .linear:
-            return String(localized: "hud.knobType.help.linear", defaultValue: "The knob is no longer graded, and the speed changes smoothly with the radius of the knob.")
+        case .cvk:
+            return String(localized: "hud.knobType.help.cvk", defaultValue: "The knob is no longer graded, and the speed changes smoothly with the radius of the knob.")
         }
     }
 

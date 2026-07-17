@@ -55,7 +55,7 @@ final class CustomKnobTests: XCTestCase {
         XCTAssertEqual(decoded.singleConfig, single)
         XCTAssertEqual(decoded.singleConfig?.minRadius, 12.0)
         XCTAssertNil(decoded.doubleConfig)
-        XCTAssertNil(decoded.linearConfig)
+        XCTAssertNil(decoded.cvkConfig)
     }
     
     func testSingleKnobConfigBackwardCompatibility() throws {
@@ -94,12 +94,12 @@ final class CustomKnobTests: XCTestCase {
     }
     
     func testKnobJSONSerializationLinear() throws {
-        let linear = LinearKnobConfig(minRadius: 5.0, maxRadius: 60.0, minScale: 0.2, maxScale: 3.0, translation: .scrollWheelHorizontal, clockwiseAction: "scrollRight")
+        let linear = CVKKnobConfig(minRadius: 5.0, maxRadius: 60.0, minScale: 0.2, maxScale: 3.0, translation: .scrollWheelHorizontal, clockwiseAction: "scrollRight")
         let knob = Knob(
             key: KnobKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
             themeColor: "#30D158",
-            configType: .linear,
-            linearConfig: linear
+            configType: .cvk,
+            cvkConfig: linear
         )
         
         let encoder = JSONEncoder()
@@ -108,8 +108,8 @@ final class CustomKnobTests: XCTestCase {
         let data = try encoder.encode(knob)
         let decoded = try decoder.decode(Knob.self, from: data)
         
-        XCTAssertEqual(decoded.configType, .linear)
-        XCTAssertEqual(decoded.linearConfig, linear)
+        XCTAssertEqual(decoded.configType, .cvk)
+        XCTAssertEqual(decoded.cvkConfig, linear)
     }
     
     func testKnobCustomizerSaveAndMerge() {

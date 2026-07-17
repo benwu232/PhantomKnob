@@ -297,39 +297,39 @@ struct UserGuideView: View {
                 }
                 .frame(width: 260)
                 
-                // Linear Knob
+                // CVK Knob
                 VStack(spacing: 8) {
                     ZStack {
                         OverlayView(
-                            targetName: String(localized: "guide.step2.linearKnobName", defaultValue: "Variable Speed Dial"),
-                            valueText: String(format: "%.1f", viewModel.linearKnobVal),
-                            angle: viewModel.linearKnobAngle,
+                            targetName: String(localized: "guide.step2.cvkKnobName", defaultValue: "Variable Speed Dial"),
+                            valueText: String(format: "%.1f", viewModel.cvkKnobVal),
+                            angle: viewModel.cvkKnobAngle,
                             isDeadzone: false,
-                            scale: viewModel.linearKnobBaseMultiplier * viewModel.currentMultiplier,
+                            scale: viewModel.cvkKnobBaseMultiplier * viewModel.currentMultiplier,
                             themeColorHex: "#34C759",
                             overlayStyle: AppSettings.shared.defaultOverlayStyle,
                             rotationStyle: AppSettings.shared.defaultRotationStyle,
-                            diameter: viewModel.linearKnobDiameter
+                            diameter: viewModel.cvkKnobDiameter
                         )
-                        .scaleEffect(viewModel.hoveredKnob == .linearKnob ? 1.1 : 1.0)
+                        .scaleEffect(viewModel.hoveredKnob == .cvkKnob ? 1.1 : 1.0)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.hoveredKnob)
                         .onHover { isHover in
-                            viewModel.hoveredKnob = isHover ? .linearKnob : .none
+                            viewModel.hoveredKnob = isHover ? .cvkKnob : .none
                         }
                     }
                     .frame(height: 180)
                     
-                    Text(String(localized: "guide.step2.linearKnobDesc1", defaultValue: "Variable Speed (0.1x ~ 5.0x)"))
+                    Text(String(localized: "guide.step2.cvkKnobDesc1", defaultValue: "Variable Speed (0.1x ~ 5.0x)"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.white.opacity(0.8))
-                    Text(String(localized: "guide.step2.linearKnobDesc2", defaultValue: "Speed scales continuously based on finger rotation radius"))
+                    Text(String(localized: "guide.step2.cvkKnobDesc2", defaultValue: "Speed scales continuously based on finger rotation radius"))
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.5))
                         .multilineTextAlignment(.center)
                         .frame(height: 24)
                     
                     Button(action: {
-                        triggerCustomizer(for: "LinearKnob")
+                        triggerCustomizer(for: "CVKKnob")
                     }) {
                         Text(String(localized: "guide.step2.customizeButton", defaultValue: "Customize Dial"))
                             .font(.system(size: 10, weight: .medium))
@@ -510,7 +510,7 @@ struct UserGuideView: View {
             identifier: knobType,
             displayName: knobType == "DoubleKnob" 
                 ? String(localized: "guide.step2.doubleKnobName", defaultValue: "Double-Ring Dial") 
-                : String(localized: "guide.step2.linearKnobName", defaultValue: "Variable Speed Dial"),
+                : String(localized: "guide.step2.cvkKnobName", defaultValue: "Variable Speed Dial"),
             element: nil,
             parentChain: []
         )
