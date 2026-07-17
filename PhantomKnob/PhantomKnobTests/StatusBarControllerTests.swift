@@ -269,4 +269,16 @@ final class StatusBarControllerTests: XCTestCase {
         UserDefaults.app.set(originalTrialStart, forKey: "trialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
+
+    func testFreeActivatingPopoverInstantiation() {
+        let controller = StatusBarController()
+        controller.showFreeActivatingPopover(secondsRemaining: 2.0)
+        
+        let expectation = XCTestExpectation(description: "Show popover")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            controller.dismissFreePopover()
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2.0)
+    }
 }

@@ -12,6 +12,8 @@ class StatusBarController: ObservableObject {
     private var versionMenuItem: NSMenuItem?
     private var hotkeyChangeObserver: AnyCancellable?
     private var licenseChangeObserver: AnyCancellable?
+    private var freePopover: NSPopover?
+    private var popoverDismissWorkItem: DispatchWorkItem?
     
     @Published var currentState: KnobGlobalState = .inactive
     @Published var targetName: String?
@@ -234,6 +236,9 @@ class StatusBarController: ObservableObject {
     
     func updateState(_ state: KnobGlobalState, targetName: String? = nil) {
         PKLogger.statusBar.info("updateState called with state: \(String(describing: state))")
+        if state != .inactive && state != .customizing {
+            dismissFreePopover()
+        }
         self.currentState = state
         self.targetName = targetName
         
@@ -500,6 +505,71 @@ class StatusBarController: ObservableObject {
     
     @objc func debugToggleLicense() {
         LicenseManager.shared.debugToggleLicense()
+    }
+    
+    func showFreeActivatingPopover(secondsRemaining: Double) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.popoverDismissWorkItem?.cancel()
+            self.popoverDismissWorkItem = nil
+            
+            let popover = self.freePopover ?? NSPopover()
+            popover.behavior = .transient
+            popover.animates = true
+            
+            let contentView = FreeEditionPopoverView(mode: .activating(secondsRemaining: secondsRemaining)) { [weak self] in
+                self?.dismissFreePopover()
+                SettingsWindowController.shared.show(tab: .about)
+            }
+            popover.contentViewController = NSHostingController(rootView: contentView)
+            self.freePopover = popover
+            
+            if let button = self.statusItem?.button {
+                if !popover.isShown {
+                    popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+                }
+            }
+        }
+    }
+
+    func showFreeExpiredPopover() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.popoverDismissWorkItem?.cancel()
+            
+            let popover = self.freePopover ?? NSPopover()
+            popover.behavior = .transient
+            popover.animates = true
+            
+            let contentView = FreeEditionPopoverView(mode: .sessionExpired) { [weak self] in
+                self?.dismissFreePopover()
+                SettingsWindowController.shared.show(tab: .about)
+            }
+            popover.contentViewController = NSHostingController(rootView: contentView)
+            self.freePopover = popover
+            
+            if let button = self.statusItem?.button {
+                if !popover.isShown {
+                    popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+                }
+            }
+            
+            // 5s 后自动隐退
+            let workItem = DispatchWorkItem { [weak self] in
+                self?.dismissFreePopover()
+            }
+            self.popoverDismissWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: workItem)
+        }
+    }
+
+    func dismissFreePopover() {
+        DispatchQueue.main.async { [weak self] in
+            self?.popoverDismissWorkItem?.cancel()
+            self?.popoverDismissWorkItem = nil
+            self?.freePopover?.performClose(nil)
+            self?.freePopover = nil
+        }
     }
 }
 
