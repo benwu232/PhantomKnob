@@ -593,7 +593,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         // 检查是否是从冷却状态恢复（如果目标相同，则跳过 5° 的激活阈值）
         var isResuming = false
         if case .cooling(let coolingTarget) = state {
-            if target.ruleKey == coolingTarget.ruleKey {
+            if target.knobKey == coolingTarget.knobKey {
                 isResuming = true
             }
         }
@@ -630,7 +630,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         // 解析并缓存 ScaleConfig 与状态变量重置
         let resolvedScaleConfig: ScaleConfig
         if let knobScaleConfig = knob?.scaleConfig {
-            switch ruleScaleConfig {
+            switch knobScaleConfig {
             case .fixed(let val):
                 if val == 1.0 {
                     resolvedScaleConfig = AppSettings.shared.activeScheme == "linear"
@@ -640,10 +640,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     resolvedScaleConfig = .fixed(val)
                 }
             default:
-                resolvedScaleConfig = ruleScaleConfig
+                resolvedScaleConfig = knobScaleConfig
             }
         } else {
-            if let r = rule {
+            if let r = knob {
                 switch r.configType {
                 case .single:
                     if let single = r.singleConfig {
@@ -698,17 +698,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             transition(to: .knobing(target: target))
             gestureClassifier.forceKnob()
             if let mouseLoc = initialTouchPosition {
-                let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: currentRadius) }
+                let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: currentRadius) }
                 overlayController.show(
                     at: mouseLoc,
                     targetName: target.displayName.isEmpty ? nil : target.displayName,
                     scale: self.lastResolvedBaseScale,
                     themeColor: color,
-                    overlayStyle: rule?.overlayStyle,
-                    rotationStyle: rule?.rotationStyle,
-                    outerThemeColor: rule?.linearConfig?.outerThemeColor,
-                    innerThemeColor: rule?.linearConfig?.innerThemeColor,
-                    configType: rule?.configType ?? .single
+                    overlayStyle: knob?.overlayStyle,
+                    rotationStyle: knob?.rotationStyle,
+                    outerThemeColor: knob?.linearConfig?.outerThemeColor,
+                    innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                    configType: knob?.configType ?? .single
                 )
             }
         } else {
@@ -772,16 +772,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                         let direction: RotationDirection = (currentAngle - previousAngle) >= 0 ? .clockwise : .counterClockwise
                         translator.apply(units: abs(correctedDelta), direction: direction)
                         
-                        let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
+                        let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
                         overlayController.update(
                             angle: currentAngle,
                             radius: radius,
                             isDeadzone: false,
                             scale: activeScale,
                             themeColor: color,
-                            outerThemeColor: rule?.linearConfig?.outerThemeColor,
-                            innerThemeColor: rule?.linearConfig?.innerThemeColor,
-                            configType: rule?.configType ?? .single
+                            outerThemeColor: knob?.linearConfig?.outerThemeColor,
+                            innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                            configType: knob?.configType ?? .single
                         )
                     }
                     self.currentAngle = currentAngle
@@ -929,16 +929,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             // 2. 检查死区判定
             guard let activeBaseScale = baseScale else {
                 // radius < minRadius, 进入死区：丢弃本帧变化，Overlay UI 变灰
-                let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
+                let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
                 overlayController.update(
                     angle: currentAngle,
                     radius: radius,
                     isDeadzone: true,
                     scale: self.lastResolvedBaseScale,
                     themeColor: color,
-                    outerThemeColor: rule?.linearConfig?.outerThemeColor,
-                    innerThemeColor: rule?.linearConfig?.innerThemeColor,
-                    configType: rule?.configType ?? .single
+                    outerThemeColor: knob?.linearConfig?.outerThemeColor,
+                    innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                    configType: knob?.configType ?? .single
                 )
                 self.currentAngle = currentAngle
                 previousAngle = currentAngle
@@ -959,16 +959,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
             translator.apply(units: deltaAngle, direction: direction)
 
-            let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
+            let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
             overlayController.update(
                 angle: currentAngle,
                 radius: radius,
                 isDeadzone: false,
                 scale: activeBaseScale,
                 themeColor: color,
-                outerThemeColor: rule?.linearConfig?.outerThemeColor,
-                innerThemeColor: rule?.linearConfig?.innerThemeColor,
-                configType: rule?.configType ?? .single
+                outerThemeColor: knob?.linearConfig?.outerThemeColor,
+                innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                configType: knob?.configType ?? .single
             )
 
             self.currentAngle = currentAngle
@@ -1024,9 +1024,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 return doubleConfig.outer.themeColor ?? knob.themeColor
             }
         }
-        if rule.configType == .linear, let linearConfig = rule.linearConfig, let r = radius {
-            let outerColor = linearConfig.outerThemeColor ?? rule.themeColor ?? "#FF9F0A"
-            let innerColor = linearConfig.innerThemeColor ?? rule.themeColor ?? "#30D158"
+        if knob.configType == .linear, let linearConfig = knob.linearConfig, let r = radius {
+            let outerColor = linearConfig.outerThemeColor ?? knob.themeColor ?? "#FF9F0A"
+            let innerColor = linearConfig.innerThemeColor ?? knob.themeColor ?? "#30D158"
             
             let minR = linearConfig.minRadius
             let maxR = linearConfig.maxRadius
@@ -1040,7 +1040,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             }
             return interpolateHexColor(from: outerColor, to: innerColor, t: t)
         }
-        return rule.themeColor
+        return knob.themeColor
     }
 
     private func interpolateHexColor(from hex1: String, to hex2: String, t: Double) -> String {
