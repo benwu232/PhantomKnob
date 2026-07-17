@@ -19,11 +19,11 @@ struct CustomizerHUDView: View {
     @State private var linearInnerColor: String = "#30D158"
     @State private var isAdvancedExpanded: Bool = false
 
-    private var currentRuleKey: RuleKey {
+    private var currentKnobKey: KnobKey {
         let chain = target.parentChain.enumerated().filter {
             selectedParents.contains($0.offset)
         }.map { $0.element }
-        return RuleKey(
+        return KnobKey(
             bundleID: target.bundleID,
             axRole: target.axRole,
             identifier: target.identifier,
@@ -440,7 +440,7 @@ struct CustomizerHUDView: View {
                 }
             }
         }
-        .onChange(of: target.ruleKey) { _ in
+        .onChange(of: target.knobKey) { _ in
             loadExisting()
         }
         .onDisappear {
@@ -1023,7 +1023,7 @@ struct CustomizerHUDView: View {
             detectConflictAndDiff()
         }
         
-        if let existing = RuleLibrary.shared.lookup(for: currentRuleKey) {
+        if let existing = KnobCustomizer.shared.knob(for: currentKnobKey) {
             self.themeColor = existing.themeColor ?? "#0A84FF"
             self.configType = existing.configType
             
@@ -1090,25 +1090,25 @@ struct CustomizerHUDView: View {
         self.doubleInnerMinRadius = self.commonMinRadius
         self.linearMinRadius = self.commonMinRadius
         
-        var rule = ControlRule(key: currentRuleKey, themeColor: themeColor, configType: configType)
+        var knob = Knob(key: currentKnobKey, themeColor: themeColor, configType: configType)
         
         switch configType {
         case .single:
-            rule.singleConfig = SingleKnobConfig(
+            knob.singleConfig = SingleKnobConfig(
                 unitPerDegree: singleScale,
                 translation: singleTranslation,
                 clockwiseAction: singleCWAction,
                 minRadius: singleMinRadius
             )
         case .double:
-            rule.doubleConfig = DoubleKnobConfig(
+            knob.doubleConfig = DoubleKnobConfig(
                 inner: VirtualKnobConfig(minRadius: doubleInnerMinRadius, maxRadius: doubleInnerRadiusMax, margin: doubleMargin, unitPerDegree: doubleInnerScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleInnerThemeColor),
                 outer: VirtualKnobConfig(minRadius: doubleInnerRadiusMax, maxRadius: doubleOuterRadiusMax, margin: doubleMargin, unitPerDegree: doubleOuterScale, translation: doubleInnerTranslation, clockwiseAction: doubleInnerCWAction, themeColor: doubleOuterThemeColor)
             )
-            rule.themeColor = doubleOuterThemeColor
+            knob.themeColor = doubleOuterThemeColor
             self.themeColor = doubleOuterThemeColor
         case .linear:
-            rule.linearConfig = LinearKnobConfig(
+            knob.linearConfig = LinearKnobConfig(
                 minRadius: linearMinRadius,
                 maxRadius: linearMaxRadius,
                 minScale: linearMinScale,
@@ -1118,17 +1118,17 @@ struct CustomizerHUDView: View {
                 outerThemeColor: linearOuterColor,
                 innerThemeColor: linearInnerColor
             )
-            rule.themeColor = linearOuterColor
+            knob.themeColor = linearOuterColor
             self.themeColor = linearOuterColor
         }
         
-        RuleLibrary.shared.saveRule(rule)
+        KnobCustomizer.shared.saveKnob(knob)
     }
 
     private func detectConflictAndDiff() {
-        // 检查是否有匹配相同基础 Key 的规则存在
-        let lookupKey = RuleKey(bundleID: target.bundleID, axRole: target.axRole, identifier: target.identifier, displayName: target.displayName)
-        if let existing = RuleLibrary.shared.lookup(for: lookupKey) {
+        // 检查是否有匹配相同基础 Key 的配置存在
+        let lookupKey = KnobKey(bundleID: target.bundleID, axRole: target.axRole, identifier: target.identifier, displayName: target.displayName)
+        if let existing = KnobCustomizer.shared.knob(for: lookupKey) {
             self.hasConflict = true
             
             // 自动比对两条 parentChain，找出第一个发生变动的层级作为强制绑定的“分叉点”

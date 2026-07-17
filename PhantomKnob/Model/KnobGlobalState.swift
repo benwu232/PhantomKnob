@@ -88,8 +88,8 @@ extension KnobGlobalState {
 
         case (.cooling, .gestureStartedWithTarget(let newTarget)):
             if case .cooling(let existingTarget) = self {
-                // identity 比较：ruleKey 匹配则恢复 knobing
-                if existingTarget.ruleKey == newTarget.ruleKey {
+                // identity 比较：knobKey 匹配则恢复 knobing
+                if existingTarget.knobKey == newTarget.knobKey {
                     return TransitionResult(state: .knobing(target: newTarget), target: newTarget)
                 } else {
                     return TransitionResult(state: .activated, target: nil)

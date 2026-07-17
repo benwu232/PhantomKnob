@@ -150,9 +150,9 @@ class UserGuideViewModel: ObservableObject {
             rotationAngle += degrees
             
             // Sync with system volume
-            let volumeKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "VolumeKnob")
-            let rule = RuleLibrary.shared.lookup(for: volumeKey)
-            let scale = rule?.singleConfig?.unitPerDegree ?? 1.0
+            let volumeKey = KnobKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "VolumeKnob")
+            let knob = KnobCustomizer.shared.knob(for: volumeKey)
+            let scale = knob?.singleConfig?.unitPerDegree ?? 1.0
             
             let sensitivity: Float = Float(0.005 * scale)
             let deltaValue = Float(degrees) * sensitivity
@@ -229,9 +229,9 @@ class UserGuideViewModel: ObservableObject {
         let radius = knobCore.radius
         
         if hoveredKnob == .doubleKnob {
-            let doubleKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "DoubleKnob")
-            let rule = RuleLibrary.shared.lookup(for: doubleKey)
-            let doubleConfig = rule?.doubleConfig
+            let doubleKey = KnobKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "DoubleKnob")
+            let knob = KnobCustomizer.shared.knob(for: doubleKey)
+            let doubleConfig = knob?.doubleConfig
             
             let maxInner = doubleConfig?.inner.maxRadius ?? 25.0
             let scaleInner = doubleConfig?.inner.unitPerDegree ?? 1.0
@@ -243,9 +243,9 @@ class UserGuideViewModel: ObservableObject {
             doubleKnobDiameter = OverlayController.calculateDiameter(for: radius)
             linearKnobDiameter = 120.0
         } else if hoveredKnob == .linearKnob {
-            let linearKey = RuleKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "LinearKnob")
-            let rule = RuleLibrary.shared.lookup(for: linearKey)
-            let linearConfig = rule?.linearConfig
+            let linearKey = KnobKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "LinearKnob")
+            let knob = KnobCustomizer.shared.knob(for: linearKey)
+            let linearConfig = knob?.linearConfig
             
             let minR = linearConfig?.minRadius ?? 10.0
             let maxR = linearConfig?.maxRadius ?? 30.0

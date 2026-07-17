@@ -123,12 +123,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         .store(in: &cancellables)
 
         NotificationCenter.default.publisher(
-            for: NSNotification.Name("ControlRuleDidUpdate")
+            for: NSNotification.Name("KnobDidUpdate")
         )
         .sink { [weak self] notification in
             guard let self = self,
-                  let updatedRule = notification.userInfo?["rule"] as? ControlRule else { return }
-            self.handleRuleHotReload(updatedRule)
+                  let updatedKnob = notification.userInfo?["knob"] as? Knob else { return }
+            self.handleKnobHotReload(updatedKnob)
         }
         .store(in: &cancellables)
 
@@ -287,15 +287,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             }
             // 针对文本输入与静态文本输入，且只有在需要模拟键盘事件时，才自动注入一次鼠标点击以聚焦
             if target.axRole == "AXTextField" || target.axRole == "AXStaticText" {
-                let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
+                let knob = KnobCustomizer.shared.knob(for: target.knobKey)
                 
-                // 静态文本通常为只读 Label，只有在其被显式配置了专属规则时，才允许进行模拟点击聚焦以接收键盘输入
-                // 注意：如果 rule 的 axRole 是 "unknown"，说明它仅匹配到了 App 的全局兜底规则，不算作专门为该静态文本配置的专属规则
+                // 静态文本通常为只读 Label，只有在其被显式配置了专属配置时，才允许进行模拟点击聚焦以接收键盘输入
+                // 注意：如果 knob 的 axRole 是 "unknown"，说明它仅匹配到了 App 的全局兜底配置，不算作专门为该静态文本配置的专属配置
                 let isStaticText = (target.axRole == "AXStaticText")
-                let hasSpecificRule = (rule != nil && rule?.key.axRole != "unknown")
+                let hasSpecificKnob = (knob != nil && knob?.key.axRole != "unknown")
                 
-                if !isStaticText || hasSpecificRule {
-                    let translation = determineTranslation(for: target, rule: rule, radius: self.currentRadius)
+                if !isStaticText || hasSpecificKnob {
+                    let translation = determineTranslation(for: target, knob: knob, radius: self.currentRadius)
                     // 仅在微调数值的键盘上下键模式（arrowKeyUpDown）下才进行点击聚焦
                     // 左右方向键模式（arrowKeyLeftRight）常用于时间轴左右逐帧移动，在此模式下绝对不产生点击，防止重新定位时间轴
                     if translation == .arrowKeyUpDown {
@@ -370,87 +370,87 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         CustomizerHUDWindowController.shared.show(for: target, overlayCenter: overlayController.fixedCenter)
     }
 
-    private func handleRuleHotReload(_ rule: ControlRule) {
-        PKLogger.knob.debug("[DEBUG-color-reload] handleRuleHotReload called, state: \(String(describing: self.state)), rule key: \(String(describing: rule.key)), themeColor: \(rule.themeColor ?? "nil")")
+    private func handleKnobHotReload(_ knob: Knob) {
+        PKLogger.knob.debug("[DEBUG-color-reload] handleKnobHotReload called, state: \(String(describing: self.state)), knob key: \(String(describing: knob.key)), themeColor: \(knob.themeColor ?? "nil")")
         
         guard let target = currentTarget else { return }
         
         if state == .customizing {
-            // 自定义状态下，直接使用刚修改的规则更新 Overlay，并根据配置计算一个安全的静态 Radius，防止 radius 为 0.0 时 Overlay 不可见
+            // 自定义状态下，直接使用刚修改的配置更新 Overlay，并根据配置计算一个安全的静态 Radius，防止 radius 为 0.0 时 Overlay 不可见
             let renderRadius: Double
             if self.currentRadius > 0 {
                 renderRadius = self.currentRadius
             } else {
-                switch rule.configType {
+                switch knob.configType {
                 case .single:
-                    renderRadius = rule.singleConfig?.minRadius ?? 16.0
+                    renderRadius = knob.singleConfig?.minRadius ?? 16.0
                 case .double:
-                    renderRadius = rule.doubleConfig?.outer.maxRadius ?? 24.0
+                    renderRadius = knob.doubleConfig?.outer.maxRadius ?? 24.0
                 case .linear:
-                    renderRadius = rule.linearConfig?.maxRadius ?? 24.0
+                    renderRadius = knob.linearConfig?.maxRadius ?? 24.0
                 }
             }
             
             // 重新实例化当前 Translator
-            let newTranslator = makeTranslator(for: target, rule: rule, radius: renderRadius)
+            let newTranslator = makeTranslator(for: target, knob: knob, radius: renderRadius)
             newTranslator.scale = currentTranslator?.scale ?? 1.0
             self.currentTranslator = newTranslator
             
-            let color = resolveThemeColor(for: rule, zoneIndex: currentZoneIndex, radius: renderRadius)
+            let color = resolveThemeColor(for: knob, zoneIndex: currentZoneIndex, radius: renderRadius)
             overlayController.update(
                 angle: self.currentAngle,
                 radius: renderRadius,
                 isDeadzone: false,
                 scale: self.lastResolvedBaseScale,
                 themeColor: color,
-                outerThemeColor: rule.linearConfig?.outerThemeColor,
-                innerThemeColor: rule.linearConfig?.innerThemeColor,
-                configType: rule.configType
+                outerThemeColor: knob.linearConfig?.outerThemeColor,
+                innerThemeColor: knob.linearConfig?.innerThemeColor,
+                configType: knob.configType
             )
             return
         }
         
         // 否则（非自定义状态下），走严格匹配过滤
-        guard let resolvedRule = RuleLibrary.shared.lookup(for: target.ruleKey),
-              resolvedRule.key.matches(rule.key) else { return }
+        guard let resolvedKnob = KnobCustomizer.shared.knob(for: target.knobKey),
+              resolvedKnob.key.matches(knob.key) else { return }
         
         // 1. 重新实例化当前 Translator
-        let newTranslator = makeTranslator(for: target, rule: rule, radius: self.currentRadius)
+        let newTranslator = makeTranslator(for: target, knob: knob, radius: self.currentRadius)
         newTranslator.scale = currentTranslator?.scale ?? 1.0
         self.currentTranslator = newTranslator
         
         // 2. 重新解析 ScaleConfig
-        switch rule.configType {
+        switch knob.configType {
         case .single:
-            if let single = rule.singleConfig {
+            if let single = knob.singleConfig {
                 self.activeScaleConfig = .fixed(single.unitPerDegree)
             }
         case .double:
-            if let double = rule.doubleConfig {
+            if let double = knob.doubleConfig {
                 self.activeScaleConfig = .zones([
                     RadiusZone(minRadius: double.inner.minRadius, maxRadius: double.inner.maxRadius, margin: double.inner.margin, scale: double.inner.unitPerDegree),
                     RadiusZone(minRadius: double.outer.minRadius, maxRadius: double.outer.maxRadius, margin: double.outer.margin, scale: double.outer.unitPerDegree)
                 ])
             }
         case .linear:
-            if let linear = rule.linearConfig {
+            if let linear = knob.linearConfig {
                 self.activeScaleConfig = .linear(ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale))
             }
         }
         
         // 3. 即时刷新 Overlay UI 配色与样式
         if isInterceptingGestures {
-            let color = resolveThemeColor(for: rule, zoneIndex: currentZoneIndex, radius: currentRadius)
+            let color = resolveThemeColor(for: knob, zoneIndex: currentZoneIndex, radius: currentRadius)
             overlayController.show(
                 at: initialTouchPosition ?? .zero,
                 targetName: target.displayName.isEmpty ? nil : target.displayName,
                 scale: lastResolvedBaseScale,
                 themeColor: color,
-                overlayStyle: rule.overlayStyle,
-                rotationStyle: rule.rotationStyle,
-                outerThemeColor: rule.linearConfig?.outerThemeColor,
-                innerThemeColor: rule.linearConfig?.innerThemeColor,
-                configType: rule.configType
+                overlayStyle: knob.overlayStyle,
+                rotationStyle: knob.rotationStyle,
+                outerThemeColor: knob.linearConfig?.outerThemeColor,
+                innerThemeColor: knob.linearConfig?.innerThemeColor,
+                configType: knob.configType
             )
         }
     }
@@ -620,16 +620,16 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let scaledPoints = scaleCoordinates(points)
         let initialRadius = calculateRawRadius(points: scaledPoints)
 
-        // 3. 查规则库（未命中则自动探测）
-        let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
+        // 3. 查配置库（未命中则自动探测）
+        let knob = KnobCustomizer.shared.knob(for: target.knobKey)
 
         // 4. 创建 InputTranslator
-        let translator = makeTranslator(for: target, rule: rule, radius: initialRadius)
+        let translator = makeTranslator(for: target, knob: knob, radius: initialRadius)
         currentTranslator = translator
  
         // 解析并缓存 ScaleConfig 与状态变量重置
         let resolvedScaleConfig: ScaleConfig
-        if let ruleScaleConfig = rule?.scaleConfig {
+        if let knobScaleConfig = knob?.scaleConfig {
             switch ruleScaleConfig {
             case .fixed(let val):
                 if val == 1.0 {
@@ -729,15 +729,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             if points.count >= 2 {
                 let scaledPointsForCalc = scaleCoordinates(points)
                 if let currentAngle = calculateRawAngle(points: scaledPointsForCalc) {
-                    let rule = currentTarget.flatMap { RuleLibrary.shared.lookup(for: $0.ruleKey) }
+                    let knob = currentTarget.flatMap { KnobCustomizer.shared.knob(for: $0.knobKey) }
                     
                     let nextVal: Double?
-                    if let rule = rule {
-                        switch rule.configType {
+                    if let knob = knob {
+                        switch knob.configType {
                         case .single:
-                            nextVal = rule.singleConfig?.unitPerDegree
+                            nextVal = knob.singleConfig?.unitPerDegree
                         case .double:
-                            if let double = rule.doubleConfig {
+                            if let double = knob.doubleConfig {
                                 let zones = [
                                     RadiusZone(minRadius: double.inner.minRadius, maxRadius: double.inner.maxRadius, margin: double.inner.margin, scale: double.inner.unitPerDegree),
                                     RadiusZone(minRadius: double.outer.minRadius, maxRadius: double.outer.maxRadius, margin: double.outer.margin, scale: double.outer.unitPerDegree)
@@ -747,7 +747,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                                 nextVal = nil
                             }
                         case .linear:
-                            if let linear = rule.linearConfig {
+                            if let linear = knob.linearConfig {
                                 let config = ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale)
                                 nextVal = ScaleResolver.resolveLinear(radius: radius, config: config)
                             } else {
@@ -759,7 +759,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     }
                     
                     if currentTranslator == nil, let t = currentTarget {
-                        currentTranslator = rule.flatMap { makeTranslator(for: t, rule: $0, radius: radius) }
+                        currentTranslator = knob.flatMap { makeTranslator(for: t, knob: $0, radius: radius) }
                     }
                     
                     if let activeScale = nextVal, let translator = currentTranslator {
@@ -817,20 +817,20 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         if mode == .knob && !state.isKnobing {
             if let target = currentTarget {
                 transition(to: .knobing(target: target))
-                let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
+                let knob = KnobCustomizer.shared.knob(for: target.knobKey)
                 if let mouseLoc = initialTouchPosition {
                     if target.axRole != "ControlPanel" {
-                        let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: currentRadius) }
+                        let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: currentRadius) }
                         overlayController.show(
                             at: mouseLoc,
                             targetName: target.displayName.isEmpty ? nil : target.displayName,
                             scale: self.lastResolvedBaseScale,
                             themeColor: color,
-                            overlayStyle: rule?.overlayStyle,
-                            rotationStyle: rule?.rotationStyle,
-                            outerThemeColor: rule?.linearConfig?.outerThemeColor,
-                            innerThemeColor: rule?.linearConfig?.innerThemeColor,
-                            configType: rule?.configType ?? .single
+                            overlayStyle: knob?.overlayStyle,
+                            rotationStyle: knob?.rotationStyle,
+                            outerThemeColor: knob?.linearConfig?.outerThemeColor,
+                            innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                            configType: knob?.configType ?? .single
                         )
                     }
                 }
@@ -864,7 +864,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
             let radius = calculateRawRadius(points: scaledPoints)
             self.currentRadius = radius
-            let rule = currentTarget.flatMap { RuleLibrary.shared.lookup(for: $0.ruleKey) }
+            let knob = currentTarget.flatMap { KnobCustomizer.shared.knob(for: $0.knobKey) }
 
             // 1. Resolve default base scale dynamically from radius
             var baseScale: Double?
@@ -875,7 +875,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 switch activeScaleConfig {
                 case .fixed(let val):
                     var minR = 10.0
-                    if let single = rule?.singleConfig {
+                    if let single = knob?.singleConfig {
                         minR = single.minRadius ?? 10.0
                     }
                     if radius < minR {
@@ -894,9 +894,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 if resolvedZoneIndex != currentZoneIndex {
                     currentZoneIndex = resolvedZoneIndex
                     if let target = currentTarget,
-                       let rule = RuleLibrary.shared.lookup(for: target.ruleKey),
-                       rule.configType == .double {
-                        let newTranslator = makeTranslator(for: target, rule: rule, radius: radius)
+                       let knob = KnobCustomizer.shared.knob(for: target.knobKey),
+                       knob.configType == .double {
+                        let newTranslator = makeTranslator(for: target, knob: knob, radius: radius)
                         self.currentTranslator = newTranslator
                         translator = newTranslator
                     }
@@ -1016,12 +1016,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
     }
 
-    func resolveThemeColor(for rule: ControlRule, zoneIndex: Int, radius: Double? = nil) -> String? {
-        if rule.configType == .double, let doubleConfig = rule.doubleConfig {
+    func resolveThemeColor(for knob: Knob, zoneIndex: Int, radius: Double? = nil) -> String? {
+        if knob.configType == .double, let doubleConfig = knob.doubleConfig {
             if zoneIndex == 0 {
-                return doubleConfig.inner.themeColor ?? rule.themeColor
+                return doubleConfig.inner.themeColor ?? knob.themeColor
             } else if zoneIndex == 1 {
-                return doubleConfig.outer.themeColor ?? rule.themeColor
+                return doubleConfig.outer.themeColor ?? knob.themeColor
             }
         }
         if rule.configType == .linear, let linearConfig = rule.linearConfig, let r = radius {
@@ -1247,17 +1247,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             }
             
             // Update Overlay UI immediately
-            let rule = RuleLibrary.shared.lookup(for: target.ruleKey)
-            let color = rule.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: self.currentRadius) }
+            let knob = KnobCustomizer.shared.knob(for: target.knobKey)
+            let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: self.currentRadius) }
             overlayController.update(
                 angle: self.currentAngle,
                 radius: self.currentRadius,
                 isDeadzone: false,
                 scale: nextVal,
                 themeColor: color,
-                outerThemeColor: rule?.linearConfig?.outerThemeColor,
-                innerThemeColor: rule?.linearConfig?.innerThemeColor,
-                configType: rule?.configType ?? .single
+                outerThemeColor: knob?.linearConfig?.outerThemeColor,
+                innerThemeColor: knob?.linearConfig?.innerThemeColor,
+                configType: knob?.configType ?? .single
             )
         }
     }
@@ -1284,8 +1284,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             return true
         }
         
-        // 1. 如果命中规则库中的任何规则，说明用户/内置规则已为此进行了特化，必然是可调节的
-        if RuleLibrary.shared.lookup(for: target.ruleKey) != nil {
+        // 1. 如果命中配置库中的任何自定义或内置配置，说明已为此进行了特化，必然是可调节的
+        if KnobCustomizer.shared.knob(for: target.knobKey) != nil {
             return true
         }
         
@@ -1392,22 +1392,22 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
     // MARK: - Translator Factory
 
-    private func makeTranslator(for target: DetectedTarget, rule: ControlRule?, radius: Double = 0.0) -> InputTranslator {
-        var translation = rule?.translation ?? autoDetectTranslation(for: target)
-        var scale = rule?.scaleConfig?.resolve() ?? 1.0
-        var isInverted = rule?.invert ?? false
+    private func makeTranslator(for target: DetectedTarget, knob: Knob?, radius: Double = 0.0) -> InputTranslator {
+        var translation = knob?.translation ?? autoDetectTranslation(for: target)
+        var scale = knob?.scaleConfig?.resolve() ?? 1.0
+        var isInverted = knob?.invert ?? false
 
-        if let rule = rule {
-            switch rule.configType {
+        if let knob = knob {
+            switch knob.configType {
             case .single:
-                if let single = rule.singleConfig {
+                if let single = knob.singleConfig {
                     translation = single.translation
                     scale = single.unitPerDegree
                     let isDefaultCW = (single.clockwiseAction == "arrowUp" || single.clockwiseAction == "arrowRight" || single.clockwiseAction == "scrollUp" || single.clockwiseAction == "swipeUp" || single.clockwiseAction == "swipeRight" || single.clockwiseAction == "increase")
                     isInverted = !isDefaultCW
                 }
             case .double:
-                if let double = rule.doubleConfig {
+                if let double = knob.doubleConfig {
                     let isOuter = radius > (double.inner.maxRadius + double.inner.margin)
                     let activeKnob = isOuter ? double.outer : double.inner
                     translation = activeKnob.translation
@@ -1416,7 +1416,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     isInverted = !isDefaultCW
                 }
             case .linear:
-                if let linear = rule.linearConfig {
+                if let linear = knob.linearConfig {
                     translation = linear.translation
                     scale = ScaleResolver.resolveLinear(radius: radius, config: ScaleConfigLinear(minRadius: linear.minRadius, maxRadius: linear.maxRadius, minScale: linear.minScale, maxScale: linear.maxScale)) ?? linear.minScale
                     let isDefaultCW = (linear.clockwiseAction == "arrowUp" || linear.clockwiseAction == "arrowRight" || linear.clockwiseAction == "scrollUp" || linear.clockwiseAction == "swipeUp" || linear.clockwiseAction == "swipeRight" || linear.clockwiseAction == "increase")
@@ -1462,22 +1462,22 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         return TargetDetector.autoDetectTranslation(for: element)
     }
 
-    private func determineTranslation(for target: DetectedTarget, rule: ControlRule?, radius: Double) -> InputTranslation {
-        var translation = rule?.translation ?? autoDetectTranslation(for: target)
-        if let rule = rule {
-            switch rule.configType {
+    private func determineTranslation(for target: DetectedTarget, knob: Knob?, radius: Double) -> InputTranslation {
+        var translation = knob?.translation ?? autoDetectTranslation(for: target)
+        if let knob = knob {
+            switch knob.configType {
             case .single:
-                if let single = rule.singleConfig {
+                if let single = knob.singleConfig {
                     translation = single.translation
                 }
             case .double:
-                if let double = rule.doubleConfig {
+                if let double = knob.doubleConfig {
                     let isOuter = radius > (double.inner.maxRadius + double.inner.margin)
                     let activeKnob = isOuter ? double.outer : double.inner
                     translation = activeKnob.translation
                 }
             case .linear:
-                if let linear = rule.linearConfig {
+                if let linear = knob.linearConfig {
                     translation = linear.translation
                 }
             }

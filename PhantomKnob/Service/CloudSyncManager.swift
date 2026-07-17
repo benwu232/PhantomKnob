@@ -49,10 +49,10 @@ public final class CloudSyncManager {
         // 2. 初始主动拉取一次云端并强制生效
         cloudStore.synchronize()
         
-        // 3. 订阅本地自定义规则更新
-        NotificationCenter.default.publisher(for: NSNotification.Name("ControlRuleDidUpdate"))
+        // 3. 订阅本地自定义配置更新
+        NotificationCenter.default.publisher(for: NSNotification.Name("KnobDidUpdate"))
             .sink { [weak self] _ in
-                self?.syncLocalRulesToCloud()
+                self?.syncLocalKnobsToCloud()
             }
             .store(in: &cancellables)
             
@@ -76,7 +76,7 @@ public final class CloudSyncManager {
     
     private func initialPushIfNeeded() {
         if cloudStore.data(forKey: "com.phantomknob.my_knobs.data") == nil {
-            syncLocalRulesToCloud()
+            syncLocalKnobsToCloud()
         }
         if cloudStore.longLong(forKey: "globalHotkeyKeyCode") == 0 {
             syncLocalHotkeyToCloud()
@@ -89,9 +89,9 @@ public final class CloudSyncManager {
         }
     }
     
-    private func syncLocalRulesToCloud() {
+    private func syncLocalKnobsToCloud() {
         guard !isSyncingFromCloud else { return }
-        let url = RuleLibrary.shared.myKnobsURL
+        let url = KnobCustomizer.shared.myKnobsURL
         guard FileManager.default.fileExists(atPath: url.path),
               let data = try? Data(contentsOf: url) else { return }
         
@@ -99,7 +99,7 @@ public final class CloudSyncManager {
         if cloudData != data {
             cloudStore.set(data, forKey: "com.phantomknob.my_knobs.data")
             cloudStore.synchronize()
-            PKLogger.cloudSync.info("Synced local custom rules to cloud.")
+            PKLogger.cloudSync.info("Synced local custom knobs to cloud.")
         }
     }
     
@@ -164,25 +164,25 @@ public final class CloudSyncManager {
         isSyncingFromCloud = true
         defer { isSyncingFromCloud = false }
         
-        var needsReloadRules = false
+        var needsReloadKnobs = false
         var needsNotifyHotkey = false
         
         for key in changedKeys {
             if key == "com.phantomknob.my_knobs.data" {
                 if let data = cloudStore.data(forKey: key) {
-                    print("[CloudSyncDebug] Found rules data in cloudStore, size: \(data.count) bytes")
-                    let url = RuleLibrary.shared.myKnobsURL
+                    print("[CloudSyncDebug] Found knobs data in cloudStore, size: \(data.count) bytes")
+                    let url = KnobCustomizer.shared.myKnobsURL
                     let dir = url.deletingLastPathComponent()
                     do {
                         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
                         try data.write(to: url)
-                        needsReloadRules = true
-                        print("[CloudSyncDebug] Successfully wrote rules data to \(url.path)")
+                        needsReloadKnobs = true
+                        print("[CloudSyncDebug] Successfully wrote knobs data to \(url.path)")
                     } catch {
-                        print("[CloudSyncDebug] Failed to write rules data: \(error)")
+                        print("[CloudSyncDebug] Failed to write knobs data: \(error)")
                     }
                 } else {
-                    print("[CloudSyncDebug] Rules data is nil in cloudStore")
+                    print("[CloudSyncDebug] Knobs data is nil in cloudStore")
                 }
             } else if key == "globalHotkeyKeyCode" {
                 let val = cloudStore.longLong(forKey: key)
@@ -207,12 +207,12 @@ public final class CloudSyncManager {
             }
         }
         
-        if needsReloadRules {
-            RuleLibrary.shared.reload()
-            print("[CloudSyncDebug] Reloaded RuleLibrary. Rules count: \(RuleLibrary.shared.lookup(for: RuleKey(bundleID: "com.test.synced", axRole: "AXSlider")) != nil)")
-            // 通知 UI 和测试规则库已重新加载
+        if needsReloadKnobs {
+            KnobCustomizer.shared.reload()
+            print("[CloudSyncDebug] Reloaded KnobCustomizer. Knobs count: \(KnobCustomizer.shared.knob(for: KnobKey(bundleID: "com.test.synced", axRole: "AXSlider")) != nil)")
+            // 通知 UI 和测试配置库已重新加载
             NotificationCenter.default.post(
-                name: NSNotification.Name("ControlRuleDidUpdate"),
+                name: NSNotification.Name("KnobDidUpdate"),
                 object: nil,
                 userInfo: nil
             )
