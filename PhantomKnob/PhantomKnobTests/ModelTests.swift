@@ -165,7 +165,7 @@ final class ComparableExtensionTests: XCTestCase {
         XCTAssertEqual(1.5.clamped(to: 0.0...1.0), 1.0)
     }
 
-    func testControlRuleCustomStyleDecoding() throws {
+    func testKnobCustomStyleDecoding() throws {
         let json = """
         {
             "key": {
@@ -182,9 +182,9 @@ final class ComparableExtensionTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let rule = try JSONDecoder().decode(ControlRule.self, from: json)
-        XCTAssertEqual(rule.themeColor, "#0A84FF")
-        XCTAssertEqual(rule.overlayStyle, "minimal")
-        XCTAssertEqual(rule.rotationStyle, "cleanArc")
+        let knob = try JSONDecoder().decode(Knob.self, from: json)
+        XCTAssertEqual(knob.themeColor, "#0A84FF")
+        XCTAssertEqual(knob.overlayStyle, "minimal")
+        XCTAssertEqual(knob.rotationStyle, "cleanArc")
     }
 }

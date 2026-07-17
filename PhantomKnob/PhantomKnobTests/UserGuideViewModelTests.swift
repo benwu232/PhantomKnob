@@ -236,10 +236,10 @@ class UserGuideViewModelTests: XCTestCase {
         let vm = UserGuideViewModel(audioService: MockAudioControlService())
         vm.currentStep = 3
 
-        let doubleKey = RuleKey(
+        let doubleKey = KnobKey(
             bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel",
             identifier: "DoubleKnob")
-        let doubleConfig = RuleLibrary.shared.lookup(for: doubleKey)?.doubleConfig
+        let doubleConfig = KnobCustomizer.shared.knob(for: doubleKey)?.doubleConfig
         let maxInner = doubleConfig?.inner.maxRadius ?? 25.0
         let minR_double = doubleConfig?.inner.minRadius ?? 15.0
         let maxR_double = doubleConfig?.outer.maxRadius ?? 60.0
@@ -280,10 +280,10 @@ class UserGuideViewModelTests: XCTestCase {
         XCTAssertEqual(vm.doubleKnobDiameter, expectedDiameterOuter, accuracy: 0.05)
 
         // 模拟无级变速旋钮插值
-        let linearKey = RuleKey(
+        let linearKey = KnobKey(
             bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel",
             identifier: "LinearKnob")
-        let linearConfig = RuleLibrary.shared.lookup(for: linearKey)?.linearConfig
+        let linearConfig = KnobCustomizer.shared.knob(for: linearKey)?.linearConfig
         let minR = linearConfig?.minRadius ?? 10.0
         let maxR = linearConfig?.maxRadius ?? 30.0
         let minScale = linearConfig?.minScale ?? 0.1
