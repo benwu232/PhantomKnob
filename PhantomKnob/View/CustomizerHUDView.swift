@@ -82,8 +82,8 @@ struct CustomizerHUDView: View {
         case global
         case doubleInner
         case doubleOuter
-        case linearInner
-        case linearOuter
+        case cvkInner
+        case cvkOuter
     }
     
     let colors = [
