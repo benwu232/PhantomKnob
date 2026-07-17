@@ -1,14 +1,14 @@
-// PhantomKnob/Storage/RuleLibrary.swift
+// PhantomKnob/Storage/KnobCustomizer.swift
 import Foundation
 import os
 
-/// 规则库：查找 ControlRule 的单一入口。
-/// 优先级：用户规则（Application Support）> 内置规则（App Bundle）
+/// 旋钮定制器：查找 Knob 的单一入口。
+/// 优先级：用户定制（Application Support）> 内置配置（App Bundle）
 /// 匹配策略：按精度从高到低，第一条命中即返回。
-final class RuleLibrary {
-    static let shared = RuleLibrary()
+final class KnobCustomizer {
+    static let shared = KnobCustomizer()
 
-    private var rules: [ControlRule] = []
+    private var knobs: [Knob] = []
 
     internal var myKnobsURL: URL = {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
@@ -21,17 +21,17 @@ final class RuleLibrary {
         reload()
     }
 
-    /// 重新从磁盘加载规则。
+    /// 重新从磁盘加载配置。
     func reload() {
-        var loaded: [ControlRule] = []
+        var loaded: [Knob] = []
 
-        // 如果用户规则文件不存在，自动创建并写入预置规则
+        // 如果用户配置文件不存在，自动创建并写入预置配置
         if !FileManager.default.fileExists(atPath: myKnobsURL.path) {
             setupDefaultMyKnobs()
         }
         
-        if let myKnobs = loadKnobs(from: myKnobsURL) {
-            loaded.append(contentsOf: myKnobs)
+        if let myKnobsList = loadKnobs(from: myKnobsURL) {
+            loaded.append(contentsOf: myKnobsList)
         }
 
         // Load pro-rules from app bundle
@@ -39,15 +39,15 @@ final class RuleLibrary {
             if FileManager.default.fileExists(atPath: proRulesDir.path) {
                 if let files = try? FileManager.default.contentsOfDirectory(at: proRulesDir, includingPropertiesForKeys: nil) {
                     for file in files where file.pathExtension == "json" {
-                        if let rules = loadKnobs(from: file) {
-                            loaded.append(contentsOf: rules)
+                        if let items = loadKnobs(from: file) {
+                            loaded.append(contentsOf: items)
                         }
                     }
                 }
             }
         }
 
-        self.rules = loaded
+        self.knobs = loaded
     }
 
     private func setupDefaultMyKnobs() {
@@ -524,63 +524,63 @@ final class RuleLibrary {
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             if let data = defaultRulesJSON.data(using: .utf8) {
                 try data.write(to: myKnobsURL)
-                PKLogger.ruleLibrary.info("Successfully initialized default my_knobs.json rules.")
+                PKLogger.knobCustomizer.info("Successfully initialized default my_knobs.json rules.")
             }
         } catch {
-            PKLogger.ruleLibrary.error("Failed to initialize default my_knobs.json: \(String(describing: error))")
+            PKLogger.knobCustomizer.error("Failed to initialize default my_knobs.json: \(String(describing: error))")
         }
     }
 
-    /// 按优先级顺序查找匹配 ruleKey 的第一条规则。
+    /// 按优先级顺序查找匹配 knobKey 的第一个配置。
     /// 精度：(parentChain constraint match) > (bundleID + axRole + identifier) > (bundleID + axRole + displayName) > (bundleID + axRole) > (axRole only)
-    func lookup(for ruleKey: RuleKey) -> ControlRule? {
+    func knob(for knobKey: KnobKey) -> Knob? {
         // 1. 最高优先级：携带 parentChain 且满足父链结构校验的专有规则
-        if let targetChain = ruleKey.parentChain, !targetChain.isEmpty {
-            let matched = rules.first(where: { rule in
-                guard let ruleChain = rule.key.parentChain, !ruleChain.isEmpty else { return false }
-                return rule.key.bundleID == ruleKey.bundleID &&
-                       rule.key.axRole == ruleKey.axRole &&
-                       Self.matchParentChain(ruleChain: ruleChain, targetChain: targetChain)
+        if let targetChain = knobKey.parentChain, !targetChain.isEmpty {
+            let matched = knobs.first(where: { item in
+                guard let knobChain = item.key.parentChain, !knobChain.isEmpty else { return false }
+                return item.key.bundleID == knobKey.bundleID &&
+                       item.key.axRole == knobKey.axRole &&
+                       Self.matchParentChain(knobChain: knobChain, targetChain: targetChain)
             })
             if let match = matched { return match }
         }
 
         // 2. 精确 ID 匹配
-        if let exact = rules.first(where: {
-            $0.key.bundleID == ruleKey.bundleID &&
-            $0.key.axRole == ruleKey.axRole &&
+        if let exact = knobs.first(where: {
+            $0.key.bundleID == knobKey.bundleID &&
+            $0.key.axRole == knobKey.axRole &&
             $0.key.identifier != nil &&
-            $0.key.identifier == ruleKey.identifier
+            $0.key.identifier == knobKey.identifier
         }) { return exact }
 
         // 3. DisplayName 匹配
-        if let byDisplayName = rules.first(where: {
-            $0.key.bundleID == ruleKey.bundleID &&
-            $0.key.axRole == ruleKey.axRole &&
+        if let byDisplayName = knobs.first(where: {
+            $0.key.bundleID == knobKey.bundleID &&
+            $0.key.axRole == knobKey.axRole &&
             $0.key.displayName != nil &&
-            ruleKey.displayName != nil &&
-            $0.key.displayName == ruleKey.displayName
+            knobKey.displayName != nil &&
+            $0.key.displayName == knobKey.displayName
         }) { return byDisplayName }
 
         // 4. 宽泛匹配（同 app 同 role，identifier/displayName/parentChain 均为 nil 或空）
-        if let broad = rules.first(where: {
-            $0.key.bundleID == ruleKey.bundleID &&
-            $0.key.axRole == ruleKey.axRole &&
+        if let broad = knobs.first(where: {
+            $0.key.bundleID == knobKey.bundleID &&
+            $0.key.axRole == knobKey.axRole &&
             $0.key.identifier == nil &&
             $0.key.displayName == nil &&
             ($0.key.parentChain == nil || $0.key.parentChain?.isEmpty == true)
         }) { return broad }
 
         // 5. 跨 app 匹配（只匹配 role）
-        if let byRole = rules.first(where: {
+        if let byRole = knobs.first(where: {
             $0.key.bundleID.isEmpty &&
-            $0.key.axRole == ruleKey.axRole
+            $0.key.axRole == knobKey.axRole
         }) { return byRole }
 
         // 6. App 级别未知角色兜底（若当前 app 存在 axRole == "unknown" 的兜底规则）
-        if !ruleKey.bundleID.isEmpty && ruleKey.axRole != "unknown" {
-            if let appFallback = rules.first(where: {
-                $0.key.bundleID == ruleKey.bundleID &&
+        if !knobKey.bundleID.isEmpty && knobKey.axRole != "unknown" {
+            if let appFallback = knobs.first(where: {
+                $0.key.bundleID == knobKey.bundleID &&
                 $0.key.axRole == "unknown" &&
                 $0.key.identifier == nil &&
                 $0.key.displayName == nil &&
@@ -592,9 +592,9 @@ final class RuleLibrary {
     }
 
     /// 校验规则父链约束是否是鼠标实际控件父链的子集序列（从叶到根匹配）
-    static func matchParentChain(ruleChain: [ParentNodeInfo], targetChain: [ParentNodeInfo]) -> Bool {
+    static func matchParentChain(knobChain: [ParentNodeInfo], targetChain: [ParentNodeInfo]) -> Bool {
         var targetIdx = 0
-        for ruleNode in ruleChain {
+        for ruleNode in knobChain {
             var found = false
             while targetIdx < targetChain.count {
                 let targetNode = targetChain[targetIdx]
@@ -610,14 +610,14 @@ final class RuleLibrary {
         return true
     }
 
-    func saveRule(_ rule: ControlRule) {
-        var loadedUserRules: [ControlRule] = []
+    func saveKnob(_ knob: Knob) {
+        var loadedUserKnobs: [Knob] = []
         
         // 1. 先尝试读取本地 my_knobs.json
         if FileManager.default.fileExists(atPath: myKnobsURL.path) {
             if let data = try? Data(contentsOf: myKnobsURL),
-               let existing = try? JSONDecoder().decode([ControlRule].self, from: data) {
-                loadedUserRules = existing
+               let existing = try? JSONDecoder().decode([Knob].self, from: data) {
+                loadedUserKnobs = existing
             }
         } else {
             // 确保目录存在
@@ -625,43 +625,43 @@ final class RuleLibrary {
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         }
         
-        // 2. 合并或追加：如果在 userRules 里有相同 key 的规则，进行替换，否则追加
-        if let index = loadedUserRules.firstIndex(where: { $0.key.matches(rule.key) }) {
-            loadedUserRules[index] = rule
+        // 2. 合并或追加：如果在 userRules 里有相同 key 的配置，进行替换，否则追加
+        if let index = loadedUserKnobs.firstIndex(where: { $0.key.matches(knob.key) }) {
+            loadedUserKnobs[index] = knob
         } else {
-            loadedUserRules.insert(rule, at: 0) // 高优先级追加
+            loadedUserKnobs.insert(knob, at: 0) // 高优先级追加
         }
         
         // 3. 序列化写回本地
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
-        if let data = try? encoder.encode(loadedUserRules) {
+        if let data = try? encoder.encode(loadedUserKnobs) {
             try? data.write(to: myKnobsURL)
         }
         
-        // 4. 重载内存规则并通知状态机更新
+        // 4. 重载内存配置并通知状态机更新
         self.reload()
         
         NotificationCenter.default.post(
-            name: NSNotification.Name("ControlRuleDidUpdate"),
+            name: NSNotification.Name("KnobDidUpdate"),
             object: nil,
-            userInfo: ["rule": rule]
+            userInfo: ["knob": knob]
         )
     }
 
-    private func loadKnobs(from url: URL) -> [ControlRule]? {
+    private func loadKnobs(from url: URL) -> [Knob]? {
         guard FileManager.default.fileExists(atPath: url.path),
               let data = try? Data(contentsOf: url) else { return nil }
         let decoder = JSONDecoder()
-        return try? decoder.decode([ControlRule].self, from: data)
+        return try? decoder.decode([Knob].self, from: data)
     }
 }
 
-// 追加到 RuleLibrary（仅测试用）
+// 追加到 KnobCustomizer（仅测试用）
 #if DEBUG
-extension RuleLibrary {
-    func injectRulesForTesting(_ rules: [ControlRule]) {
-        self.rules = rules
+extension KnobCustomizer {
+    func injectKnobsForTesting(_ knobs: [Knob]) {
+        self.knobs = knobs
     }
 }
 #endif

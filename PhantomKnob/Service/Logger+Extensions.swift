@@ -11,6 +11,6 @@ extension PKLogger {
     static let app = os.Logger(subsystem: "com.phantomknob", category: "app")
     static let settings = os.Logger(subsystem: "com.phantomknob", category: "settings")
     static let cloudSync = os.Logger(subsystem: "com.phantomknob", category: "cloudSync")
-    static let ruleLibrary = os.Logger(subsystem: "com.phantomknob", category: "ruleLibrary")
+    static let knobCustomizer = os.Logger(subsystem: "com.phantomknob", category: "knobCustomizer")
     static let language = os.Logger(subsystem: "com.phantomknob", category: "language")
 }
