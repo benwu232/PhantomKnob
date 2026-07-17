@@ -46,6 +46,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     
     private let featureGate: FeatureGate
     private var activationWorkItem: DispatchWorkItem?
+    private var popoverCountdownWorkItem: DispatchWorkItem?
     private var sessionTimer: Timer?
     var sessionTimeRemaining: Double = 0.0
 
@@ -136,6 +137,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 guard let self = self else { return }
                 self.activationWorkItem?.cancel()
                 self.activationWorkItem = nil
+                self.popoverCountdownWorkItem?.cancel()
+                self.popoverCountdownWorkItem = nil
+                self.statusBarController.dismissFreePopover()
                 self.sessionTimer?.invalidate()
                 self.sessionTimer = nil
                 self.transition(to: .inactive)
@@ -167,6 +171,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             PKLogger.knob.debug("Cancelling activation delay")
             activationWorkItem?.cancel()
             activationWorkItem = nil
+            popoverCountdownWorkItem?.cancel()
+            popoverCountdownWorkItem = nil
+            statusBarController.dismissFreePopover()
             statusBarController.updateState(.inactive)
             return
         }
@@ -193,9 +200,18 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             if delay > 0.0 {
                 PKLogger.knob.debug("Scheduling activation after delay of \(delay)s")
                 statusBarController.updateStateActivating(secondsRemaining: delay)
+                statusBarController.showFreeActivatingPopover(secondsRemaining: delay)
+                
+                let countdownItem = DispatchWorkItem { [weak self] in
+                    self?.statusBarController.showFreeActivatingPopover(secondsRemaining: delay - 1.0)
+                }
+                popoverCountdownWorkItem = countdownItem
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: countdownItem)
                 
                 let workItem = DispatchWorkItem { [weak self] in
                     guard let self = self else { return }
+                    self.popoverCountdownWorkItem?.cancel()
+                    self.popoverCountdownWorkItem = nil
                     self.activationWorkItem = nil
                     self.completeActivation()
                 }
@@ -209,6 +225,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             
             activationWorkItem?.cancel()
             activationWorkItem = nil
+            popoverCountdownWorkItem?.cancel()
+            popoverCountdownWorkItem = nil
+            statusBarController.dismissFreePopover()
             
             sessionTimer?.invalidate()
             sessionTimer = nil
@@ -228,6 +247,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     private func completeActivation() {
         PKLogger.knob.debug("Transitioning to activated")
         transition(to: .activated)
+        statusBarController.dismissFreePopover()
         
         // 启动后台多点触控捕获
         startMultitouch()
@@ -252,6 +272,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             if self.sessionTimeRemaining <= 0 {
                 PKLogger.knob.debug("Session limit reached. Automatically deactivating.")
                 self.toggleMode()
+                self.statusBarController.showFreeExpiredPopover()
             }
         }
     }
