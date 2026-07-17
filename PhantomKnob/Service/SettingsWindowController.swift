@@ -52,6 +52,15 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         NotificationCenter.default.post(name: NSNotification.Name("SettingsPanelDidShow"), object: nil)
     }
     
+    func show(tab: SettingsTab) {
+        show()
+        NotificationCenter.default.post(
+            name: NSNotification.Name("SettingsSelectTab"),
+            object: nil,
+            userInfo: ["tab": tab]
+        )
+    }
+    
     func hide() {
         window?.orderOut(nil)
         removeClickMonitor()

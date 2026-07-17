@@ -104,6 +104,13 @@ struct SettingsView: View {
         .onAppear {
             isPinned = SettingsWindowController.shared.isPinned
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("SettingsSelectTab"))) { notification in
+            if let tab = notification.userInfo?["tab"] as? SettingsTab {
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    self.activeTab = tab
+                }
+            }
+        }
     }
 }
 
