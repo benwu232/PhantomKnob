@@ -4,23 +4,23 @@ import XCTest
 
 final class InputTranslationTests: XCTestCase {
 
-    // MARK: - RuleKey matching
+    // MARK: - KnobKey matching
 
-    func testRuleKeyExactMatch() {
-        let key = RuleKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: "timeline")
-        let candidate = RuleKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: "timeline")
+    func testKnobKeyExactMatch() {
+        let key = KnobKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: "timeline")
+        let candidate = KnobKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: "timeline")
         XCTAssertTrue(key.matches(candidate))
     }
 
-    func testRuleKeyNilIdentifierMatchesAll() {
-        let broadRule = RuleKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: nil)
-        let specific  = RuleKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: "timeline")
-        XCTAssertTrue(broadRule.matches(specific))
+    func testKnobKeyNilIdentifierMatchesAll() {
+        let broadKnob = KnobKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: nil)
+        let specific  = KnobKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: "timeline")
+        XCTAssertTrue(broadKnob.matches(specific))
     }
 
-    func testRuleKeyMismatch() {
-        let a = RuleKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: nil)
-        let b = RuleKey(bundleID: "com.apple.QuickTime", axRole: "AXSlider", identifier: nil)
+    func testKnobKeyMismatch() {
+        let a = KnobKey(bundleID: "com.apple.FinalCut", axRole: "AXSlider", identifier: nil)
+        let b = KnobKey(bundleID: "com.apple.QuickTime", axRole: "AXSlider", identifier: nil)
         XCTAssertFalse(a.matches(b))
     }
 
@@ -33,16 +33,16 @@ final class InputTranslationTests: XCTestCase {
     }
 
     func testDefaultScaleIsOne() {
-        let rule = ControlRule(
-            key: RuleKey(bundleID: "x", axRole: "AXSlider", identifier: nil),
+        let knob = Knob(
+            key: KnobKey(bundleID: "x", axRole: "AXSlider", identifier: nil),
             translation: .axWrite
         )
-        XCTAssertEqual(rule.scaleConfig?.resolve(), 1.0)
+        XCTAssertEqual(knob.scaleConfig?.resolve(), 1.0)
     }
 
-    // MARK: - DetectedTarget ruleKey
+    // MARK: - DetectedTarget knobKey
 
-    func testDetectedTargetRuleKey() {
+    func testDetectedTargetKnobKey() {
         let target = DetectedTarget(
             bundleID: "com.apple.FinalCut",
             axRole: "AXSlider",
@@ -51,9 +51,9 @@ final class InputTranslationTests: XCTestCase {
             element: nil,
             parentChain: []
         )
-        XCTAssertEqual(target.ruleKey.bundleID, "com.apple.FinalCut")
-        XCTAssertEqual(target.ruleKey.axRole, "AXSlider")
-        XCTAssertEqual(target.ruleKey.identifier, "timeline")
+        XCTAssertEqual(target.knobKey.bundleID, "com.apple.FinalCut")
+        XCTAssertEqual(target.knobKey.axRole, "AXSlider")
+        XCTAssertEqual(target.knobKey.identifier, "timeline")
     }
 }
 

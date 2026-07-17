@@ -63,29 +63,29 @@ final class CloudSyncManagerTests: XCTestCase {
         super.tearDown()
     }
     
-    func testCloudSyncManagerExternalRulesUpdate() throws {
+    func testCloudSyncManagerExternalKnobsUpdate() throws {
         // 1. 初始化
         let manager = CloudSyncManager.shared
         manager.start()
         
-        // 2. 模拟外部发来的自定义规则
-        let mockRule = ControlRule(
-            key: RuleKey(bundleID: "com.test.synced", axRole: "AXSlider"),
+        // 2. 模拟外部发来的自定义配置
+        let mockKnob = Knob(
+            key: KnobKey(bundleID: "com.test.synced", axRole: "AXSlider"),
             translation: .arrowKeyUpDown
         )
         let encoder = JSONEncoder()
-        let mockData = try encoder.encode([mockRule])
+        let mockData = try encoder.encode([mockKnob])
         
-        let expectation = self.expectation(description: "Rule library is reloaded when rules are synced from cloud")
+        let expectation = self.expectation(description: "Knob customizer is reloaded when knobs are synced from cloud")
         
         let observer = NotificationCenter.default.addObserver(
-            forName: NSNotification.Name("ControlRuleDidUpdate"),
+            forName: NSNotification.Name("KnobDidUpdate"),
             object: nil,
             queue: nil
         ) { _ in
-            // 再次查询库中是否存在云端注入的规则
-            let lookupKey = RuleKey(bundleID: "com.test.synced", axRole: "AXSlider")
-            let matched = RuleLibrary.shared.lookup(for: lookupKey)
+            // 再次查询库中是否存在云端注入的配置
+            let lookupKey = KnobKey(bundleID: "com.test.synced", axRole: "AXSlider")
+            let matched = KnobCustomizer.shared.knob(for: lookupKey)
             if matched?.translation == .arrowKeyUpDown {
                 expectation.fulfill()
             }
@@ -110,8 +110,8 @@ final class CloudSyncManagerTests: XCTestCase {
         NotificationCenter.default.removeObserver(observer)
         
         // 4. 清理本地模拟写入的文件
-        try? FileManager.default.removeItem(at: RuleLibrary.shared.myKnobsURL)
-        RuleLibrary.shared.reload()
+        try? FileManager.default.removeItem(at: KnobCustomizer.shared.myKnobsURL)
+        KnobCustomizer.shared.reload()
     }
     
     func testCloudSyncManagerExternalHotkeyUpdate() {

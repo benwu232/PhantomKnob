@@ -8,18 +8,18 @@ final class CustomKnobTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        originalMyKnobsURL = RuleLibrary.shared.myKnobsURL
+        originalMyKnobsURL = KnobCustomizer.shared.myKnobsURL
         let tempDir = NSTemporaryDirectory()
         let filename = "my_knobs_test_\(UUID().uuidString).json"
         tempMyKnobsURL = URL(fileURLWithPath: tempDir).appendingPathComponent(filename)
-        RuleLibrary.shared.myKnobsURL = tempMyKnobsURL
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.myKnobsURL = tempMyKnobsURL
+        KnobCustomizer.shared.reload()
     }
 
     override func tearDown() {
         try? FileManager.default.removeItem(at: tempMyKnobsURL)
-        RuleLibrary.shared.myKnobsURL = originalMyKnobsURL
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.myKnobsURL = originalMyKnobsURL
+        KnobCustomizer.shared.reload()
         
         // Clean up all open/visible test windows
         for window in NSApp.windows {
@@ -34,10 +34,10 @@ final class CustomKnobTests: XCTestCase {
         super.tearDown()
     }
 
-    func testControlRuleJSONSerializationSingle() throws {
+    func testKnobJSONSerializationSingle() throws {
         let single = SingleKnobConfig(unitPerDegree: 1.2, translation: .axWrite, clockwiseAction: "increase", minRadius: 12.0)
-        let rule = ControlRule(
-            key: RuleKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
+        let knob = Knob(
+            key: KnobKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
             themeColor: "#BF5AF2",
             configType: .single,
             singleConfig: single
@@ -46,10 +46,10 @@ final class CustomKnobTests: XCTestCase {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
         
-        let data = try encoder.encode(rule)
-        let decoded = try decoder.decode(ControlRule.self, from: data)
+        let data = try encoder.encode(knob)
+        let decoded = try decoder.decode(Knob.self, from: data)
         
-        XCTAssertEqual(decoded.key.bundleID, rule.key.bundleID)
+        XCTAssertEqual(decoded.key.bundleID, knob.key.bundleID)
         XCTAssertEqual(decoded.themeColor, "#BF5AF2")
         XCTAssertEqual(decoded.configType, .single)
         XCTAssertEqual(decoded.singleConfig, single)
@@ -71,13 +71,13 @@ final class CustomKnobTests: XCTestCase {
         XCTAssertNil(decoded.minRadius)
     }
     
-    func testControlRuleJSONSerializationDouble() throws {
+    func testKnobJSONSerializationDouble() throws {
         let inner = VirtualKnobConfig(minRadius: 5.0, maxRadius: 25.0, margin: 2.0, unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
         let outer = VirtualKnobConfig(minRadius: 27.0, maxRadius: 100.0, margin: 2.0, unitPerDegree: 2.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp")
         let doubleConfig = DoubleKnobConfig(inner: inner, outer: outer)
         
-        let rule = ControlRule(
-            key: RuleKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
+        let knob = Knob(
+            key: KnobKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
             themeColor: "#FF9F0A",
             configType: .double,
             doubleConfig: doubleConfig
@@ -86,17 +86,17 @@ final class CustomKnobTests: XCTestCase {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
         
-        let data = try encoder.encode(rule)
-        let decoded = try decoder.decode(ControlRule.self, from: data)
+        let data = try encoder.encode(knob)
+        let decoded = try decoder.decode(Knob.self, from: data)
         
         XCTAssertEqual(decoded.configType, .double)
         XCTAssertEqual(decoded.doubleConfig, doubleConfig)
     }
     
-    func testControlRuleJSONSerializationLinear() throws {
+    func testKnobJSONSerializationLinear() throws {
         let linear = LinearKnobConfig(minRadius: 5.0, maxRadius: 60.0, minScale: 0.2, maxScale: 3.0, translation: .scrollWheelHorizontal, clockwiseAction: "scrollRight")
-        let rule = ControlRule(
-            key: RuleKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
+        let knob = Knob(
+            key: KnobKey(bundleID: "test.app", axRole: "test.role", identifier: "test.id", displayName: "test.display"),
             themeColor: "#30D158",
             configType: .linear,
             linearConfig: linear
@@ -105,47 +105,47 @@ final class CustomKnobTests: XCTestCase {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
         
-        let data = try encoder.encode(rule)
-        let decoded = try decoder.decode(ControlRule.self, from: data)
+        let data = try encoder.encode(knob)
+        let decoded = try decoder.decode(Knob.self, from: data)
         
         XCTAssertEqual(decoded.configType, .linear)
         XCTAssertEqual(decoded.linearConfig, linear)
     }
     
-    func testRuleLibrarySaveAndMerge() {
-        let key = RuleKey(bundleID: "test.library.app", axRole: "test.role", identifier: "test.id", displayName: "test.display")
-        let initialRule = ControlRule(
+    func testKnobCustomizerSaveAndMerge() {
+        let key = KnobKey(bundleID: "test.library.app", axRole: "test.role", identifier: "test.id", displayName: "test.display")
+        let initialKnob = Knob(
             key: key,
             themeColor: "#0A84FF",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp")
         )
         
-        let expectation = self.expectation(description: "ControlRuleDidUpdate notification received")
+        let expectation = self.expectation(description: "KnobDidUpdate notification received")
         
-        var receivedRule: ControlRule?
-        let observer = NotificationCenter.default.addObserver(forName: NSNotification.Name("ControlRuleDidUpdate"), object: nil, queue: nil) { notification in
-            receivedRule = notification.userInfo?["rule"] as? ControlRule
+        var receivedKnob: Knob?
+        let observer = NotificationCenter.default.addObserver(forName: NSNotification.Name("KnobDidUpdate"), object: nil, queue: nil) { notification in
+            receivedKnob = notification.userInfo?["knob"] as? Knob
             expectation.fulfill()
         }
         
-        RuleLibrary.shared.saveRule(initialRule)
+        KnobCustomizer.shared.saveKnob(initialKnob)
         
         waitForExpectations(timeout: 2.0, handler: nil)
         NotificationCenter.default.removeObserver(observer)
         
-        XCTAssertNotNil(receivedRule)
-        XCTAssertEqual(receivedRule?.key.bundleID, key.bundleID)
-        XCTAssertEqual(receivedRule?.themeColor, "#0A84FF")
+        XCTAssertNotNil(receivedKnob)
+        XCTAssertEqual(receivedKnob?.key.bundleID, key.bundleID)
+        XCTAssertEqual(receivedKnob?.themeColor, "#0A84FF")
         
-        // Lookup rule in library
-        let found = RuleLibrary.shared.lookup(for: key)
+        // Lookup knob in customizer
+        let found = KnobCustomizer.shared.knob(for: key)
         XCTAssertNotNil(found)
         XCTAssertEqual(found?.themeColor, "#0A84FF")
     }
     
-    func testNSColorPanelColorChangeUpdatesRule() {
-        let key = RuleKey(bundleID: "test.color.app", axRole: "test.role", identifier: "test.id", displayName: "test.display")
+    func testNSColorPanelColorChangeUpdatesKnob() {
+        let key = KnobKey(bundleID: "test.color.app", axRole: "test.role", identifier: "test.id", displayName: "test.display")
         let target = DetectedTarget(
             bundleID: key.bundleID,
             axRole: key.axRole,
@@ -155,13 +155,13 @@ final class CustomKnobTests: XCTestCase {
             parentChain: []
         )
         
-        let initialRule = ControlRule(
+        let initialKnob = Knob(
             key: key,
             themeColor: "#000000",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp")
         )
-        RuleLibrary.shared.saveRule(initialRule)
+        KnobCustomizer.shared.saveKnob(initialKnob)
         
         let view = CustomizerHUDView(target: target)
         let hostingController = NSHostingController(rootView: view)
@@ -190,8 +190,8 @@ final class CustomKnobTests: XCTestCase {
         
         self.waitForExpectations(timeout: 5.0, handler: nil)
         
-        let updatedRule = RuleLibrary.shared.lookup(for: key)
-        XCTAssertEqual(updatedRule?.themeColor, "#FF0000")
+        let updatedKnob = KnobCustomizer.shared.knob(for: key)
+        XCTAssertEqual(updatedKnob?.themeColor, "#FF0000")
     }
     
     func testVirtualKnobConfigThemeColorCodable() throws {
@@ -223,12 +223,12 @@ final class CustomKnobTests: XCTestCase {
     }
     
     func testKnobStateManagerResolvesZoneThemeColor() {
-        let key = RuleKey(bundleID: "test.zone.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
+        let key = KnobKey(bundleID: "test.zone.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
         let inner = VirtualKnobConfig(minRadius: 5.0, maxRadius: 20.0, margin: 2.0, unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp", themeColor: "#30D158")
         let outer = VirtualKnobConfig(minRadius: 22.0, maxRadius: 100.0, margin: 2.0, unitPerDegree: 2.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", themeColor: "#FF9F0A")
-        let rule = ControlRule(key: key, themeColor: "#0A84FF", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
+        let knob = Knob(key: key, themeColor: "#0A84FF", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
         
-        RuleLibrary.shared.saveRule(rule)
+        KnobCustomizer.shared.saveKnob(knob)
         
         let manager = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -240,19 +240,19 @@ final class CustomKnobTests: XCTestCase {
         manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil, parentChain: [])
         
         // 触发规则重载
-        NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
+        NotificationCenter.default.post(name: NSNotification.Name("KnobDidUpdate"), object: nil, userInfo: ["knob": knob])
         
         // 验证在 inner zone (zoneIndex = 0) 时解析为绿色
-        let colorInner = manager.resolveThemeColor(for: rule, zoneIndex: 0)
+        let colorInner = manager.resolveThemeColor(for: knob, zoneIndex: 0)
         XCTAssertEqual(colorInner, "#30D158")
         
         // 验证在 outer zone (zoneIndex = 1) 时解析为橙色
-        let colorOuter = manager.resolveThemeColor(for: rule, zoneIndex: 1)
+        let colorOuter = manager.resolveThemeColor(for: knob, zoneIndex: 1)
         XCTAssertEqual(colorOuter, "#FF9F0A")
     }
     
     func testCustomizerHUDViewLoadsDefaultOrSavedSettings() {
-        let key = RuleKey(bundleID: "test.load.app", axRole: "test.role", identifier: "test.id", displayName: "test.display")
+        let key = KnobKey(bundleID: "test.load.app", axRole: "test.role", identifier: "test.id", displayName: "test.display")
         let target = DetectedTarget(
             bundleID: key.bundleID,
             axRole: key.axRole,
@@ -263,7 +263,7 @@ final class CustomKnobTests: XCTestCase {
         )
         
         // 1. 无保存设置时加载：默认值应为单旋钮
-        RuleLibrary.shared.injectRulesForTesting([])
+        KnobCustomizer.shared.injectKnobsForTesting([])
         
         var resolvedConfigType1: KnobConfigType? = nil
         var resolvedThemeColor1: String? = nil
@@ -294,9 +294,9 @@ final class CustomKnobTests: XCTestCase {
         // 2. 有保存设置时加载：验证能够正确读取并显示已保存的设置
         let inner = VirtualKnobConfig(minRadius: 5.0, maxRadius: 20.0, margin: 2.0, unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp", themeColor: "#30D158")
         let outer = VirtualKnobConfig(minRadius: 22.0, maxRadius: 100.0, margin: 2.0, unitPerDegree: 2.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", themeColor: "#FF9F0A")
-        let savedRule = ControlRule(key: key, themeColor: "#BF5AF2", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
+        let savedKnob = Knob(key: key, themeColor: "#BF5AF2", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
         
-        RuleLibrary.shared.injectRulesForTesting([savedRule])
+        KnobCustomizer.shared.injectKnobsForTesting([savedKnob])
         
         var resolvedConfigType2: KnobConfigType? = nil
         var resolvedThemeColor2: String? = nil
@@ -324,16 +324,16 @@ final class CustomKnobTests: XCTestCase {
         XCTAssertEqual(resolvedConfigType2, .double)
         XCTAssertEqual(resolvedThemeColor2, "#BF5AF2")
         
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.reload()
     }
     
     func testDoubleKnobConfigHysteresisRadiusAlignment() {
-        let key = RuleKey(bundleID: "test.align.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
+        let key = KnobKey(bundleID: "test.align.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
         let inner = VirtualKnobConfig(minRadius: 5.0, maxRadius: 25.0, margin: 2.0, unitPerDegree: 0.5, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp", themeColor: "#30D158")
         let outer = VirtualKnobConfig(minRadius: 25.0, maxRadius: 100.0, margin: 2.0, unitPerDegree: 2.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", themeColor: "#FF9F0A")
-        let rule = ControlRule(key: key, themeColor: "#0A84FF", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
+        let knob = Knob(key: key, themeColor: "#0A84FF", configType: .double, doubleConfig: DoubleKnobConfig(inner: inner, outer: outer))
         
-        RuleLibrary.shared.saveRule(rule)
+        KnobCustomizer.shared.saveKnob(knob)
         
         let manager = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -344,8 +344,8 @@ final class CustomKnobTests: XCTestCase {
         )
         manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil, parentChain: [])
         
-        // Load target and rule scale config
-        NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
+        // Load target and knob scale config
+        NotificationCenter.default.post(name: NSNotification.Name("KnobDidUpdate"), object: nil, userInfo: ["knob": knob])
         
         // 模拟 Multitouch Began
         manager.currentZoneIndex = 0
@@ -376,15 +376,15 @@ final class CustomKnobTests: XCTestCase {
         XCTAssertEqual(zoneIndex, 0)
         XCTAssertEqual(scale, 0.5)
         
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.reload()
     }
     
     func testSingleKnobConfigMinRadiusEnforcement() {
-        let key = RuleKey(bundleID: "test.single.min.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
+        let key = KnobKey(bundleID: "test.single.min.app", axRole: "AXSlider", identifier: "test", displayName: "Test")
         let single = SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp", minRadius: 12.0)
-        let rule = ControlRule(key: key, themeColor: "#0A84FF", configType: .single, singleConfig: single)
+        let knob = Knob(key: key, themeColor: "#0A84FF", configType: .single, singleConfig: single)
         
-        RuleLibrary.shared.saveRule(rule)
+        KnobCustomizer.shared.saveKnob(knob)
         
         let manager = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -395,7 +395,7 @@ final class CustomKnobTests: XCTestCase {
         )
         manager.currentTarget = DetectedTarget(bundleID: key.bundleID, axRole: key.axRole, identifier: key.identifier, displayName: key.displayName ?? "", element: nil, parentChain: [])
         
-        NotificationCenter.default.post(name: NSNotification.Name("ControlRuleDidUpdate"), object: nil, userInfo: ["rule": rule])
+        NotificationCenter.default.post(name: NSNotification.Name("KnobDidUpdate"), object: nil, userInfo: ["knob": knob])
         
         switch manager.activeScaleConfig {
         case .fixed(let val):
@@ -404,12 +404,12 @@ final class CustomKnobTests: XCTestCase {
             XCTFail("Should resolve to fixed scale")
         }
         
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.reload()
     }
     
     func testQuickTimeCustomizationToggleBug() {
-        let timelineKey = RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "timeline")
-        let volumeKey = RuleKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "volume")
+        let timelineKey = KnobKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "timeline")
+        let volumeKey = KnobKey(bundleID: "com.apple.QuickTimePlayerX", axRole: "AXSlider", displayName: "volume")
         
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let rulesURL = appSupport.appendingPathComponent("PhantomKnob/my_knobs.json")
@@ -427,10 +427,10 @@ final class CustomKnobTests: XCTestCase {
                 try? FileManager.default.copyItem(at: backupURL, to: rulesURL)
                 try? FileManager.default.removeItem(at: backupURL)
             }
-            RuleLibrary.shared.reload()
+            KnobCustomizer.shared.reload()
         }
         
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.reload()
         
         let timelineTarget = DetectedTarget(bundleID: timelineKey.bundleID, axRole: timelineKey.axRole, identifier: nil, displayName: "timeline", element: nil, parentChain: [])
         
@@ -442,7 +442,7 @@ final class CustomKnobTests: XCTestCase {
         
         let exp1 = self.expectation(description: "timeline save")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            let found = RuleLibrary.shared.lookup(for: timelineKey)
+            let found = KnobCustomizer.shared.knob(for: timelineKey)
             XCTAssertNotNil(found)
             XCTAssertEqual(found?.configType, .double)
             exp1.fulfill()
@@ -454,21 +454,21 @@ final class CustomKnobTests: XCTestCase {
         
         let exp2 = self.expectation(description: "volume save")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            let found = RuleLibrary.shared.lookup(for: volumeKey)
+            let found = KnobCustomizer.shared.knob(for: volumeKey)
             XCTAssertNotNil(found)
             XCTAssertEqual(found?.configType, .single)
             exp2.fulfill()
         }
         waitForExpectations(timeout: 2.0, handler: nil)
         
-        let timelineRuleAfterVolumeSave = RuleLibrary.shared.lookup(for: timelineKey)
-        XCTAssertEqual(timelineRuleAfterVolumeSave?.configType, .double)
+        let timelineKnobAfterVolumeSave = KnobCustomizer.shared.knob(for: timelineKey)
+        XCTAssertEqual(timelineKnobAfterVolumeSave?.configType, .double)
         
         hostingController.rootView = CustomizerHUDView(target: timelineTarget)
         
         let exp3 = self.expectation(description: "timeline reload")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            let found = RuleLibrary.shared.lookup(for: timelineKey)
+            let found = KnobCustomizer.shared.knob(for: timelineKey)
             XCTAssertNotNil(found)
             XCTAssertEqual(found?.configType, .double)
             exp3.fulfill()
@@ -477,16 +477,16 @@ final class CustomKnobTests: XCTestCase {
     }
 
     func testSelectiveFocusClickForKeyboardRequiredTranslation() {
-        let textFieldKey = RuleKey(bundleID: "com.test.text", axRole: "AXTextField", displayName: "TextField")
+        let textFieldKey = KnobKey(bundleID: "com.test.text", axRole: "AXTextField", displayName: "TextField")
         
         // 1. 测试用例 1：AXTextField，使用键盘控制（arrowKeyUpDown），应该触发模拟点击
-        let keyboardRule = ControlRule(
+        let keyboardKnob = Knob(
             key: textFieldKey,
             themeColor: "#0A84FF",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
         )
-        RuleLibrary.shared.saveRule(keyboardRule)
+        KnobCustomizer.shared.saveKnob(keyboardKnob)
         
         let manager1 = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -503,15 +503,15 @@ final class CustomKnobTests: XCTestCase {
         
         XCTAssertTrue(manager1.didSimulateClickForTest, "Should simulate click for AXTextField with arrowKeyUpDown translation")
         
-        // 2. 测试用例 2：AXStaticText，明确配置了专属 arrowKeyUpDown 规则，应该触发模拟点击
-        let staticTextKey = RuleKey(bundleID: "com.test.text", axRole: "AXStaticText", displayName: "StaticText")
-        let staticTextRule = ControlRule(
+        // 2. 测试用例 2：AXStaticText，明确配置了专属 arrowKeyUpDown 配置，应该触发模拟点击
+        let staticTextKey = KnobKey(bundleID: "com.test.text", axRole: "AXStaticText", displayName: "StaticText")
+        let staticTextKnob = Knob(
             key: staticTextKey,
             themeColor: "#0A84FF",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
         )
-        RuleLibrary.shared.saveRule(staticTextRule)
+        KnobCustomizer.shared.saveKnob(staticTextKnob)
         
         let manager2 = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -526,17 +526,17 @@ final class CustomKnobTests: XCTestCase {
         
         manager2.transition(to: .knobing(target: manager2.currentTarget!))
         
-        XCTAssertTrue(manager2.didSimulateClickForTest, "Should simulate click for AXStaticText with specific arrowKeyUpDown rule")
+        XCTAssertTrue(manager2.didSimulateClickForTest, "Should simulate click for AXStaticText with specific arrowKeyUpDown knob")
         
-        // 3. 测试用例 3：AXStaticText，仅匹配到 App 的全局 "unknown" 兜底规则，绝对不产生任何模拟点击
-        let fallbackTextKey = RuleKey(bundleID: "com.test.fallback", axRole: "AXStaticText", displayName: "StaticText")
-        let unknownRule = ControlRule(
-            key: RuleKey(bundleID: "com.test.fallback", axRole: "unknown"),
+        // 3. 测试用例 3：AXStaticText，仅匹配到 App 的全局 "unknown" 兜底配置，绝对不产生任何模拟点击
+        let fallbackTextKey = KnobKey(bundleID: "com.test.fallback", axRole: "AXStaticText", displayName: "StaticText")
+        let unknownKnob = Knob(
+            key: KnobKey(bundleID: "com.test.fallback", axRole: "unknown"),
             themeColor: "#0A84FF",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
         )
-        RuleLibrary.shared.saveRule(unknownRule)
+        KnobCustomizer.shared.saveKnob(unknownKnob)
         
         let manager3 = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -551,20 +551,20 @@ final class CustomKnobTests: XCTestCase {
         
         manager3.transition(to: .knobing(target: manager3.currentTarget!))
         
-        XCTAssertFalse(manager3.didSimulateClickForTest, "Should NOT simulate click for AXStaticText when only matching unknown fallback rule")
+        XCTAssertFalse(manager3.didSimulateClickForTest, "Should NOT simulate click for AXStaticText when only matching unknown fallback knob")
         
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.reload()
     }
     
     func testSimulateReturnKeyOnFocusRelease() {
-        let textFieldKey = RuleKey(bundleID: "com.test.focusrelease", axRole: "AXTextField", displayName: "TextField")
-        let keyboardRule = ControlRule(
+        let textFieldKey = KnobKey(bundleID: "com.test.focusrelease", axRole: "AXTextField", displayName: "TextField")
+        let keyboardKnob = Knob(
             key: textFieldKey,
             themeColor: "#0A84FF",
             configType: .single,
             singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .arrowKeyUpDown, clockwiseAction: "arrowUp")
         )
-        RuleLibrary.shared.saveRule(keyboardRule)
+        KnobCustomizer.shared.saveKnob(keyboardKnob)
         
         let manager = KnobStateManager(
             targetDetector: TargetDetector(),
@@ -587,7 +587,7 @@ final class CustomKnobTests: XCTestCase {
         manager.transition(to: .cooling(target: manager.currentTarget!))
         XCTAssertTrue(manager.didSimulateReturnForTest)
         
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.reload()
     }
     
     func testOptionHoldTemporaryToggle() {
@@ -639,4 +639,3 @@ final class CustomKnobTests: XCTestCase {
         XCTAssertEqual(manager.state, .inactive)
     }
 }
-

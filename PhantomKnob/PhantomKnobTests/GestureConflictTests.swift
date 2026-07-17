@@ -9,11 +9,11 @@ final class GestureConflictTests: XCTestCase {
     }
     
     override func tearDown() {
-        RuleLibrary.shared.reload()
+        KnobCustomizer.shared.reload()
         super.tearDown()
     }
     
-    func testIsAdjustableRuleLibraryMatch() {
+    func testIsAdjustableKnobCustomizerMatch() {
         let manager = KnobStateManager(
             targetDetector: TargetDetector(),
             gestureClassifier: GestureClassifier(),
@@ -22,11 +22,11 @@ final class GestureConflictTests: XCTestCase {
             touchHandler: GlobalTouchHandler()
         )
         
-        let rule = ControlRule(
-            key: RuleKey(bundleID: "com.test.adjustable", axRole: "unknown", identifier: nil, displayName: nil),
+        let knob = Knob(
+            key: KnobKey(bundleID: "com.test.adjustable", axRole: "unknown", identifier: nil, displayName: nil),
             translation: .scrollWheelVertical
         )
-        RuleLibrary.shared.injectRulesForTesting([rule])
+        KnobCustomizer.shared.injectKnobsForTesting([knob])
         
         let target = DetectedTarget(
             bundleID: "com.test.adjustable",
@@ -49,7 +49,7 @@ final class GestureConflictTests: XCTestCase {
             touchHandler: GlobalTouchHandler()
         )
         
-        RuleLibrary.shared.injectRulesForTesting([])
+        KnobCustomizer.shared.injectKnobsForTesting([])
         
         let target = DetectedTarget(
             bundleID: "com.test.nonadjustable",
@@ -83,11 +83,11 @@ final class GestureConflictTests: XCTestCase {
             touchHandler: GlobalTouchHandler()
         )
         
-        let rule = ControlRule(
-            key: RuleKey(bundleID: "com.test.intercepting", axRole: "AXSlider", displayName: "TestSlider"),
+        let knob = Knob(
+            key: KnobKey(bundleID: "com.test.intercepting", axRole: "AXSlider", displayName: "TestSlider"),
             translation: .scrollWheelVertical
         )
-        RuleLibrary.shared.injectRulesForTesting([rule])
+        KnobCustomizer.shared.injectKnobsForTesting([knob])
         
         // 1. 模拟激活状态下的双指触摸开始
         manager.transition(to: .activated)
