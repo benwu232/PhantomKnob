@@ -1346,7 +1346,7 @@
         }
       }
     },
-    "menu.license.premium" : {
+    "menu.license.pro" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {

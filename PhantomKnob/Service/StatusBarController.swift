@@ -139,14 +139,14 @@ class StatusBarController: ObservableObject {
         menu?.addItem(versionItem)
         updateVersionItem()
         
-        // 动态添加购买/升级 Premium 项目
+        // 动态添加购买/升级 Pro 项目
         let licenseState = LicenseManager.shared.currentState
         switch licenseState {
         case .trialing(let daysRemaining):
             if daysRemaining < 3 {
                 let buyItem = NSMenuItem(
-                    title: "🛒 Buy PhantomKnob Premium...",
-                    action: #selector(buyPremium),
+                    title: "🛒 Buy PhantomKnob Pro...",
+                    action: #selector(buyPro),
                     keyEquivalent: ""
                 )
                 buyItem.target = self
@@ -154,8 +154,8 @@ class StatusBarController: ObservableObject {
             }
         case .free:
             let buyItem = NSMenuItem(
-                title: "🛒 Upgrade to Premium...",
-                action: #selector(buyPremium),
+                title: "🛒 Upgrade to Pro...",
+                action: #selector(buyPro),
                 keyEquivalent: ""
             )
             buyItem.target = self
@@ -241,7 +241,7 @@ class StatusBarController: ObservableObject {
         #if DEBUG
         menu?.addItem(NSMenuItem.separator())
         let debugToggleItem = NSMenuItem(
-            title: "Toggle Free/Premium (Debug)",
+            title: "Toggle Free/Pro (Debug)",
             action: #selector(debugToggleLicense),
             keyEquivalent: "t"
         )
@@ -306,7 +306,7 @@ class StatusBarController: ObservableObject {
         let title: String
         switch licenseState {
         case .licensed:
-            title = String(localized: "menu.license.premium", defaultValue: "License: Premium")
+            title = String(localized: "menu.license.pro", defaultValue: "License: Pro")
         case .trialing(let days):
             let format = String(localized: "menu.license.trial", defaultValue: "License: Trial (%d days remaining)")
             title = String(format: format, days)
@@ -535,7 +535,7 @@ class StatusBarController: ObservableObject {
         setupMenu()
     }
     
-    @objc func buyPremium() {
+    @objc func buyPro() {
         if let url = URL(string: "https://phantomknob.com#buy") {
             NSWorkspace.shared.open(url)
         }

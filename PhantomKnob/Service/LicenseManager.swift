@@ -100,7 +100,7 @@ class LicenseManager {
     }
     
     var currentState: LicenseState {
-        if let receiptStr = storageRead("licenseReceipt"),
+        if let receiptStr = storageRead("proLicenseReceipt"),
            let receiptData = receiptStr.data(using: .utf8),
            let receipt = try? JSONDecoder().decode(LicenseReceipt.self, from: receiptData) {
             
@@ -118,8 +118,7 @@ class LicenseManager {
             }
         }
         
-        // 兼容原有的 licenseKey & licenseEmail 字段
-        if storageRead("licenseKey") != nil, storageRead("licenseEmail") != nil {
+        if storageRead("proLicenseKey") != nil, storageRead("proLicenseEmail") != nil {
             return .licensed
         }
         
@@ -127,11 +126,11 @@ class LicenseManager {
     }
 
     private func checkTrialStatus() -> LicenseState {
-        guard let trialStartDateStr = storageRead("trialStartDate"),
+        guard let trialStartDateStr = storageRead("proTrialStartDate"),
               let trialStartDate = formatter.date(from: trialStartDateStr) else {
             let now = currentDateProvider()
             let nowStr = formatter.string(from: now)
-            storageWrite("trialStartDate", nowStr)
+            storageWrite("proTrialStartDate", nowStr)
             return .trialing(daysRemaining: 14)
         }
         
@@ -156,15 +155,15 @@ class LicenseManager {
             return false
         }
         
-        storageWrite("licenseKey", licenseKey)
-        storageWrite("licenseEmail", email)
+        storageWrite("proLicenseKey", licenseKey)
+        storageWrite("proLicenseEmail", email)
         return true
     }
     
     func deactivate() {
-        storageWrite("licenseReceipt", nil)
-        storageWrite("licenseKey", nil)
-        storageWrite("licenseEmail", nil)
+        storageWrite("proLicenseReceipt", nil)
+        storageWrite("proLicenseKey", nil)
+        storageWrite("proLicenseEmail", nil)
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
     
@@ -199,7 +198,7 @@ class LicenseManager {
             }
             if self.verifyReceiptOffline(newReceipt) {
                 if let receiptStr = String(data: data, encoding: .utf8) {
-                    self.storageWrite("licenseReceipt", receiptStr)
+                    self.storageWrite("proLicenseReceipt", receiptStr)
                     NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
                 }
             }
@@ -236,9 +235,9 @@ class LicenseManager {
                 let receipt = try JSONDecoder().decode(LicenseReceipt.self, from: data)
                 if self.verifyReceiptOffline(receipt) {
                     if let receiptStr = String(data: data, encoding: .utf8) {
-                        self.storageWrite("licenseReceipt", receiptStr)
-                        self.storageWrite("licenseKey", receipt.licenseKey)
-                        self.storageWrite("licenseEmail", receipt.email)
+                        self.storageWrite("proLicenseReceipt", receiptStr)
+                        self.storageWrite("proLicenseKey", receipt.licenseKey)
+                        self.storageWrite("proLicenseEmail", receipt.email)
                         
                         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
                         DispatchQueue.main.async {
@@ -261,13 +260,13 @@ class LicenseManager {
     
     func debugToggleLicense() {
         if case .licensed = currentState {
-            storageWrite("licenseKey", nil)
-            storageWrite("licenseEmail", nil)
+            storageWrite("proLicenseKey", nil)
+            storageWrite("proLicenseEmail", nil)
             let expiredDate = Date().addingTimeInterval(-20 * 24 * 60 * 60)
-            storageWrite("trialStartDate", formatter.string(from: expiredDate))
+            storageWrite("proTrialStartDate", formatter.string(from: expiredDate))
         } else {
-            storageWrite("licenseKey", "DEBUG_KEY")
-            storageWrite("licenseEmail", "debug@example.com")
+            storageWrite("proLicenseKey", "DEBUG_KEY")
+            storageWrite("proLicenseEmail", "debug@example.com")
         }
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }

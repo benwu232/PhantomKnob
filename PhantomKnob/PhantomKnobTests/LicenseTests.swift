@@ -4,7 +4,7 @@ import XCTest
 class LicenseTests: XCTestCase {
     func testLicensedStateProperties() {
         let state = LicenseState.licensed
-        XCTAssertTrue(state.isPremiumActive)
+        XCTAssertTrue(state.isProActive)
         XCTAssertTrue(state.hasStyleCustomization)
         XCTAssertTrue(state.hasCloudSync)
         XCTAssertEqual(state.activationDelay, 0.0)
@@ -13,7 +13,7 @@ class LicenseTests: XCTestCase {
     
     func testTrialingStateProperties() {
         let state = LicenseState.trialing(daysRemaining: 10)
-        XCTAssertTrue(state.isPremiumActive)
+        XCTAssertTrue(state.isProActive)
         XCTAssertTrue(state.hasStyleCustomization)
         XCTAssertTrue(state.hasCloudSync)
         XCTAssertEqual(state.activationDelay, 0.0)
@@ -22,7 +22,7 @@ class LicenseTests: XCTestCase {
     
     func testFreeStateProperties() {
         let state = LicenseState.free
-        XCTAssertFalse(state.isPremiumActive)
+        XCTAssertFalse(state.isProActive)
         XCTAssertFalse(state.hasStyleCustomization)
         XCTAssertFalse(state.hasCloudSync)
         XCTAssertEqual(state.activationDelay, 2.0)

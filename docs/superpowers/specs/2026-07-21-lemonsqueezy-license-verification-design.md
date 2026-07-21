@@ -37,7 +37,7 @@ sequenceDiagram
     App->>App: 用本地内置的公钥进行数学验签
     App->>App: 校验收据内 UUID 是否与本机 UUID 匹配
     App->>Keychain: 将验证成功的加密收据存入 Keychain
-    App->>User: 提示“✨ 激活成功”并更新为 Premium 状态
+    App->>User: 提示“✨ 激活成功”并更新为 Pro 状态
 ```
 
 ---
@@ -87,14 +87,14 @@ struct LicenseReceipt: Codable {
 2. 处于试用期临界状态 (Trialing, 剩余天数 < 3 天)：
    ┌─────────────────────────────────────────┐
    │ ✦ 试用期: 还剩 2 天                     │
-   │ 🛒 购买专业版 (Buy Premium)...          │  <-- 动态新增
+   │ 🛒 购买专业版 (Buy Pro)...              │  <-- 动态新增
    │ ...                                     │
    └─────────────────────────────────────────┘
-
+ 
 3. 处于免费版 (Free Edition)：
    ┌─────────────────────────────────────────┐
    │ ✦ 许可证: 免费版                        │
-   │ 🛒 升级到专业版 (Get Premium)...         │  <-- 常驻
+   │ 🛒 升级到专业版 (Get Pro)...             │  <-- 常驻
    │ ...                                     │
    └─────────────────────────────────────────┘
 ```
@@ -126,9 +126,9 @@ struct LicenseReceipt: Codable {
 
 ### 4.3 [MODIFY] [StatusBarController.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Service/StatusBarController.swift)
 * 动态构建状态栏菜单项：
-  * 判断 `daysRemaining < 3` 时追加 `Buy Premium`。
-  * 处于 `.free` 状态时，常驻 `Upgrade to Premium`。
-* **[安全加固]**：将状态栏菜单中的 `Toggle Free/Premium (Debug)` 调试选项及绑定的快捷键（`⌘⌥T`）使用 `#if DEBUG` ... `#endif` 进行物理编译隔离，确保对外发布的 Release 包中无任何调试后门。
+  * 判断 `daysRemaining < 3` 时追加 `Buy Pro`。
+  * 处于 `.free` 状态时，常驻 `Upgrade to Pro`。
+* **[安全加固]**：将状态栏菜单中的 `Toggle Free/Pro (Debug)` 调试选项及绑定的快捷键（`⌘⌥T`）使用 `#if DEBUG` ... `#endif` 进行物理编译隔离，确保对外发布的 Release 包中无任何调试后门。
 
 ### 4.4 [MODIFY] [SettingsView.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/View/SettingsView.swift)
 * 更新 `About/License` 标签页，实现加载状态、成功庆祝、错误反馈的毛玻璃美学 UI。

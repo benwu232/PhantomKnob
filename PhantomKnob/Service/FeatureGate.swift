@@ -11,8 +11,8 @@ class FeatureGate {
         self.isShared = (licenseManager === LicenseManager.shared)
     }
     
-    var isPremiumActive: Bool {
-        return licenseManager.currentState.isPremiumActive
+    var isProActive: Bool {
+        return licenseManager.currentState.isProActive
     }
     
     var hasStyleCustomization: Bool {

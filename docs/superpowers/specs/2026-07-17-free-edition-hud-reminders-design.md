@@ -15,7 +15,7 @@ This document details the design and implementation plan for adding NSPopover-ba
    * 提示气泡内显示 `"免费版会话到期"`，并说明这是 15 分钟限制，引导用户按快捷键重新开启。
    * 气泡底部提供“升级至专业版”链接，点击后直接拉起设置窗口的 “About” 界面。
    * 气泡在展示 5 秒后自动关闭。
-3. **保留专业调性 (Maintain Premium Aesthetic)**:
+3. **保留专业调性 (Maintain Pro Aesthetic)**:
    * 气泡采用 macOS 原生的毛玻璃半透明材质，配合精细的 SVG 图标（锁/时钟）和深色渐变设计。
    * 气泡位置精确悬浮于状态栏图标正下方，不遮挡屏幕中央的生产力工作区。
 
@@ -27,7 +27,7 @@ This document details the design and implementation plan for adding NSPopover-ba
 
 ```mermaid
 graph TD
-    A[按下激活快捷键 ⌥⌘K] --> B{是否为 Premium?}
+    A[按下激活快捷键 ⌥⌘K] --> B{是否为 Pro?}
     B -- 是 --> C[直接激活手势]
     B -- 否 --> D[展示 Activation Popover]
     D --> E[倒计时 2s 递减并更新 UI]

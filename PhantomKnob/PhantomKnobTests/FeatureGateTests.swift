@@ -3,7 +3,7 @@ import XCTest
 
 class FeatureGateTests: XCTestCase {
     func testFeatureGateWithLicensedState() {
-        let mockStorage = ["licenseKey": "VALID-KEY", "licenseEmail": "user@example.com"]
+        let mockStorage = ["proLicenseKey": "VALID-KEY", "proLicenseEmail": "user@example.com"]
         let licenseManager = LicenseManager(
             currentDateProvider: { Date() },
             storageRead: { key in mockStorage[key] },
@@ -11,7 +11,7 @@ class FeatureGateTests: XCTestCase {
         )
         let gate = FeatureGate(licenseManager: licenseManager)
         
-        XCTAssertTrue(gate.isPremiumActive)
+        XCTAssertTrue(gate.isProActive)
         XCTAssertTrue(gate.hasStyleCustomization)
         XCTAssertTrue(gate.hasCloudSync)
         XCTAssertEqual(gate.activationDelay, 0.0)
@@ -21,7 +21,7 @@ class FeatureGateTests: XCTestCase {
     func testFeatureGateWithTrialingState() {
         let formatter = ISO8601DateFormatter()
         let startDateStr = formatter.string(from: Date())
-        let mockStorage = ["trialStartDate": startDateStr]
+        let mockStorage = ["proTrialStartDate": startDateStr]
         let licenseManager = LicenseManager(
             currentDateProvider: { Date() },
             storageRead: { key in mockStorage[key] },
@@ -29,7 +29,7 @@ class FeatureGateTests: XCTestCase {
         )
         let gate = FeatureGate(licenseManager: licenseManager)
         
-        XCTAssertTrue(gate.isPremiumActive)
+        XCTAssertTrue(gate.isProActive)
         XCTAssertTrue(gate.hasStyleCustomization)
         XCTAssertTrue(gate.hasCloudSync)
         XCTAssertEqual(gate.activationDelay, 0.0)
@@ -40,7 +40,7 @@ class FeatureGateTests: XCTestCase {
         // Force free state by having an expired trial date
         let formatter = ISO8601DateFormatter()
         let startDateStr = formatter.string(from: Date().addingTimeInterval(-16 * 24 * 60 * 60))
-        let mockStorage = ["trialStartDate": startDateStr]
+        let mockStorage = ["proTrialStartDate": startDateStr]
         let licenseManager = LicenseManager(
             currentDateProvider: { Date() },
             storageRead: { key in mockStorage[key] },
@@ -48,7 +48,7 @@ class FeatureGateTests: XCTestCase {
         )
         let gate = FeatureGate(licenseManager: licenseManager)
         
-        XCTAssertFalse(gate.isPremiumActive)
+        XCTAssertFalse(gate.isProActive)
         XCTAssertFalse(gate.hasStyleCustomization)
         XCTAssertFalse(gate.hasCloudSync)
         XCTAssertEqual(gate.activationDelay, 2.0)

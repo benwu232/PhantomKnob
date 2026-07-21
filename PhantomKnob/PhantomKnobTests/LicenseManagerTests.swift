@@ -35,14 +35,14 @@ class LicenseManagerTests: XCTestCase {
         }
         
         // It should have written the start date to storage
-        XCTAssertNotNil(mockStorage["trialStartDate"])
+        XCTAssertNotNil(mockStorage["proTrialStartDate"])
     }
     
     func testTrialProgressiveDays() {
         // First launch initializes trial start
         _ = licenseManager.currentState
         let formatter = ISO8601DateFormatter()
-        let startDateStr = mockStorage["trialStartDate"]!
+        let startDateStr = mockStorage["proTrialStartDate"]!
         let startDate = formatter.date(from: startDateStr)!
         
         // Move simulated date forward by 5 days
@@ -77,8 +77,8 @@ class LicenseManagerTests: XCTestCase {
         let success = licenseManager.activate(licenseKey: "TEST-LICENSE-KEY", email: "user@example.com")
         XCTAssertTrue(success)
         XCTAssertEqual(licenseManager.currentState, .licensed)
-        XCTAssertEqual(mockStorage["licenseKey"], "TEST-LICENSE-KEY")
-        XCTAssertEqual(mockStorage["licenseEmail"], "user@example.com")
+        XCTAssertEqual(mockStorage["proLicenseKey"], "TEST-LICENSE-KEY")
+        XCTAssertEqual(mockStorage["proLicenseEmail"], "user@example.com")
     }
     
     func testDeactivationRevertsToTrial() {
@@ -229,11 +229,11 @@ class LicenseManagerTests: XCTestCase {
         
         let encoder = JSONEncoder()
         let receiptJsonData = try! encoder.encode(receiptWithinGrace)
-        mockStorage["licenseReceipt"] = String(data: receiptJsonData, encoding: .utf8)
+        mockStorage["proLicenseReceipt"] = String(data: receiptJsonData, encoding: .utf8)
         
         // 我们需要把 trial 模拟为过期，排除干扰
         let formatter = ISO8601DateFormatter()
-        mockStorage["trialStartDate"] = formatter.string(from: Date().addingTimeInterval(-20 * 24 * 60 * 60))
+        mockStorage["proTrialStartDate"] = formatter.string(from: Date().addingTimeInterval(-20 * 24 * 60 * 60))
         
         // 此时由于 20 < 22 天，应当仍处于 .licensed 状态
         XCTAssertEqual(manager.currentState, .licensed)
@@ -253,7 +253,7 @@ class LicenseManagerTests: XCTestCase {
         )
         
         let receiptJsonDataExpired = try! encoder.encode(receiptExpired)
-        mockStorage["licenseReceipt"] = String(data: receiptJsonDataExpired, encoding: .utf8)
+        mockStorage["proLicenseReceipt"] = String(data: receiptJsonDataExpired, encoding: .utf8)
         
         // 此时已经超过宽限期，应当退回到 trial 过期状态即 .free
         XCTAssertEqual(manager.currentState, .free)

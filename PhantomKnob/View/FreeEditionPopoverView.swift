@@ -63,7 +63,7 @@ struct FreeEditionPopoverView: View {
                 .padding(.vertical, 2)
                 
                 Button(action: onUpgrade) {
-                    Text(String(localized: "popover.upgrade", defaultValue: "Get Premium for Unlimited Time ➔"))
+                    Text(String(localized: "popover.upgrade", defaultValue: "Get Pro for Unlimited Time ➔"))
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.cyan)
                         .underline()

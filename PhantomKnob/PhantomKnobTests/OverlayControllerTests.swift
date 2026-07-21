@@ -65,7 +65,7 @@ class OverlayControllerTests: XCTestCase {
     }
     
     func testOverlayUpdateThemeColor() {
-        class PremiumFeatureGate: FeatureGate {
+        class ProFeatureGate: FeatureGate {
             override var hasStyleCustomization: Bool { return true }
         }
         let mockStorage: [String: String] = [:]
@@ -74,7 +74,7 @@ class OverlayControllerTests: XCTestCase {
             storageRead: { key in mockStorage[key] },
             storageWrite: { _, _ in }
         )
-        let gate = PremiumFeatureGate(licenseManager: licenseManager)
+        let gate = ProFeatureGate(licenseManager: licenseManager)
         let controller = OverlayController(featureGate: gate)
         
         controller.show(at: .zero, targetName: "Test", scale: 1.0, themeColor: "#000000")

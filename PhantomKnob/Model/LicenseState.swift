@@ -14,7 +14,7 @@ public enum LicenseState: Equatable {
         }
     }
     
-    public var isPremiumActive: Bool {
+    public var isProActive: Bool {
         switch self {
         case .trialing, .licensed:
             return true

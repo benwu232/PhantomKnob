@@ -412,12 +412,12 @@ section {
     backdrop-filter: blur(10px);
 }
 
-.pricing-card.premium {
+.pricing-card.pro {
     border-color: rgba(191, 90, 242, 0.4);
     box-shadow: 0 15px 35px rgba(191, 90, 242, 0.08);
 }
 
-.pricing-card.premium::before {
+.pricing-card.pro::before {
     content: '';
     position: absolute;
     top: 0;
@@ -501,7 +501,7 @@ section {
     color: var(--accent-blue);
 }
 
-.pricing-card.premium .plan-features li svg {
+.pricing-card.pro .plan-features li svg {
     color: var(--accent-purple);
 }
 

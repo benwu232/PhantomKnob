@@ -231,28 +231,28 @@ final class StatusBarControllerTests: XCTestCase {
         let controller = StatusBarController()
         
         // 保存初始状态以供清理
-        let originalKey = UserDefaults.app.string(forKey: "licenseKey")
-        let originalEmail = UserDefaults.app.string(forKey: "licenseEmail")
-        let originalTrialStart = UserDefaults.app.string(forKey: "trialStartDate")
+        let originalKey = UserDefaults.app.string(forKey: "proLicenseKey")
+        let originalEmail = UserDefaults.app.string(forKey: "proLicenseEmail")
+        let originalTrialStart = UserDefaults.app.string(forKey: "proTrialStartDate")
         
         // 强制进入 Licensed 状态
-        UserDefaults.app.set("DEBUG_KEY", forKey: "licenseKey")
-        UserDefaults.app.set("debug@example.com", forKey: "licenseEmail")
+        UserDefaults.app.set("DEBUG_KEY", forKey: "proLicenseKey")
+        UserDefaults.app.set("debug@example.com", forKey: "proLicenseEmail")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
         XCTAssertEqual(LicenseManager.shared.currentState, .licensed)
         
-        // Premium 激活状态
+        // Pro 激活状态
         controller.updateState(.activated)
         if let button = controller.statusItem?.button {
             XCTAssertNotNil(button.image)
         }
         
         // 强制进入 Free 状态
-        UserDefaults.app.removeObject(forKey: "licenseKey")
-        UserDefaults.app.removeObject(forKey: "licenseEmail")
+        UserDefaults.app.removeObject(forKey: "proLicenseKey")
+        UserDefaults.app.removeObject(forKey: "proLicenseEmail")
         let expiredDate = Date().addingTimeInterval(-20 * 24 * 60 * 60)
         let formatter = ISO8601DateFormatter()
-        UserDefaults.app.set(formatter.string(from: expiredDate), forKey: "trialStartDate")
+        UserDefaults.app.set(formatter.string(from: expiredDate), forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
         XCTAssertEqual(LicenseManager.shared.currentState, .free)
         
@@ -263,9 +263,9 @@ final class StatusBarControllerTests: XCTestCase {
         }
         
         // 清理：恢复初始状态
-        UserDefaults.app.set(originalKey, forKey: "licenseKey")
-        UserDefaults.app.set(originalEmail, forKey: "licenseEmail")
-        UserDefaults.app.set(originalTrialStart, forKey: "trialStartDate")
+        UserDefaults.app.set(originalKey, forKey: "proLicenseKey")
+        UserDefaults.app.set(originalEmail, forKey: "proLicenseEmail")
+        UserDefaults.app.set(originalTrialStart, forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
 
@@ -285,46 +285,46 @@ final class StatusBarControllerTests: XCTestCase {
         let controller = StatusBarController()
         
         // 备份原来的 License 状态
-        let originalKey = UserDefaults.app.string(forKey: "licenseKey")
-        let originalEmail = UserDefaults.app.string(forKey: "licenseEmail")
-        let originalTrialStart = UserDefaults.app.string(forKey: "trialStartDate")
+        let originalKey = UserDefaults.app.string(forKey: "proLicenseKey")
+        let originalEmail = UserDefaults.app.string(forKey: "proLicenseEmail")
+        let originalTrialStart = UserDefaults.app.string(forKey: "proTrialStartDate")
         
         let formatter = ISO8601DateFormatter()
         
-        // 1. 模拟试用期还剩 2 天 (天数 < 3)，预期有 buyPremium 动作
+        // 1. 模拟试用期还剩 2 天 (天数 < 3)，预期有 buyPro 动作
         let trialStartDateLess3 = Date().addingTimeInterval(-12 * 24 * 60 * 60) // 12天前，剩2天
-        UserDefaults.app.removeObject(forKey: "licenseKey")
-        UserDefaults.app.removeObject(forKey: "licenseEmail")
-        UserDefaults.app.removeObject(forKey: "licenseReceipt")
-        UserDefaults.app.set(formatter.string(from: trialStartDateLess3), forKey: "trialStartDate")
+        UserDefaults.app.removeObject(forKey: "proLicenseKey")
+        UserDefaults.app.removeObject(forKey: "proLicenseEmail")
+        UserDefaults.app.removeObject(forKey: "proLicenseReceipt")
+        UserDefaults.app.set(formatter.string(from: trialStartDateLess3), forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
         
         controller.rebuildMenu() // 重建菜单
         var actions = controller.menu?.items.compactMap { $0.action } ?? []
-        XCTAssertTrue(actions.contains(Selector(("buyPremium"))))
+        XCTAssertTrue(actions.contains(Selector(("buyPro"))))
         
-        // 2. 模拟试用期还剩 10 天 (天数 >= 3)，预期无 buyPremium 动作
+        // 2. 模拟试用期还剩 10 天 (天数 >= 3)，预期无 buyPro 动作
         let trialStartDateMore3 = Date().addingTimeInterval(-4 * 24 * 60 * 60) // 4天前，剩10天
-        UserDefaults.app.set(formatter.string(from: trialStartDateMore3), forKey: "trialStartDate")
+        UserDefaults.app.set(formatter.string(from: trialStartDateMore3), forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
         
         controller.rebuildMenu() // 重建菜单
         actions = controller.menu?.items.compactMap { $0.action } ?? []
-        XCTAssertFalse(actions.contains(Selector(("buyPremium"))))
+        XCTAssertFalse(actions.contains(Selector(("buyPro"))))
         
-        // 3. 模拟 Free 状态，预期有 buyPremium 动作
+        // 3. 模拟 Free 状态，预期有 buyPro 动作
         let trialStartDateExpired = Date().addingTimeInterval(-20 * 24 * 60 * 60) // 20天前，已过期
-        UserDefaults.app.set(formatter.string(from: trialStartDateExpired), forKey: "trialStartDate")
+        UserDefaults.app.set(formatter.string(from: trialStartDateExpired), forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
         
         controller.rebuildMenu()
         actions = controller.menu?.items.compactMap { $0.action } ?? []
-        XCTAssertTrue(actions.contains(Selector(("buyPremium"))))
+        XCTAssertTrue(actions.contains(Selector(("buyPro"))))
         
         // 清理：恢复初始状态
-        UserDefaults.app.set(originalKey, forKey: "licenseKey")
-        UserDefaults.app.set(originalEmail, forKey: "licenseEmail")
-        UserDefaults.app.set(originalTrialStart, forKey: "trialStartDate")
+        UserDefaults.app.set(originalKey, forKey: "proLicenseKey")
+        UserDefaults.app.set(originalEmail, forKey: "proLicenseEmail")
+        UserDefaults.app.set(originalTrialStart, forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
 }

@@ -465,11 +465,11 @@ struct AboutView: View {
             
             if case .licensed = licenseState {
                 VStack(spacing: 8) {
-                    Text(String(localized: "about.license.premium", defaultValue: "✨ Premium Edition Active"))
+                    Text(String(localized: "about.license.pro", defaultValue: "✨ Pro Edition Active"))
                         .font(.system(size: 13, weight: .bold))
                         .foregroundColor(.orange)
                     
-                    if let savedEmail = UserDefaults.app.string(forKey: "licenseEmail") {
+                    if let savedEmail = UserDefaults.app.string(forKey: "proLicenseEmail") {
                         Text(String(format: String(localized: "about.license.email", defaultValue: "Licensed to: %@"), maskEmail(savedEmail)))
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.6))
@@ -545,7 +545,7 @@ struct AboutView: View {
                                         .controlSize(.small)
                                         .padding(.trailing, 4)
                                 }
-                                Text(String(localized: "about.btn.activate", defaultValue: "Activate Premium"))
+                                Text(String(localized: "about.btn.activate", defaultValue: "Activate Pro"))
                             }
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.white)
