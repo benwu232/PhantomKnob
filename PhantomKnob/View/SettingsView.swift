@@ -111,6 +111,11 @@ struct SettingsView: View {
                 }
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("FocusLicenseActivation"))) { _ in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                self.activeTab = .about
+            }
+        }
     }
 }
 
@@ -394,6 +399,11 @@ struct GeneralSettingsView: View {
 // MARK: - About Tab
 struct AboutView: View {
     @State private var licenseState: LicenseState = LicenseManager.shared.currentState
+    @State private var email: String = ""
+    @State private var licenseKey: String = ""
+    @State private var isActivating: Bool = false
+    @State private var errorMessage: String? = nil
+    @FocusState private var isEmailFocused: Bool
     
     private var versionString: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
@@ -410,31 +420,165 @@ struct AboutView: View {
         }
     }
 
+    private func maskEmail(_ email: String) -> String {
+        let parts = email.split(separator: "@")
+        guard parts.count == 2 else { return email }
+        let name = String(parts[0])
+        let domain = String(parts[1])
+        if name.count <= 2 {
+            return "\(name.prefix(1))***@\(domain)"
+        } else {
+            return "\(name.prefix(1))***\(name.suffix(1))@\(domain)"
+        }
+    }
+
     var body: some View {
         VStack(spacing: 16) {
-            Spacer()
             Image(nsImage: appIcon)
                 .resizable()
-                .frame(width: 72, height: 72)
-                .cornerRadius(16)
+                .frame(width: 64, height: 64)
+                .cornerRadius(14)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 14)
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
+            
             VStack(spacing: 4) {
                 Text("PhantomKnob")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.white)
                 Text(versionString)
-                    .font(.system(size: 12))
+                    .font(.system(size: 11))
                     .foregroundColor(.white.opacity(0.5))
             }
             
             Text(String(localized: "about.description", defaultValue: "Use natural two-finger rotation gestures to precisely control\nsliders and dials in video or audio editors, just like a physical dial."))
                 .multilineTextAlignment(.center)
-                .font(.system(size: 13))
+                .font(.system(size: 12))
                 .foregroundColor(.white.opacity(0.7))
-                .lineSpacing(4)
+                .lineSpacing(3)
+                .padding(.horizontal, 16)
+            
+            Divider()
+                .background(Color.white.opacity(0.1))
+                .padding(.horizontal, 20)
+            
+            if case .licensed = licenseState {
+                VStack(spacing: 8) {
+                    Text(String(localized: "about.license.premium", defaultValue: "✨ Premium Edition Active"))
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.orange)
+                    
+                    if let savedEmail = UserDefaults.app.string(forKey: "licenseEmail") {
+                        Text(String(format: String(localized: "about.license.email", defaultValue: "Licensed to: %@"), maskEmail(savedEmail)))
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                    
+                    Button(action: {
+                        LicenseManager.shared.deactivate()
+                    }) {
+                        Text(String(localized: "about.license.deactivate", defaultValue: "Deactivate License"))
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.red.opacity(0.8))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 4)
+                            .background(Color.red.opacity(0.12))
+                            .cornerRadius(4)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.red.opacity(0.2), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 4)
+                }
+                .padding(.vertical, 4)
+            } else {
+                VStack(spacing: 10) {
+                    HStack(spacing: 8) {
+                        TextField(String(localized: "about.email.placeholder", defaultValue: "Email address"), text: $email)
+                            .textFieldStyle(.plain)
+                            .focused($isEmailFocused)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .background(Color.white.opacity(0.08))
+                            .cornerRadius(6)
+                            .disabled(isActivating)
+                        
+                        SecureField(String(localized: "about.key.placeholder", defaultValue: "License Key"), text: $licenseKey)
+                            .textFieldStyle(.plain)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .background(Color.white.opacity(0.08))
+                            .cornerRadius(6)
+                            .disabled(isActivating)
+                    }
+                    
+                    if let error = errorMessage {
+                        Text(error)
+                            .font(.system(size: 11))
+                            .foregroundColor(.red)
+                    }
+                    
+                    HStack(spacing: 12) {
+                        Button(action: {
+                            guard !email.isEmpty && !licenseKey.isEmpty else {
+                                errorMessage = "请完整输入邮箱和授权码"
+                                return
+                            }
+                            isActivating = true
+                            errorMessage = nil
+                            LicenseManager.shared.activateOnline(licenseKey: licenseKey, email: email) { success, error in
+                                isActivating = false
+                                if success {
+                                    email = ""
+                                    licenseKey = ""
+                                } else {
+                                    errorMessage = error ?? "激活失败"
+                                }
+                            }
+                        }) {
+                            HStack {
+                                if isActivating {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                        .padding(.trailing, 4)
+                                }
+                                Text(String(localized: "about.btn.activate", defaultValue: "Activate Premium"))
+                            }
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
+                            .background(isActivating ? Color.gray.opacity(0.3) : Color.blue)
+                            .cornerRadius(6)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isActivating)
+                        
+                        Button(action: {
+                            if let url = URL(string: "https://phantomknob.com#buy") {
+                                NSWorkspace.shared.open(url)
+                            }
+                        }) {
+                            Text(String(localized: "about.btn.buy", defaultValue: "Get License Key ➔"))
+                                .font(.system(size: 12))
+                                .foregroundColor(.blue)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isActivating)
+                    }
+                }
+                .frame(maxWidth: 320)
+                .padding(.top, 4)
+            }
+            
+            Divider()
+                .background(Color.white.opacity(0.1))
+                .padding(.horizontal, 20)
             
             Button(action: {
                 SettingsWindowController.shared.hide()
@@ -445,20 +589,23 @@ struct AboutView: View {
                     .foregroundColor(.blue)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 6)
-                    .background(Color.blue.opacity(0.15))
+                    .background(Color.blue.opacity(0.12))
                     .cornerRadius(6)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                            .stroke(Color.blue.opacity(0.2), lineWidth: 1)
                     )
             }
             .buttonStyle(.plain)
-            
-            Spacer()
         }
-        .frame(minHeight: 260)
+        .frame(minHeight: 320)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LicenseStateDidChange"))) { _ in
             self.licenseState = LicenseManager.shared.currentState
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("FocusLicenseActivation"))) { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                isEmailFocused = true
+            }
         }
     }
 }
