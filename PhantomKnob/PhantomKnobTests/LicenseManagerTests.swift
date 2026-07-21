@@ -1,4 +1,5 @@
 import XCTest
+import CryptoKit
 @testable import PhantomKnob
 
 class LicenseManagerTests: XCTestCase {
@@ -109,5 +110,83 @@ class LicenseManagerTests: XCTestCase {
         licenseManager.debugToggleLicense()
         XCTAssertEqual(licenseManager.currentState, .free)
         #endif
+    }
+    
+    func testOfflineReceiptVerification() {
+        // 1. 生成测试 Ed25519 私钥和公钥
+        let testPrivateKey = Curve25519.Signing.PrivateKey()
+        let testPublicKey = testPrivateKey.publicKey
+        let pubKeyData = testPublicKey.rawRepresentation
+        
+        // 2. 创建一个基于测试公钥的 LicenseManager 实例
+        let manager = LicenseManager(
+            currentDateProvider: { self.simulatedDate },
+            storageRead: { key in self.mockStorage[key] },
+            storageWrite: { key, value in
+                if let val = value {
+                    self.mockStorage[key] = val
+                } else {
+                    self.mockStorage.removeValue(forKey: key)
+                }
+            },
+            publicKeyRepresentation: pubKeyData
+        )
+        
+        let key = "TEST-LICENSE-KEY"
+        let email = "user@example.com"
+        let uuid = manager.getDeviceUUID()
+        let now = Date()
+        
+        // 3. 用测试私钥对消息签名
+        let message = "\(key)|\(email)|\(uuid)|\(Int(now.timeIntervalSince1970))|\(Int(now.timeIntervalSince1970))"
+        let messageData = message.data(using: .utf8)!
+        let signature = try! testPrivateKey.signature(for: messageData).base64EncodedString()
+        
+        let receipt = LicenseReceipt(
+            licenseKey: key,
+            email: email,
+            deviceUUID: uuid,
+            activatedAt: now,
+            lastVerifiedAt: now,
+            signature: signature
+        )
+        
+        // 4. 验证合法的签名和 UUID 应该通过
+        XCTAssertTrue(manager.verifyReceiptOffline(receipt))
+        
+        // 5. 验证篡改的邮箱签名应该失败
+        let temperedReceipt = LicenseReceipt(
+            licenseKey: key,
+            email: "hacker@example.com", // 篡改
+            deviceUUID: uuid,
+            activatedAt: now,
+            lastVerifiedAt: now,
+            signature: signature
+        )
+        XCTAssertFalse(manager.verifyReceiptOffline(temperedReceipt))
+        
+        // 6. 验证错误的设备 UUID 应该失败
+        let wrongDeviceReceipt = LicenseReceipt(
+            licenseKey: key,
+            email: email,
+            deviceUUID: "WRONG-UUID-123", // 篡改
+            activatedAt: now,
+            lastVerifiedAt: now,
+            signature: signature
+        )
+        XCTAssertFalse(manager.verifyReceiptOffline(wrongDeviceReceipt))
+        
+        // 7. 用外部另一个无关的私钥签名，应该失败
+        let unrelatedPrivateKey = Curve25519.Signing.PrivateKey()
+        let unrelatedSignature = try! unrelatedPrivateKey.signature(for: messageData).base64EncodedString()
+        let badSignatureReceipt = LicenseReceipt(
+            licenseKey: key,
+            email: email,
+            deviceUUID: uuid,
+            activatedAt: now,
+            lastVerifiedAt: now,
+            signature: unrelatedSignature // 无关签名
+        )
+        XCTAssertFalse(manager.verifyReceiptOffline(badSignatureReceipt))
     }
 }

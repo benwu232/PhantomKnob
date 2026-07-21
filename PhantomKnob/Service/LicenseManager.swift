@@ -1,5 +1,16 @@
 import Foundation
 import Security
+import CryptoKit
+import IOKit
+
+public struct LicenseReceipt: Codable {
+    public let licenseKey: String
+    public let email: String
+    public let deviceUUID: String
+    public let activatedAt: Date
+    public let lastVerifiedAt: Date
+    public let signature: String
+}
 
 class KeychainHelper {
     static func set(_ value: String, forKey key: String) {
@@ -54,6 +65,7 @@ class LicenseManager {
     private let storageRead: (String) -> String?
     private let storageWrite: (String, String?) -> Void
     private let formatter = ISO8601DateFormatter()
+    private let publicKeyRepresentation: Data
     
     init(
         currentDateProvider: @escaping () -> Date = { Date() },
@@ -78,11 +90,13 @@ class LicenseManager {
                 KeychainHelper.delete(forKey: key)
             }
             #endif
-        }
+        },
+        publicKeyRepresentation: Data = Data(base64Encoded: "Sg6X484hS3Fsk2k8XzV8pTzH59WkE/B3eJmXb5mU8QY=")!
     ) {
         self.currentDateProvider = currentDateProvider
         self.storageRead = storageRead
         self.storageWrite = storageWrite
+        self.publicKeyRepresentation = publicKeyRepresentation
     }
     
     var currentState: LicenseState {
@@ -142,5 +156,34 @@ class LicenseManager {
             storageWrite("licenseEmail", "debug@example.com")
         }
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+    }
+    
+    public func getDeviceUUID() -> String {
+        let platformExpert = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"))
+        defer { IOObjectRelease(platformExpert) }
+        if platformExpert > 0 {
+            if let uuid = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformUUIDKey as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String {
+                return uuid.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }
+        return "UNKNOWN_DEVICE_UUID"
+    }
+    
+    public func verifyReceiptOffline(_ receipt: LicenseReceipt) -> Bool {
+        // 1. 验证设备 UUID 匹配
+        guard receipt.deviceUUID == getDeviceUUID() else { return false }
+        
+        // 2. 验证 Signature
+        guard let sigData = Data(base64Encoded: receipt.signature) else { return false }
+        let message = "\(receipt.licenseKey)|\(receipt.email)|\(receipt.deviceUUID)|\(Int(receipt.activatedAt.timeIntervalSince1970))|\(Int(receipt.lastVerifiedAt.timeIntervalSince1970))"
+        guard let messageData = message.data(using: .utf8) else { return false }
+        
+        // 使用 CryptoKit 验证 Ed25519 签名
+        do {
+            let publicKey = try Curve25519.Signing.PublicKey(rawRepresentation: publicKeyRepresentation)
+            return publicKey.isValidSignature(sigData, for: messageData)
+        } catch {
+            return false
+        }
     }
 }
