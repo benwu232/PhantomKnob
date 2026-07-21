@@ -208,24 +208,23 @@ final class StatusBarControllerTests: XCTestCase {
         // 14: separator
         // 15: quitItem (退出)
         
-        XCTAssertEqual(menu.items.count, 16)
+        // 健壮检测，不硬编码固定索引
+        let actions = menu.items.compactMap { $0.action }
         
-        XCTAssertNil(menu.items[0].action)
-        XCTAssertNil(menu.items[1].action)
-        XCTAssertTrue(menu.items[2].isSeparatorItem)
-        XCTAssertEqual(menu.items[3].action, Selector(("toggleMode")))
-        XCTAssertEqual(menu.items[4].action, Selector(("openKnobPanel")))
-        XCTAssertTrue(menu.items[5].isSeparatorItem)
-        XCTAssertEqual(menu.items[6].action, Selector(("openSettings")))
-        XCTAssertTrue(menu.items[7].isSeparatorItem)
-        XCTAssertEqual(menu.items[8].action, Selector(("openGuide")))
-        XCTAssertEqual(menu.items[9].action, Selector(("openShortcutsGuide")))
-        XCTAssertEqual(menu.items[10].action, Selector(("checkForUpdates")))
-        XCTAssertEqual(menu.items[11].action, Selector(("sendFeedback")))
-        XCTAssertTrue(menu.items[12].isSeparatorItem)
-        XCTAssertEqual(menu.items[13].action, Selector(("debugToggleLicense")))
-        XCTAssertTrue(menu.items[14].isSeparatorItem)
-        XCTAssertEqual(menu.items[15].action, Selector(("quitApp")))
+        XCTAssertTrue(actions.contains(Selector(("toggleMode"))))
+        XCTAssertTrue(actions.contains(Selector(("openKnobPanel"))))
+        XCTAssertTrue(actions.contains(Selector(("openSettings"))))
+        XCTAssertTrue(actions.contains(Selector(("openGuide"))))
+        XCTAssertTrue(actions.contains(Selector(("openShortcutsGuide"))))
+        XCTAssertTrue(actions.contains(Selector(("checkForUpdates"))))
+        XCTAssertTrue(actions.contains(Selector(("sendFeedback"))))
+        XCTAssertTrue(actions.contains(Selector(("quitApp"))))
+        
+        #if DEBUG
+        XCTAssertTrue(actions.contains(Selector(("debugToggleLicense"))))
+        #else
+        XCTAssertFalse(actions.contains(Selector(("debugToggleLicense"))))
+        #endif
     }
     
     func testStatusBarIconFreeModeAppendsSuffix() {
@@ -280,5 +279,52 @@ final class StatusBarControllerTests: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 2.0)
+    }
+    
+    func testTrialDaysStatusBarMenu() {
+        let controller = StatusBarController()
+        
+        // 备份原来的 License 状态
+        let originalKey = UserDefaults.app.string(forKey: "licenseKey")
+        let originalEmail = UserDefaults.app.string(forKey: "licenseEmail")
+        let originalTrialStart = UserDefaults.app.string(forKey: "trialStartDate")
+        
+        let formatter = ISO8601DateFormatter()
+        
+        // 1. 模拟试用期还剩 2 天 (天数 < 3)，预期有 buyPremium 动作
+        let trialStartDateLess3 = Date().addingTimeInterval(-12 * 24 * 60 * 60) // 12天前，剩2天
+        UserDefaults.app.removeObject(forKey: "licenseKey")
+        UserDefaults.app.removeObject(forKey: "licenseEmail")
+        UserDefaults.app.removeObject(forKey: "licenseReceipt")
+        UserDefaults.app.set(formatter.string(from: trialStartDateLess3), forKey: "trialStartDate")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+        
+        controller.rebuildMenu() // 重建菜单
+        var actions = controller.menu?.items.compactMap { $0.action } ?? []
+        XCTAssertTrue(actions.contains(Selector(("buyPremium"))))
+        
+        // 2. 模拟试用期还剩 10 天 (天数 >= 3)，预期无 buyPremium 动作
+        let trialStartDateMore3 = Date().addingTimeInterval(-4 * 24 * 60 * 60) // 4天前，剩10天
+        UserDefaults.app.set(formatter.string(from: trialStartDateMore3), forKey: "trialStartDate")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+        
+        controller.rebuildMenu() // 重建菜单
+        actions = controller.menu?.items.compactMap { $0.action } ?? []
+        XCTAssertFalse(actions.contains(Selector(("buyPremium"))))
+        
+        // 3. 模拟 Free 状态，预期有 buyPremium 动作
+        let trialStartDateExpired = Date().addingTimeInterval(-20 * 24 * 60 * 60) // 20天前，已过期
+        UserDefaults.app.set(formatter.string(from: trialStartDateExpired), forKey: "trialStartDate")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+        
+        controller.rebuildMenu()
+        actions = controller.menu?.items.compactMap { $0.action } ?? []
+        XCTAssertTrue(actions.contains(Selector(("buyPremium"))))
+        
+        // 清理：恢复初始状态
+        UserDefaults.app.set(originalKey, forKey: "licenseKey")
+        UserDefaults.app.set(originalEmail, forKey: "licenseEmail")
+        UserDefaults.app.set(originalTrialStart, forKey: "trialStartDate")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
 }

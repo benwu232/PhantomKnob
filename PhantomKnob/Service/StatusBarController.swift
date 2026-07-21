@@ -34,7 +34,7 @@ class StatusBarController: ObservableObject {
         licenseChangeObserver = NotificationCenter.default
             .publisher(for: NSNotification.Name("LicenseStateDidChange"))
             .sink { [weak self] _ in
-                self?.updateVersionItem()
+                self?.rebuildMenu()
             }
     }
     
@@ -139,6 +139,31 @@ class StatusBarController: ObservableObject {
         menu?.addItem(versionItem)
         updateVersionItem()
         
+        // 动态添加购买/升级 Premium 项目
+        let licenseState = LicenseManager.shared.currentState
+        switch licenseState {
+        case .trialing(let daysRemaining):
+            if daysRemaining < 3 {
+                let buyItem = NSMenuItem(
+                    title: "🛒 Buy PhantomKnob Premium...",
+                    action: #selector(buyPremium),
+                    keyEquivalent: ""
+                )
+                buyItem.target = self
+                menu?.addItem(buyItem)
+            }
+        case .free:
+            let buyItem = NSMenuItem(
+                title: "🛒 Upgrade to Premium...",
+                action: #selector(buyPremium),
+                keyEquivalent: ""
+            )
+            buyItem.target = self
+            menu?.addItem(buyItem)
+        case .licensed:
+            break
+        }
+        
         menu?.addItem(NSMenuItem.separator())
         
         let hs = HotkeySettings.shared
@@ -213,8 +238,8 @@ class StatusBarController: ObservableObject {
         feedbackItem.target = self
         menu?.addItem(feedbackItem)
         
+        #if DEBUG
         menu?.addItem(NSMenuItem.separator())
-        
         let debugToggleItem = NSMenuItem(
             title: "Toggle Free/Premium (Debug)",
             action: #selector(debugToggleLicense),
@@ -224,6 +249,9 @@ class StatusBarController: ObservableObject {
         debugToggleItem.target = self
         menu?.addItem(debugToggleItem)
         menu?.addItem(NSMenuItem.separator())
+        #else
+        menu?.addItem(NSMenuItem.separator())
+        #endif
         
         let quitItem = NSMenuItem(
             title: String(localized: "menu.quit", defaultValue: "Quit"),
@@ -503,9 +531,21 @@ class StatusBarController: ObservableObject {
         }
     }
     
+    public func rebuildMenu() {
+        setupMenu()
+    }
+    
+    @objc func buyPremium() {
+        if let url = URL(string: "https://phantomknob.com#buy") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    #if DEBUG
     @objc func debugToggleLicense() {
         LicenseManager.shared.debugToggleLicense()
     }
+    #endif
     
     func showFreeActivatingPopover(secondsRemaining: Double) {
         DispatchQueue.main.async { [weak self] in
