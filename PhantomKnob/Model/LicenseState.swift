@@ -5,6 +5,15 @@ public enum LicenseState: Equatable {
     case licensed
     case free
     
+    public var daysRemaining: Int? {
+        switch self {
+        case .trialing(let days):
+            return days
+        default:
+            return nil
+        }
+    }
+    
     public var isPremiumActive: Bool {
         switch self {
         case .trialing, .licensed:
@@ -35,7 +44,7 @@ public enum LicenseState: Equatable {
     public var activationDelay: Double {
         switch self {
         case .free:
-            return 3.0
+            return 2.0
         case .trialing, .licensed:
             return 0.0
         }

@@ -28,4 +28,10 @@ class LicenseTests: XCTestCase {
         XCTAssertEqual(state.activationDelay, 2.0)
         XCTAssertEqual(state.sessionLimitSeconds, 900.0)
     }
+    
+    func testLicenseStateDaysRemaining() {
+        XCTAssertEqual(LicenseState.licensed.daysRemaining, nil)
+        XCTAssertEqual(LicenseState.free.daysRemaining, nil)
+        XCTAssertEqual(LicenseState.trialing(daysRemaining: 5).daysRemaining, 5)
+    }
 }
