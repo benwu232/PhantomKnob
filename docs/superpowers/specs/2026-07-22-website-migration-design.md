@@ -52,13 +52,9 @@
    * Source: `Deploy from a branch`
    * Branch: `main`
    * Folder: `/ (root)`
-3. **自定义域名**：
-   * 在 Settings > Pages > Custom domain 中输入 `phantomknob.com`。
-   * 这将自动在 `PhantomKnob` 仓库根目录下生成或更新 `CNAME` 文件，内容为：
-     ```text
-     phantomknob.com
-     ```
-   * 勾选 "Enforce HTTPS" 保证全站以 HTTPS 安全协议访问。
+3. **访问地址**：
+   * 默认部署地址为：`https://benwu232.github.io/PhantomKnob/`
+   * 暂不新增 `CNAME` 文件，后续有自定义域名需求时再进行配置。
 
 ---
 
