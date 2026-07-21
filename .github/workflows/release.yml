@@ -1,0 +1,98 @@
+name: Build & Auto Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    name: Build and Release App
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Determine Code Signing
+        id: sign_step
+        run: |
+          if [ -n "${{ secrets.APPLE_CERTIFICATE_P12 }}" ]; then
+            echo "has_cert=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_cert=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build App (Fallback Ad-hoc or Notarized)
+        env:
+          APPLE_CERT: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+          APPLE_CERT_PASS: ${{ secrets.APPLE_CERTIFICATE_PASS }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [ "${{ steps.sign_step.outputs.has_cert }}" = "true" ]; then
+            KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+            KEYCHAIN_PASSWORD=$(openssl rand -base64 12)
+            security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+            security default-keychain -s "$KEYCHAIN_PATH"
+            security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+            
+            echo "$APPLE_CERT" | base64 --decode > $RUNNER_TEMP/cert.p12
+            security import $RUNNER_TEMP/cert.p12 -k "$KEYCHAIN_PATH" -P "$APPLE_CERT_PASS" -T /usr/bin/codesign -T /usr/bin/xcodebuild
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+            
+            export EXPORT_NOTARY_PASSWORD="$APPLE_ID_PASS"
+            export SIGNING_IDENTITY="Developer ID Application: Your Name ($APPLE_TEAM_ID)"
+            export DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
+            export APPLE_ID="$APPLE_ID"
+            ./scripts/build_notarize.sh
+          else
+            echo "[INFO] No signing certificates found in Secrets. Building with Ad-hoc signing."
+            BUILD_NUMBER=$(git rev-list --count HEAD)
+            /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "PhantomKnob/Info.plist"
+            
+            xcodebuild archive \
+              -project PhantomKnob/PhantomKnob.xcodeproj \
+              -scheme PhantomKnob \
+              -configuration Release \
+              -archivePath build/PhantomKnob.xcarchive \
+              CODE_SIGN_STYLE="Manual" \
+              CODE_SIGN_IDENTITY="-" \
+              ENABLE_HARDENED_RUNTIME="YES"
+            
+            xcodebuild -exportArchive \
+              -archivePath build/PhantomKnob.xcarchive \
+              -exportOptionsPlist <(cat <<EOF
+            {
+                "method": "developer-id",
+                "signingStyle": "manual",
+                "signingCertificate": "-",
+                "compileBitcode": false
+            }
+            EOF
+            ) \
+              -exportPath build/Exported
+            
+            mkdir -p dist
+            bash ./scripts/package_dmg.sh build/Exported/PhantomKnob.app dist/PhantomKnob.dmg
+          fi
+          
+          # 重命名生成的 DMG 为带 Tag 版本的包
+          TAG_NAME=${GITHUB_REF_NAME}
+          if [ -f "dist/PhantomKnob_v1.0.dmg" ]; then
+            mv dist/PhantomKnob_v1.0.dmg dist/PhantomKnob_${TAG_NAME}.dmg
+          elif [ -f "dist/PhantomKnob.dmg" ]; then
+            mv dist/PhantomKnob.dmg dist/PhantomKnob_${TAG_NAME}.dmg
+          fi
+          echo "[INFO] Generated release package: $(ls dist/PhantomKnob_${TAG_NAME}.dmg)"
+
+      - name: Push Release to Distribution Repo
+        uses: softprops/action-gh-release@v1
+        with:
+          repository: benwu232/PhantomKnob
+          token: ${{ secrets.RELEASE_TOKEN }}
+          files: dist/*.dmg
+          generate_release_notes: true
