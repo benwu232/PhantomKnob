@@ -122,11 +122,13 @@ struct LicenseReceipt: Codable {
 * 重写 `currentState` 的校验逻辑，接入非对称加密校验（CryptoKit）。
 * 实现后台静默刷新定时器、7 天宽限期计数器。
 * 编写获取 Mac UUID 及绑定验证的方法。
+* **[安全加固]**：使用 `#if DEBUG` ... `#endif` 隔离 `debugToggleLicense` 调试切换方法，防止在生产环境被调用。
 
 ### 4.3 [MODIFY] [StatusBarController.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/Service/StatusBarController.swift)
 * 动态构建状态栏菜单项：
   * 判断 `daysRemaining < 3` 时追加 `Buy Premium`。
   * 处于 `.free` 状态时，常驻 `Upgrade to Premium`。
+* **[安全加固]**：将状态栏菜单中的 `Toggle Free/Premium (Debug)` 调试选项及绑定的快捷键（`⌘⌥T`）使用 `#if DEBUG` ... `#endif` 进行物理编译隔离，确保对外发布的 Release 包中无任何调试后门。
 
 ### 4.4 [MODIFY] [SettingsView.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/View/SettingsView.swift)
 * 更新 `About/License` 标签页，实现加载状态、成功庆祝、错误反馈的毛玻璃美学 UI。

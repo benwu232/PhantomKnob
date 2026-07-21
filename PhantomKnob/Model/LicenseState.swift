@@ -35,7 +35,7 @@ public enum LicenseState: Equatable {
     public var activationDelay: Double {
         switch self {
         case .free:
-            return 2.0
+            return 3.0
         case .trialing, .licensed:
             return 0.0
         }
