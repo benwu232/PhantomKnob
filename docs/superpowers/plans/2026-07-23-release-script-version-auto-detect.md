@@ -49,13 +49,23 @@
 +    echo "[ERROR] 版本号格式必须符合 vX.Y.Z 格式 (当前输入: $TAG_VERSION)" >&2
 +    exit 1
 +fi
++
++# 如果用户输入了不同的版本号，则自动更新 project.yml
++CLEAN_VERSION="${TAG_VERSION#v}"
++if [ "$CLEAN_VERSION" != "$PROJ_VERSION" ]; then
++    echo "检测到不同的版本号，正在将 project.yml 中的 MARKETING_VERSION 更新为: $CLEAN_VERSION"
++    sed -i '' "s/\(MARKETING_VERSION:[[:space:]]*\)[0-9.]*/\1${CLEAN_VERSION}/" PhantomKnob/project.yml
++    
++    echo "正在运行 xcodegen 重新生成项目..."
++    (cd PhantomKnob && xcodegen)
++fi
 ```
 
-- [ ] **步骤 2：测试提取逻辑以验证 correctness**
-在 shell 中直接运行提取语句，确保其输出符合预期。
+- [ ] **步骤 2：测试提取与替换逻辑以验证 correctness**
+在 shell 中直接运行提取和 sed 替换以及 xcodegen 命令，确保其能正常回写并构建项目。
 
 - [ ] **步骤 3：Commit 变更**
 ```bash
 git add scripts/local_release.sh
-git commit -m "feat: auto-detect MARKETING_VERSION from project.yml in local_release.sh"
+git commit -m "feat: auto-detect and write custom version to project.yml in local_release.sh"
 ```
