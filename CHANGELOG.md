@@ -2,7 +2,7 @@
 
 All notable changes to PhantomKnob will be documented in this file.
 
-## [1.0.0] - 2026-07-03
+## [0.8.0] - 2026-07-22
 
 ### Added
 - Global knob control mode with trackpad two-finger rotation gesture
