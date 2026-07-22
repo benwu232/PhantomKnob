@@ -65,6 +65,8 @@ jobs:
             
             mkdir -p build/Exported
             cp -R build/PhantomKnob.xcarchive/Products/Applications/PhantomKnob.app build/Exported/
+            echo "[INFO] Running deep codesign on exported Ad-hoc app..."
+            codesign --force --sign - --deep build/Exported/PhantomKnob.app
             
             mkdir -p dist
             bash ./scripts/package_dmg.sh build/Exported/PhantomKnob.app dist/PhantomKnob.dmg

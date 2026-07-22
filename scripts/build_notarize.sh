@@ -95,6 +95,8 @@ if [ "${IS_ADHOC}" = "true" ]; then
     log_info "正在导出 App Bundle (Ad-hoc)..."
     mkdir -p "${BUILD_DIR}/Exported"
     cp -R "${BUILD_DIR}/${APP_NAME}.xcarchive/Products/Applications/${APP_NAME}.app" "${BUILD_DIR}/Exported/"
+    log_info "正在对导出的 App 及其内含库进行 Ad-hoc 递归重签名..."
+    codesign --force --sign - --deep "${BUILD_DIR}/Exported/${APP_NAME}.app"
 else
     xcodebuild archive \
         -project "${PROJECT_DIR}/${APP_NAME}.xcodeproj" \
