@@ -26,10 +26,22 @@ fi
 echo "==> [2/4] 获取版本 Tag..."
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "无")
 echo "本地最近的 Tag 版本为: $LATEST_TAG"
-read -rp "请输入要发布的新版本号 (格式如 v1.0.0): " TAG_VERSION
+
+# 提取 project.yml 中的 MARKETING_VERSION
+PROJ_VERSION=$(sed -n 's/^[[:space:]]*MARKETING_VERSION:[[:space:]]*\([0-9.]*\)/\1/p' PhantomKnob/project.yml | tr -d '[:space:]')
+DEFAULT_TAG="v${PROJ_VERSION}"
+
+echo "project.yml 中的 MARKETING_VERSION 为: $PROJ_VERSION"
+read -rp "请输入要发布的新版本号 (默认: ${DEFAULT_TAG}，回车直接确认): " TAG_INPUT
+
+if [ -z "$TAG_INPUT" ]; then
+    TAG_VERSION="$DEFAULT_TAG"
+else
+    TAG_VERSION="$TAG_INPUT"
+fi
 
 if [[ ! "$TAG_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-    echo "[ERROR] 版本号格式必须符合 vX.Y.Z 格式" >&2
+    echo "[ERROR] 版本号格式必须符合 vX.Y.Z 格式 (当前输入: $TAG_VERSION)" >&2
     exit 1
 fi
 
