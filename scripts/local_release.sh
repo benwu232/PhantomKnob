@@ -25,7 +25,9 @@ fi
 
 echo "==> [2/4] 获取版本 Tag..."
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "无")
+GH_LATEST_RELEASE=$(gh release view --repo "$DIST_REPO" --json tagName --jq .tagName 2>/dev/null || echo "无")
 echo "本地最近的 Tag 版本为: $LATEST_TAG"
+echo "GitHub 上最新的 Release 版本为: $GH_LATEST_RELEASE"
 
 # 提取 project.yml 中的 MARKETING_VERSION
 PROJ_VERSION=$(sed -n 's/^[[:space:]]*MARKETING_VERSION:[[:space:]]*\([0-9.]*\)/\1/p' PhantomKnob/project.yml | tr -d '[:space:]')
