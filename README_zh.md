@@ -38,7 +38,7 @@
 
 #### 一键终端安装
 ```bash
-curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.sh | bash
 ```
 
 #### 手动下载安装

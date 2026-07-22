@@ -38,7 +38,7 @@
 
 #### One-Click Install (Via Terminal)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.sh | bash
 ```
 
 #### Manual Download
