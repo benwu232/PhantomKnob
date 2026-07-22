@@ -91,30 +91,10 @@ if [ "${IS_ADHOC}" = "true" ]; then
         CODE_SIGN_IDENTITY="-" \
         ENABLE_HARDENED_RUNTIME="YES"
 
-    EXPORT_PLIST="${BUILD_DIR}/exportOptions.plist"
-    cat > "${EXPORT_PLIST}" <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>method</key>
-    <string>developer-id</string>
-    <key>signingStyle</key>
-    <string>manual</string>
-    <key>signingCertificate</key>
-    <string>-</string>
-    <key>compileBitcode</key>
-    <false/>
-</dict>
-</plist>
-EOF
-
-    # 4. 导出 App Bundle
-    log_info "正在导出 App Bundle..."
-    xcodebuild -exportArchive \
-        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
-        -exportOptionsPlist "${EXPORT_PLIST}" \
-        -exportPath "${BUILD_DIR}/Exported"
+    # 4. 导出 App Bundle (Ad-hoc 模式直接提取 xcarchive 中的 App 产物)
+    log_info "正在导出 App Bundle (Ad-hoc)..."
+    mkdir -p "${BUILD_DIR}/Exported"
+    cp -R "${BUILD_DIR}/${APP_NAME}.xcarchive/Products/Applications/${APP_NAME}.app" "${BUILD_DIR}/Exported/"
 else
     xcodebuild archive \
         -project "${PROJECT_DIR}/${APP_NAME}.xcodeproj" \
