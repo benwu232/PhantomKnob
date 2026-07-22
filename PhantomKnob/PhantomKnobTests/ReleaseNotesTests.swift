@@ -24,12 +24,14 @@ final class ReleaseNotesTests: XCTestCase {
         UserDefaults.app = UserDefaults(suiteName: suiteName) ?? .standard
         UserDefaults.app.removePersistentDomain(forName: suiteName)
         
+        let controller = ReleaseNotesController.shared
+        controller.currentVersionOverride = "1.0"
+        
         defer {
+            controller.currentVersionOverride = nil
             UserDefaults.app.removePersistentDomain(forName: suiteName)
             UserDefaults.app = .standard
         }
-        
-        let controller = ReleaseNotesController.shared
         
         // 1. Initially lastSeenReleaseNotesVersion is nil
         XCTAssertNil(UserDefaults.app.string(forKey: "lastSeenReleaseNotesVersion"))
@@ -42,7 +44,7 @@ final class ReleaseNotesTests: XCTestCase {
         
         // Verify it did not show and directly marked current version as seen
         XCTAssertFalse(controller.isVisible)
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let currentVersion = controller.currentVersion
         XCTAssertEqual(UserDefaults.app.string(forKey: "lastSeenReleaseNotesVersion"), currentVersion)
         
         // 2. Upgrade Scenario: set lastSeen to older version

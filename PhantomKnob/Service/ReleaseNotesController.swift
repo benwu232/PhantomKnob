@@ -14,13 +14,19 @@ final class ReleaseNotesController: NSObject, NSWindowDelegate {
         return window?.isVisible ?? false
     }
     
+    var currentVersionOverride: String?
+    
+    var currentVersion: String {
+        currentVersionOverride ?? (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
+    }
+    
     func showIfNeeded() {
         // 1. Skip if user guide onboarding isn't completed
         let guideCompleted = UserDefaults.app.bool(forKey: "firstRunUserGuideCompleted")
         guard guideCompleted else { return }
         
         // 2. Check version changes
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let currentVersion = self.currentVersion
         
         // If lastSeenVersion is nil, user is running the app/feature for the first time.
         // We register the current version as read and skip showing.
@@ -106,7 +112,7 @@ final class ReleaseNotesController: NSObject, NSWindowDelegate {
     }
     
     func windowDidResignKey(_ notification: Notification) {
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let currentVersion = self.currentVersion
         UserDefaults.app.set(currentVersion, forKey: "lastSeenReleaseNotesVersion")
         hide()
     }
