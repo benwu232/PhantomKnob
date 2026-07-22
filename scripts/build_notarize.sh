@@ -91,11 +91,8 @@ if [ "${IS_ADHOC}" = "true" ]; then
         CODE_SIGN_IDENTITY="-" \
         ENABLE_HARDENED_RUNTIME="YES"
 
-    # 4. 导出 App Bundle
-    log_info "正在导出 App Bundle..."
-    xcodebuild -exportArchive \
-        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
-        -exportOptionsPlist <(cat <<EOF
+    EXPORT_PLIST="${BUILD_DIR}/exportOptions.plist"
+    cat > "${EXPORT_PLIST}" <<EOF
 {
     "method": "developer-id",
     "signingStyle": "manual",
@@ -103,7 +100,12 @@ if [ "${IS_ADHOC}" = "true" ]; then
     "compileBitcode": false
 }
 EOF
-) \
+
+    # 4. 导出 App Bundle
+    log_info "正在导出 App Bundle..."
+    xcodebuild -exportArchive \
+        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
+        -exportOptionsPlist "${EXPORT_PLIST}" \
         -exportPath "${BUILD_DIR}/Exported"
 else
     xcodebuild archive \
@@ -117,11 +119,8 @@ else
         ENABLE_HARDENED_RUNTIME="YES" \
         OTHER_CODE_SIGN_FLAGS="--options runtime"
 
-    # 4. 导出 App Bundle
-    log_info "正在导出 App Bundle..."
-    xcodebuild -exportArchive \
-        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
-        -exportOptionsPlist <(cat <<EOF
+    EXPORT_PLIST="${BUILD_DIR}/exportOptions.plist"
+    cat > "${EXPORT_PLIST}" <<EOF
 {
     "method": "developer-id",
     "signingStyle": "manual",
@@ -129,7 +128,12 @@ else
     "teamID": "${DEVELOPMENT_TEAM}"
 }
 EOF
-) \
+
+    # 4. 导出 App Bundle
+    log_info "正在导出 App Bundle..."
+    xcodebuild -exportArchive \
+        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
+        -exportOptionsPlist "${EXPORT_PLIST}" \
         -exportPath "${BUILD_DIR}/Exported"
 fi
 
