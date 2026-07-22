@@ -32,11 +32,13 @@
 +LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "无")
 +echo "本地最近的 Tag 版本为: $LATEST_TAG"
 +
-+# 提取 project.yml 中的 MARKETING_VERSION
++# 提取 project.yml 中的 MARKETING_VERSION 和 CURRENT_PROJECT_VERSION
 +PROJ_VERSION=$(sed -n 's/^[[:space:]]*MARKETING_VERSION:[[:space:]]*\([0-9.]*\)/\1/p' PhantomKnob/project.yml | tr -d '[:space:]')
++PROJ_BUILD=$(sed -n 's/^[[:space:]]*CURRENT_PROJECT_VERSION:[[:space:]]*\([0-9]*\)/\1/p' PhantomKnob/project.yml | tr -d '[:space:]')
 +DEFAULT_TAG="v${PROJ_VERSION}"
 +
 +echo "project.yml 中的 MARKETING_VERSION 为: $PROJ_VERSION"
++echo "project.yml 中的 CURRENT_PROJECT_VERSION 为: $PROJ_BUILD"
 +read -rp "请输入要发布的新版本号 (默认: ${DEFAULT_TAG}，回车直接确认): " TAG_INPUT
 +
 +if [ -z "$TAG_INPUT" ]; then
@@ -50,22 +52,41 @@
 +    exit 1
 +fi
 +
-+# 如果用户输入了不同的版本号，则自动更新 project.yml
++# 计算最新的 Build Number 并回写更新 project.yml
 +CLEAN_VERSION="${TAG_VERSION#v}"
++BUILD_NUMBER=$(git rev-list --count HEAD)
++
++SHOULD_UPDATE_YML=false
 +if [ "$CLEAN_VERSION" != "$PROJ_VERSION" ]; then
-+    echo "检测到不同的版本号，正在将 project.yml 中的 MARKETING_VERSION 更新为: $CLEAN_VERSION"
++    SHOULD_UPDATE_YML=true
++fi
++if [ "$BUILD_NUMBER" != "$PROJ_BUILD" ]; then
++    SHOULD_UPDATE_YML=true
++fi
++
++if [ "$SHOULD_UPDATE_YML" = "true" ]; then
++    echo "正在更新 project.yml 中的版本和构建号 (Version: $CLEAN_VERSION, Build: $BUILD_NUMBER)..."
 +    sed -i '' "s/\(MARKETING_VERSION:[[:space:]]*\)[0-9.]*/\1${CLEAN_VERSION}/" PhantomKnob/project.yml
++    sed -i '' "s/\(CURRENT_PROJECT_VERSION:[[:space:]]*\)[0-9]*/\1${BUILD_NUMBER}/" PhantomKnob/project.yml
 +    
 +    echo "正在运行 xcodegen 重新生成项目..."
 +    (cd PhantomKnob && xcodegen)
++    
++    echo "正在提交版本和构建号更新并推送至当前分支..."
++    git add PhantomKnob/project.yml
++    if [ -d "PhantomKnob/PhantomKnob.xcodeproj" ]; then
++        git add PhantomKnob/PhantomKnob.xcodeproj
++    fi
++    git commit -m "bump: version to $CLEAN_VERSION ($BUILD_NUMBER)"
++    git push origin "$(git branch --show-current)"
 +fi
 ```
 
-- [ ] **步骤 2：测试提取与替换逻辑以验证 correctness**
-在 shell 中直接运行提取和 sed 替换以及 xcodegen 命令，确保其能正常回写并构建项目。
+- [ ] **步骤 2：测试提取、替换与自动提交逻辑以验证 correctness**
+在 shell 中验证提取、回写、xcodegen 以及 Git 提交和推送逻辑是否通畅。
 
 - [ ] **步骤 3：Commit 变更**
 ```bash
 git add scripts/local_release.sh
-git commit -m "feat: auto-detect and write custom version to project.yml in local_release.sh"
+git commit -m "feat: auto-bump CURRENT_PROJECT_VERSION and commit version bump before release"
 ```
