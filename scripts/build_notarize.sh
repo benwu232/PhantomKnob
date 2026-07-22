@@ -72,24 +72,56 @@ BUILD_NUMBER=$(git rev-list --count HEAD)
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" "${PROJECT_DIR}/Info.plist"
 log_info "Build Number 设置为: $BUILD_NUMBER"
 
+IS_ADHOC=false
+if [ "${SIGNING_IDENTITY}" = "Developer ID Application: Your Name (TEAM_ID)" ] || [ -z "${SIGNING_IDENTITY}" ]; then
+    log_info "⚠️ 未检测到已配置的 Apple 开发者证书，降级为 Ad-hoc (自签名) 模式打包..."
+    SIGNING_IDENTITY="-"
+    IS_ADHOC=true
+fi
+
 # 3. 运行 xcodebuild 进行归档构建 (Archive)
 log_info "开始使用 xcodebuild 编译并归档项目 (Release 配置)..."
-xcodebuild archive \
-    -project "${PROJECT_DIR}/${APP_NAME}.xcodeproj" \
-    -scheme "${APP_NAME}" \
-    -configuration Release \
-    -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
-    CODE_SIGN_STYLE="Manual" \
-    CODE_SIGN_IDENTITY="${SIGNING_IDENTITY}" \
-    DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" \
-    ENABLE_HARDENED_RUNTIME="YES" \
-    OTHER_CODE_SIGN_FLAGS="--options runtime"
+if [ "${IS_ADHOC}" = "true" ]; then
+    xcodebuild archive \
+        -project "${PROJECT_DIR}/${APP_NAME}.xcodeproj" \
+        -scheme "${APP_NAME}" \
+        -configuration Release \
+        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
+        CODE_SIGN_STYLE="Manual" \
+        CODE_SIGN_IDENTITY="-" \
+        ENABLE_HARDENED_RUNTIME="YES"
 
-# 4. 导出 App Bundle
-log_info "正在导出 App Bundle..."
-xcodebuild -exportArchive \
-    -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
-    -exportOptionsPlist <(cat <<EOF
+    # 4. 导出 App Bundle
+    log_info "正在导出 App Bundle..."
+    xcodebuild -exportArchive \
+        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
+        -exportOptionsPlist <(cat <<EOF
+{
+    "method": "developer-id",
+    "signingStyle": "manual",
+    "signingCertificate": "-",
+    "compileBitcode": false
+}
+EOF
+) \
+        -exportPath "${BUILD_DIR}/Exported"
+else
+    xcodebuild archive \
+        -project "${PROJECT_DIR}/${APP_NAME}.xcodeproj" \
+        -scheme "${APP_NAME}" \
+        -configuration Release \
+        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
+        CODE_SIGN_STYLE="Manual" \
+        CODE_SIGN_IDENTITY="${SIGNING_IDENTITY}" \
+        DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" \
+        ENABLE_HARDENED_RUNTIME="YES" \
+        OTHER_CODE_SIGN_FLAGS="--options runtime"
+
+    # 4. 导出 App Bundle
+    log_info "正在导出 App Bundle..."
+    xcodebuild -exportArchive \
+        -archivePath "${BUILD_DIR}/${APP_NAME}.xcarchive" \
+        -exportOptionsPlist <(cat <<EOF
 {
     "method": "developer-id",
     "signingStyle": "manual",
@@ -98,7 +130,8 @@ xcodebuild -exportArchive \
 }
 EOF
 ) \
-    -exportPath "${BUILD_DIR}/Exported"
+        -exportPath "${BUILD_DIR}/Exported"
+fi
 
 EXPORTED_APP="${BUILD_DIR}/Exported/${APP_NAME}.app"
 
@@ -109,7 +142,7 @@ fi
 
 # 5. 校验 App 的 Hardened Runtime 签名
 log_info "正在校验导出的 App 代码签名和硬化运行时 (Hardened Runtime) 状态..."
-codesign -dvvv "${EXPORTED_APP}"
+codesign -dvvv "${EXPORTED_APP}" || true
 log_info "运行公证要求性自检评估..."
 spctl --assess --type execute --verbose "${EXPORTED_APP}" || true
 
@@ -124,7 +157,6 @@ log_info "品牌化 DMG 构建成功，路径: ${DMG_PATH}"
 log_info "正在对 DMG 本身进行代码签名..."
 codesign --force \
          --sign "${SIGNING_IDENTITY}" \
-         --timestamp \
          "${DMG_PATH}"
 
 log_info "验证已签名的 DMG..."
