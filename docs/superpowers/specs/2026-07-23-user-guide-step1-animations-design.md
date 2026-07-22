@@ -31,14 +31,20 @@
 
 ### 2.2 核心组件变更
 
+#### [MODIFY] [KnobPanelView.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/View/KnobPanelView.swift)
+
+1. **改造 `RadialKnobControlView`**：
+   * 新增 `knobOverlay: AnyView? = nil` 构造参数。
+   * 在其内部负责缩放和绘图的 `ZStack` 中直接渲染该 `knobOverlay`，使传入的子动画与旋钮的物理中心完全对齐，并随旋钮自动进行 1.2 倍缩放。
+
 #### [MODIFY] [UserGuideView.swift](file:///Users/wb/work/phantom_knob_mac/PhantomKnob/View/UserGuideView.swift)
 
 1. **重构 `CursorGuideAnimationView`**：
-   * 将原来的静态缩放/偏移手势图换成从右下角往旋钮圆心平移的光标幻影。
+   * 将原手势图换成指向圆心的平移光标渐现效果。
 2. **新增 `TwoFingerRotationGuideView`**：
-   * 实现一个由两条对称运动的蓝色触控点、旋转圆弧虚线轨道和中心微旋箭头组成的 SwiftUI 动画视图。
+   * 实现由暖色调肤色渐变指尖和圆形轨道组成的无自缩放往复旋转手势动画。
 3. **更新 `step1View` 布局**：
-   * 在练习旋钮的 `ZStack` 容器内嵌入状态控制的条件渲染。
+   * 移除外层 `ZStack`，通过 `knobOverlay` 参数将动画路由分发给 `RadialKnobControlView` 内部渲染，实现完美的同心圆定位。
 
 ---
 
