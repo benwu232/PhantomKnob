@@ -73,49 +73,51 @@ struct CursorGuideAnimationView: View {
 struct TwoFingerRotationGuideView: View {
     @State private var rotationAngle: Double = -25.0
     
+    private let skinColorStart = Color(red: 252/255, green: 230/255, blue: 210/255)
+    private let skinColorEnd = Color(red: 220/255, green: 163/255, blue: 130/255)
+    
     var body: some View {
         ZStack {
+            // 背景圆环轨道
             Circle()
                 .stroke(
-                    Color.blue.opacity(0.2),
+                    Color.white.opacity(0.12),
                     style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [4, 6])
                 )
                 .frame(width: 90, height: 90)
             
+            // 触控点 1（肉色指尖）
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [Color.blue, Color.blue.opacity(0.3)],
+                        colors: [skinColorStart, skinColorEnd],
                         center: .center,
                         startRadius: 0,
                         endRadius: 8
                     )
                 )
                 .frame(width: 16, height: 16)
-                .shadow(color: .blue.opacity(0.5), radius: 4)
+                .shadow(color: skinColorEnd.opacity(0.4), radius: 3, x: 0, y: 1.5)
                 .offset(y: -45)
                 .rotationEffect(.degrees(rotationAngle))
             
+            // 触控点 2（肉色指尖）
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [Color.blue, Color.blue.opacity(0.3)],
+                        colors: [skinColorStart, skinColorEnd],
                         center: .center,
                         startRadius: 0,
                         endRadius: 8
                     )
                 )
                 .frame(width: 16, height: 16)
-                .shadow(color: .blue.opacity(0.5), radius: 4)
+                .shadow(color: skinColorEnd.opacity(0.4), radius: 3, x: 0, y: 1.5)
                 .offset(y: 45)
                 .rotationEffect(.degrees(rotationAngle))
-            
-            Image(systemName: "arrow.triangle.2.circlepath")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.blue.opacity(0.8))
-                .rotationEffect(.degrees(-rotationAngle * 0.5))
         }
         .frame(width: 120, height: 120)
+        .scaleEffect(1.2) // 放大 1.2 倍以贴合聚焦状态下的旋钮圆周
         .onAppear {
             withAnimation(
                 .easeInOut(duration: 1.6)
