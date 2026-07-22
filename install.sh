@@ -36,9 +36,10 @@ if [ -d "/Applications/PhantomKnob.app" ]; then
 fi
 cp -R "$MOUNT_POINT/PhantomKnob.app" /Applications/
 
-# 4. Remove Gatekeeper Quarantine flag
-echo -e "\033[1;34m==>\033[0m Bypassing Gatekeeper quarantine security check..."
+# 4. Remove Gatekeeper Quarantine flag and re-sign recursively
+echo -e "\033[1;34m==>\033[0m Bypassing Gatekeeper quarantine and re-signing application..."
 xattr -cr /Applications/PhantomKnob.app 2>/dev/null || true
+codesign --force --sign - --deep /Applications/PhantomKnob.app 2>/dev/null || true
 
 # 5. Unmount and cleanup
 echo -e "\033[1;34m==>\033[0m Cleaning up installation files..."
