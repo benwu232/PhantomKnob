@@ -93,12 +93,20 @@ if [ "${IS_ADHOC}" = "true" ]; then
 
     EXPORT_PLIST="${BUILD_DIR}/exportOptions.plist"
     cat > "${EXPORT_PLIST}" <<EOF
-{
-    "method": "developer-id",
-    "signingStyle": "manual",
-    "signingCertificate": "-",
-    "compileBitcode": false
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>developer-id</string>
+    <key>signingStyle</key>
+    <string>manual</string>
+    <key>signingCertificate</key>
+    <string>-</string>
+    <key>compileBitcode</key>
+    <false/>
+</dict>
+</plist>
 EOF
 
     # 4. 导出 App Bundle
@@ -121,12 +129,20 @@ else
 
     EXPORT_PLIST="${BUILD_DIR}/exportOptions.plist"
     cat > "${EXPORT_PLIST}" <<EOF
-{
-    "method": "developer-id",
-    "signingStyle": "manual",
-    "signingCertificate": "${SIGNING_IDENTITY}",
-    "teamID": "${DEVELOPMENT_TEAM}"
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>developer-id</string>
+    <key>signingStyle</key>
+    <string>manual</string>
+    <key>signingCertificate</key>
+    <string>${SIGNING_IDENTITY}</string>
+    <key>teamID</key>
+    <string>${DEVELOPMENT_TEAM}</string>
+</dict>
+</plist>
 EOF
 
     # 4. 导出 App Bundle
