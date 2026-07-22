@@ -93,6 +93,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           repository: benwu232/PhantomKnob
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ secrets.PHANTOM_KNOB_RELEASE }}
           files: dist/*.dmg
           generate_release_notes: true
