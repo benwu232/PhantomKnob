@@ -180,10 +180,14 @@ struct UserGuideView: View {
                     viewModel.hoveredKnob = isHover ? .volumeKnob : .none
                 }
                 
-                if !viewModel.hovered && !viewModel.isTouchpadDetected {
-                    CursorGuideAnimationView()
-                        .offset(x: 70, y: -50)
-                        .transition(.opacity)
+                if !viewModel.isTouchpadDetected && !viewModel.isGestureActive {
+                    if !viewModel.hovered {
+                        CursorGuideAnimationView()
+                            .transition(.opacity)
+                    } else {
+                        TwoFingerRotationGuideView()
+                            .transition(.opacity)
+                    }
                 }
             }
             .frame(height: 140)
@@ -624,19 +628,80 @@ struct UserGuideView: View {
 }
 
 struct CursorGuideAnimationView: View {
-    @State private var pulse = false
+    @State private var isAnimating = false
     
     var body: some View {
-        Image(systemName: "hand.draw.fill")
-            .font(.system(size: 32))
-            .foregroundColor(Color.blue.opacity(0.8))
-            .scaleEffect(pulse ? 1.2 : 0.9)
-            .offset(x: pulse ? -10 : 10, y: pulse ? 10 : -10)
+        Image(systemName: "cursorarrow")
+            .font(.system(size: 28))
+            .foregroundColor(.blue)
+            .shadow(color: .blue.opacity(0.4), radius: 4)
+            .offset(x: isAnimating ? 25 : 85, y: isAnimating ? -25 : -85)
+            .opacity(isAnimating ? 1.0 : 0.0)
             .onAppear {
-                withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
-                    pulse = true
+                withAnimation(
+                    .easeInOut(duration: 1.5)
+                    .repeatForever(autoreverses: false)
+                ) {
+                    isAnimating = true
                 }
             }
+    }
+}
+
+struct TwoFingerRotationGuideView: View {
+    @State private var rotationAngle: Double = -25.0
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(
+                    Color.blue.opacity(0.2),
+                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [4, 6])
+                )
+                .frame(width: 90, height: 90)
+            
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [Color.blue, Color.blue.opacity(0.3)],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 8
+                    )
+                )
+                .frame(width: 16, height: 16)
+                .shadow(color: .blue.opacity(0.5), radius: 4)
+                .offset(y: -45)
+                .rotationEffect(.degrees(rotationAngle))
+            
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [Color.blue, Color.blue.opacity(0.3)],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 8
+                    )
+                )
+                .frame(width: 16, height: 16)
+                .shadow(color: .blue.opacity(0.5), radius: 4)
+                .offset(y: 45)
+                .rotationEffect(.degrees(rotationAngle))
+            
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(.blue.opacity(0.8))
+                .rotationEffect(.degrees(-rotationAngle * 0.5))
+        }
+        .frame(width: 120, height: 120)
+        .onAppear {
+            withAnimation(
+                .easeInOut(duration: 1.6)
+                .repeatForever(autoreverses: true)
+            ) {
+                rotationAngle = 25.0
+            }
+        }
     }
 }
 
