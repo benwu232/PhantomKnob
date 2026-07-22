@@ -145,7 +145,7 @@ class StatusBarController: ObservableObject {
         case .trialing(let daysRemaining):
             if daysRemaining < 3 {
                 let buyItem = NSMenuItem(
-                    title: "🛒 Buy PhantomKnob Pro...",
+                    title: String(localized: "menu.buyPro", defaultValue: "🛒 Buy PhantomKnob Pro..."),
                     action: #selector(buyPro),
                     keyEquivalent: ""
                 )
@@ -154,7 +154,7 @@ class StatusBarController: ObservableObject {
             }
         case .free:
             let buyItem = NSMenuItem(
-                title: "🛒 Upgrade to Pro...",
+                title: String(localized: "menu.upgradeToPro", defaultValue: "🛒 Upgrade to Pro..."),
                 action: #selector(buyPro),
                 keyEquivalent: ""
             )

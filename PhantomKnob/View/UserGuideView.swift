@@ -497,13 +497,6 @@ struct UserGuideView: View {
             .padding(.horizontal, 32)
             
             Spacer()
-            
-            Toggle(String(localized: "guide.step3.skipGuide", defaultValue: "Don't show user guide again on next startup"), isOn: $viewModel.skipOnNextStartup)
-                .toggleStyle(.checkbox)
-                .foregroundColor(.white.opacity(0.85))
-                .font(.system(size: 12))
-            
-            Spacer()
         }
     }
     
@@ -556,54 +549,62 @@ struct UserGuideView: View {
 
     // MARK: - Step 5: Shortcuts Reference
     private var shortcutsView: some View {
-        ScrollView(showsIndicators: true) {
-            VStack(alignment: .leading, spacing: 20) {
-                
-                // Status Bar Icon Operations
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(String(localized: "guide.shortcuts.section.statusbar", defaultValue: "Status Bar Icon Operations"))
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(.blue)
+        VStack(spacing: 8) {
+            ScrollView(showsIndicators: true) {
+                VStack(alignment: .leading, spacing: 20) {
                     
-                    shortcutRow(key: String(localized: "guide.shortcuts.statusbar.click", defaultValue: "Single Click"), desc: String(localized: "guide.shortcuts.statusbar.click.desc", defaultValue: "Toggle global gesture control mode (activate/deactivate)"))
-                    shortcutRow(key: String(localized: "guide.shortcuts.statusbar.doubleClick", defaultValue: "Double Click"), desc: String(localized: "guide.shortcuts.statusbar.doubleClick.desc", defaultValue: "Show/hide the shortcut button panel (Control Panel)"))
-                    shortcutRow(key: String(localized: "guide.shortcuts.statusbar.rightClick", defaultValue: "Right Click / Ctrl+Click"), desc: String(localized: "guide.shortcuts.statusbar.rightClick.desc", defaultValue: "Open app system menu (Settings, User Guide, etc.)"))
-                }
-                .padding(12)
-                .background(Color.white.opacity(0.03))
-                .cornerRadius(8)
-                
-                // Keyboard Shortcuts
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(String(localized: "guide.shortcuts.section.keyboard", defaultValue: "Keyboard Shortcuts"))
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(.orange)
+                    // Status Bar Icon Operations
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(String(localized: "guide.shortcuts.section.statusbar", defaultValue: "Status Bar Icon Operations"))
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.blue)
+                        
+                        shortcutRow(key: String(localized: "guide.shortcuts.statusbar.click", defaultValue: "Single Click"), desc: String(localized: "guide.shortcuts.statusbar.click.desc", defaultValue: "Toggle global gesture control mode (activate/deactivate)"))
+                        shortcutRow(key: String(localized: "guide.shortcuts.statusbar.doubleClick", defaultValue: "Double Click"), desc: String(localized: "guide.shortcuts.statusbar.doubleClick.desc", defaultValue: "Show/hide the shortcut button panel (Control Panel)"))
+                        shortcutRow(key: String(localized: "guide.shortcuts.statusbar.rightClick", defaultValue: "Right Click / Ctrl+Click"), desc: String(localized: "guide.shortcuts.statusbar.rightClick.desc", defaultValue: "Open app system menu (Settings, User Guide, etc.)"))
+                    }
+                    .padding(12)
+                    .background(Color.white.opacity(0.03))
+                    .cornerRadius(8)
                     
-                    shortcutRow(key: "⌘ ⌥ K", desc: String(localized: "guide.shortcuts.keyboard.toggle", defaultValue: "Global control switch shortcut — toggle active state instantly"))
-                    shortcutRow(key: String(localized: "guide.shortcuts.keyboard.bypass", defaultValue: "Hold Option Key"), desc: String(localized: "guide.shortcuts.keyboard.bypass.desc", defaultValue: "Temporarily bypass gestures to use native trackpad scroll or zoom"))
-                }
-                .padding(12)
-                .background(Color.white.opacity(0.03))
-                .cornerRadius(8)
+                    // Keyboard Shortcuts
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(String(localized: "guide.shortcuts.section.keyboard", defaultValue: "Keyboard Shortcuts"))
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.orange)
+                        
+                        shortcutRow(key: "⌘ ⌥ K", desc: String(localized: "guide.shortcuts.keyboard.toggle", defaultValue: "Global control switch shortcut — toggle active state instantly"))
+                        shortcutRow(key: String(localized: "guide.shortcuts.keyboard.bypass", defaultValue: "Hold Option Key"), desc: String(localized: "guide.shortcuts.keyboard.bypass.desc", defaultValue: "Temporarily bypass gestures to use native trackpad scroll or zoom"))
+                    }
+                    .padding(12)
+                    .background(Color.white.opacity(0.03))
+                    .cornerRadius(8)
 
-                // Auxiliary Keys During Rotation
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(String(localized: "guide.shortcuts.section.auxiliary", defaultValue: "Auxiliary Keys (Active During Rotation)"))
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(.green)
-                    
-                    shortcutRow(key: "C", desc: String(localized: "guide.shortcuts.auxiliary.cKey", defaultValue: "Press during gesture rotation to directly show the Customizer panel"))
-                    shortcutRow(key: "1", desc: String(localized: "guide.shortcuts.auxiliary.key1", defaultValue: "Reset rotation speed to 1.0x of the base speed setting"))
-                    shortcutRow(key: "2 - 9", desc: String(localized: "guide.shortcuts.auxiliary.key2to9", defaultValue: "Set rotation speed multiplier to 2.0x ~ 9.0x of the base speed setting"))
-                    shortcutRow(key: "↑ / ↓", desc: String(localized: "guide.shortcuts.auxiliary.arrowsVertical", defaultValue: "Increase/decrease rotation speed multiplier by 1.0x"))
-                    shortcutRow(key: "← / →", desc: String(localized: "guide.shortcuts.auxiliary.arrowsHorizontal", defaultValue: "Increase/decrease rotation speed multiplier by 0.1x"))
+                    // Auxiliary Keys During Rotation
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(String(localized: "guide.shortcuts.section.auxiliary", defaultValue: "Auxiliary Keys (Active During Rotation)"))
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.green)
+                        
+                        shortcutRow(key: "C", desc: String(localized: "guide.shortcuts.auxiliary.cKey", defaultValue: "Press during gesture rotation to directly show the Customizer panel"))
+                        shortcutRow(key: "1", desc: String(localized: "guide.shortcuts.auxiliary.key1", defaultValue: "Reset rotation speed to 1.0x of the base speed setting"))
+                        shortcutRow(key: "2 - 9", desc: String(localized: "guide.shortcuts.auxiliary.key2to9", defaultValue: "Set rotation speed multiplier to 2.0x ~ 9.0x of the base speed setting"))
+                        shortcutRow(key: "↑ / ↓", desc: String(localized: "guide.shortcuts.auxiliary.arrowsVertical", defaultValue: "Increase/decrease rotation speed multiplier by 1.0x"))
+                        shortcutRow(key: "← / →", desc: String(localized: "guide.shortcuts.auxiliary.arrowsHorizontal", defaultValue: "Increase/decrease rotation speed multiplier by 0.1x"))
+                    }
+                    .padding(12)
+                    .background(Color.white.opacity(0.03))
+                    .cornerRadius(8)
                 }
-                .padding(12)
-                .background(Color.white.opacity(0.03))
-                .cornerRadius(8)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 16)
+            
+            Toggle(String(localized: "guide.step3.skipGuide", defaultValue: "Don't show user guide again on next startup"), isOn: $viewModel.skipOnNextStartup)
+                .toggleStyle(.checkbox)
+                .foregroundColor(.white.opacity(0.85))
+                .font(.system(size: 12))
+                .padding(.bottom, 12)
         }
     }
 
