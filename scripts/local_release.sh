@@ -45,6 +45,16 @@ if [[ ! "$TAG_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
     exit 1
 fi
 
+# 如果用户输入了不同的版本号，则自动更新 project.yml
+CLEAN_VERSION="${TAG_VERSION#v}"
+if [ "$CLEAN_VERSION" != "$PROJ_VERSION" ]; then
+    echo "检测到不同的版本号，正在将 project.yml 中的 MARKETING_VERSION 更新为: $CLEAN_VERSION"
+    sed -i '' "s/\(MARKETING_VERSION:[[:space:]]*\)[0-9.]*/\1${CLEAN_VERSION}/" PhantomKnob/project.yml
+    
+    echo "正在运行 xcodegen 重新生成项目..."
+    (cd PhantomKnob && xcodegen)
+fi
+
 if git rev-parse "$TAG_VERSION" &>/dev/null; then
     echo "[ERROR] 本地已存在 Tag $TAG_VERSION ！" >&2
     exit 1
