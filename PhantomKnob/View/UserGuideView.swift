@@ -165,30 +165,31 @@ struct UserGuideView: View {
         VStack(spacing: 0) {
             Spacer()
             
-            ZStack {
-                RadialKnobControlView(
-                    title: String(localized: "guide.step1.practiceKnob", defaultValue: "Volume Practice Dial"),
-                    icon: "speaker.wave.3.fill",
-                    value: viewModel.volumeVal,
-                    angle: viewModel.rotationAngle,
-                    isFocused: viewModel.hovered,
-                    isGestureActive: viewModel.isGestureActive,
-                    showPercentage: true
-                )
-                .onHover { isHover in
-                    viewModel.hovered = isHover
-                    viewModel.hoveredKnob = isHover ? .volumeKnob : .none
-                }
-                
-                if !viewModel.isTouchpadDetected && !viewModel.isGestureActive {
-                    if !viewModel.hovered {
-                        CursorGuideAnimationView()
-                            .transition(.opacity)
-                    } else {
-                        TwoFingerRotationGuideView()
-                            .transition(.opacity)
+            RadialKnobControlView(
+                title: String(localized: "guide.step1.practiceKnob", defaultValue: "Volume Practice Dial"),
+                icon: "speaker.wave.3.fill",
+                value: viewModel.volumeVal,
+                angle: viewModel.rotationAngle,
+                isFocused: viewModel.hovered,
+                isGestureActive: viewModel.isGestureActive,
+                showPercentage: true,
+                knobOverlay: AnyView(
+                    Group {
+                        if !viewModel.isTouchpadDetected && !viewModel.isGestureActive {
+                            if !viewModel.hovered {
+                                CursorGuideAnimationView()
+                                    .transition(.opacity)
+                            } else {
+                                TwoFingerRotationGuideView()
+                                    .transition(.opacity)
+                            }
+                        }
                     }
-                }
+                )
+            )
+            .onHover { isHover in
+                viewModel.hovered = isHover
+                viewModel.hoveredKnob = isHover ? .volumeKnob : .none
             }
             .frame(height: 140)
             
@@ -695,7 +696,6 @@ struct TwoFingerRotationGuideView: View {
                 .rotationEffect(.degrees(rotationAngle))
         }
         .frame(width: 120, height: 120)
-        .scaleEffect(1.2) // 放大 1.2 倍以贴合聚焦状态下的旋钮圆周
         .onAppear {
             withAnimation(
                 .easeInOut(duration: 1.6)

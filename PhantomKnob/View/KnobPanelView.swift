@@ -104,8 +104,9 @@ struct RadialKnobControlView: View {
     let isFocused: Bool
     let isGestureActive: Bool
     let showPercentage: Bool
+    let knobOverlay: AnyView?
     
-    init(title: String, icon: String, value: Float, angle: Double, isFocused: Bool, isGestureActive: Bool, showPercentage: Bool = true) {
+    init(title: String, icon: String, value: Float, angle: Double, isFocused: Bool, isGestureActive: Bool, showPercentage: Bool = true, knobOverlay: AnyView? = nil) {
         self.title = title
         self.icon = icon
         self.value = value
@@ -113,6 +114,7 @@ struct RadialKnobControlView: View {
         self.isFocused = isFocused
         self.isGestureActive = isGestureActive
         self.showPercentage = showPercentage
+        self.knobOverlay = knobOverlay
     }
     
     var body: some View {
@@ -157,6 +159,11 @@ struct RadialKnobControlView: View {
                 Image(systemName: icon)
                     .font(.system(size: 28))
                     .foregroundColor(isFocused ? .blue : .white.opacity(0.8))
+                
+                // Custom overlay aligned to the knob center
+                if let overlay = knobOverlay {
+                    overlay
+                }
             }
             .scaleEffect(isFocused ? 1.20 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isFocused)
