@@ -558,7 +558,7 @@ struct AboutView: View {
                         .disabled(isActivating)
                         
                         Button(action: {
-                            if let url = URL(string: "https://phantomknob.com#buy") {
+                            if let url = URL(string: "https://benwu232.github.io/PhantomKnob/#buy") {
                                 NSWorkspace.shared.open(url)
                             }
                         }) {

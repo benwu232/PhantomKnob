@@ -536,7 +536,7 @@ class StatusBarController: ObservableObject {
     }
     
     @objc func buyPro() {
-        if let url = URL(string: "https://phantomknob.com#buy") {
+        if let url = URL(string: "https://benwu232.github.io/PhantomKnob/#buy") {
             NSWorkspace.shared.open(url)
         }
     }
