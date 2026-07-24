@@ -45,6 +45,7 @@
 		5B0159A542CFECBEC84D42F7 /* MultitouchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */; };
 		5CA6B4775FA6E741161BDF28 /* ReleaseNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8120D28F7EC33A9A5859F62D /* ReleaseNotesView.swift */; };
 		63E525A54A0379329A2409D4 /* KnobGlobalStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1EC8639129B1EA4015970A /* KnobGlobalStateTests.swift */; };
+		653633D5D245EA1DADC1FDD8 /* KnobCustomizationTriggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DB066BD45933FF9EFDD35B /* KnobCustomizationTriggerTests.swift */; };
 		69196DF1790F7953D566EC24 /* SystemServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F9A87164F5EE435A917D0A /* SystemServicesTests.swift */; };
 		6A1DF635D87D8391F5225929 /* UserDefaults+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FA9731707F828DF8131590 /* UserDefaults+App.swift */; };
 		6A9ED4B9776BDB0D8253547F /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E07393EBAB5C633F4A79E498 /* Localizable.xcstrings */; };
@@ -148,6 +149,7 @@
 		3143B43E9BB98963B310B6D1 /* PhantomKnobApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomKnobApp.swift; sourceTree = "<group>"; };
 		33997C526CE3C79D79F6AC92 /* DemoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewModel.swift; sourceTree = "<group>"; };
 		33E0AF95038612DA34DA2759 /* LicenseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseManager.swift; sourceTree = "<group>"; };
+		36DB066BD45933FF9EFDD35B /* KnobCustomizationTriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCustomizationTriggerTests.swift; sourceTree = "<group>"; };
 		3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslationTests.swift; sourceTree = "<group>"; };
 		3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderView.swift; sourceTree = "<group>"; };
 		412FAE1848F7AE48AD20C030 /* FreeEditionPopoverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeEditionPopoverTests.swift; sourceTree = "<group>"; };
@@ -426,6 +428,7 @@
 				3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */,
 				B2DD05C13BC59773FD98055F /* JSONCParserTests.swift */,
 				F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */,
+				36DB066BD45933FF9EFDD35B /* KnobCustomizationTriggerTests.swift */,
 				D294D0E8BC84017A0F384350 /* KnobCustomizerTests.swift */,
 				1F1EC8639129B1EA4015970A /* KnobGlobalStateTests.swift */,
 				DB40B42C0370CE2503669AC4 /* KnobPanelNotificationTests.swift */,
@@ -569,6 +572,7 @@
 				782BBECA7771215D3AC55E1D /* InputTranslationTests.swift in Sources */,
 				89CC4DDB76C47724BEEF1BC0 /* JSONCParserTests.swift in Sources */,
 				37B5CCF456D3EE1E46375088 /* KnobAlgorithmTests.swift in Sources */,
+				653633D5D245EA1DADC1FDD8 /* KnobCustomizationTriggerTests.swift in Sources */,
 				FEE46F29785B361A5031F4DB /* KnobCustomizerTests.swift in Sources */,
 				63E525A54A0379329A2409D4 /* KnobGlobalStateTests.swift in Sources */,
 				9BD67FBCDAD45F5056D4F77D /* KnobPanelNotificationTests.swift in Sources */,
@@ -762,7 +766,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.8.0;
+				MARKETING_VERSION = 0.8.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -842,7 +846,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.8.0;
+				MARKETING_VERSION = 0.8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = PhantomKnob;

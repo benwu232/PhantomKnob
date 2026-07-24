@@ -218,6 +218,9 @@ class KnobPanelWindowController: NSObject, NSWindowDelegate {
     }
     
     func windowDidResignKey(_ notification: Notification) {
+        if CustomizerHUDWindowController.shared.isVisible || NSColorPanel.shared.isVisible {
+            return
+        }
         if !isPinned {
             hide()
         }

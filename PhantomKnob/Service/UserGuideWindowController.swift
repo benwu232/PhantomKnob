@@ -14,6 +14,7 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
     private var localClickMonitor: Any?
     var isPinned: Bool = false
     var initialStep: Int = 1
+    weak var viewModel: UserGuideViewModel?
     
     var isVisible: Bool {
         return window?.isVisible ?? false
@@ -127,6 +128,9 @@ class UserGuideWindowController: NSObject, NSWindowDelegate {
     }
     
     func windowDidResignKey(_ notification: Notification) {
+        if CustomizerHUDWindowController.shared.isVisible || NSColorPanel.shared.isVisible {
+            return
+        }
         if !isPinned {
             hide()
         }

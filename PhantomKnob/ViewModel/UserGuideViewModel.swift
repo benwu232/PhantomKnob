@@ -57,6 +57,7 @@ class UserGuideViewModel: ObservableObject {
         self.volumeVal = audioService.getVolume() ?? 0.5
         self.currentMultiplier = getControlPanelMultiplier()
         self.isTouchpadDetected = UserDefaults.app.bool(forKey: "userGuideTouchpadPracticed")
+        UserGuideWindowController.shared.viewModel = self
         setupBindings()
         
         let soundURL = URL(fileURLWithPath: "/System/Library/Sounds/Tink.aiff")

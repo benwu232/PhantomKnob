@@ -339,7 +339,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     private func handleAppSwitch() {
-        guard state != .inactive else { return }
+        guard state != .inactive, state != .customizing else { return }
         transition(to: .activated)
         currentTarget = nil
         currentTranslator = nil
@@ -550,11 +550,53 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         coolingTimer = nil
 
         if KnobPanelWindowController.shared.isVisible || UserGuideWindowController.shared.isVisible {
+            var identifier: String? = nil
+            var displayName = "控制面板"
+            
+            if UserGuideWindowController.shared.isVisible {
+                if let guideVM = UserGuideWindowController.shared.viewModel {
+                    if guideVM.currentStep == 2 {
+                        identifier = "VolumeKnob"
+                        displayName = "音量练习"
+                    } else if guideVM.currentStep == 3 {
+                        switch guideVM.hoveredKnob {
+                        case .doubleKnob:
+                            identifier = "DoubleKnob"
+                            displayName = "双环旋钮"
+                        case .cvkKnob:
+                            identifier = "CVKKnob"
+                            displayName = "无级变速旋钮"
+                        case .volumeKnob:
+                            identifier = "VolumeKnob"
+                            displayName = "音量练习"
+                        case .none:
+                            identifier = nil
+                            displayName = "控制面板"
+                        }
+                    }
+                }
+            } else if KnobPanelWindowController.shared.isVisible {
+                switch ControlPanelViewModel.shared.focusedVariable {
+                case .volume:
+                    identifier = "VolumeKnob"
+                    displayName = "系统音量"
+                case .brightness:
+                    identifier = "BrightnessKnob"
+                    displayName = "屏幕亮度"
+                case .keyboardBacklight:
+                    identifier = "KeyboardBacklightKnob"
+                    displayName = "键盘灯"
+                case nil:
+                    identifier = nil
+                    displayName = "控制面板"
+                }
+            }
+            
             let target = DetectedTarget(
                 bundleID: "com.phantomknob.controlpanel",
                 axRole: "ControlPanel",
-                identifier: nil,
-                displayName: "控制面板",
+                identifier: identifier,
+                displayName: displayName,
                 element: nil,
                 parentChain: []
             )
@@ -1106,10 +1148,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         guard eventTap == nil else { return }
         
         let eventMask = UInt64(1 << CGEventType.keyDown.rawValue) |
-                        UInt64(1 << CGEventType.keyUp.rawValue) |
-                        UInt64(1 << 29) | // gesture
-                        UInt64(1 << 19) | // magnify
-                        UInt64(1 << 18)   // rotate
+                        UInt64(1 << CGEventType.keyUp.rawValue)
         
         let selfPointer = Unmanaged.passUnretained(self).toOpaque()
         
@@ -1157,7 +1196,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
     }
 
-    private func handleEventTap(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Bool {
+    func handleEventTap(proxy: CGEventTapProxy?, type: CGEventType, event: CGEvent) -> Bool {
         // Skip events posted by our own translators
         let sourceUserData = event.getIntegerValueField(.eventSourceUserData)
         guard sourceUserData != 0xDEADC0DE else { return false }
@@ -1165,12 +1204,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         // Check key events for customization trigger first
         if type == .keyDown || type == .keyUp {
             let keyCode = CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode))
-            if keyCode == 8 && type == .keyDown { // 'C' keycode
+            if keyCode == 8 { // 'C' keycode
                 if state.isKnobing || state.isCooling {
-                    DispatchQueue.main.async { [weak self] in
-                        self?.enterCustomization()
+                    if type == .keyDown {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.enterCustomization()
+                        }
                     }
-                    return true
+                    return true // Swallow both keyDown and keyUp to prevent penetration!
                 }
             }
         }
