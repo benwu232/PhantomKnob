@@ -34,6 +34,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var lastResolvedBaseScale: Double = 1.0
     private var currentRadius: Double = 0.0
     private var eventTap: CFMachPort?
+    private var hasShownEventTapErrorAlert = false
     private var runLoopSource: CFRunLoopSource?
     var isInterceptingGestures = false
     private var wasInactiveBeforePanelShow = false
@@ -1148,7 +1149,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         guard eventTap == nil else { return }
         
         let eventMask = UInt64(1 << CGEventType.keyDown.rawValue) |
-                        UInt64(1 << CGEventType.keyUp.rawValue)
+                        UInt64(1 << CGEventType.keyUp.rawValue) |
+                        UInt64(1 << 29) | // gesture
+                        UInt64(1 << 19) | // magnify
+                        UInt64(1 << 18)   // rotate
         
         let selfPointer = Unmanaged.passUnretained(self).toOpaque()
         
@@ -1176,6 +1180,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             userInfo: selfPointer
         ) else {
             PKLogger.knob.error("Failed to create event tap")
+            showEventTapErrorAlertOnce()
             return
         }
         
@@ -1193,6 +1198,35 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         if let tap = eventTap {
             CGEvent.tapEnable(tap: tap, enable: true)
             PKLogger.knob.debug("Re-enabled event tap after timeout/disable event")
+        }
+    }
+
+    private func showEventTapErrorAlertOnce() {
+        #if DEBUG
+        let env = ProcessInfo.processInfo.environment
+        let isTesting = env.keys.contains { $0.range(of: "xctest", options: .caseInsensitive) != nil }
+        if isTesting || NSClassFromString("XCTestCase") != nil {
+            return
+        }
+        #endif
+        
+        guard !hasShownEventTapErrorAlert else { return }
+        hasShownEventTapErrorAlert = true
+        
+        DispatchQueue.main.async {
+            let alert = NSAlert()
+            alert.messageText = String(localized: "eventTap.error.title", defaultValue: "辅助功能与输入监听权限已失效")
+            alert.informativeText = String(localized: "eventTap.error.message", defaultValue: "检测到 Event Tap 注册失败。如果您已经授予了权限，这通常是由于重新编译导致 macOS 安全缓存失效引起的。\n\n请在系统设置中，将 PhantomKnob 从【辅助功能】与【输入监听】列表中完全移除（选中并按 - 按钮），然后重新添加即可激活权限。")
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: String(localized: "eventTap.error.openSettings", defaultValue: "打开系统设置"))
+            alert.addButton(withTitle: String(localized: "eventTap.error.cancel", defaultValue: "取消"))
+            
+            let response = alert.runModal()
+            if response == .alertFirstButtonReturn {
+                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
         }
     }
 
