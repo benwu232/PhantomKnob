@@ -70,4 +70,6 @@ debug.log
 
 # Brainstorming Visual Companion
 .superpowers/
+.agents/
+.claude/
 
