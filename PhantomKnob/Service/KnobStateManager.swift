@@ -550,7 +550,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         coolingTimer?.invalidate()
         coolingTimer = nil
 
-        if KnobPanelWindowController.shared.isVisible || UserGuideWindowController.shared.isVisible {
+        let isUserGuidePractice = UserGuideWindowController.shared.isVisible && {
+            if let guideVM = UserGuideWindowController.shared.viewModel {
+                return guideVM.currentStep == 2 || guideVM.currentStep == 3
+            }
+            return false
+        }()
+
+        if KnobPanelWindowController.shared.isVisible || isUserGuidePractice {
             var identifier: String? = nil
             var displayName = "控制面板"
             
@@ -875,6 +882,11 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.fingerIdx2 = idx2
         }
 
+        let isTooClose = scaledPoints.count >= 2 && {
+            let (knobCore, _, _) = KnobAlgorithm().calKnob(scaledPoints)
+            return knobCore.isValid && knobCore.radius * 2 < 10.0
+        }()
+
         // 🌟 进行手势判定是否升级为 knob
         let mode = gestureClassifier.processTouchesMoved(points: points)
         if mode == .knob && !state.isKnobing {
@@ -901,6 +913,23 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
 
         if state.isKnobing {
+            if mode != .knob {
+                // 两指靠拢超时，触发退出
+                PKLogger.knob.debug("Exiting knobing early because gesture mode is no longer .knob (distance filter timeout)")
+                if let target = currentTarget {
+                    transition(to: .cooling(target: target))
+                    if target.axRole != "ControlPanel" {
+                        overlayController.fadeOut { [weak self] in
+                            self?.startCoolingTimer()
+                        }
+                    } else {
+                        startCoolingTimer()
+                    }
+                } else {
+                    transition(to: .activated)
+                }
+                return
+            }
             if let lockPos = initialTouchPositionCarbon {
                 CGWarpMouseCursorPosition(lockPos)
             }
@@ -928,6 +957,24 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             let radius = calculateRawRadius(points: scaledPoints)
             self.currentRadius = radius
             let knob = currentTarget.flatMap { KnobCustomizer.shared.knob(for: $0.knobKey) }
+
+            if isTooClose {
+                let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
+                overlayController.update(
+                    angle: currentAngle,
+                    radius: radius,
+                    isDeadzone: false,
+                    isTooClose: true,
+                    scale: self.lastResolvedBaseScale,
+                    themeColor: color,
+                    outerThemeColor: knob?.cvkConfig?.outerThemeColor,
+                    innerThemeColor: knob?.cvkConfig?.innerThemeColor,
+                    configType: knob?.configType ?? .single
+                )
+                self.currentAngle = currentAngle
+                previousAngle = currentAngle
+                return
+            }
 
             // 1. Resolve default base scale dynamically from radius
             var baseScale: Double?
@@ -997,6 +1044,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     angle: currentAngle,
                     radius: radius,
                     isDeadzone: true,
+                    isTooClose: false,
                     scale: self.lastResolvedBaseScale,
                     themeColor: color,
                     outerThemeColor: knob?.cvkConfig?.outerThemeColor,
@@ -1027,6 +1075,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 angle: currentAngle,
                 radius: radius,
                 isDeadzone: false,
+                isTooClose: false,
                 scale: activeBaseScale,
                 themeColor: color,
                 outerThemeColor: knob?.cvkConfig?.outerThemeColor,
