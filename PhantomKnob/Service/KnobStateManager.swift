@@ -934,26 +934,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 CGWarpMouseCursorPosition(lockPos)
             }
 
-            if let target = currentTarget, target.axRole == "ControlPanel" {
-                let knobState = KnobState(
-                    current: KnobCore(angle: currentAngle),
-                    previous: KnobCore(angle: previousAngle)
-                )
-                let delta = knobState.deltaAngle
-                
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("KnobPanelDidRotate"),
-                    object: nil,
-                    userInfo: ["delta": delta]
-                )
-                
-                ControlPanelViewModel.shared.receiveRotationDelta(delta)
-                
-                self.currentAngle = currentAngle
-                previousAngle = currentAngle
-                return
-            }
-
             let radius = calculateRawRadius(points: scaledPoints)
             self.currentRadius = radius
             let knob = currentTarget.flatMap { KnobCustomizer.shared.knob(for: $0.knobKey) }
@@ -975,6 +955,27 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 previousAngle = currentAngle
                 return
             }
+
+            if let target = currentTarget, target.axRole == "ControlPanel" {
+                let knobState = KnobState(
+                    current: KnobCore(angle: currentAngle),
+                    previous: KnobCore(angle: previousAngle)
+                )
+                let delta = knobState.deltaAngle
+                
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("KnobPanelDidRotate"),
+                    object: nil,
+                    userInfo: ["delta": delta]
+                )
+                
+                ControlPanelViewModel.shared.receiveRotationDelta(delta)
+                
+                self.currentAngle = currentAngle
+                previousAngle = currentAngle
+                return
+            }
+
 
             // 1. Resolve default base scale dynamically from radius
             var baseScale: Double?
