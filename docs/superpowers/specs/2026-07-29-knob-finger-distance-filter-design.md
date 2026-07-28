@@ -1,6 +1,6 @@
 # 双指距离小于10mm避错与超时退出设计规格说明 (Knob Finger Distance Filter)
 
-本规格说明定义了当两指物理距离小于10mm时，避免判定为旋钮，以及旋钮期间如果两指距离小于10mm持续超过1秒则自动退出旋钮（避免误判）的设计细节、UI 交互（显示10mm警告圆）与测试验证方案。
+本规格说明定义了当两指物理距离小于10mm时，避免判定为旋钮，以及旋钮期间如果两指距离小于10mm持续超过1秒则自动退出旋钮（避免误判）的设计细节、UI 交互（仅显示10mm警告圆）与测试验证方案。
 
 ## 背景与目的
 
@@ -8,7 +8,7 @@ Phantom Knob 利用触控板上的双指手势来模拟旋钮旋转。然而，�
 为了解决该误判问题：
 1. **落指严格校验**：在落指那一刻（`processTouchesBegan`）强制要求双指间距 $\ge 10\text{ mm}$，否则不进行旋钮判定。
 2. **移动渐进容错与 UI 反馈**：在已激活旋钮的状态下，如果两指距离小于 10mm：
-   - **UI 变化**：立即隐藏原有的旋钮 Overlay，只在原位置显示一个直径 10mm（对应屏幕 50pt）的警示圆，提醒用户双指距离太近。
+   - **UI 变化**：立即隐藏原有的旋钮 Overlay，只在原位置显示一个直径 10mm（对应屏幕 50pt）的橙色警示圆，提醒用户双指距离太近。
    - **动态恢复**：如果用户在 1.0 秒内拉开双指（距离 $\ge 10\text{ mm}$），则立即恢复正常的旋钮 Overlay 渲染，不中断本次旋钮操作。
    - **超时退出**：如果双指持续靠拢超过 1.0 秒，则退出旋钮状态并淡出该警示圆。同时，单指延续状态由于不具备双指间距，需自动绕过此校验。
 
@@ -135,7 +135,7 @@ stateDiagram-v2
   var body: some View {
       VStack(spacing: 4) {
           if isTooClose {
-              // 渲染 10mm (50pt) 的橙色警示圆
+              // 仅需渲染 10mm (50pt) 的橙色警示圆
               ZStack {
                   Circle()
                       .stroke(Color.orange, lineWidth: 2)
@@ -143,9 +143,6 @@ stateDiagram-v2
                   Circle()
                       .fill(Color.orange.opacity(0.15))
                       .frame(width: 48, height: 48)
-                  Image(systemName: "exclamationmark.triangle")
-                      .font(.system(size: 14, weight: .bold))
-                      .foregroundColor(.orange)
               }
               .frame(width: diameter, height: diameter)
           } else {
