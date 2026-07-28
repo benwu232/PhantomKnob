@@ -19,6 +19,7 @@ class OverlayController: ObservableObject {
     @Published var outerThemeColor: String? = nil
     @Published var innerThemeColor: String? = nil
     @Published var configType: KnobConfigType = .single
+    @Published var isTooClose: Bool = false
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
@@ -127,6 +128,7 @@ class OverlayController: ObservableObject {
     func update(angle: Double, 
                 radius: Double, 
                 isDeadzone: Bool = false, 
+                isTooClose: Bool = false,
                 scale: Double? = nil, 
                 themeColor: String? = nil,
                 outerThemeColor: String? = nil,
@@ -134,6 +136,7 @@ class OverlayController: ObservableObject {
                 configType: KnobConfigType = .single) {
         self.angle = angle
         self.isDeadzone = isDeadzone
+        self.isTooClose = isTooClose
         self.scale = scale
         self.configType = configType
         if !featureGate.hasStyleCustomization {
@@ -147,7 +150,11 @@ class OverlayController: ObservableObject {
             self.outerThemeColor = outerThemeColor
             self.innerThemeColor = innerThemeColor
         }
-        self.diameter = Self.calculateDiameter(for: radius)
+        if isTooClose {
+            self.diameter = 50.0 // 10mm = 50pt
+        } else {
+            self.diameter = Self.calculateDiameter(for: radius)
+        }
         
         updatePanelFrame()
         updateOverlayView()
@@ -223,6 +230,7 @@ class OverlayController: ObservableObject {
             targetName: targetName,
             angle: angle,
             isDeadzone: isDeadzone,
+            isTooClose: isTooClose,
             scale: scale,
             themeColorHex: themeColor,
             overlayStyle: overlayStyle,
@@ -244,6 +252,7 @@ class OverlayController: ObservableObject {
             targetName: targetName,
             angle: angle,
             isDeadzone: isDeadzone,
+            isTooClose: isTooClose,
             scale: scale,
             themeColorHex: themeColor,
             overlayStyle: overlayStyle,
