@@ -156,4 +156,60 @@ final class GestureClassifierTests: XCTestCase {
         let modeRotated = classifier.processTouchesMoved(points: points3)
         XCTAssertEqual(modeRotated, .pan, "中心平移位移超标后，即使再次旋转也绝不应该触发 knob")
     }
+    
+    func testBeganDistanceFilter() {
+        let classifier = GestureClassifier()
+        // 双指物理间距为 8.0 mm (小于 10.0mm 阈值)
+        let points1: [Int: CGPoint] = [
+            1: CGPoint(x: 4.0, y: 0.0),
+            2: CGPoint(x: -4.0, y: 0.0)
+        ]
+        classifier.processTouchesBegan(points: points1)
+        
+        // 模拟旋转了 15 度，位移为 0.0 (未超标)
+        let radians = 15.0 * .pi / 180.0
+        let points2: [Int: CGPoint] = [
+            1: CGPoint(x: 4.0 * cos(radians), y: 4.0 * sin(radians)),
+            2: CGPoint(x: -4.0 * cos(radians), y: -4.0 * sin(radians))
+        ]
+        let mode = classifier.processTouchesMoved(points: points2)
+        XCTAssertEqual(mode, .pan, "双指初始物理间距小于 10mm 时，不应该开启或进入旋钮判定")
+    }
+
+    func testKnobDistanceTimeout() {
+        let classifier = GestureClassifier()
+        // 双指物理间距为 20.0 mm (大于 10.0mm 阈值)
+        let points1: [Int: CGPoint] = [
+            1: CGPoint(x: 10.0, y: 0.0),
+            2: CGPoint(x: -10.0, y: 0.0)
+        ]
+        classifier.processTouchesBegan(points: points1)
+        
+        // 旋转 15 度以激活旋钮
+        let radians = 15.0 * .pi / 180.0
+        let points2: [Int: CGPoint] = [
+            1: CGPoint(x: 10.0 * cos(radians), y: 10.0 * sin(radians)),
+            2: CGPoint(x: -10.0 * cos(radians), y: -10.0 * sin(radians))
+        ]
+        let mode = classifier.processTouchesMoved(points: points2)
+        XCTAssertEqual(mode, .knob, "正常旋转应当激活旋钮")
+        
+        // 保持旋转，但双指突然缩拢到距离仅 8.0 mm
+        let points3: [Int: CGPoint] = [
+            1: CGPoint(x: 4.0 * cos(radians), y: 4.0 * sin(radians)),
+            2: CGPoint(x: -4.0 * cos(radians), y: -4.0 * sin(radians))
+        ]
+        
+        // 刚缩拢时，由于未到 1 秒，应当继续维持 knob
+        let modeImmediately = classifier.processTouchesMoved(points: points3)
+        XCTAssertEqual(modeImmediately, .knob, "未超时前应当维持旋钮状态")
+        
+        // 模拟等待 1.1 秒
+        Thread.sleep(forTimeInterval: 1.1)
+        
+        // 再次移动，应当由于超时退回 .pan 模式
+        let modeAfterTimeout = classifier.processTouchesMoved(points: points3)
+        XCTAssertEqual(modeAfterTimeout, .pan, "两指距离过小持续 1.0 秒后，应自动降级退出旋钮状态")
+    }
 }
+
