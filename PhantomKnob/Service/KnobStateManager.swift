@@ -884,7 +884,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
         let isTooClose = scaledPoints.count >= 2 && {
             let (knobCore, _, _) = KnobAlgorithm().calKnob(scaledPoints)
-            return knobCore.isValid && knobCore.radius * 2 < 10.0
+            return knobCore.isValid && knobCore.radius * 2 < 20.0
         }()
 
         // 🌟 进行手势判定是否升级为 knob

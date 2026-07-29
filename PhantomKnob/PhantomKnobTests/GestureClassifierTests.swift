@@ -159,7 +159,7 @@ final class GestureClassifierTests: XCTestCase {
     
     func testBeganDistanceFilter() {
         let classifier = GestureClassifier()
-        // 双指物理间距为 8.0 mm (小于 10.0mm 阈值)
+        // 双指物理间距为 8.0 mm (小于 20.0mm 阈值)
         let points1: [Int: CGPoint] = [
             1: CGPoint(x: 4.0, y: 0.0),
             2: CGPoint(x: -4.0, y: 0.0)
@@ -173,31 +173,31 @@ final class GestureClassifierTests: XCTestCase {
             2: CGPoint(x: -4.0 * cos(radians), y: -4.0 * sin(radians))
         ]
         let mode = classifier.processTouchesMoved(points: points2)
-        XCTAssertEqual(mode, .pan, "双指初始物理间距小于 10mm 时，不应该开启或进入旋钮判定")
+        XCTAssertEqual(mode, .pan, "双指初始物理间距小于 20mm 时，不应该开启或进入旋钮判定")
     }
 
     func testKnobDistanceTimeout() {
         let classifier = GestureClassifier()
-        // 双指物理间距为 20.0 mm (大于 10.0mm 阈值)
+        // 双指物理间距为 30.0 mm (大于 20.0mm 阈值)
         let points1: [Int: CGPoint] = [
-            1: CGPoint(x: 10.0, y: 0.0),
-            2: CGPoint(x: -10.0, y: 0.0)
+            1: CGPoint(x: 15.0, y: 0.0),
+            2: CGPoint(x: -15.0, y: 0.0)
         ]
         classifier.processTouchesBegan(points: points1)
         
         // 旋转 15 度以激活旋钮
         let radians = 15.0 * .pi / 180.0
         let points2: [Int: CGPoint] = [
-            1: CGPoint(x: 10.0 * cos(radians), y: 10.0 * sin(radians)),
-            2: CGPoint(x: -10.0 * cos(radians), y: -10.0 * sin(radians))
+            1: CGPoint(x: 15.0 * cos(radians), y: 15.0 * sin(radians)),
+            2: CGPoint(x: -15.0 * cos(radians), y: -15.0 * sin(radians))
         ]
         let mode = classifier.processTouchesMoved(points: points2)
         XCTAssertEqual(mode, .knob, "正常旋转应当激活旋钮")
         
-        // 保持旋转，但双指突然缩拢到距离仅 8.0 mm
+        // 保持旋转，但双指突然缩拢到距离仅 12.0 mm (小于 20.0mm 阈值)
         let points3: [Int: CGPoint] = [
-            1: CGPoint(x: 4.0 * cos(radians), y: 4.0 * sin(radians)),
-            2: CGPoint(x: -4.0 * cos(radians), y: -4.0 * sin(radians))
+            1: CGPoint(x: 6.0 * cos(radians), y: 6.0 * sin(radians)),
+            2: CGPoint(x: -6.0 * cos(radians), y: -6.0 * sin(radians))
         ]
         
         // 刚缩拢时，由于未到 1 秒，应当继续维持 knob
