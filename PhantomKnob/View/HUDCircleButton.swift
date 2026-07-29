@@ -1,5 +1,13 @@
 import SwiftUI
 
+struct HUDButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
+    }
+}
+
 struct HUDCircleButton: View {
     let icon: String
     let color: Color
@@ -22,9 +30,11 @@ struct HUDCircleButton: View {
                         .stroke(Color.white.opacity(0.12), lineWidth: 1)
                 )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(HUDButtonStyle())
         .onHover { hovering in
-            isHovered = hovering
+            withAnimation(.easeOut(duration: 0.15)) {
+                isHovered = hovering
+            }
         }
     }
 }

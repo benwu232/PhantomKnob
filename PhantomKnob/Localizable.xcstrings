@@ -208,7 +208,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按下时，临时切换激活状态"
+            "value" : "按下Option键并保持，临时切换激活状态"
           }
         }
       }

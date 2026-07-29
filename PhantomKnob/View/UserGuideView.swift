@@ -16,29 +16,29 @@ struct UserGuideView: View {
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text(String(localized: "guide.step1.subtitle", defaultValue: "Verify your trackpad and practice the rotation gesture"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(.system(size: 13))
+                        .foregroundColor(.white.opacity(0.75))
                 } else if viewModel.currentStep == 3 {
                     Text(String(localized: "guide.step2.title", defaultValue: "Step 2: Advanced Knobs"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text(String(localized: "guide.step2.subtitle", defaultValue: "Practice double-ring and variable speed knobs, adjust speed, and try customizer"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(.system(size: 13))
+                        .foregroundColor(.white.opacity(0.75))
                 } else if viewModel.currentStep == 4 {
                     Text(String(localized: "guide.step3.title", defaultValue: "Step 3: Go Global"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text(String(localized: "guide.step3.subtitle", defaultValue: "Master shortcuts and discover supported apps"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(.system(size: 13))
+                        .foregroundColor(.white.opacity(0.75))
                 } else {
                     Text(String(localized: "guide.stepShortcuts.title", defaultValue: "Shortcuts & Operations Guide"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text(String(localized: "guide.stepShortcuts.subtitle", defaultValue: "Quick reference manual for system gestures and shortcuts"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(.system(size: 13))
+                        .foregroundColor(.white.opacity(0.75))
                 }
             }
             .padding(.top, 28)
@@ -82,10 +82,19 @@ struct UserGuideView: View {
                             .background(Color.white.opacity(0.1))
                             .cornerRadius(8)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(HUDButtonStyle())
                 }
                 
                 Spacer()
+                
+                if viewModel.currentStep == 5 {
+                    Toggle(String(localized: "guide.step3.skipGuide", defaultValue: "Don't show user guide again on next startup"), isOn: $viewModel.skipOnNextStartup)
+                        .toggleStyle(.checkbox)
+                        .foregroundColor(.white.opacity(0.85))
+                        .font(.system(size: 12))
+                    
+                    Spacer()
+                }
                 
                 if viewModel.currentStep < 5 {
                     Button(action: {
@@ -114,7 +123,7 @@ struct UserGuideView: View {
                         .shadow(color: Color.blue.opacity(viewModel.currentStep == 2 && !viewModel.isTouchpadDetected ? 0 : 0.3), radius: 4, y: 2)
                     }
                     .disabled(viewModel.currentStep == 2 && !viewModel.isTouchpadDetected)
-                    .buttonStyle(.plain)
+                    .buttonStyle(HUDButtonStyle())
                 } else {
                     Button(action: {
                         viewModel.completeGuide()
@@ -134,7 +143,7 @@ struct UserGuideView: View {
                             .cornerRadius(8)
                             .shadow(color: Color.red.opacity(0.2), radius: 4, y: 2)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(HUDButtonStyle())
                 }
             }
             .padding(.horizontal, 24)
@@ -208,19 +217,14 @@ struct UserGuideView: View {
                 }
                 
                 Text(String(localized: "guide.step1.footer", defaultValue: "The system will detect whether your hardware supports knob gestures; if supported, you will see the dial rotate and hear the volume change."))
-                    .font(.system(size: 11))
-                    .foregroundColor(.white.opacity(0.6))
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.75))
                     .padding(.top, 4)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
-            .background(Color.white.opacity(0.03))
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
-            )
+            .padding(.horizontal, 14)
+            .padding(.vertical, 2)
+            .hudCardStyle()
             .padding(.horizontal, 32)
             .padding(.bottom, 12)
             
@@ -237,8 +241,8 @@ struct UserGuideView: View {
                         .progressViewStyle(.circular)
                         .scaleEffect(0.7)
                     Text(String(format: String(localized: "guide.step1.waitingDetection", defaultValue: "Waiting for rotation gestures to detect device (Samples: %@/3)…"), "\(viewModel.touchpadSamplesCount)"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(.system(size: 13))
+                        .foregroundColor(.white.opacity(0.75))
                 }
             }
             .padding(.horizontal, 16)
@@ -279,11 +283,11 @@ struct UserGuideView: View {
                     .frame(height: 180)
                     
                     Text(String(localized: "guide.step2.doubleKnobDesc1", defaultValue: "Double-Ring (Outer 0.1x, Inner 1.0x)"))
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.white.opacity(0.8))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.85))
                     Text(String(localized: "guide.step2.doubleKnobDesc2", defaultValue: "Switches between fine and coarse tuning automatically"))
-                        .font(.system(size: 10))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 11))
+                        .foregroundColor(.white.opacity(0.65))
                         .multilineTextAlignment(.center)
                         .frame(height: 24)
                     
@@ -291,14 +295,14 @@ struct UserGuideView: View {
                         triggerCustomizer(for: "DoubleKnob")
                     }) {
                         Text(String(localized: "guide.step2.customizeButton", defaultValue: "Customize Dial"))
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.blue)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
                             .background(Color.blue.opacity(0.15))
                             .cornerRadius(6)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(HUDButtonStyle())
                 }
                 .frame(width: 260)
                 
@@ -325,11 +329,11 @@ struct UserGuideView: View {
                     .frame(height: 180)
                     
                     Text(String(localized: "guide.step2.cvkKnobDesc1", defaultValue: "Variable Speed (0.1x ~ 5.0x)"))
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.white.opacity(0.8))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.85))
                     Text(String(localized: "guide.step2.cvkKnobDesc2", defaultValue: "Speed scales continuously based on finger rotation radius"))
-                        .font(.system(size: 10))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 11))
+                        .foregroundColor(.white.opacity(0.65))
                         .multilineTextAlignment(.center)
                         .frame(height: 24)
                     
@@ -337,14 +341,14 @@ struct UserGuideView: View {
                         triggerCustomizer(for: "CVKKnob")
                     }) {
                         Text(String(localized: "guide.step2.customizeButton", defaultValue: "Customize Dial"))
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.green)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
                             .background(Color.green.opacity(0.15))
                             .cornerRadius(6)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(HUDButtonStyle())
                 }
                 .frame(width: 260)
             }
@@ -363,14 +367,9 @@ struct UserGuideView: View {
                     bulletItem(text: String(localized: "guide.step2.hintLine2", defaultValue: "Press 'C' key while rotating to open the Customizer HUD panel."))
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
-            .background(Color.white.opacity(0.03))
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
-            )
+            .padding(.horizontal, 14)
+            .padding(.vertical, 2)
+            .hudCardStyle()
             .padding(.horizontal, 32)
             .padding(.bottom, 16)
         }
@@ -409,8 +408,8 @@ struct UserGuideView: View {
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundColor(.white)
                             Text(String(localized: "guide.step3.featureStatusbar.desc", defaultValue: "Double-click the menu bar icon to pop up the quick control panel, allowing you to easily adjust volume, screen brightness, etc., with knob gestures."))
-                                .font(.system(size: 11))
-                                .foregroundColor(.white.opacity(0.6))
+                                .font(.system(size: 12))
+                                .foregroundColor(.white.opacity(0.75))
                         }
                     }
                     
@@ -447,8 +446,8 @@ struct UserGuideView: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
                         Text(String(localized: "guide.step3.feature1.desc", defaultValue: "Press the shortcut or enable it from the menu bar to control any slider, stepper, or dial with gestures."))
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.6))
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.75))
                     }
                 }
                 
@@ -462,8 +461,8 @@ struct UserGuideView: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
                         Text(String(localized: "guide.step3.feature2.desc", defaultValue: "If you want to use native trackpad scrolling or pinch-to-zoom, hold the Option key to temporarily bypass gestures."))
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.6))
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.75))
                     }
                 }
                 
@@ -477,13 +476,13 @@ struct UserGuideView: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.white)
                         Text(String(localized: "guide.step3.feature3.desc", defaultValue: "Phantom Knob works with timelines, volumes, and sliders in supported apps. Hover over any control and rotate."))
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.6))
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.75))
                         HStack(spacing: 6) {
                             ForEach(supportedApps, id: \.self) { appName in
                                 Text(appName)
-                                    .font(.system(size: 10, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.85))
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 3)
                                     .background(Color.white.opacity(0.1))
@@ -521,8 +520,8 @@ struct UserGuideView: View {
                 .foregroundColor(.blue)
                 .font(.system(size: 13, weight: .bold))
             Text(text)
-                .font(.system(size: 12))
-                .foregroundColor(.white.opacity(0.8))
+                .font(.system(size: 13))
+                .foregroundColor(.white.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -550,7 +549,7 @@ struct UserGuideView: View {
     // MARK: - Step 5: Shortcuts Reference
     private var shortcutsView: some View {
         VStack(spacing: 8) {
-            ScrollView(showsIndicators: true) {
+            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
                     
                     // Status Bar Icon Operations
@@ -563,9 +562,8 @@ struct UserGuideView: View {
                         shortcutRow(key: String(localized: "guide.shortcuts.statusbar.doubleClick", defaultValue: "Double Click"), desc: String(localized: "guide.shortcuts.statusbar.doubleClick.desc", defaultValue: "Show/hide the shortcut button panel (Control Panel)"))
                         shortcutRow(key: String(localized: "guide.shortcuts.statusbar.rightClick", defaultValue: "Right Click / Ctrl+Click"), desc: String(localized: "guide.shortcuts.statusbar.rightClick.desc", defaultValue: "Open app system menu (Settings, User Guide, etc.)"))
                     }
-                    .padding(12)
-                    .background(Color.white.opacity(0.03))
-                    .cornerRadius(8)
+                    .padding(2)
+                    .hudCardStyle()
                     
                     // Keyboard Shortcuts
                     VStack(alignment: .leading, spacing: 8) {
@@ -574,12 +572,11 @@ struct UserGuideView: View {
                             .foregroundColor(.orange)
                         
                         shortcutRow(key: "⌘ ⌥ K", desc: String(localized: "guide.shortcuts.keyboard.toggle", defaultValue: "Global control switch shortcut — toggle active state instantly"))
-                        shortcutRow(key: String(localized: "guide.shortcuts.keyboard.bypass", defaultValue: "Hold Option Key"), desc: String(localized: "guide.shortcuts.keyboard.bypass.desc", defaultValue: "Temporarily bypass gestures to use native trackpad scroll or zoom"))
+                        shortcutRow(key: "⌥ ", desc: String(localized: "guide.shortcuts.keyboard.bypass.desc", defaultValue: "Temporarily bypass gestures to use native trackpad scroll or zoom"))
                     }
-                    .padding(12)
-                    .background(Color.white.opacity(0.03))
-                    .cornerRadius(8)
-
+                    .padding(2)
+                    .hudCardStyle()
+ 
                     // Auxiliary Keys During Rotation
                     VStack(alignment: .leading, spacing: 8) {
                         Text(String(localized: "guide.shortcuts.section.auxiliary", defaultValue: "Auxiliary Keys (Active During Rotation)"))
@@ -592,19 +589,24 @@ struct UserGuideView: View {
                         shortcutRow(key: "↑ / ↓", desc: String(localized: "guide.shortcuts.auxiliary.arrowsVertical", defaultValue: "Increase/decrease rotation speed multiplier by 1.0x"))
                         shortcutRow(key: "← / →", desc: String(localized: "guide.shortcuts.auxiliary.arrowsHorizontal", defaultValue: "Increase/decrease rotation speed multiplier by 0.1x"))
                     }
-                    .padding(12)
-                    .background(Color.white.opacity(0.03))
-                    .cornerRadius(8)
+                    .padding(2)
+                    .hudCardStyle()
                 }
                 .padding(.horizontal, 24)
                 .padding(.vertical, 16)
             }
-            
-            Toggle(String(localized: "guide.step3.skipGuide", defaultValue: "Don't show user guide again on next startup"), isOn: $viewModel.skipOnNextStartup)
-                .toggleStyle(.checkbox)
-                .foregroundColor(.white.opacity(0.85))
-                .font(.system(size: 12))
-                .padding(.bottom, 12)
+            .mask(
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0.0),
+                        .init(color: .black, location: 0.04),
+                        .init(color: .black, location: 0.92),
+                        .init(color: .clear, location: 1.0)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
         }
     }
 
@@ -665,6 +667,34 @@ struct TwoFingerRotationGuideView: View {
                     style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [4, 6])
                 )
                 .frame(width: 90, height: 90)
+            
+            // 拖尾光轨 1
+            Circle()
+                .trim(from: 0.0, to: 0.15)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.blue.opacity(0.4), Color.blue.opacity(0.0)],
+                        startPoint: .trailing,
+                        endPoint: .leading
+                    ),
+                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                )
+                .frame(width: 90, height: 90)
+                .rotationEffect(.degrees(rotationAngle - 90 - 45))
+            
+            // 拖尾光轨 2
+            Circle()
+                .trim(from: 0.0, to: 0.15)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.blue.opacity(0.4), Color.blue.opacity(0.0)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ),
+                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                )
+                .frame(width: 90, height: 90)
+                .rotationEffect(.degrees(rotationAngle + 90 - 45))
             
             // 触控点 1（肉色指尖）
             Circle()

@@ -122,9 +122,9 @@ struct RadialKnobControlView: View {
             ZStack {
                 // Glow circle
                 Circle()
-                    .stroke(Color.blue.opacity(isFocused ? 0.3 : 0.05), lineWidth: 8)
+                    .stroke(Color.blue.opacity(isFocused ? 0.35 : 0.05), lineWidth: 8)
                     .frame(width: 120, height: 120)
-                    .blur(radius: isFocused ? 4 : 0)
+                    .blur(radius: isFocused ? 5 : 0)
                 
                 // Progress arc
                 Circle()
@@ -140,16 +140,17 @@ struct RadialKnobControlView: View {
                     .frame(width: 104, height: 104)
                     .rotationEffect(Angle(degrees: -90))
                 
-                // Inner dial circle
+                // Inner dial circle - scale this slightly for physical feel
                 Circle()
-                    .fill(Color.black.opacity(0.4))
+                    .fill(Color.black.opacity(0.45))
                     .frame(width: 90, height: 90)
-                    .shadow(radius: isFocused ? 8 : 2)
+                    .shadow(color: Color.blue.opacity(isFocused ? 0.40 : 0.15), radius: isFocused ? 8 : 2, x: 0, y: isFocused ? 4 : 1)
+                    .scaleEffect(isFocused ? 1.06 : 1.0)
                 
                 // Indicator dot
                 if isFocused && isGestureActive {
                     Circle()
-                        .fill(Color.white.opacity(0.8))
+                        .fill(Color.white.opacity(0.85))
                         .frame(width: 6, height: 6)
                         .offset(y: -38)
                         .rotationEffect(Angle(degrees: angle))
@@ -158,14 +159,14 @@ struct RadialKnobControlView: View {
                 // Icon
                 Image(systemName: icon)
                     .font(.system(size: 28))
-                    .foregroundColor(isFocused ? .blue : .white.opacity(0.8))
+                    .foregroundColor(isFocused ? .blue : .white.opacity(0.85))
+                    .scaleEffect(isFocused ? 1.06 : 1.0)
                 
                 // Custom overlay aligned to the knob center
                 if let overlay = knobOverlay {
                     overlay
                 }
             }
-            .scaleEffect(isFocused ? 1.20 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isFocused)
             
             Text(title)

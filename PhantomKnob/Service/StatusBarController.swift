@@ -631,8 +631,9 @@ extension NSImage {
         
         resolvedColor.set()
         let imageRect = NSRect(origin: .zero, size: size)
-        self.draw(in: imageRect, from: imageRect, operation: .sourceOver, fraction: 1.0)
-        imageRect.fill(using: .sourceAtop)
+        imageRect.fill()
+        
+        self.draw(in: imageRect, from: imageRect, operation: .destinationIn, fraction: 1.0)
         
         tintedImage.unlockFocus()
         tintedImage.isTemplate = false

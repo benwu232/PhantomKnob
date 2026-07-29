@@ -135,8 +135,8 @@ struct GeneralSettingsView: View {
                         .foregroundColor(.blue)
                         .font(.system(size: 12, weight: .semibold))
                     Text(String(localized: "settings.section.language", defaultValue: "Language"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.70))
                 }
                 
                 HStack {
@@ -191,8 +191,8 @@ struct GeneralSettingsView: View {
                         .foregroundColor(.blue)
                         .font(.system(size: 12, weight: .semibold))
                     Text(String(localized: "settings.section.hotkey", defaultValue: "Hotkey"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.70))
                 }
                 
                 HStack {
@@ -202,7 +202,7 @@ struct GeneralSettingsView: View {
                             .foregroundColor(.white)
                         Text(String(localized: "settings.hotkey.subtitle", defaultValue: "Activate / deactivate knob control mode"))
                             .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.white.opacity(0.70))
                     }
                     Spacer()
                     HotkeyRecorderView()
@@ -223,8 +223,8 @@ struct GeneralSettingsView: View {
                         .foregroundColor(hasAccessibilityPermission ? .green : .red)
                         .font(.system(size: 12, weight: .semibold))
                     Text(String(localized: "settings.section.accessibility", defaultValue: "Accessibility Permission"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.70))
                 }
                 
                 HStack {
@@ -262,8 +262,8 @@ struct GeneralSettingsView: View {
                 
                 if !hasAccessibilityPermission {
                     Text(String(localized: "settings.accessibility.description", defaultValue: "Global control mode requires Accessibility permission to detect gestures and perform actions."))
-                        .font(.system(size: 10))
-                        .foregroundColor(.white.opacity(0.4))
+                        .font(.system(size: 11))
+                        .foregroundColor(.white.opacity(0.55))
                         .padding(.leading, 24)
                 }
             }
@@ -282,8 +282,8 @@ struct GeneralSettingsView: View {
                         .foregroundColor(.orange)
                         .font(.system(size: 12, weight: .semibold))
                     Text(String(localized: "settings.section.startup", defaultValue: "Startup & Updates"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.70))
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
@@ -346,8 +346,8 @@ struct GeneralSettingsView: View {
                         .foregroundColor(.blue)
                         .font(.system(size: 12, weight: .semibold))
                     Text(String(localized: "settings.section.privacy", defaultValue: "Privacy"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.70))
                 }
                 
                 Toggle(String(localized: "settings.crashReporting", defaultValue: "Send crash reports"), isOn: Binding(
@@ -449,13 +449,13 @@ struct AboutView: View {
                     .foregroundColor(.white)
                 Text(versionString)
                     .font(.system(size: 11))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(.white.opacity(0.70))
             }
             
             Text(String(localized: "about.description", defaultValue: "Use natural two-finger rotation gestures to precisely control\nsliders and dials in video or audio editors, just like a physical dial."))
                 .multilineTextAlignment(.center)
-                .font(.system(size: 12))
-                .foregroundColor(.white.opacity(0.7))
+                .font(.system(size: 13))
+                .foregroundColor(.white.opacity(0.8))
                 .lineSpacing(3)
                 .padding(.horizontal, 16)
             
@@ -472,7 +472,7 @@ struct AboutView: View {
                     if let savedEmail = UserDefaults.app.string(forKey: "proLicenseEmail") {
                         Text(String(format: String(localized: "about.license.email", defaultValue: "Licensed to: %@"), maskEmail(savedEmail)))
                             .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(.white.opacity(0.75))
                     }
                     
                     Button(action: {
