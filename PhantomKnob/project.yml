@@ -85,6 +85,10 @@ targets:
         SUFeedURL: "https://phantomknob.com/appcast.xml"
         SUPublicEDKey: "5CmEsYugmzzvzy/eL9awVk3/bqjCwAap9i0K3ao/3sM="
         SUEnableAutomaticChecks: true
+        CFBundleURLTypes:
+          - CFBundleURLName: com.phantomknob.url-scheme
+            CFBundleURLSchemes:
+              - phantomknob
 
   PhantomKnobTests:
     type: bundle.unit-test
