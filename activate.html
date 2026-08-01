@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在激活 PhantomKnob Pro...</title>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 440px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            animation: spin 6s infinite linear;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ff9f43, #ff5252);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .btn {
+            display: inline-block;
+            background: #ff9f43;
+            color: #000;
+            font-weight: 600;
+            padding: 12px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #ffb366;
+        }
+        .backup-box {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
+        }
+        .backup-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ff9f43;
+            margin-bottom: 8px;
+        }
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #00ffcc;
+            word-break: break-all;
+            user-select: all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="40" stroke="#ff9f43" stroke-width="4" stroke-dasharray="10 5" />
+            <path d="M50 15V35" stroke="#ff9f43" stroke-width="6" stroke-linecap="round" />
+        </svg>
+        
+        <h1 id="status-text">正在启动 PhantomKnob 激活...</h1>
+        <p>我们正在向您 Mac 上的 PhantomKnob 客户端发送激活信号。如果没有自动弹出激活成功界面，请点击下方按钮手动唤醒。</p>
+        
+        <a class="btn" id="activate-btn">打开并激活 App</a>
+        
+        <div class="backup-box">
+            <div class="backup-title">手动备份授权码 (非 Mac 设备或离线备用)</div>
+            <p style="font-size:11px; margin-bottom:8px;">如果您是在手机上购买的，可以复制此授权码前往 Mac 端 App 手动输入：</p>
+            <div class="code-snippet" id="key-display">正在加载...</div>
+            <div style="margin-top: 8px; font-size: 11px; color: rgba(255,255,255,0.5)">
+                授权邮箱: <span id="email-display" style="color: #fff">...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const key = params.get('key') || params.get('license_key');
+            const email = params.get('email');
+            
+            if (key && email) {
+                document.getElementById('key-display').textContent = key;
+                document.getElementById('email-display').textContent = email;
+                
+                const schemeUrl = `phantomknob://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`;
+                
+                // 自动尝试唤起 App
+                setTimeout(() => {
+                    window.location.href = schemeUrl;
+                }, 1000);
+                
+                // 按钮绑定点击
+                document.getElementById('activate-btn').onclick = function() {
+                    window.location.href = schemeUrl;
+                };
+            } else {
+                document.getElementById('status-text').textContent = "激活参数不完整";
+                document.getElementById('key-display').textContent = "无有效授权码";
+            }
+        };
+    </script>
+</body>
+</html>
