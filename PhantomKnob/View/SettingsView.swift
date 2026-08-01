@@ -112,9 +112,8 @@ struct SettingsView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("FocusLicenseActivation"))) { _ in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                self.activeTab = .about
-            }
+            SettingsWindowController.shared.hide()
+            LicenseWindowController.shared.show()
         }
     }
 }
@@ -399,11 +398,6 @@ struct GeneralSettingsView: View {
 // MARK: - About Tab
 struct AboutView: View {
     @State private var licenseState: LicenseState = LicenseManager.shared.currentState
-    @State private var email: String = ""
-    @State private var licenseKey: String = ""
-    @State private var isActivating: Bool = false
-    @State private var errorMessage: String? = nil
-    @FocusState private var isEmailFocused: Bool
     
     private var versionString: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
@@ -495,85 +489,22 @@ struct AboutView: View {
                 }
                 .padding(.vertical, 4)
             } else {
-                VStack(spacing: 10) {
-                    HStack(spacing: 8) {
-                        TextField(String(localized: "about.email.placeholder", defaultValue: "Email address"), text: $email)
-                            .textFieldStyle(.plain)
-                            .focused($isEmailFocused)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.08))
-                            .cornerRadius(6)
-                            .disabled(isActivating)
-                        
-                        SecureField(String(localized: "about.key.placeholder", defaultValue: "License Key"), text: $licenseKey)
-                            .textFieldStyle(.plain)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
-                            .background(Color.white.opacity(0.08))
-                            .cornerRadius(6)
-                            .disabled(isActivating)
-                    }
-                    
-                    if let error = errorMessage {
-                        Text(error)
-                            .font(.system(size: 11))
-                            .foregroundColor(.red)
-                    }
-                    
-                    HStack(spacing: 12) {
-                        Button(action: {
-                            guard !email.isEmpty && !licenseKey.isEmpty else {
-                                errorMessage = "请完整输入邮箱和授权码"
-                                return
-                            }
-                            isActivating = true
-                            errorMessage = nil
-                            LicenseManager.shared.activateOnline(licenseKey: licenseKey, email: email) { success, error in
-                                isActivating = false
-                                if success {
-                                    email = ""
-                                    licenseKey = ""
-                                } else {
-                                    errorMessage = error ?? "激活失败"
-                                }
-                            }
-                        }) {
-                            HStack {
-                                if isActivating {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                        .padding(.trailing, 4)
-                                }
-                                Text(String(localized: "about.btn.activate", defaultValue: "Activate Pro"))
-                            }
-                            .font(.system(size: 12, weight: .semibold))
+                VStack(spacing: 8) {
+                    Button(action: {
+                        SettingsWindowController.shared.hide()
+                        LicenseWindowController.shared.show()
+                    }) {
+                        Text("升级到 Pro 版 ➔")
+                            .font(.system(size: 12, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 6)
-                            .background(isActivating ? Color.gray.opacity(0.3) : Color.blue)
+                            .background(Color.orange)
                             .cornerRadius(6)
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(isActivating)
-                        
-                        Button(action: {
-                            if let url = URL(string: "https://benwu232.github.io/PhantomKnob/#buy") {
-                                NSWorkspace.shared.open(url)
-                            }
-                        }) {
-                            Text(String(localized: "about.btn.buy", defaultValue: "Get License Key ➔"))
-                                .font(.system(size: 12))
-                                .foregroundColor(.blue)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(isActivating)
                     }
+                    .buttonStyle(.plain)
                 }
-                .frame(maxWidth: 320)
-                .padding(.top, 4)
+                .padding(.vertical, 4)
             }
             
             Divider()
@@ -601,11 +532,6 @@ struct AboutView: View {
         .frame(minHeight: 320)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LicenseStateDidChange"))) { _ in
             self.licenseState = LicenseManager.shared.currentState
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("FocusLicenseActivation"))) { _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                isEmailFocused = true
-            }
         }
     }
 }

@@ -536,9 +536,7 @@ class StatusBarController: ObservableObject {
     }
     
     @objc func buyPro() {
-        if let url = URL(string: "https://benwu232.github.io/PhantomKnob/#buy") {
-            NSWorkspace.shared.open(url)
-        }
+        LicenseWindowController.shared.show()
     }
     
     #if DEBUG
@@ -559,7 +557,7 @@ class StatusBarController: ObservableObject {
             
             let contentView = FreeEditionPopoverView(mode: .activating(secondsRemaining: secondsRemaining)) { [weak self] in
                 self?.dismissFreePopover()
-                SettingsWindowController.shared.show(tab: .about)
+                LicenseWindowController.shared.show()
             }
             popover.contentViewController = NSHostingController(rootView: contentView)
             self.freePopover = popover
@@ -583,7 +581,7 @@ class StatusBarController: ObservableObject {
             
             let contentView = FreeEditionPopoverView(mode: .sessionExpired) { [weak self] in
                 self?.dismissFreePopover()
-                SettingsWindowController.shared.show(tab: .about)
+                LicenseWindowController.shared.show()
             }
             popover.contentViewController = NSHostingController(rootView: contentView)
             self.freePopover = popover
