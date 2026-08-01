@@ -26,6 +26,7 @@ class AppState: ObservableObject {
         #endif
         
         AnalyticsManager.shared.initialize()
+        URLSchemeHandler.shared.startListening()
         
         let targetDetector = TargetDetector()
         let gestureClassifier = GestureClassifier()

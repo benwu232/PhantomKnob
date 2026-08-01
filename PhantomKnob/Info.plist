@@ -36,5 +36,16 @@
 	<string>https://phantomknob.com/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>5CmEsYugmzzvzy/eL9awVk3/bqjCwAap9i0K3ao/3sM=</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.phantomknob.url-scheme</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>phantomknob</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
