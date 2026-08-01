@@ -1098,7 +1098,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             NotificationCenter.default.post(
                 name: NSNotification.Name("CustomizerRadiusDidUpdate"),
                 object: nil,
-                userInfo: ["radius": nil]
+                userInfo: ["radius": (nil as Any?)]
             )
             return
         }

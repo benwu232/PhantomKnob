@@ -91,7 +91,7 @@ class LicenseManager {
             }
             #endif
         },
-        publicKeyRepresentation: Data = Data(base64Encoded: "Sg6X484hS3Fsk2k8XzV8pTzH59WkE/B3eJmXb5mU8QY=")!
+        publicKeyRepresentation: Data = Data(base64Encoded: "XFhc6OcspnJxLX+GMW3r5CNp7cQflNkI8ObE0wlCAFQ=")!
     ) {
         self.currentDateProvider = currentDateProvider
         self.storageRead = storageRead
@@ -102,7 +102,7 @@ class LicenseManager {
     var currentState: LicenseState {
         if let receiptStr = storageRead("proLicenseReceipt"),
            let receiptData = receiptStr.data(using: .utf8),
-           let receipt = try? JSONDecoder().decode(LicenseReceipt.self, from: receiptData) {
+           let receipt = try? JSONDecoder.licenseDecoder.decode(LicenseReceipt.self, from: receiptData) {
             
             if verifyReceiptOffline(receipt) {
                 let now = currentDateProvider()
@@ -174,7 +174,7 @@ class LicenseManager {
         isRefreshing = true
         
         let uuid = getDeviceUUID()
-        guard let url = URL(string: "https://licensing.phantomknob.com/activate") else {
+        guard let url = URL(string: "https://phantom-knob-licensing.heavywater.workers.dev/activate") else {
             isRefreshing = false
             return
         }
@@ -193,7 +193,7 @@ class LicenseManager {
         URLSession.shared.dataTask(with: request) { data, response, error in
             defer { self.isRefreshing = false }
             guard let data = data, error == nil,
-                  let newReceipt = try? JSONDecoder().decode(LicenseReceipt.self, from: data) else {
+                  let newReceipt = try? JSONDecoder.licenseDecoder.decode(LicenseReceipt.self, from: data) else {
                 return
             }
             if self.verifyReceiptOffline(newReceipt) {
@@ -207,7 +207,7 @@ class LicenseManager {
     
     func activateOnline(licenseKey: String, email: String, completion: @escaping (Bool, String?) -> Void) {
         let uuid = getDeviceUUID()
-        guard let url = URL(string: "https://licensing.phantomknob.com/activate") else {
+        guard let url = URL(string: "https://phantom-knob-licensing.heavywater.workers.dev/activate") else {
             completion(false, "Internal Error: Invalid URL")
             return
         }
@@ -232,7 +232,7 @@ class LicenseManager {
             }
             
             do {
-                let receipt = try JSONDecoder().decode(LicenseReceipt.self, from: data)
+                let receipt = try JSONDecoder.licenseDecoder.decode(LicenseReceipt.self, from: data)
                 if self.verifyReceiptOffline(receipt) {
                     if let receiptStr = String(data: data, encoding: .utf8) {
                         self.storageWrite("proLicenseReceipt", receiptStr)
@@ -272,7 +272,13 @@ class LicenseManager {
     }
     
     public func getDeviceUUID() -> String {
-        let platformExpert = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"))
+        let mainPort: mach_port_t
+        if #available(macOS 12.0, *) {
+            mainPort = kIOMainPortDefault
+        } else {
+            mainPort = kIOMasterPortDefault
+        }
+        let platformExpert = IOServiceGetMatchingService(mainPort, IOServiceMatching("IOPlatformExpertDevice"))
         defer { IOObjectRelease(platformExpert) }
         if platformExpert > 0 {
             if let uuid = IORegistryEntryCreateCFProperty(platformExpert, kIOPlatformUUIDKey as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? String {
@@ -298,5 +304,27 @@ class LicenseManager {
         } catch {
             return false
         }
+    }
+}
+
+extension JSONDecoder {
+    static var licenseDecoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateStr = try container.decode(String.self)
+            if let date = formatter.date(from: dateStr) {
+                return date
+            }
+            // Fallback for standard ISO8601 without fractional seconds
+            let standardFormatter = ISO8601DateFormatter()
+            if let date = standardFormatter.date(from: dateStr) {
+                return date
+            }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date string \(dateStr)")
+        }
+        return decoder
     }
 }
