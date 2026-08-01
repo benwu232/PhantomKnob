@@ -114,13 +114,19 @@ class MultitouchManager {
     // 双指手势生命周期状态机
     private var inGesture = false
     
+    static func isAnyContactReleasing(states: [Int32]) -> Bool {
+        return states.contains { $0 == 5 || $0 == 6 }
+    }
+    
     private func handleContacts(_ contactsPtr: UnsafeMutablePointer<MTContact>?, count: Int) {
         var activePoints: [Int: CGPoint] = [:]
+        var rawStates: [Int32] = []
         
         // 只有当 count > 0 且指针不为空时，才进行触点状态遍历
         if count > 0, let contacts = contactsPtr {
             for i in 0..<count {
                 let contact = contacts[i]
+                rawStates.append(contact.state)
                 // 印出所有手指的 state 信息用于诊断
                 PKLogger.multitouch.debug("Contact[\(i)]: ID = \(contact.identifier), state = \(contact.state), pos = (\(contact.normalized.pos.x), \(contact.normalized.pos.y))")
                 
@@ -145,6 +151,9 @@ class MultitouchManager {
         
         PKLogger.multitouch.debug("handleContacts: activePoints count = \(activePoints.count), inGesture = \(self.inGesture)")
         
+        // 🌟 检查是否有处于离板/断开阶段 (state 5/6) 的触点
+        let isReleasing = MultitouchManager.isAnyContactReleasing(states: rawStates)
+        
         // 当触控板上有且至少有 2 根手指活动时，激活或更新旋钮手势
         if activePoints.count >= 2 {
             if !inGesture {
@@ -154,17 +163,25 @@ class MultitouchManager {
                     self.delegate?.onMultitouchBegan(points: activePoints)
                 }
             } else {
-                PKLogger.multitouch.debug("Gesture trigger: onMultitouchMoved with points = \(String(describing: activePoints))")
-                DispatchQueue.main.async {
-                    self.delegate?.onMultitouchMoved(points: activePoints)
+                if isReleasing {
+                    PKLogger.multitouch.debug("Releasing contact detected (state 5/6), skipping moved update during liftoff phase")
+                } else {
+                    PKLogger.multitouch.debug("Gesture trigger: onMultitouchMoved with points = \(String(describing: activePoints))")
+                    DispatchQueue.main.async {
+                        self.delegate?.onMultitouchMoved(points: activePoints)
+                    }
                 }
             }
         } else if activePoints.count == 1 {
             if inGesture {
-                // 🌟 核心改进：当处于手势中且降为单指时，延续旋钮手势，继续发送 Moved 事件
-                PKLogger.multitouch.debug("Gesture trigger: onMultitouchMoved (1 finger) with points = \(String(describing: activePoints))")
-                DispatchQueue.main.async {
-                    self.delegate?.onMultitouchMoved(points: activePoints)
+                if isReleasing {
+                    PKLogger.multitouch.debug("Releasing contact detected (1 finger, state 5/6), skipping moved update during liftoff phase")
+                } else {
+                    // 🌟 核心改进：当处于手势中且降为单指时，延续旋钮手势，继续发送 Moved 事件
+                    PKLogger.multitouch.debug("Gesture trigger: onMultitouchMoved (1 finger) with points = \(String(describing: activePoints))")
+                    DispatchQueue.main.async {
+                        self.delegate?.onMultitouchMoved(points: activePoints)
+                    }
                 }
             }
         } else if activePoints.count == 0 {

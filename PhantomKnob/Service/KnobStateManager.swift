@@ -23,6 +23,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var initialTouchPosition: CGPoint?
     var initialTouchPositionCarbon: CGPoint? // 锁定鼠标 of Carbon coordinate (top-left origin)
     private var previousAngle: Double = 0
+    var angleBuffer = KnobAngleBuffer()
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
     var fixedCenter: CGPoint?
@@ -1086,6 +1087,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
             self.currentAngle = currentAngle
             previousAngle = currentAngle
+            angleBuffer.append(angle: currentAngle)
 
             PKLogger.knob.debug("applied delta=\(deltaAngle) dir=\(String(describing: direction)) scale=\(finalScale)")
         }
@@ -1100,6 +1102,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 object: nil,
                 userInfo: ["radius": NSNull()]
             )
+            angleBuffer.clear()
             return
         }
         isInterceptingGestures = false
@@ -1109,17 +1112,26 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
 
-        if state.isKnobing, let target = currentTarget {
-            transition(to: .cooling(target: target))
-            if target.axRole != "ControlPanel" {
-                overlayController.fadeOut { [weak self] in
-                    self?.startCoolingTimer()
+        if state.isKnobing {
+            if let lockAngle = angleBuffer.resolvedLiftoffAngle() {
+                self.currentAngle = lockAngle
+                PKLogger.knob.debug("Liftoff angle locked to stable frame: \(lockAngle)")
+            }
+            angleBuffer.clear()
+            
+            if let target = currentTarget {
+                transition(to: .cooling(target: target))
+                if target.axRole != "ControlPanel" {
+                    overlayController.fadeOut { [weak self] in
+                        self?.startCoolingTimer()
+                    }
+                } else {
+                    startCoolingTimer()
                 }
-            } else {
-                startCoolingTimer()
             }
         } else {
             // 🌟 若手指抬起前从未触发过旋钮手势，静默归位激活状态并清除临时变量
+            angleBuffer.clear()
             transition(to: .activated)
             currentTarget = nil
             currentTranslator = nil
@@ -1690,6 +1702,43 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 }
 
+// MARK: - Liftoff Jitter Filter Buffer
+struct AngleFrame {
+    let angle: Double
+    let timestamp: Date
+}
+
+struct KnobAngleBuffer {
+    let capacity: Int
+    let timeWindowSec: TimeInterval
+    private(set) var frames: [AngleFrame] = []
+    
+    init(capacity: Int = 3, timeWindowSec: TimeInterval = 0.03) {
+        self.capacity = capacity
+        self.timeWindowSec = timeWindowSec
+    }
+    
+    mutating func append(angle: Double, timestamp: Date = Date()) {
+        frames.append(AngleFrame(angle: angle, timestamp: timestamp))
+        if frames.count > capacity {
+            frames.removeFirst()
+        }
+    }
+    
+    mutating func clear() {
+        frames.removeAll()
+    }
+    
+    func resolvedLiftoffAngle() -> Double? {
+        guard !frames.isEmpty else { return nil }
+        if frames.count >= 2 {
+            // 丢弃包含离板抖动的最后一帧，回退至倒数第二帧稳定值
+            return frames[frames.count - 2].angle
+        }
+        return frames.last?.angle
+    }
+}
+
 extension NSColor {
     convenience init?(hex: String) {
         let hexCleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
@@ -1707,3 +1756,4 @@ extension NSColor {
         self.init(red: CGFloat(r) / 255.0, green: CGFloat(g) / 255.0, blue: CGFloat(b) / 255.0, alpha: 1.0)
     }
 }
+

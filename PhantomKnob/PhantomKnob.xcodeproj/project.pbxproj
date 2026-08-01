@@ -99,6 +99,7 @@
 		D61FAFC54E4662475B43B82E /* KnobState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0279BBA53DE238B7A49EE6A6 /* KnobState.swift */; };
 		D8EDE11220DF5C7F6A758198 /* InputTranslation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8776E7B99B66A818472F3AD2 /* InputTranslation.swift */; };
 		D9AA75CFB01B353867490AC0 /* CustomMultiplierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */; };
+		E8C3B1A2F3D4E56789012341 /* KnobLiftoffFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C3B1A2F3D4E56789012340 /* KnobLiftoffFilterTests.swift */; };
 		DA239AC64B92C952567FFAC8 /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E59D5E06F5866BA93B2D8A /* OverlayView.swift */; };
 		E0F19BAF580103A3FF1CAF03 /* UserGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B82F5973F1273CE4101B2F /* UserGuideView.swift */; };
 		E24DD72C05AEA88624D595F4 /* KeyboardBacklightService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131BC13BA4105812935DB9AD /* KeyboardBacklightService.swift */; };
@@ -209,6 +210,7 @@
 		BFD76C8F55D149872824073D /* URLSchemeHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeHandlerTests.swift; sourceTree = "<group>"; };
 		C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobStateManager.swift; sourceTree = "<group>"; };
 		C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMultiplierTests.swift; sourceTree = "<group>"; };
+		E8C3B1A2F3D4E56789012340 /* KnobLiftoffFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobLiftoffFilterTests.swift; sourceTree = "<group>"; };
 		C4DECA527A57B3E32B400EF2 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		C6409308252718581F95D9CD /* KnobPanelWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobPanelWindowController.swift; sourceTree = "<group>"; };
 		C955EF152C23C292A17B7F8A /* InputTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslator.swift; sourceTree = "<group>"; };
@@ -429,6 +431,7 @@
 				29618E44B78DFC05E3D4E562 /* CloudSyncManagerTests.swift */,
 				8C9B369B5463055B638A95E6 /* CustomKnobTests.swift */,
 				C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */,
+				E8C3B1A2F3D4E56789012340 /* KnobLiftoffFilterTests.swift */,
 				A31EB983132648BE5B011996 /* DemoSliderTargetTests.swift */,
 				150138859D28698EB07164B3 /* FeatureGateTests.swift */,
 				412FAE1848F7AE48AD20C030 /* FreeEditionPopoverTests.swift */,
@@ -574,6 +577,7 @@
 				9925F34855238AC2A1877858 /* CloudSyncManagerTests.swift in Sources */,
 				46905D868F84074B17794338 /* CustomKnobTests.swift in Sources */,
 				D9AA75CFB01B353867490AC0 /* CustomMultiplierTests.swift in Sources */,
+				E8C3B1A2F3D4E56789012341 /* KnobLiftoffFilterTests.swift in Sources */,
 				EA6A77CCD1BA63EAFAE99002 /* DemoSliderTargetTests.swift in Sources */,
 				C463D598377098DC39E1C197 /* FeatureGateTests.swift in Sources */,
 				01A6460B057DC868BBCB7E3B /* FreeEditionPopoverTests.swift in Sources */,
