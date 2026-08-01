@@ -40,4 +40,17 @@ final class KnobLiftoffFilterTests: XCTestCase {
         buffer.clear()
         XCTAssertNil(buffer.resolvedLiftoffAngle(), "清空后 resolvedLiftoffAngle 应该为 nil")
     }
+    
+    func testTwoToOneTransitionLockWindow() {
+        let now = Date()
+        let lockTime = now
+        
+        let timeInWindow = now.addingTimeInterval(0.05)
+        let isLockedInWindow = timeInWindow.timeIntervalSince(lockTime) < 0.100
+        XCTAssertTrue(isLockedInWindow, "50ms 时应处于 100ms 锁定保护期")
+        
+        let timeAfterWindow = now.addingTimeInterval(0.12)
+        let isLockedAfterWindow = timeAfterWindow.timeIntervalSince(lockTime) < 0.100
+        XCTAssertFalse(isLockedAfterWindow, "120ms 时应解除 100ms 锁定保护")
+    }
 }
