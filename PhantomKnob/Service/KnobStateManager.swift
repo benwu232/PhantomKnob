@@ -24,6 +24,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var initialTouchPositionCarbon: CGPoint? // 锁定鼠标 of Carbon coordinate (top-left origin)
     private var previousAngle: Double = 0
     var angleBuffer = KnobAngleBuffer()
+    private var transitionToOneFingerTime: Date?
+    private var previousPointCount: Int = 0
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
     var fixedCenter: CGPoint?
@@ -751,6 +753,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.lastResolvedBaseScale = 1.0
         }
 
+        transitionToOneFingerTime = nil
+        previousPointCount = points.count
+
         // 5. 缓存鼠标位置，不直接进入 knobing
         let mouseLoc = NSEvent.mouseLocation
         initialTouchPosition = mouseLoc
@@ -788,6 +793,22 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     func onMultitouchMoved(points: [Int: CGPoint]) {
+        if previousPointCount >= 2 && points.count == 1 {
+            transitionToOneFingerTime = Date()
+            PKLogger.knob.debug("Two-to-one finger transition detected, starting 100ms protection lock")
+        }
+        previousPointCount = points.count
+
+        var isTransitionLocked = false
+        if let lockTime = transitionToOneFingerTime {
+            let elapsed = Date().timeIntervalSince(lockTime)
+            if elapsed < 0.100 {
+                isTransitionLocked = true
+            } else {
+                transitionToOneFingerTime = nil
+            }
+        }
+
         if state == .customizing {
             let scaledPoints = scaleCoordinates(points)
             let radius = calculateRawRadius(points: scaledPoints)
@@ -1070,7 +1091,12 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             let deltaAngle = abs(knobState.deltaAngle)
             let direction: RotationDirection = knobState.deltaAngle >= 0 ? .clockwise : .counterClockwise
 
-            translator.apply(units: deltaAngle, direction: direction)
+            if !isTransitionLocked {
+                translator.apply(units: deltaAngle, direction: direction)
+                PKLogger.knob.debug("applied delta=\(deltaAngle) dir=\(String(describing: direction)) scale=\(finalScale)")
+            } else {
+                PKLogger.knob.debug("Transition locked (100ms): updating internal angle \(currentAngle), skipping translator.apply()")
+            }
 
             let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
             overlayController.update(
@@ -1088,8 +1114,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.currentAngle = currentAngle
             previousAngle = currentAngle
             angleBuffer.append(angle: currentAngle)
-
-            PKLogger.knob.debug("applied delta=\(deltaAngle) dir=\(String(describing: direction)) scale=\(finalScale)")
         }
     }
 
@@ -1111,6 +1135,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
+        transitionToOneFingerTime = nil
+        previousPointCount = 0
 
         if state.isKnobing {
             if let lockAngle = angleBuffer.resolvedLiftoffAngle() {
