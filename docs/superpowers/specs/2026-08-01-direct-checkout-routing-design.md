@@ -13,7 +13,7 @@ Lemon Squeezy 提供的官方结账直链格式如下：
 https://[store-subdomain].lemonsqueezy.com/buy/[product-variant-id-or-slug]
 ```
 示例占位链接：
-`https://phantomknob.lemonsqueezy.com/buy/pro`（或您在 Lemon Squeezy Dashboard 复制的真实 Checkout URL）。
+`https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10`（或您在 Lemon Squeezy Dashboard 复制的真实 Checkout URL）。
 
 ### 2.2 重定向（Redirect URL）配置
 在 Lemon Squeezy 后台产品的 **Settings** ➔ **Confirmation Modal / Redirect URL** 中，配置付款成功后的跳转目标：
@@ -30,7 +30,7 @@ https://benwu232.github.io/PhantomKnob/activate.html?key={license_key}&email={cu
 1. **收银台常量提取**：
    在 `AppSettings.swift` 或 `AppConfig` 中定义统一的 `storeCheckoutURL`：
    ```swift
-   public static let storeCheckoutURL = URL(string: "https://phantomknob.lemonsqueezy.com/buy/pro")!
+   public static let storeCheckoutURL = URL(string: "https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10")!
    ```
 2. **按钮动作更新 (`LicenseWindowView.swift`)**：
    修改“🛒 立即获取 Pro 授权”按钮点击逻辑：
@@ -45,7 +45,7 @@ https://benwu232.github.io/PhantomKnob/activate.html?key={license_key}&email={cu
 ### 3.2 网页端按钮更新 (`index.html` & `index_zh.html`)
 将 Pro 卡片与导航栏中的购买按钮 `href` 均指向标准的 Lemon Squeezy 直链结账地址：
 ```html
-<a href="https://phantomknob.lemonsqueezy.com/buy/pro" class="plan-btn pro">购买许可</a>
+<a href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" class="plan-btn pro">购买许可</a>
 ```
 
 ---
