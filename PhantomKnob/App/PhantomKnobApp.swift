@@ -75,8 +75,17 @@ class AppState: ObservableObject {
 }
 
 #if !TESTING
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            URLSchemeHandler.shared.parseAndTriggerActivation(url: url)
+        }
+    }
+}
+
 @main
 struct PhantomKnobApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appState = AppState()
     
     init() {
@@ -97,6 +106,9 @@ struct PhantomKnobApp: App {
     var body: some Scene {
         Settings {
             SettingsView()
+                .onOpenURL { url in
+                    URLSchemeHandler.shared.parseAndTriggerActivation(url: url)
+                }
         }
     }
 }
