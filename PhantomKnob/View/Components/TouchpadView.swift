@@ -10,13 +10,13 @@ class TouchpadView: NSView {
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
-        acceptsTouchEvents = true
+        allowedTouchTypes = [.direct, .indirect]
         wantsRestingTouches = true
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        acceptsTouchEvents = true
+        allowedTouchTypes = [.direct, .indirect]
         wantsRestingTouches = true
     }
     
