@@ -117,9 +117,9 @@
   // 写入 LicenseManager 内部
   private let lemonSqueezyPublicKeyPEM = """
   -----BEGIN PUBLIC KEY-----
-  MCowBQYDK2VwAyEASg6X484hS3Fsk2k8XzV8pTzH59WkE/B3eJmXb5mU8QY=
+  MCowBQYDK2VwAyEAXFhc6OcspnJxLX+GMW3r5CNp7cQflNkI8ObE0wlCAFQ=
   -----END PUBLIC KEY-----
-  """ // 预置的 CF Worker 网关公钥
+  """ // 预置 of CF Worker 网关公钥
 
   func getDeviceUUID() -> String {
       let platformExpert = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"))
@@ -241,7 +241,7 @@
   // 异步激活网络请求
   func activateOnline(licenseKey: String, email: String, completion: @escaping (Bool, String?) -> Void) {
       let uuid = getDeviceUUID()
-      let url = URL(string: "https://licensing.phantomknob.com/activate")! // CF Worker 网关
+      let url = URL(string: "https://phantom-knob-licensing.heavywater.workers.dev")! // CF Worker 网关
       var request = URLRequest(url: url)
       request.httpMethod = "POST"
       request.setValue("application/json", forHTTPHeaderField: "Content-Type")
