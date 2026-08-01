@@ -2,12 +2,12 @@ import AppKit
 import Foundation
 import os
 
-class URLSchemeHandler {
-    static let shared = URLSchemeHandler()
+public class URLSchemeHandler {
+    public static let shared = URLSchemeHandler()
     
     private init() {}
     
-    func startListening() {
+    public func startListening() {
         NSAppleEventManager.shared().setEventHandler(
             self,
             andSelector: #selector(handleGetURLEvent(_:withReplyEvent:)),
@@ -24,7 +24,7 @@ class URLSchemeHandler {
         parseAndTriggerActivation(url: url)
     }
     
-    func parseAndTriggerActivation(url: URL) {
+    public func parseAndTriggerActivation(url: URL) {
         guard url.host == "activate" else { return }
         
         let components = URLComponents(url: url, resolvingAgainstBaseURL: true)

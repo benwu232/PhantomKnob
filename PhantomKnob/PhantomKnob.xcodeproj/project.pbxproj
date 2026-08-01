@@ -315,7 +315,7 @@
 			isa = PBXGroup;
 			children = (
 												7A550C8CB4A87848D4F798DC /* LicenseWindowController.swift */,
-77BC38F06FC10C094BBEB897 /* URLSchemeHandler.swift */,
+				77BC38F06FC10C094BBEB897 /* URLSchemeHandler.swift */,
 CC5C8E0A0350FB712070D82F /* AnalyticsManager.swift */,
 				E2CDEC7A8A488C0D2A64D6AA /* AppLanguageManager.swift */,
 				FC25D2DC3A258F173AB3BD8C /* AudioControlService.swift */,
@@ -612,8 +612,8 @@ B0BAF899FEBBC2AEB0F09C7F /* AppLanguageManagerTests.swift in Sources */,
 			buildActionMask = 2147483647;
 			files = (
 																2CE674208EE7D53AE9FD9726 /* LicenseWindowView.swift in Sources */,
-84D85EA0AFE287DB371E2B75 /* LicenseWindowController.swift in Sources */,
-A3378150C96CF4A0FD8107BF /* URLSchemeHandler.swift in Sources */,
+				84D85EA0AFE287DB371E2B75 /* LicenseWindowController.swift in Sources */,
+				A3378150C96CF4A0FD8107BF /* URLSchemeHandler.swift in Sources */,
 9F4C5719CF0BE0C6FFA610B6 /* AXWriteTranslator.swift in Sources */,
 				A58333C3C51D7ECE8BC8B514 /* AnalyticsManager.swift in Sources */,
 				4F12C029F2E542B599ADF3C4 /* AppLanguageManager.swift in Sources */,

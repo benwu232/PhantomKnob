@@ -1,20 +1,20 @@
 import AppKit
 import SwiftUI
 
-class LicenseWindow: NSWindow {
-    override var canBecomeKey: Bool { return true }
+public class LicenseWindow: NSWindow {
+    public override var canBecomeKey: Bool { return true }
 }
 
-class LicenseWindowController: NSObject, NSWindowDelegate {
-    static let shared = LicenseWindowController()
+public class LicenseWindowController: NSObject, NSWindowDelegate {
+    public static let shared = LicenseWindowController()
     
     private var window: LicenseWindow?
     
-    var isVisible: Bool {
+    public var isVisible: Bool {
         return window?.isVisible ?? false
     }
     
-    func show() {
+    public func show() {
         if window == nil {
             createWindow()
         }
@@ -23,7 +23,7 @@ class LicenseWindowController: NSObject, NSWindowDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
     
-    func hide() {
+    public func hide() {
         window?.orderOut(nil)
         NSApp.setActivationPolicy(.accessory)
     }
@@ -69,7 +69,7 @@ class LicenseWindowController: NSObject, NSWindowDelegate {
         self.window = win
     }
     
-    func windowDidResignKey(_ notification: Notification) {
+    public func windowDidResignKey(_ notification: Notification) {
         hide()
     }
 }
