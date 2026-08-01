@@ -26,13 +26,25 @@ let package = Package(
                 .product(name: "TelemetryClient", package: "SwiftClient")
             ],
             path: ".",
+            exclude: [
+                "Info.plist",
+                "project.yml",
+                "PhantomKnob.entitlements",
+                "PhantomKnobTests"
+            ],
             sources: [
+                "App/",
                 "Model/",
                 "ViewModel/",
                 "View/",
                 "Service/",
                 "Control/",
                 "Storage/",
+            ],
+            resources: [
+                .process("Assets.xcassets"),
+                .process("Localizable.xcstrings"),
+                .process("Resources")
             ]
         ),
         .testTarget(
