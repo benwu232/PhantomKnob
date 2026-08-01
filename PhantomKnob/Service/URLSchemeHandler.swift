@@ -31,12 +31,13 @@ public class URLSchemeHandler {
         let key = components?.queryItems?.first(where: { $0.name == "key" || $0.name == "license_key" })?.value
         let email = components?.queryItems?.first(where: { $0.name == "email" })?.value
         
-        if let key = key, let email = email {
+        if let key = key, !key.isEmpty {
+            let targetEmail = email ?? ""
             DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: NSNotification.Name("TriggerLicenseActivationFromURL"),
                     object: nil,
-                    userInfo: ["key": key, "email": email]
+                    userInfo: ["key": key, "email": targetEmail]
                 )
             }
         }
