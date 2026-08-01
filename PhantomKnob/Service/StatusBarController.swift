@@ -360,7 +360,9 @@ class StatusBarController: ObservableObject {
         guard let ev = event else {
             if let menu = menu {
                 if !isTesting {
-                    statusItem?.popUpMenu(menu)
+                    statusItem?.menu = menu
+                    statusItem?.button?.performClick(nil)
+                    statusItem?.menu = nil
                 }
             }
             return
@@ -375,7 +377,9 @@ class StatusBarController: ObservableObject {
             pendingMenuWorkItem = nil
             if let menu = menu {
                 if !isTesting {
-                    statusItem?.popUpMenu(menu)
+                    statusItem?.menu = menu
+                    statusItem?.button?.performClick(nil)
+                    statusItem?.menu = nil
                 }
             }
             return
@@ -619,10 +623,18 @@ extension NSImage {
         
         let resolvedColor: NSColor
         if let appearance = appearance {
-            let saved = NSAppearance.current
-            NSAppearance.current = appearance
-            resolvedColor = color.usingColorSpace(.deviceRGB) ?? color
-            NSAppearance.current = saved
+            var colorRes = color
+            if #available(macOS 11.0, *) {
+                appearance.performAsCurrentDrawingAppearance {
+                    colorRes = color.usingColorSpace(.deviceRGB) ?? color
+                }
+            } else {
+                let saved = NSAppearance.current
+                NSAppearance.current = appearance
+                colorRes = color.usingColorSpace(.deviceRGB) ?? color
+                NSAppearance.current = saved
+            }
+            resolvedColor = colorRes
         } else {
             resolvedColor = color
         }
