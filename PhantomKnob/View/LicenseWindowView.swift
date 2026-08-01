@@ -148,9 +148,7 @@ struct LicenseWindowView: View {
             .cornerRadius(10)
             
             Button(action: {
-                if let url = URL(string: "https://benwu232.github.io/PhantomKnob/#buy") {
-                    NSWorkspace.shared.open(url)
-                }
+                NSWorkspace.shared.open(AppSettings.storeCheckoutURL)
             }) {
                 Text("🛒 立即获取 Pro 授权")
                     .font(.system(size: 13, weight: .semibold))

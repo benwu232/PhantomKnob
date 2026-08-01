@@ -25,6 +25,12 @@ class LicenseManagerTests: XCTestCase {
         )
     }
     
+    func testStoreCheckoutURLIsValid() {
+        let url = AppSettings.storeCheckoutURL
+        XCTAssertEqual(url.host, "benwu232.lemonsqueezy.com")
+        XCTAssertTrue(url.path.contains("checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10"))
+    }
+    
     func testFirstLaunchInitializesTrial() {
         // Initial state should be trialing with 14 days remaining
         let state = licenseManager.currentState

@@ -2,6 +2,8 @@
 import Foundation
 
 struct AppSettings: Codable {
+    public static let storeCheckoutURL = URL(string: "https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10")!
+    
     var activeScheme: String = "fixed"
     var enableKeyboardNumberMultiplier: Bool = true
     var fixed: FixedSchemeConfig = FixedSchemeConfig()
