@@ -112,8 +112,8 @@
     <script>
         window.onload = function() {
             const params = new URLSearchParams(window.location.search);
-            const key = params.get('key') || params.get('license_key');
-            const email = params.get('email');
+            const key = params.get('key') || params.get('license_key') || params.get('license');
+            const email = params.get('email') || params.get('customer_email');
             
             if (key && email) {
                 document.getElementById('key-display').textContent = key;
