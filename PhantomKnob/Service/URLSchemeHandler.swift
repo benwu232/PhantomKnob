@@ -34,6 +34,7 @@ public class URLSchemeHandler {
         if let key = key, !key.isEmpty {
             let targetEmail = email ?? ""
             DispatchQueue.main.async {
+                LicenseWindowController.shared.show()
                 NotificationCenter.default.post(
                     name: NSNotification.Name("TriggerLicenseActivationFromURL"),
                     object: nil,
