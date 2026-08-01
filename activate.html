@@ -113,23 +113,24 @@
         window.onload = function() {
             const params = new URLSearchParams(window.location.search);
             const key = params.get('key') || params.get('license_key') || params.get('license');
-            const email = params.get('email') || params.get('customer_email');
+            const email = params.get('email') || params.get('customer_email') || '';
             
-            if (key && email) {
+            if (key) {
                 document.getElementById('key-display').textContent = key;
-                document.getElementById('email-display').textContent = email;
+                document.getElementById('email-display').textContent = email || '已通过授权码自动关联';
                 
                 const schemeUrl = `phantomknob://activate?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`;
+                
+                const btn = document.getElementById('activate-btn');
+                btn.href = schemeUrl;
+                btn.onclick = function(e) {
+                    window.location.href = schemeUrl;
+                };
                 
                 // 自动尝试唤起 App
                 setTimeout(() => {
                     window.location.href = schemeUrl;
-                }, 1000);
-                
-                // 按钮绑定点击
-                document.getElementById('activate-btn').onclick = function() {
-                    window.location.href = schemeUrl;
-                };
+                }, 800);
             } else {
                 document.getElementById('status-text').textContent = "激活参数不完整";
                 document.getElementById('key-display').textContent = "无有效授权码";
