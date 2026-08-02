@@ -56,7 +56,7 @@ struct OverlayView: View {
     let themeColorHex: String
     let overlayStyle: String
     let rotationStyle: String
-    let diameter: CGFloat    // 新增：渐变渲染与内嵌高亮支持
+    let diameter: CGFloat
     let outerThemeColorHex: String?
     let innerThemeColorHex: String?
     let configType: KnobConfigType
@@ -109,8 +109,6 @@ struct OverlayView: View {
             return isActive ? base : base.opacity(0.3)
         }()
         
-        let resolvedSkin = skin ?? HUDSkinManager.shared.resolveSkin(skinID: nil, overrides: HUDSkinOverride(primaryColorHex: themeColorHex))
-
         VStack(spacing: 4) {
             if isTooClose {
                 ZStack {
@@ -123,63 +121,34 @@ struct OverlayView: View {
                 }
                 .frame(width: diameter, height: diameter)
             } else {
-                let titleText: String = {
-                    let name = (targetName == nil || targetName!.isEmpty) ? "Knob" : targetName!
-                    return name
-                }()
+                // 1. 名字及数值悬浮正上方 (Layer 8)
+                HUDValueBadgeView(targetName: targetName, valueText: valueText, isDeadzone: isDeadzone, primaryColor: activeColor)
                 
-                VStack(spacing: 2) {
-                    Text(titleText)
-                        .font(.system(size: 13, weight: .semibold))
-                        .tracking(-0.2)
-                        .foregroundColor(isDeadzone ? Color.gray.opacity(0.45) : activeColor.opacity(0.70))
-                        .lineLimit(1)
-                    
-                    if let valueText = valueText {
-                        HUDValueBadgeView(config: resolvedSkin.components.valueBadge, valueText: valueText)
-                    }
-                }
-                .frame(height: valueText != nil ? 38 : 20)
-                
-                // 8 图层解耦容器
+                // 2. 圆形 Overlay 容器（包含 Layer 1, 5, 6, 7 & Scale 文本）
                 ZStack {
-                    // Layer 1: Backdrop
-                    if resolvedSkin.components.backdrop.enabled {
-                        HUDBackdropView(config: resolvedSkin.appearance.backdrop, primaryColor: activeColor)
-                    }
-                    // Layer 2: Texture Overlay
-                    if resolvedSkin.components.textureOverlay.enabled {
-                        HUDTextureOverlayView(config: resolvedSkin.components.textureOverlay)
-                    }
-                    // Layer 3: Custom Image Assets
-                    HUDCustomImageView(assets: resolvedSkin.customImageAssets)
-
-                    // Layer 4: Center Cap
-                    if resolvedSkin.components.centerCap.enabled {
-                        HUDCenterCapView(config: resolvedSkin.components.centerCap, primaryColor: activeColor)
-                    }
-
-                    // Layer 5: Gauge
-                    if resolvedSkin.components.gauge.enabled {
-                        HUDGaugeView(config: resolvedSkin.components.gauge, primaryColor: activeColor)
-                    }
-
-                    // Layer 6: Notch Pins
-                    if resolvedSkin.components.notchPins.enabled {
-                        HUDNotchPinsView(config: resolvedSkin.components.notchPins, primaryColor: activeColor)
-                    }
-
-                    // Layer 7: Pointer
-                    if resolvedSkin.components.pointer.enabled {
-                        HUDPointerView(config: resolvedSkin.components.pointer, angle: angle, primaryColor: activeColor)
-                    }
+                    // Layer 1: Backdrop / Circle Fill / Deadzone
+                    HUDBackdropView(overlayStyle: overlayStyle, isDeadzone: isDeadzone, primaryColor: activeColor, diameter: diameter)
                     
-                    if let scale = scale {
-                        Text(String(format: "%.1fx", scale))
-                            .font(.system(size: 28, weight: .black, design: .monospaced))
-                            .tracking(-0.5)
-                            .foregroundColor(activeColor.opacity(0.55))
-                            .shadow(color: Color.black.opacity(0.15), radius: 1, x: 0, y: 1)
+                    if !isDeadzone {
+                        if rotationStyle == "ticks" {
+                            // Layer 6: Notch Pin (主 Notch 圆点)
+                            HUDNotchPinsView(angle: angle, primaryColor: activeColor)
+                            
+                            // Layer 5: Gauge Ticks (60 刻度线)
+                            HUDGaugeView(angle: angle, primaryColor: activeColor, tickCount: 60)
+                        } else if rotationStyle == "rimDot" {
+                            // Layer 7: RimDot Pointer
+                            HUDPointerView(angle: angle, primaryColor: activeColor, rotationStyle: "rimDot")
+                        }
+                        
+                        // 4. 正中心倍数显示
+                        if let scale = scale {
+                            Text(String(format: "%.1fx", scale))
+                                .font(.system(size: 28, weight: .black, design: .monospaced))
+                                .tracking(-0.5)
+                                .foregroundColor(activeColor.opacity(0.55))
+                                .shadow(color: Color.black.opacity(0.15), radius: 1, x: 0, y: 1)
+                        }
                     }
                 }
                 .frame(width: diameter, height: diameter)
@@ -188,7 +157,6 @@ struct OverlayView: View {
         .frame(width: diameter, height: diameter + (isTooClose ? 0 : (valueText != nil ? 38 : 20)))
     }
 }
-
 
 struct OverlayView_Previews: PreviewProvider {
     static var previews: some View {

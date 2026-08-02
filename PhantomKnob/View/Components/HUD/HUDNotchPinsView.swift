@@ -1,22 +1,33 @@
 import SwiftUI
 
 public struct HUDNotchPinsView: View {
-    public let config: HUDNotchPinsComponent
+    public let angle: Double
     public let primaryColor: Color
 
-    public init(config: HUDNotchPinsComponent, primaryColor: Color) {
-        self.config = config
+    public init(angle: Double, primaryColor: Color) {
+        self.angle = angle
         self.primaryColor = primaryColor
     }
 
     public var body: some View {
-        Group {
-            if config.enabled && config.type != "none" {
-                Circle()
-                    .fill(primaryColor)
-                    .frame(width: 4, height: 4)
-                    .offset(y: -75)
-            }
+        Canvas { context, size in
+            let center = CGPoint(x: size.width / 2, y: size.height / 2)
+            let r = min(size.width, size.height) / 2 - 8
+            
+            context.translateBy(x: center.x, y: center.y)
+            context.rotate(by: Angle(degrees: -angle))
+            
+            let dotRadius = max(2.5, r * 0.08)
+            let dotDist = r * 0.75
+            var path = Path()
+            path.addArc(
+                center: CGPoint(x: dotDist, y: 0),
+                radius: dotRadius,
+                startAngle: .zero,
+                endAngle: Angle(degrees: 360),
+                clockwise: false
+            )
+            context.fill(path, with: .color(primaryColor.opacity(0.4)))
         }
     }
 }
