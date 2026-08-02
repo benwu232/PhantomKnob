@@ -182,8 +182,43 @@ struct HUDSkinOverride: Codable {
 
 ---
 
-## 7. 规格自检 (Self-Check)
+## 7. 系统架构与底层基础设施支持 (System Architecture & Infrastructure)
 
-- [x] **占位符检查**：无 TODO 或待定事项，数据格式与参数范围均明确标注。
-- [x] **内部一致性**：图层编号（Layer 1~8）、动画名称与代码 JSON 结构完全一致。
-- [x] **范围控制**：本文档专注于数据协议、解构图层与动画规范，暂不涉及工程逻辑实现。
+为了支持上述数据协议与 UI 编辑器，项目底层需补充以下基础设施组件：
+
+### 7.1 皮肤仓库管理器 (`HUDSkinManager`)
+* **统一加载路径与优先级**：
+  1. 用户存储目录：`~/Library/Application Support/PhantomKnob/Skins/<skinID>/skin.json`
+  2. Bundle 默认目录：`Bundle.main/Contents/Resources/Skins/<skinID>/skin.json`
+  3. 系统兜底 (Fallback)：`com.phantomknob.skin.default`
+* **内存缓存**：`HUDSkinManager.shared` 维护 `[String: HUDSkin]` 注册表表单，并在皮肤变更或安装时发送 `HUDSkinLibraryDidUpdate` 通知。
+
+### 7.2 `.hudskinpack` 包机制与素材路径解析
+* **素材存储标准**：用户导入的自定义贴图（PNG/SVG）统一放置在皮肤包目录下的 `assets/` 子文件夹中。
+* **压缩包规范 (`.hudskinpack`)**：
+  * 为带有 `skin.json` 与 `assets/` 文件夹的标准 ZIP 归档。
+  * `Info.plist` 中配置扩展名 `.hudskinpack` 的 Document Type 关联与 UTType 声明。
+  * `SkinPackager` 负责拖入/双击文件时的自动解压与目录校验。
+
+### 7.3 渲染管线组件拆解 (`OverlayView` Component Stack)
+为避免视图过度膨胀，`OverlayView` 解耦为以下独立 SwiftUI 子视图构成的图层栈：
+* `HUDBackdropView` (Layer 1)
+* `HUDTextureView` (Layer 2)
+* `HUDCustomImageView` (Layer 3)
+* `HUDCenterCapView` (Layer 4)
+* `HUDGaugeView` (Layer 5)
+* `HUDNotchPinsView` (Layer 6)
+* `HUDPointerView` (Layer 7)
+* `HUDValueBadgeView` (Layer 8)
+
+### 7.4 向下兼容与平滑迁移 (Backward Compatibility)
+* **旧配置降级渲染**：对现有 `my_knobs.json` 中仅定义了 `themeColor` 或 `overlayStyle` 的旧规则，`HUDSkinManager` 会基于系统默认皮肤自动动态构建 `skinOverrides` 内存映射，确保既有逻辑无需手动迁移即可完美呈现。
+
+---
+
+## 8. 规格自检 (Self-Check)
+
+- [x] **占位符检查**：无 TODO 或待定事项，数据格式、架构模块与目录规范均明确标注。
+- [x] **内部一致性**：图层编号（Layer 1~8）、动画名称、文件包规范与代码 JSON 结构完全一致。
+- [x] **范围控制**：包含完整的 Schema 规范、系统底层基础设施拆解、包机制与渲染管线架构。
+
