@@ -57,4 +57,18 @@ final class HUDSkinTests: XCTestCase {
         XCTAssertEqual(resolved.appearance.colors.primaryHex, "#FF0000")
         XCTAssertEqual(resolved.appearance.backdrop.opacity, 0.9)
     }
+
+    func testSkinPackagerExportAndImport() throws {
+        let manager = HUDSkinManager.shared
+        let skin = manager.defaultSkin
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+        let packURL = tempDir.appendingPathComponent("test.hudskinpack")
+        try SkinPackager.exportSkin(skin, to: packURL)
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: packURL.path))
+        let importedSkin = try SkinPackager.importSkin(from: packURL)
+        XCTAssertEqual(importedSkin.id, skin.id)
+    }
 }
