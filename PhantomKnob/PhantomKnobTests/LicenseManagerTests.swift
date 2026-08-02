@@ -216,10 +216,11 @@ class LicenseManagerTests: XCTestCase {
         let key = "TEST-LICENSE-KEY"
         let email = "user@example.com"
         let uuid = manager.getDeviceUUID()
+        let now = self.simulatedDate
         
         // 1. 模拟在宽限期内（上次验证在 20 天前，介于 15 ~ 22 天之间）
-        let activatedDate = Date().addingTimeInterval(-30 * 24 * 60 * 60)
-        let verifiedDateWithinGrace = Date().addingTimeInterval(-20 * 24 * 60 * 60)
+        let activatedDate = now.addingTimeInterval(-30 * 24 * 60 * 60)
+        let verifiedDateWithinGrace = now.addingTimeInterval(-20 * 24 * 60 * 60)
         
         let msg = "\(key)|\(email)|\(uuid)|\(Int(activatedDate.timeIntervalSince1970))|\(Int(verifiedDateWithinGrace.timeIntervalSince1970))"
         let sig = try! testPrivateKey.signature(for: msg.data(using: .utf8)!).base64EncodedString()
@@ -233,19 +234,19 @@ class LicenseManagerTests: XCTestCase {
             signature: sig
         )
         
-        let encoder = JSONEncoder()
+        let encoder = JSONEncoder.licenseEncoder
         let receiptJsonData = try! encoder.encode(receiptWithinGrace)
         mockStorage["proLicenseReceipt"] = String(data: receiptJsonData, encoding: .utf8)
         
         // 我们需要把 trial 模拟为过期，排除干扰
         let formatter = ISO8601DateFormatter()
-        mockStorage["proTrialStartDate"] = formatter.string(from: Date().addingTimeInterval(-20 * 24 * 60 * 60))
+        mockStorage["proTrialStartDate"] = formatter.string(from: now.addingTimeInterval(-20 * 24 * 60 * 60))
         
         // 此时由于 20 < 22 天，应当仍处于 .licensed 状态
         XCTAssertEqual(manager.currentState, .licensed)
         
         // 2. 模拟宽限期失效（上次验证在 25 天前，超过 22 天限制）
-        let verifiedDateExpired = Date().addingTimeInterval(-25 * 24 * 60 * 60)
+        let verifiedDateExpired = now.addingTimeInterval(-25 * 24 * 60 * 60)
         let msgExpired = "\(key)|\(email)|\(uuid)|\(Int(activatedDate.timeIntervalSince1970))|\(Int(verifiedDateExpired.timeIntervalSince1970))"
         let sigExpired = try! testPrivateKey.signature(for: msgExpired.data(using: .utf8)!).base64EncodedString()
         

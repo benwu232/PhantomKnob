@@ -307,6 +307,19 @@ class LicenseManager {
     }
 }
 
+extension JSONEncoder {
+    static var licenseEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        encoder.dateEncodingStrategy = .custom { date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(formatter.string(from: date))
+        }
+        return encoder
+    }
+}
+
 extension JSONDecoder {
     static var licenseDecoder: JSONDecoder {
         let decoder = JSONDecoder()
