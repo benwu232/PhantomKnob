@@ -18,6 +18,7 @@ struct CustomizerHUDView: View {
     @State private var cvkOuterColor: String = "#FF9F0A"
     @State private var cvkInnerColor: String = "#30D158"
     @State private var isAdvancedExpanded: Bool = false
+    @State private var selectedSkinID: String = "com.phantomknob.skin.default"
 
     private var currentKnobKey: KnobKey {
         let chain = target.parentChain.enumerated().filter {
