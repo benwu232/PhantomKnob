@@ -793,11 +793,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     func onMultitouchMoved(points: [Int: CGPoint]) {
-        if previousPointCount >= 2 && points.count == 1 {
+        let currentTouchCount = points.count
+        if currentTouchCount >= 2 {
+            transitionToOneFingerTime = nil
+        } else if previousPointCount >= 2 && currentTouchCount == 1 {
             transitionToOneFingerTime = Date()
             PKLogger.knob.debug("Two-to-one finger transition detected, starting 100ms protection lock")
         }
-        previousPointCount = points.count
+        previousPointCount = currentTouchCount
+
 
         var isTransitionLocked = false
         if let lockTime = transitionToOneFingerTime {
@@ -896,9 +900,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let scaledPoints = scaleCoordinates(points)
         guard let currentAngle = calculateRawAngle(points: scaledPoints) else { return }
 
-        let currentTouchCount = scaledPoints.count
+        let scaledTouchCount = scaledPoints.count
         // 单指重新升级回双指时，重新缓存双指的 ID 对应关系以备下一次抬指匹配
-        if currentTouchCount >= 2 {
+        if scaledTouchCount >= 2 {
             let (_, idx1, idx2) = KnobAlgorithm().calKnob(scaledPoints)
             self.fingerIdx1 = idx1
             self.fingerIdx2 = idx2

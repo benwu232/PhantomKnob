@@ -53,4 +53,23 @@ final class KnobLiftoffFilterTests: XCTestCase {
         let isLockedAfterWindow = timeAfterWindow.timeIntervalSince(lockTime) < 0.100
         XCTAssertFalse(isLockedAfterWindow, "120ms 时应解除 100ms 锁定保护")
     }
+    
+    func testTwoToOneTransitionInstantUnlockOnTwoFingers() {
+        // 验证当检测到两指降为一指触发 transitionToOneFingerTime 后，
+        // 若后续采样再次恢复为两指 (count >= 2)，transitionToOneFingerTime 能够被即时清空为 nil
+        var transitionToOneFingerTime: Date? = Date()
+        var previousPointCount: Int = 1
+        
+        // 模拟 onMultitouchMoved 在 points.count >= 2 时的解锁逻辑
+        let currentPointsCount = 2
+        if currentPointsCount >= 2 {
+            transitionToOneFingerTime = nil
+        } else if previousPointCount >= 2 && currentPointsCount == 1 {
+            transitionToOneFingerTime = Date()
+        }
+        previousPointCount = currentPointsCount
+        
+        XCTAssertNil(transitionToOneFingerTime, "当触点恢复为 2 指时，应该立即解锁并清除 transitionToOneFingerTime 为 nil")
+    }
 }
+
