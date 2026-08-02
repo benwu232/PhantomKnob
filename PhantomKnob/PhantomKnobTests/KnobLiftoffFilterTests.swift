@@ -64,7 +64,7 @@ final class KnobLiftoffFilterTests: XCTestCase {
         let currentPointsCount = 2
         if currentPointsCount >= 2 {
             transitionToOneFingerTime = nil
-        } else if previousPointCount >= 2 && currentPointsCount == 1 {
+        } else if previousPointCount >= 2 && currentPointsCount < 2 {
             transitionToOneFingerTime = Date()
         }
         previousPointCount = currentPointsCount

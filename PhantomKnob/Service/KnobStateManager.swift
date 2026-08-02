@@ -796,9 +796,9 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         let currentTouchCount = points.count
         if currentTouchCount >= 2 {
             transitionToOneFingerTime = nil
-        } else if previousPointCount >= 2 && currentTouchCount == 1 {
+        } else if previousPointCount >= 2 && currentTouchCount < 2 {
             transitionToOneFingerTime = Date()
-            PKLogger.knob.debug("Two-to-one finger transition detected, starting 100ms protection lock")
+            PKLogger.knob.debug("Transition to less than two fingers detected, starting 100ms protection lock")
         }
         previousPointCount = currentTouchCount
 
