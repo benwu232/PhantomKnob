@@ -30,7 +30,8 @@ let package = Package(
                 "Info.plist",
                 "project.yml",
                 "PhantomKnob.entitlements",
-                "PhantomKnobTests"
+                "PhantomKnobTests",
+                "App/PhantomKnobApp.swift"
             ],
             sources: [
                 "App/",

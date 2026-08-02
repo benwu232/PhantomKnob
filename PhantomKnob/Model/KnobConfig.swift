@@ -112,6 +112,20 @@ struct CVKKnobConfig: Codable, Equatable {
     }
 }
 
+public struct HUDSkinOverride: Codable, Equatable {
+    public var primaryColorHex: String?
+    public var backdropOpacity: Double?
+    public var diameterScale: Double?
+    public var valuePosition: String?
+
+    public init(primaryColorHex: String? = nil, backdropOpacity: Double? = nil, diameterScale: Double? = nil, valuePosition: String? = nil) {
+        self.primaryColorHex = primaryColorHex
+        self.backdropOpacity = backdropOpacity
+        self.diameterScale = diameterScale
+        self.valuePosition = valuePosition
+    }
+}
+
 /// RuleLibrary 中存储的一条规则。
 struct Knob: Codable, Equatable {
     let key: KnobKey
@@ -123,6 +137,8 @@ struct Knob: Codable, Equatable {
     var cvkConfig: CVKKnobConfig?
     
     var extra: [String: String]?
+    var skinID: String?
+    var skinOverrides: HUDSkinOverride?
     
     // 兼容旧字段
     var translation: InputTranslation?
@@ -134,6 +150,7 @@ struct Knob: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case key, themeColor, configType, singleConfig, doubleConfig, cvkConfig, extra
         case translation, scaleConfig, invert, overlayStyle, rotationStyle
+        case skinID, skinOverrides
     }
 
     init(key: KnobKey,
