@@ -43,4 +43,18 @@ final class HUDSkinTests: XCTestCase {
         XCTAssertEqual(skin.components.gauge.tickCount, 60)
         XCTAssertEqual(skin.animations.entrance.type, .simpleCenterScaleIn)
     }
+
+    func testHUDSkinManagerFallbackAndOverride() {
+        let manager = HUDSkinManager.shared
+        let defaultSkin = manager.defaultSkin
+        XCTAssertEqual(defaultSkin.id, "com.phantomknob.skin.default")
+
+        var override = HUDSkinOverride()
+        override.primaryColorHex = "#FF0000"
+        override.backdropOpacity = 0.9
+
+        let resolved = manager.resolveSkin(skinID: nil, overrides: override)
+        XCTAssertEqual(resolved.appearance.colors.primaryHex, "#FF0000")
+        XCTAssertEqual(resolved.appearance.backdrop.opacity, 0.9)
+    }
 }
