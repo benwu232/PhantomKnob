@@ -31,4 +31,22 @@ struct HardwareDetector {
         let nsSet = devices as NSSet
         return nsSet.count > 0
     }
+    
+    /// 异步重试检测触控板，允许开机/登录时外接蓝牙妙控板（Magic Trackpad）有缓冲时间完成连接
+    static func checkTrackpadWithRetry(maxAttempts: Int = 5, interval: TimeInterval = 2.0, completion: @escaping (Bool) -> Void) {
+        func attempt(remaining: Int) {
+            if isTrackpadConnected() {
+                completion(true)
+                return
+            }
+            if remaining <= 1 {
+                completion(false)
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+                attempt(remaining: remaining - 1)
+            }
+        }
+        attempt(remaining: maxAttempts)
+    }
 }

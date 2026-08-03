@@ -90,14 +90,18 @@ struct PhantomKnobApp: App {
     
     init() {
         if NSClassFromString("XCTestCase") == nil {
-            if !HardwareDetector.isTrackpadConnected() {
-                let alert = NSAlert()
-                alert.messageText = String(localized: "startup.noTrackpad.title", defaultValue: "No Trackpad Detected")
-                alert.informativeText = String(localized: "startup.noTrackpad.message", defaultValue: "PhantomKnob requires a trackpad (MacBook trackpad or Magic Trackpad) to perform knob gestures. The application will now exit.")
-                alert.alertStyle = .critical
-                alert.addButton(withTitle: String(localized: "startup.noTrackpad.quit", defaultValue: "Quit"))
-                alert.runModal()
-                exit(0)
+            HardwareDetector.checkTrackpadWithRetry(maxAttempts: 5, interval: 2.0) { connected in
+                if !connected {
+                    DispatchQueue.main.async {
+                        let alert = NSAlert()
+                        alert.messageText = String(localized: "startup.noTrackpad.title", defaultValue: "No Trackpad Detected")
+                        alert.informativeText = String(localized: "startup.noTrackpad.message", defaultValue: "PhantomKnob requires a trackpad (MacBook trackpad or Magic Trackpad) to perform knob gestures. The application will now exit.")
+                        alert.alertStyle = .critical
+                        alert.addButton(withTitle: String(localized: "startup.noTrackpad.quit", defaultValue: "Quit"))
+                        alert.runModal()
+                        exit(0)
+                    }
+                }
             }
         }
         AppLanguageManager.shared.applyLanguageOverrideOnStartup()
