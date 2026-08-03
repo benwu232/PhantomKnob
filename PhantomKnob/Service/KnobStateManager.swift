@@ -158,6 +158,14 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
         // 绑定 MultitouchManager 代理
         MultitouchManager.shared.delegate = self
+
+        // 启动时自动恢复激活状态
+        if UserDefaults.app.restoreActiveStateOnStartup &&
+           UserDefaults.app.lastKnobActiveState &&
+           isProcessTrusted() {
+            PKLogger.knob.info("Restoring last active state on startup")
+            toggleMode()
+        }
     }
 
     func stop() {
@@ -285,6 +293,15 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         state = newState
         let targetName = currentTarget?.displayName
         statusBarController.updateState(newState, targetName: targetName)
+        
+        // 避开临时 Option hold 状态，仅更新显式持久化的激活状态
+        if !isOptionHoldActive && !isOptionHoldInactive {
+            if case .activated = newState {
+                UserDefaults.app.lastKnobActiveState = true
+            } else if case .inactive = newState {
+                UserDefaults.app.lastKnobActiveState = false
+            }
+        }
         
         if eventTap == nil {
             setupEventTap()
