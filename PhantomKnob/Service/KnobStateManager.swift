@@ -24,8 +24,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var initialTouchPositionCarbon: CGPoint? // 锁定鼠标 of Carbon coordinate (top-left origin)
     private var previousAngle: Double = 0
     var angleBuffer = KnobAngleBuffer()
-    private var transitionToOneFingerTime: Date?
-    private var previousPointCount: Int = 0
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
     var fixedCenter: CGPoint?
@@ -702,49 +700,47 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
  
         // 解析并缓存 ScaleConfig 与状态变量重置
         let resolvedScaleConfig: ScaleConfig
-        if let knobScaleConfig = knob?.scaleConfig {
-            switch knobScaleConfig {
-            case .fixed(let val):
-                if val == 1.0 {
-                    resolvedScaleConfig = AppSettings.shared.activeScheme == "cvk"
-                        ? .cvk(AppSettings.shared.cvk)
-                        : .zones(AppSettings.shared.fixed.zones)
+        if let r = knob {
+            switch r.configType {
+            case .single:
+                if let single = r.singleConfig {
+                    resolvedScaleConfig = .fixed(single.unitPerDegree)
+                } else if let knobScaleConfig = r.scaleConfig {
+                    switch knobScaleConfig {
+                    case .fixed(let val):
+                        if val == 1.0 {
+                            resolvedScaleConfig = AppSettings.shared.activeScheme == "cvk"
+                                ? .cvk(AppSettings.shared.cvk)
+                                : .zones(AppSettings.shared.fixed.zones)
+                        } else {
+                            resolvedScaleConfig = .fixed(val)
+                        }
+                    default:
+                        resolvedScaleConfig = knobScaleConfig
+                    }
                 } else {
-                    resolvedScaleConfig = .fixed(val)
+                    resolvedScaleConfig = .fixed(1.0)
                 }
-            default:
-                resolvedScaleConfig = knobScaleConfig
+            case .double:
+                if let d = r.doubleConfig {
+                    resolvedScaleConfig = .zones([
+                        RadiusZone(minRadius: d.inner.minRadius, maxRadius: d.inner.maxRadius, margin: d.inner.margin, scale: d.inner.unitPerDegree),
+                        RadiusZone(minRadius: d.outer.minRadius, maxRadius: d.outer.maxRadius, margin: d.outer.margin, scale: d.outer.unitPerDegree)
+                    ])
+                } else {
+                    resolvedScaleConfig = .zones(AppSettings.shared.fixed.zones)
+                }
+            case .cvk:
+                if let l = r.cvkConfig {
+                    resolvedScaleConfig = .cvk(ScaleConfigCVK(minRadius: l.minRadius, maxRadius: l.maxRadius, minScale: l.minScale, maxScale: l.maxScale))
+                } else {
+                    resolvedScaleConfig = .cvk(AppSettings.shared.cvk)
+                }
             }
         } else {
-            if let r = knob {
-                switch r.configType {
-                case .single:
-                    if let single = r.singleConfig {
-                        resolvedScaleConfig = .fixed(single.unitPerDegree)
-                    } else {
-                        resolvedScaleConfig = .fixed(1.0)
-                    }
-                case .double:
-                    if let d = r.doubleConfig {
-                        resolvedScaleConfig = .zones([
-                            RadiusZone(minRadius: d.inner.minRadius, maxRadius: d.inner.maxRadius, margin: d.inner.margin, scale: d.inner.unitPerDegree),
-                            RadiusZone(minRadius: d.outer.minRadius, maxRadius: d.outer.maxRadius, margin: d.outer.margin, scale: d.outer.unitPerDegree)
-                        ])
-                    } else {
-                        resolvedScaleConfig = .zones(AppSettings.shared.fixed.zones)
-                    }
-                case .cvk:
-                    if let l = r.cvkConfig {
-                        resolvedScaleConfig = .cvk(ScaleConfigCVK(minRadius: l.minRadius, maxRadius: l.maxRadius, minScale: l.minScale, maxScale: l.maxScale))
-                    } else {
-                        resolvedScaleConfig = .cvk(AppSettings.shared.cvk)
-                    }
-                }
-            } else {
-                resolvedScaleConfig = AppSettings.shared.activeScheme == "cvk"
-                    ? .cvk(AppSettings.shared.cvk)
-                    : .zones(AppSettings.shared.fixed.zones)
-            }
+            resolvedScaleConfig = AppSettings.shared.activeScheme == "cvk"
+                ? .cvk(AppSettings.shared.cvk)
+                : .zones(AppSettings.shared.fixed.zones)
         }
         self.activeScaleConfig = resolvedScaleConfig
         
@@ -752,9 +748,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.currentZoneIndex = 0
             self.lastResolvedBaseScale = 1.0
         }
-
-        transitionToOneFingerTime = nil
-        previousPointCount = points.count
 
         // 5. 缓存鼠标位置，不直接进入 knobing
         let mouseLoc = NSEvent.mouseLocation
@@ -784,7 +777,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     rotationStyle: knob?.rotationStyle,
                     outerThemeColor: knob?.cvkConfig?.outerThemeColor,
                     innerThemeColor: knob?.cvkConfig?.innerThemeColor,
-                    configType: knob?.configType ?? .single
+                    configType: knob?.configType ?? .single,
+                    animationMode: knob?.animationMode ?? knob?.skinOverrides?.animationMode ?? AppSettings.shared.defaultAnimationMode,
+                    entranceDuration: knob?.entranceDuration ?? knob?.skinOverrides?.entranceDuration ?? AppSettings.shared.defaultEntranceDuration,
+                    exitDuration: knob?.exitDuration ?? knob?.skinOverrides?.exitDuration ?? AppSettings.shared.defaultExitDuration
                 )
             }
         } else {
@@ -793,26 +789,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     }
 
     func onMultitouchMoved(points: [Int: CGPoint]) {
-        let currentTouchCount = points.count
-        if currentTouchCount >= 2 {
-            transitionToOneFingerTime = nil
-        } else if previousPointCount >= 2 && currentTouchCount < 2 {
-            transitionToOneFingerTime = Date()
-            PKLogger.knob.debug("Transition to less than two fingers detected, starting 100ms protection lock")
-        }
-        previousPointCount = currentTouchCount
-
-
-        var isTransitionLocked = false
-        if let lockTime = transitionToOneFingerTime {
-            let elapsed = Date().timeIntervalSince(lockTime)
-            if elapsed < 0.100 {
-                isTransitionLocked = true
-            } else {
-                transitionToOneFingerTime = nil
-            }
-        }
-
         if state == .customizing {
             let scaledPoints = scaleCoordinates(points)
             let radius = calculateRawRadius(points: scaledPoints)
@@ -931,7 +907,10 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                             rotationStyle: knob?.rotationStyle,
                             outerThemeColor: knob?.cvkConfig?.outerThemeColor,
                             innerThemeColor: knob?.cvkConfig?.innerThemeColor,
-                            configType: knob?.configType ?? .single
+                            configType: knob?.configType ?? .single,
+                            animationMode: knob?.animationMode ?? knob?.skinOverrides?.animationMode ?? AppSettings.shared.defaultAnimationMode,
+                            entranceDuration: knob?.entranceDuration ?? knob?.skinOverrides?.entranceDuration ?? AppSettings.shared.defaultEntranceDuration,
+                            exitDuration: knob?.exitDuration ?? knob?.skinOverrides?.exitDuration ?? AppSettings.shared.defaultExitDuration
                         )
                     }
                 }
@@ -1095,12 +1074,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             let deltaAngle = abs(knobState.deltaAngle)
             let direction: RotationDirection = knobState.deltaAngle >= 0 ? .clockwise : .counterClockwise
 
-            if !isTransitionLocked {
-                translator.apply(units: deltaAngle, direction: direction)
-                PKLogger.knob.debug("applied delta=\(deltaAngle) dir=\(String(describing: direction)) scale=\(finalScale)")
-            } else {
-                PKLogger.knob.debug("Transition locked (100ms): updating internal angle \(currentAngle), skipping translator.apply()")
-            }
+            translator.apply(units: deltaAngle, direction: direction)
+            PKLogger.knob.debug("applied delta=\(deltaAngle) dir=\(String(describing: direction)) scale=\(finalScale)")
 
             let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: radius) }
             overlayController.update(
@@ -1139,8 +1114,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         }
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
-        transitionToOneFingerTime = nil
-        previousPointCount = 0
 
         if state.isKnobing {
             if let lockAngle = angleBuffer.resolvedLiftoffAngle() {

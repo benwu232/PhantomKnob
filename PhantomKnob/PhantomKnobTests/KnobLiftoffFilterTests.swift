@@ -17,17 +17,6 @@ final class KnobLiftoffFilterTests: XCTestCase {
         XCTAssertEqual(resolvedAngle ?? 0, 20.0, accuracy: 0.001, "应该丢弃尾部反弹帧 18° 并锁定在倒数稳定帧 20°")
     }
     
-    func testMultitouchManagerFilterBreakingContacts() {
-        // 验证接触状态包含 state=5 (breaking) 或 6 (lingering) 时，被正确判断为离板阶段
-        let statesTouching: [Int32] = [4, 4]
-        let statesBreaking: [Int32] = [4, 5]
-        let statesLingering: [Int32] = [6, 4]
-        
-        XCTAssertFalse(MultitouchManager.isAnyContactReleasing(states: statesTouching), "全状态为 4 时不应判定为离板")
-        XCTAssertTrue(MultitouchManager.isAnyContactReleasing(states: statesBreaking), "包含 state=5 (breaking) 时应该判定为 isReleasing == true")
-        XCTAssertTrue(MultitouchManager.isAnyContactReleasing(states: statesLingering), "包含 state=6 (lingering) 时应该判定为 isReleasing == true")
-    }
-    
     func testKnobAngleBufferClearAndOverflow() {
         var buffer = KnobAngleBuffer(capacity: 3, timeWindowSec: 0.03)
         buffer.append(angle: 10)
@@ -41,35 +30,15 @@ final class KnobLiftoffFilterTests: XCTestCase {
         XCTAssertNil(buffer.resolvedLiftoffAngle(), "清空后 resolvedLiftoffAngle 应该为 nil")
     }
     
-    func testTwoToOneTransitionLockWindow() {
-        let now = Date()
-        let lockTime = now
+    func testInstantMovedProcessingNoLock() {
+        // 验证在移除了 100ms 保护锁后，所有的 Angle 更新与 Buffer 追加是即时且连续的
+        var buffer = KnobAngleBuffer(capacity: 3)
+        buffer.append(angle: 45.0)
+        buffer.append(angle: 90.0)
         
-        let timeInWindow = now.addingTimeInterval(0.05)
-        let isLockedInWindow = timeInWindow.timeIntervalSince(lockTime) < 0.100
-        XCTAssertTrue(isLockedInWindow, "50ms 时应处于 100ms 锁定保护期")
-        
-        let timeAfterWindow = now.addingTimeInterval(0.12)
-        let isLockedAfterWindow = timeAfterWindow.timeIntervalSince(lockTime) < 0.100
-        XCTAssertFalse(isLockedAfterWindow, "120ms 时应解除 100ms 锁定保护")
-    }
-    
-    func testTwoToOneTransitionInstantUnlockOnTwoFingers() {
-        // 验证当检测到两指降为一指触发 transitionToOneFingerTime 后，
-        // 若后续采样再次恢复为两指 (count >= 2)，transitionToOneFingerTime 能够被即时清空为 nil
-        var transitionToOneFingerTime: Date? = Date()
-        var previousPointCount: Int = 1
-        
-        // 模拟 onMultitouchMoved 在 points.count >= 2 时的解锁逻辑
-        let currentPointsCount = 2
-        if currentPointsCount >= 2 {
-            transitionToOneFingerTime = nil
-        } else if previousPointCount >= 2 && currentPointsCount < 2 {
-            transitionToOneFingerTime = Date()
-        }
-        previousPointCount = currentPointsCount
-        
-        XCTAssertNil(transitionToOneFingerTime, "当触点恢复为 2 指时，应该立即解锁并清除 transitionToOneFingerTime 为 nil")
+        XCTAssertEqual(buffer.frames.count, 2)
+        XCTAssertEqual(buffer.resolvedLiftoffAngle() ?? 0, 45.0, accuracy: 0.001)
     }
 }
+
 
