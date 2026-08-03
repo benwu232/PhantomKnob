@@ -327,4 +327,45 @@ final class StatusBarControllerTests: XCTestCase {
         UserDefaults.app.set(originalTrialStart, forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
+
+    func testLicenseStatusMenuItems() {
+        let controller = StatusBarController()
+        
+        let originalKey = UserDefaults.app.string(forKey: "proLicenseKey")
+        let originalEmail = UserDefaults.app.string(forKey: "proLicenseEmail")
+        let originalTrialStart = UserDefaults.app.string(forKey: "proTrialStartDate")
+        
+        let formatter = ISO8601DateFormatter()
+        let trialStartDateExpired = Date().addingTimeInterval(-20 * 24 * 60 * 60)
+        
+        // 1. Free 状态：验证包含 Upgrade to Pro / 升级到专业版 菜单项
+        UserDefaults.app.removeObject(forKey: "proLicenseKey")
+        UserDefaults.app.removeObject(forKey: "proLicenseEmail")
+        UserDefaults.app.set(formatter.string(from: trialStartDateExpired), forKey: "proTrialStartDate")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+        controller.rebuildMenu()
+        
+        let freeMenuItems = controller.menu?.items ?? []
+        let hasUpgradeItem = freeMenuItems.contains { $0.action == #selector(StatusBarController.buyPro) }
+        XCTAssertTrue(hasUpgradeItem, "Free 模式下应包含升级入口")
+        
+        // 2. Pro 状态：验证包含 Manage License / 许可管理 菜单项
+        UserDefaults.app.set("test-pro-key", forKey: "proLicenseKey")
+        UserDefaults.app.set("test@example.com", forKey: "proLicenseEmail")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+        controller.rebuildMenu()
+        
+        let proMenuItems = controller.menu?.items ?? []
+        let hasManageItem = proMenuItems.contains { $0.action == #selector(StatusBarController.buyPro) }
+        XCTAssertTrue(hasManageItem, "Pro 模式下应包含许可管理入口")
+        
+        let manageMenuItem = proMenuItems.first { $0.action == #selector(StatusBarController.buyPro) }
+        XCTAssertEqual(manageMenuItem?.title, String(localized: "menu.manageLicense", defaultValue: "🔑 Manage License..."))
+        
+        // 恢复初始状态
+        UserDefaults.app.set(originalKey, forKey: "proLicenseKey")
+        UserDefaults.app.set(originalEmail, forKey: "proLicenseEmail")
+        UserDefaults.app.set(originalTrialStart, forKey: "proTrialStartDate")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+    }
 }
