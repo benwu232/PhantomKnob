@@ -23,7 +23,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
     var initialTouchPosition: CGPoint?
     var initialTouchPositionCarbon: CGPoint? // 锁定鼠标 of Carbon coordinate (top-left origin)
     private var previousAngle: Double = 0
-    var angleBuffer = KnobAngleBuffer()
     private var isOptionHoldActive = false
     private var coolingTimer: Timer?
     var fixedCenter: CGPoint?
@@ -777,10 +776,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     rotationStyle: knob?.rotationStyle,
                     outerThemeColor: knob?.cvkConfig?.outerThemeColor,
                     innerThemeColor: knob?.cvkConfig?.innerThemeColor,
-                    configType: knob?.configType ?? .single,
-                    animationMode: knob?.animationMode ?? knob?.skinOverrides?.animationMode ?? AppSettings.shared.defaultAnimationMode,
-                    entranceDuration: knob?.entranceDuration ?? knob?.skinOverrides?.entranceDuration ?? AppSettings.shared.defaultEntranceDuration,
-                    exitDuration: knob?.exitDuration ?? knob?.skinOverrides?.exitDuration ?? AppSettings.shared.defaultExitDuration
+                    configType: knob?.configType ?? .single
                 )
             }
         } else {
@@ -886,7 +882,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
         let isTooClose = scaledPoints.count >= 2 && {
             let (knobCore, _, _) = KnobAlgorithm().calKnob(scaledPoints)
-            return knobCore.isValid && knobCore.radius * 2 < 20.0
+            return knobCore.isValid && knobCore.radius * 2 < 10.0
         }()
 
         // 🌟 进行手势判定是否升级为 knob
@@ -907,10 +903,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                             rotationStyle: knob?.rotationStyle,
                             outerThemeColor: knob?.cvkConfig?.outerThemeColor,
                             innerThemeColor: knob?.cvkConfig?.innerThemeColor,
-                            configType: knob?.configType ?? .single,
-                            animationMode: knob?.animationMode ?? knob?.skinOverrides?.animationMode ?? AppSettings.shared.defaultAnimationMode,
-                            entranceDuration: knob?.entranceDuration ?? knob?.skinOverrides?.entranceDuration ?? AppSettings.shared.defaultEntranceDuration,
-                            exitDuration: knob?.exitDuration ?? knob?.skinOverrides?.exitDuration ?? AppSettings.shared.defaultExitDuration
+                            configType: knob?.configType ?? .single
                         )
                     }
                 }
@@ -1092,7 +1085,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
 
             self.currentAngle = currentAngle
             previousAngle = currentAngle
-            angleBuffer.append(angle: currentAngle)
         }
     }
 
@@ -1105,7 +1097,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 object: nil,
                 userInfo: ["radius": NSNull()]
             )
-            angleBuffer.clear()
             return
         }
         isInterceptingGestures = false
@@ -1115,26 +1106,17 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         gestureClassifier.processTouchesEnded()
         initialTouchPositionCarbon = nil
 
-        if state.isKnobing {
-            if let lockAngle = angleBuffer.resolvedLiftoffAngle() {
-                self.currentAngle = lockAngle
-                PKLogger.knob.debug("Liftoff angle locked to stable frame: \(lockAngle)")
-            }
-            angleBuffer.clear()
-            
-            if let target = currentTarget {
-                transition(to: .cooling(target: target))
-                if target.axRole != "ControlPanel" {
-                    overlayController.fadeOut { [weak self] in
-                        self?.startCoolingTimer()
-                    }
-                } else {
-                    startCoolingTimer()
+        if state.isKnobing, let target = currentTarget {
+            transition(to: .cooling(target: target))
+            if target.axRole != "ControlPanel" {
+                overlayController.fadeOut { [weak self] in
+                    self?.startCoolingTimer()
                 }
+            } else {
+                startCoolingTimer()
             }
         } else {
             // 🌟 若手指抬起前从未触发过旋钮手势，静默归位激活状态并清除临时变量
-            angleBuffer.clear()
             transition(to: .activated)
             currentTarget = nil
             currentTranslator = nil
@@ -1702,43 +1684,6 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
               let title = titleVal as? String else { return nil }
               
         return TargetDetector.extractResolvePageMode(from: title)
-    }
-}
-
-// MARK: - Liftoff Jitter Filter Buffer
-struct AngleFrame {
-    let angle: Double
-    let timestamp: Date
-}
-
-struct KnobAngleBuffer {
-    let capacity: Int
-    let timeWindowSec: TimeInterval
-    private(set) var frames: [AngleFrame] = []
-    
-    init(capacity: Int = 3, timeWindowSec: TimeInterval = 0.03) {
-        self.capacity = capacity
-        self.timeWindowSec = timeWindowSec
-    }
-    
-    mutating func append(angle: Double, timestamp: Date = Date()) {
-        frames.append(AngleFrame(angle: angle, timestamp: timestamp))
-        if frames.count > capacity {
-            frames.removeFirst()
-        }
-    }
-    
-    mutating func clear() {
-        frames.removeAll()
-    }
-    
-    func resolvedLiftoffAngle() -> Double? {
-        guard !frames.isEmpty else { return nil }
-        if frames.count >= 2 {
-            // 丢弃包含离板抖动的最后一帧，回退至倒数第二帧稳定值
-            return frames[frames.count - 2].angle
-        }
-        return frames.last?.angle
     }
 }
 

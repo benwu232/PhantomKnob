@@ -16,7 +16,7 @@ class GestureClassifier {
     private let angleThreshold: Double = 8.0
     private let translationThreshold: CGFloat = 3.0
     private let algorithm = KnobAlgorithm()
-    private let minDistanceThreshold: CGFloat = 20.0 // 最小旋钮距离阈值 (mm)
+    private let minDistanceThreshold: CGFloat = 10.0 // 最小旋钮距离阈值 (mm)
     private var closeDistanceStartTime: Date?       // 记录两指小于 10mm 的开始时间
     
     func processTouchesBegan(points: [Int: CGPoint]) {
