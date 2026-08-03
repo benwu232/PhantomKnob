@@ -161,7 +161,13 @@ class StatusBarController: ObservableObject {
             buyItem.target = self
             menu?.addItem(buyItem)
         case .licensed:
-            break
+            let manageItem = NSMenuItem(
+                title: String(localized: "menu.manageLicense", defaultValue: "🔑 Manage License..."),
+                action: #selector(buyPro),
+                keyEquivalent: ""
+            )
+            manageItem.target = self
+            menu?.addItem(manageItem)
         }
         
         menu?.addItem(NSMenuItem.separator())
