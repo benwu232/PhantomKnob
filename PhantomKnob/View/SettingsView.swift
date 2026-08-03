@@ -123,6 +123,7 @@ struct SettingsView: View {
 struct GeneralSettingsView: View {
     @State private var hasAccessibilityPermission = AXIsProcessTrusted()
     @AppStorage("skipUserGuideOnStartup") private var skipUserGuideOnStartup = false
+    @AppStorage("restoreActiveStateOnStartup", store: .app) private var restoreActiveStateOnStartup = true
     @State private var launchAtLogin = false
 
     var body: some View {
@@ -174,6 +175,37 @@ struct GeneralSettingsView: View {
                     .pickerStyle(.menu)
                     .frame(width: 150)
                 }
+            }
+            .padding(12)
+            .background(Color.white.opacity(0.04))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
+
+            // -- Behavior Section Card --
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 6) {
+                    Image(systemName: "gearshape")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 12, weight: .semibold))
+                    Text(String(localized: "settings.section.behavior", defaultValue: "Behavior"))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.70))
+                }
+                
+                Toggle(isOn: $restoreActiveStateOnStartup) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(String(localized: "settings.general.restoreActiveState", defaultValue: "Restore activation state on startup"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.white)
+                        Text(String(localized: "settings.general.restoreActiveState.subtitle", defaultValue: "Automatically resume PhantomKnob if it was active when last quit"))
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.6))
+                    }
+                }
+                .toggleStyle(.switch)
             }
             .padding(12)
             .background(Color.white.opacity(0.04))

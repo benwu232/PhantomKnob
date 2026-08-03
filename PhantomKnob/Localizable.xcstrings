@@ -1677,6 +1677,39 @@
         }
       }
     },
+    "settings.section.behavior" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行为设置"
+          }
+        }
+      }
+    },
+    "settings.general.restoreActiveState" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动时恢复激活状态"
+          }
+        }
+      }
+    },
+    "settings.general.restoreActiveState.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次退出时若处于激活状态，应用启动后自动恢复激活"
+          }
+        }
+      }
+    },
     "settings.section.privacy" : {
       "extractionState" : "manual",
       "localizations" : {
