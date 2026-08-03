@@ -75,6 +75,10 @@ public final class HUDSkinManager {
         }
     }
 
+    public var allSkins: [HUDSkin] {
+        return Array(skinsMap.values).sorted { $0.name < $1.name }
+    }
+
     public func resolveSkin(skinID: String?, overrides: HUDSkinOverride?) -> HUDSkin {
         let baseSkin: HUDSkin
         if let id = skinID, let found = skinsMap[id] {
@@ -90,6 +94,37 @@ public final class HUDSkinManager {
         if let op = overrides.backdropOpacity { resolved.appearance.backdrop.opacity = op }
         if let scale = overrides.diameterScale { resolved.appearance.size.defaultDiameter *= scale }
         if let pos = overrides.valuePosition { resolved.components.valueBadge.position = pos }
+        if let mode = overrides.animationMode {
+            switch mode {
+            case .none:
+                resolved.animations.entrance.type = .fadeInOnly
+                resolved.animations.entrance.duration = 0.0
+                resolved.animations.exit.type = .fadeOut
+                resolved.animations.exit.duration = 0.0
+            case .fade:
+                resolved.animations.entrance.type = .fadeInOnly
+                resolved.animations.exit.type = .fadeOut
+                resolved.animations.entrance.duration = Self.effectiveDuration(overrides.entranceDuration, default: 0.30)
+                resolved.animations.exit.duration = Self.effectiveDuration(overrides.exitDuration, default: 0.50)
+            case .scale:
+                resolved.animations.entrance.type = .simpleCenterScaleIn
+                resolved.animations.exit.type = .simpleCenterScaleOut
+                resolved.animations.entrance.duration = Self.effectiveDuration(overrides.entranceDuration, default: 0.30)
+                resolved.animations.exit.duration = Self.effectiveDuration(overrides.exitDuration, default: 0.50)
+            }
+        } else {
+            if let entType = overrides.entranceAnimationType { resolved.animations.entrance.type = entType }
+            if let exitType = overrides.exitAnimationType { resolved.animations.exit.type = exitType }
+            if let entDur = overrides.entranceDuration, entDur > 0 { resolved.animations.entrance.duration = entDur }
+            if let exitDur = overrides.exitDuration, exitDur > 0 { resolved.animations.exit.duration = exitDur }
+        }
         return resolved
+    }
+
+    /// 动画时长兜底：明确指定 > 0 的时长则使用，否则使用默认时长。
+    /// 防止历史脏数据（animationMode 非 none 但时长为 0）导致 HUD 无动画。
+    private static func effectiveDuration(_ value: Double?, default defaultValue: Double) -> Double {
+        guard let v = value, v > 0 else { return defaultValue }
+        return v
     }
 }

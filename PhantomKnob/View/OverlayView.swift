@@ -66,6 +66,8 @@ struct OverlayView: View {
     let isTooClose: Bool
     
     let skin: HUDSkin?
+    let sessionID: Int
+    let isExiting: Bool
 
     init(targetName: String?,
          valueText: String? = nil,
@@ -83,7 +85,9 @@ struct OverlayView: View {
          isActive: Bool = true,
          minRadius: Double? = nil,
          maxRadius: Double? = nil,
-         skin: HUDSkin? = nil) {
+         skin: HUDSkin? = nil,
+         sessionID: Int = 0,
+         isExiting: Bool = false) {
         self.targetName = targetName
         self.valueText = valueText
         self.angle = angle
@@ -101,6 +105,8 @@ struct OverlayView: View {
         self.minRadius = minRadius
         self.maxRadius = maxRadius
         self.skin = skin
+        self.sessionID = sessionID
+        self.isExiting = isExiting
     }
     
     var body: some View {
@@ -155,6 +161,73 @@ struct OverlayView: View {
             }
         }
         .frame(width: diameter, height: diameter + (isTooClose ? 0 : (valueText != nil ? 38 : 20)))
+        .modifier(HUDAnimationModifier(animations: skin?.animations, isExiting: isExiting))
+        .id(sessionID)
+    }
+}
+
+struct HUDAnimationModifier: ViewModifier {
+    let animations: HUDAnimationConfig?
+    let isExiting: Bool
+    @State private var isAppeared: Bool = false
+    @State private var isExitingAnimated: Bool = false
+
+    func body(content: Content) -> some View {
+        let entranceType = animations?.entrance.type ?? .simpleCenterScaleIn
+        let exitType = animations?.exit.type ?? .simpleCenterScaleOut
+        let entranceDuration = animations?.entrance.duration ?? 0.30
+        let exitDuration = animations?.exit.duration ?? 0.30
+
+        let targetScale: CGFloat = {
+            if isExitingAnimated {
+                return exitType == .simpleCenterScaleOut ? 0.2 : 1.0
+            } else if isAppeared {
+                return 1.0
+            } else {
+                return initialScale(for: entranceType)
+            }
+        }()
+
+        content
+            .scaleEffect(targetScale)
+            .rotationEffect(isAppeared ? .zero : initialRotation(for: entranceType))
+            .opacity(isExitingAnimated ? 0.0 : (isAppeared ? 1.0 : (entranceDuration == 0 ? 1.0 : 0.0)))
+            .onAppear {
+                if entranceDuration > 0 {
+                    withAnimation(.easeOut(duration: entranceDuration)) {
+                        isAppeared = true
+                    }
+                } else {
+                    isAppeared = true
+                }
+            }
+            .onChange(of: isExiting) { newValue in
+                if newValue {
+                    withAnimation(.easeOut(duration: exitDuration)) {
+                        isExitingAnimated = true
+                    }
+                } else {
+                    isExitingAnimated = false
+                }
+            }
+    }
+
+    private func initialScale(for type: EntranceAnimationType) -> CGFloat {
+        switch type {
+        case .simpleCenterScaleIn: return 0.2
+        case .pointExpand: return 0.05
+        case .glitchPop: return 0.4
+        case .spinIn: return 0.2
+        case .fadeInOnly: return 1.0
+        }
+    }
+
+    private func initialRotation(for type: EntranceAnimationType) -> Angle {
+        switch type {
+        case .spinIn: return .degrees(-180)
+        case .glitchPop: return .degrees(15)
+        default: return .zero
+        }
     }
 }
 

@@ -231,11 +231,18 @@ public struct HUDAnimationConfig: Codable, Equatable {
     }
 }
 
+public enum HUDAnimationMode: String, Codable, CaseIterable {
+    case none
+    case fade
+    case scale
+}
+
 public enum EntranceAnimationType: String, Codable {
     case simpleCenterScaleIn
     case pointExpand
     case glitchPop
     case spinIn
+    case fadeInOnly
 }
 
 public struct HUDEntranceAnimation: Codable, Equatable {

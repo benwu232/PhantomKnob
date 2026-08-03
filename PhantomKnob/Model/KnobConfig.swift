@@ -117,12 +117,30 @@ public struct HUDSkinOverride: Codable, Equatable {
     public var backdropOpacity: Double?
     public var diameterScale: Double?
     public var valuePosition: String?
+    public var animationMode: HUDAnimationMode?
+    public var entranceAnimationType: EntranceAnimationType?
+    public var entranceDuration: Double?
+    public var exitAnimationType: ExitAnimationType?
+    public var exitDuration: Double?
 
-    public init(primaryColorHex: String? = nil, backdropOpacity: Double? = nil, diameterScale: Double? = nil, valuePosition: String? = nil) {
+    public init(primaryColorHex: String? = nil,
+                backdropOpacity: Double? = nil,
+                diameterScale: Double? = nil,
+                valuePosition: String? = nil,
+                animationMode: HUDAnimationMode? = nil,
+                entranceAnimationType: EntranceAnimationType? = nil,
+                entranceDuration: Double? = nil,
+                exitAnimationType: ExitAnimationType? = nil,
+                exitDuration: Double? = nil) {
         self.primaryColorHex = primaryColorHex
         self.backdropOpacity = backdropOpacity
         self.diameterScale = diameterScale
         self.valuePosition = valuePosition
+        self.animationMode = animationMode
+        self.entranceAnimationType = entranceAnimationType
+        self.entranceDuration = entranceDuration
+        self.exitAnimationType = exitAnimationType
+        self.exitDuration = exitDuration
     }
 }
 
@@ -242,6 +260,8 @@ struct Knob: Codable, Equatable {
         self.extra = try container.decodeIfPresent([String: String].self, forKey: .extra)
         self.overlayStyle = try container.decodeIfPresent(String.self, forKey: .overlayStyle)
         self.rotationStyle = try container.decodeIfPresent(String.self, forKey: .rotationStyle)
+        self.skinID = try container.decodeIfPresent(String.self, forKey: .skinID)
+        self.skinOverrides = try container.decodeIfPresent(HUDSkinOverride.self, forKey: .skinOverrides)
         
         if let configTypeStr = try container.decodeIfPresent(String.self, forKey: .configType),
            let parsedType = KnobConfigType(rawValue: configTypeStr) {

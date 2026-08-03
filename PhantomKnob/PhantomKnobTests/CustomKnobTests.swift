@@ -638,4 +638,26 @@ final class CustomKnobTests: XCTestCase {
         manager.onGlobalModifierOptionChanged(isPressed: false)
         XCTAssertEqual(manager.state, .inactive)
     }
+
+    func testSaveAndLoadAnimationMode() {
+        let key = KnobKey(bundleID: "test.anim.app", axRole: "AXSlider", identifier: nil, displayName: nil)
+        var knob = Knob(
+            key: key,
+            themeColor: "#0A84FF",
+            configType: .single,
+            singleConfig: SingleKnobConfig(unitPerDegree: 1.0, translation: .scrollWheelVertical, clockwiseAction: "scrollUp")
+        )
+        knob.skinOverrides = HUDSkinOverride(
+            primaryColorHex: "#0A84FF",
+            animationMode: .fade,
+            entranceDuration: 0.3,
+            exitDuration: 0.5
+        )
+        
+        KnobCustomizer.shared.saveKnob(knob)
+        
+        let loaded = KnobCustomizer.shared.knob(for: key)
+        XCTAssertNotNil(loaded)
+        XCTAssertEqual(loaded?.skinOverrides?.animationMode, .fade)
+    }
 }

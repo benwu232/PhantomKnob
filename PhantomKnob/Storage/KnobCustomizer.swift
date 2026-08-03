@@ -625,8 +625,8 @@ final class KnobCustomizer {
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         }
         
-        // 2. 合并或追加：如果在 userRules 里有相同 key 的配置，进行替换，否则追加
-        if let index = loadedUserKnobs.firstIndex(where: { $0.key.matches(knob.key) }) {
+        // 2. 合并或追加：如果在 userRules 里有完全相同 key 的配置，进行替换，否则追加
+        if let index = loadedUserKnobs.firstIndex(where: { $0.key == knob.key }) {
             loadedUserKnobs[index] = knob
         } else {
             loadedUserKnobs.insert(knob, at: 0) // 高优先级追加

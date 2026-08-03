@@ -20,6 +20,9 @@ class OverlayController: ObservableObject {
     @Published var innerThemeColor: String? = nil
     @Published var configType: KnobConfigType = .single
     @Published var isTooClose: Bool = false
+    @Published var currentSkin: HUDSkin? = nil
+    @Published var sessionID: Int = 0
+    @Published var isExiting: Bool = false
 
     private var position: CGPoint = .zero
     private var showCount: Int = 0 // 递增标记每次显示的代数（Generation Token），用于解决异步竞态问题
@@ -47,11 +50,16 @@ class OverlayController: ObservableObject {
               rotationStyle: String? = nil,
               outerThemeColor: String? = nil,
               innerThemeColor: String? = nil,
-              configType: KnobConfigType = .single) {
+              configType: KnobConfigType = .single,
+              skin: HUDSkin? = nil) {
         self.position = position
         self.targetName = targetName
         self.scale = scale
         self.configType = configType
+        self.currentSkin = skin
+        self.showCount += 1
+        self.sessionID = self.showCount
+        self.isExiting = false
         if !featureGate.hasStyleCustomization {
             self.themeColor = "#8E8E93"
             self.outerThemeColor = nil
@@ -114,6 +122,8 @@ class OverlayController: ObservableObject {
 
         if panel == nil {
             createPanel()
+        } else {
+            updateOverlayView()
         }
 
         // 显式停止之前的动画并强制恢复不透明度
@@ -133,7 +143,11 @@ class OverlayController: ObservableObject {
                 themeColor: String? = nil,
                 outerThemeColor: String? = nil,
                 innerThemeColor: String? = nil,
-                configType: KnobConfigType = .single) {
+                configType: KnobConfigType = .single,
+                skin: HUDSkin? = nil) {
+        if let skin = skin {
+            self.currentSkin = skin
+        }
         self.angle = angle
         self.isDeadzone = isDeadzone
         self.isTooClose = isTooClose
@@ -174,11 +188,17 @@ class OverlayController: ObservableObject {
     }
 
     func fadeOut(duration: TimeInterval = 1.0, completion: (() -> Void)? = nil) {
+        let actualDuration = (duration == 1.0) ? (currentSkin?.animations.exit.duration ?? 0.5) : duration
         let currentGeneration = showCount // 捕获开启淡出时的代数标记
-        PKLogger.overlay.debug("fadeOut() initiated: duration = \(duration), currentGeneration = \(currentGeneration)")
+        PKLogger.overlay.debug("fadeOut() initiated: duration = \(actualDuration), currentGeneration = \(currentGeneration)")
+
+        withAnimation(.easeOut(duration: actualDuration)) {
+            self.isExiting = true
+            updateOverlayView()
+        }
 
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = duration
+            context.duration = actualDuration
             context.allowsImplicitAnimation = true // 🌟 必须开启隐式动画以确保 NSWindow/NSPanel 动画正常运转且回调 100% 触发
             panel?.animator().alphaValue = 0
         } completionHandler: { [weak self] in
@@ -238,7 +258,10 @@ class OverlayController: ObservableObject {
             diameter: diameter,
             outerThemeColorHex: outerThemeColor,
             innerThemeColorHex: innerThemeColor,
-            configType: configType
+            configType: configType,
+            skin: currentSkin,
+            sessionID: sessionID,
+            isExiting: isExiting
         ))
 
         panel.contentView = view
@@ -260,7 +283,10 @@ class OverlayController: ObservableObject {
             diameter: diameter,
             outerThemeColorHex: outerThemeColor,
             innerThemeColorHex: innerThemeColor,
-            configType: configType
+            configType: configType,
+            skin: currentSkin,
+            sessionID: sessionID,
+            isExiting: isExiting
         )
     }
 

@@ -24,11 +24,15 @@ struct CustomizerHUDView: View {
         let chain = target.parentChain.enumerated().filter {
             selectedParents.contains($0.offset)
         }.map { $0.element }
+        // 空字符串与 nil 语义等价（无有效标识），归一化为 nil
+        // 以确保宽泛匹配（step4 要求 displayName == nil）能正确命中
+        let normalizedIdentifier = target.identifier?.isEmpty == true ? nil : target.identifier
+        let normalizedDisplayName = target.displayName.isEmpty ? nil : target.displayName
         return KnobKey(
             bundleID: target.bundleID,
             axRole: target.axRole,
-            identifier: target.identifier,
-            displayName: target.displayName,
+            identifier: normalizedIdentifier,
+            displayName: normalizedDisplayName,
             parentChain: chain.isEmpty ? nil : chain
         )
     }
@@ -74,6 +78,11 @@ struct CustomizerHUDView: View {
     @State private var isPinned: Bool = false
     @State private var commonMinRadius: Double = 10.0
     
+    // 动画相关设置
+    @State private var animationMode: HUDAnimationMode = .scale
+    @State private var entranceDuration: Double = 0.30
+    @State private var exitDuration: Double = 0.50
+
     // 双旋钮配色
     @State private var doubleInnerThemeColor: String = "#30D158"
     @State private var doubleOuterThemeColor: String = "#FF9F0A"
@@ -278,6 +287,9 @@ struct CustomizerHUDView: View {
                         case .cvk:
                             cvkAppearanceForm
                         }
+
+                        // 动画效果表单
+                        animationForm
                     }
                     
                     Divider().background(Color.hudCardBorder)
@@ -1012,6 +1024,10 @@ struct CustomizerHUDView: View {
         self.cvkInnerColor = "#30D158"
         
         self.activeColorTarget = .global
+        
+        self.animationMode = .none
+        self.entranceDuration = 0.30
+        self.exitDuration = 0.50
     }
 
     private func loadExisting() {
@@ -1027,6 +1043,18 @@ struct CustomizerHUDView: View {
         if let existing = KnobCustomizer.shared.knob(for: currentKnobKey) {
             self.themeColor = existing.themeColor ?? "#0A84FF"
             self.configType = existing.configType
+            if let overrides = existing.skinOverrides {
+                self.animationMode = overrides.animationMode ?? .none
+                var entrance = overrides.entranceDuration ?? 0.30
+                var exit = overrides.exitDuration ?? 0.50
+                // 非 none 模式时长归一化：历史脏数据（0 时长）恢复默认，面板正确展示
+                if self.animationMode != .none {
+                    if entrance <= 0 { entrance = 0.30 }
+                    if exit <= 0 { exit = 0.50 }
+                }
+                self.entranceDuration = entrance
+                self.exitDuration = exit
+            }
             
             if let single = existing.singleConfig {
                 self.singleScale = single.unitPerDegree
@@ -1092,6 +1120,20 @@ struct CustomizerHUDView: View {
         self.cvkMinRadius = self.commonMinRadius
         
         var knob = Knob(key: currentKnobKey, themeColor: themeColor, configType: configType)
+        // 非 none 模式时长有下限保护：<= 0（如继承自旧 none 配置）时写默认值，避免保存后无动画
+        let saveEntranceDuration = animationMode == .none ? 0.0 : (entranceDuration > 0 ? entranceDuration : 0.30)
+        let saveExitDuration = animationMode == .none ? 0.0 : (exitDuration > 0 ? exitDuration : 0.50)
+        knob.skinOverrides = HUDSkinOverride(
+            primaryColorHex: themeColor,
+            backdropOpacity: nil,
+            diameterScale: nil,
+            valuePosition: nil,
+            animationMode: animationMode,
+            entranceAnimationType: nil,
+            entranceDuration: saveEntranceDuration,
+            exitAnimationType: nil,
+            exitDuration: saveExitDuration
+        )
         
         switch configType {
         case .single:
@@ -1271,7 +1313,64 @@ struct CustomizerHUDView: View {
         }
     }
 
+    private var animationForm: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(String(localized: "hud.section.animation", defaultValue: "动画效果"))
+                .font(.hudTitle)
+                .foregroundColor(.hudTitle)
 
+            VStack(alignment: .leading, spacing: 10) {
+                // 统一动画效果 Picker
+                HStack {
+                    Text(String(localized: "hud.animationMode", defaultValue: "进入/退出动画效果"))
+                        .font(.hudLabel)
+                        .foregroundColor(.hudSecondary)
+                    Spacer()
+                    Picker("", selection: $animationMode) {
+                        Text("无").tag(HUDAnimationMode.none)
+                        Text("淡入淡出").tag(HUDAnimationMode.fade)
+                        Text("放大缩小").tag(HUDAnimationMode.scale)
+                    }
+                    .labelsHidden()
+                    .frame(width: 120)
+                    .onChange(of: animationMode) { _ in save() }
+                }
+
+                if animationMode != .none {
+                    Divider().background(Color.white.opacity(0.1))
+
+                    HStack {
+                        Text(String(localized: "hud.entranceDuration", defaultValue: "进入时间"))
+                            .font(.hudLabel)
+                            .foregroundColor(.hudSecondary)
+                        Spacer()
+                        Text(String(format: "%.2f s", entranceDuration))
+                            .font(.hudValue)
+                            .foregroundColor(.hudTitle)
+                            .frame(width: 50, alignment: .trailing)
+                        Stepper("", value: $entranceDuration, in: 0.05...1.0, step: 0.05)
+                            .labelsHidden()
+                            .onChange(of: entranceDuration) { _ in save() }
+                    }
+
+                    HStack {
+                        Text(String(localized: "hud.exitDuration", defaultValue: "退出时间"))
+                            .font(.hudLabel)
+                            .foregroundColor(.hudSecondary)
+                        Spacer()
+                        Text(String(format: "%.2f s", exitDuration))
+                            .font(.hudValue)
+                            .foregroundColor(.hudTitle)
+                            .frame(width: 50, alignment: .trailing)
+                        Stepper("", value: $exitDuration, in: 0.05...1.0, step: 0.05)
+                            .labelsHidden()
+                            .onChange(of: exitDuration) { _ in save() }
+                    }
+                }
+            }
+            .hudCardStyle()
+        }
+    }
 }
 
 struct HUDHelpButton: View {

@@ -418,6 +418,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             self.currentTranslator = newTranslator
             
             let color = resolveThemeColor(for: knob, zoneIndex: currentZoneIndex, radius: renderRadius)
+            let resolvedSkin = HUDSkinManager.shared.resolveSkin(skinID: knob.skinID, overrides: knob.skinOverrides)
             overlayController.update(
                 angle: self.currentAngle,
                 radius: renderRadius,
@@ -426,7 +427,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 themeColor: color,
                 outerThemeColor: knob.cvkConfig?.outerThemeColor,
                 innerThemeColor: knob.cvkConfig?.innerThemeColor,
-                configType: knob.configType
+                configType: knob.configType,
+                skin: resolvedSkin
             )
             return
         }
@@ -462,6 +464,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
         // 3. 即时刷新 Overlay UI 配色与样式
         if isInterceptingGestures {
             let color = resolveThemeColor(for: knob, zoneIndex: currentZoneIndex, radius: currentRadius)
+            let resolvedSkin = HUDSkinManager.shared.resolveSkin(skinID: knob.skinID, overrides: knob.skinOverrides)
             overlayController.show(
                 at: initialTouchPosition ?? .zero,
                 targetName: target.displayName.isEmpty ? nil : target.displayName,
@@ -471,7 +474,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 rotationStyle: knob.rotationStyle,
                 outerThemeColor: knob.cvkConfig?.outerThemeColor,
                 innerThemeColor: knob.cvkConfig?.innerThemeColor,
-                configType: knob.configType
+                configType: knob.configType,
+                skin: resolvedSkin
             )
         }
     }
@@ -767,6 +771,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
             gestureClassifier.forceKnob()
             if let mouseLoc = initialTouchPosition {
                 let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: currentRadius) }
+                let resolvedSkin = HUDSkinManager.shared.resolveSkin(skinID: knob?.skinID, overrides: knob?.skinOverrides)
                 overlayController.show(
                     at: mouseLoc,
                     targetName: target.displayName.isEmpty ? nil : target.displayName,
@@ -776,7 +781,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                     rotationStyle: knob?.rotationStyle,
                     outerThemeColor: knob?.cvkConfig?.outerThemeColor,
                     innerThemeColor: knob?.cvkConfig?.innerThemeColor,
-                    configType: knob?.configType ?? .single
+                    configType: knob?.configType ?? .single,
+                    skin: resolvedSkin
                 )
             }
         } else {
@@ -894,6 +900,7 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                 if let mouseLoc = initialTouchPosition {
                     if target.axRole != "ControlPanel" {
                         let color = knob.flatMap { resolveThemeColor(for: $0, zoneIndex: currentZoneIndex, radius: currentRadius) }
+                        let resolvedSkin = HUDSkinManager.shared.resolveSkin(skinID: knob?.skinID, overrides: knob?.skinOverrides)
                         overlayController.show(
                             at: mouseLoc,
                             targetName: target.displayName.isEmpty ? nil : target.displayName,
@@ -903,7 +910,8 @@ class KnobStateManager: ObservableObject, GlobalTouchDelegate, MultitouchEventDe
                             rotationStyle: knob?.rotationStyle,
                             outerThemeColor: knob?.cvkConfig?.outerThemeColor,
                             innerThemeColor: knob?.cvkConfig?.innerThemeColor,
-                            configType: knob?.configType ?? .single
+                            configType: knob?.configType ?? .single,
+                            skin: resolvedSkin
                         )
                     }
                 }
