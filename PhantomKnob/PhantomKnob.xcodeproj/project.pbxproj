@@ -103,6 +103,7 @@
 		C38EB6989296E836A2B30500 /* KnobStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DFFD9D9201775F76B3B8DB /* KnobStateManager.swift */; };
 		C463D598377098DC39E1C197 /* FeatureGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150138859D28698EB07164B3 /* FeatureGateTests.swift */; };
 		C6A93D4A134FE1463D14477E /* KnobStateManagerFeatureGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A95D534D2BC56D0EEAAA4C /* KnobStateManagerFeatureGateTests.swift */; };
+		A1B2C3D4E5F6789012345678 /* KnobActiveStatePersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F678901234567890 /* KnobActiveStatePersistenceTests.swift */; };
 		C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B15AA0918B5B487EAD25BC /* GestureClassifier.swift */; };
 		C9F6F3BCA2F7399BE23BDD76 /* GestureConflictTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0704C959B2850EE4DF5B9648 /* GestureConflictTests.swift */; };
 		D263B739342BEC17C2AAFDB3 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DECA527A57B3E32B400EF2 /* SettingsWindowController.swift */; };
@@ -223,6 +224,7 @@
 		B4F69A27EBAEC2C12A6B2F0D /* UserGuideViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGuideViewModel.swift; sourceTree = "<group>"; };
 		B5C0A6CA8592C5DEE68B94A5 /* SkinPackager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkinPackager.swift; sourceTree = "<group>"; };
 		B7A95D534D2BC56D0EEAAA4C /* KnobStateManagerFeatureGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobStateManagerFeatureGateTests.swift; sourceTree = "<group>"; };
+		B2C3D4E5F678901234567890 /* KnobActiveStatePersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobActiveStatePersistenceTests.swift; sourceTree = "<group>"; };
 		B83D8874A40287B9C9842B36 /* DemoSliderTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoSliderTarget.swift; sourceTree = "<group>"; };
 		BB013A64BA258E0802863E95 /* ScaleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleResolver.swift; sourceTree = "<group>"; };
 		BC6423248EA5723E80A08AEA /* DisplayBrightnessService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBrightnessService.swift; sourceTree = "<group>"; };
@@ -493,6 +495,7 @@
 				E22B8A0EEE9ADDE36EBD680C /* KnobPanelViewModelTests.swift */,
 				2002FF819A681E0345379B26 /* KnobPanelWindowControllerTests.swift */,
 				B7A95D534D2BC56D0EEAAA4C /* KnobStateManagerFeatureGateTests.swift */,
+				B2C3D4E5F678901234567890 /* KnobActiveStatePersistenceTests.swift */,
 				7D92127E9E33E2068C39C6D2 /* LicenseManagerTests.swift */,
 				8CC5ECEF8259B4A6171B21ED /* LicenseTests.swift */,
 				F09176C4330342A99B8E6D12 /* ModelTests.swift */,
@@ -640,6 +643,7 @@
 				5469DDF8E41720D5D140AC2C /* KnobPanelViewModelTests.swift in Sources */,
 				1C808A46E3A523A077DD53B0 /* KnobPanelWindowControllerTests.swift in Sources */,
 				C6A93D4A134FE1463D14477E /* KnobStateManagerFeatureGateTests.swift in Sources */,
+				A1B2C3D4E5F6789012345678 /* KnobActiveStatePersistenceTests.swift in Sources */,
 				571F5529C50E62928537397D /* LicenseManagerTests.swift in Sources */,
 				EF577467CFBE5D345B9A45E3 /* LicenseTests.swift in Sources */,
 				FCD6CEE952DDCB62D6405CA0 /* ModelTests.swift in Sources */,

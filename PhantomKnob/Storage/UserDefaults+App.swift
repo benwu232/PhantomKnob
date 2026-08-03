@@ -9,4 +9,16 @@ extension UserDefaults {
         get { _app }
         set { _app = newValue }
     }
+
+    /// Whether to restore the active state of PhantomKnob on application startup.
+    public var restoreActiveStateOnStartup: Bool {
+        get { object(forKey: "restoreActiveStateOnStartup") as? Bool ?? true }
+        set { set(newValue, forKey: "restoreActiveStateOnStartup") }
+    }
+
+    /// The last persistent active state of PhantomKnob.
+    public var lastKnobActiveState: Bool {
+        get { bool(forKey: "lastKnobActiveState") }
+        set { set(newValue, forKey: "lastKnobActiveState") }
+    }
 }
