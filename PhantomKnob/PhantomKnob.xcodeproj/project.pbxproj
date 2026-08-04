@@ -10,6 +10,7 @@
 		01A6460B057DC868BBCB7E3B /* FreeEditionPopoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412FAE1848F7AE48AD20C030 /* FreeEditionPopoverTests.swift */; };
 		01A6D704DC3678F59BEE0232 /* ArrowKeyTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D76A85C86CFA1CEFA58915D /* ArrowKeyTranslator.swift */; };
 		04B23D46ED2398168310E343 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 120041D50B70899FF05F7C9D /* Sparkle */; };
+		062CAE11F0FE4F2E98C8C70B /* FeedbackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871B6891D66B1771C9F60B48 /* FeedbackViewModel.swift */; };
 		084FAE69514FD8C7EEB9000A /* HUDCenterCapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCF8FF6DD6D5C745B73A6D3 /* HUDCenterCapView.swift */; };
 		08725A37A3171E8C9E1D442D /* KnobCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73263D014AF58E4418641B4A /* KnobCircleView.swift */; };
 		09897705C0C8B7D06DC6EDEE /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEDDC2B2FB1885EA5CB8219 /* UpdateManager.swift */; };
@@ -80,6 +81,8 @@
 		8719DFCECA87671EB3BB1382 /* KnobCustomizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FC033D8EFF916E61230512B /* KnobCustomizer.swift */; };
 		89CC4DDB76C47724BEEF1BC0 /* JSONCParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2DD05C13BC59773FD98055F /* JSONCParserTests.swift */; };
 		8CC5803134336AEC78F42B6E /* KnobPanelWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6409308252718581F95D9CD /* KnobPanelWindowController.swift */; };
+		902EC63E52F49D3E5B847DA4 /* SettingsWindowLanguageSwitchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06647F6206A3372DFA8E0D5B /* SettingsWindowLanguageSwitchTests.swift */; };
+		9044A2156D769089977CB93F /* FeedbackViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24602BE1862C7BFB5F05AFB2 /* FeedbackViewModelTests.swift */; };
 		91BA023F6642C406A78AE521 /* Logger+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9785379F4C1295E57267D2BC /* Logger+Extensions.swift */; };
 		92A07B9D8857FFC3528F0A0A /* final-cut-pro.json in Resources */ = {isa = PBXBuildFile; fileRef = BD6585BAA9CD7820FC6E16DC /* final-cut-pro.json */; };
 		9370546A95618B48796AE620 /* davinci-resolve.json in Resources */ = {isa = PBXBuildFile; fileRef = 0960371388A77DEDB4D452D5 /* davinci-resolve.json */; };
@@ -149,6 +152,7 @@
 		00FE8BDCFAAC5ADF8A71C0C0 /* HUDSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDSkin.swift; sourceTree = "<group>"; };
 		0279BBA53DE238B7A49EE6A6 /* KnobState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobState.swift; sourceTree = "<group>"; };
 		038D5EEE3B0DE096CC012769 /* AnimationPersistenceReproTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationPersistenceReproTests.swift; sourceTree = "<group>"; };
+		06647F6206A3372DFA8E0D5B /* SettingsWindowLanguageSwitchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowLanguageSwitchTests.swift; sourceTree = "<group>"; };
 		0704C959B2850EE4DF5B9648 /* GestureConflictTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureConflictTests.swift; sourceTree = "<group>"; };
 		0960371388A77DEDB4D452D5 /* davinci-resolve.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "davinci-resolve.json"; sourceTree = "<group>"; };
 		0BD747C9F6DC171899EA02CC /* GlobalTouchHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTouchHandler.swift; sourceTree = "<group>"; };
@@ -164,6 +168,7 @@
 		1D501667239AF8D006C21DF8 /* CloudSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncManager.swift; sourceTree = "<group>"; };
 		1F1EC8639129B1EA4015970A /* KnobGlobalStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobGlobalStateTests.swift; sourceTree = "<group>"; };
 		2002FF819A681E0345379B26 /* KnobPanelWindowControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobPanelWindowControllerTests.swift; sourceTree = "<group>"; };
+		24602BE1862C7BFB5F05AFB2 /* FeedbackViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewModelTests.swift; sourceTree = "<group>"; };
 		28B15AA0918B5B487EAD25BC /* GestureClassifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureClassifier.swift; sourceTree = "<group>"; };
 		29618E44B78DFC05E3D4E562 /* CloudSyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncManagerTests.swift; sourceTree = "<group>"; };
 		2CC77959DB4C1B4AC99F89BA /* HotkeySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeySettings.swift; sourceTree = "<group>"; };
@@ -201,6 +206,7 @@
 		8120D28F7EC33A9A5859F62D /* ReleaseNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotesView.swift; sourceTree = "<group>"; };
 		81AB9DF6DBD27B74032E57BA /* release-notes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "release-notes.json"; sourceTree = "<group>"; };
 		831481C7139BDC5517BEF2FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		871B6891D66B1771C9F60B48 /* FeedbackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewModel.swift; sourceTree = "<group>"; };
 		8771BC1033CA41840E19A7B4 /* HotkeySettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeySettingsTests.swift; sourceTree = "<group>"; };
 		8776E7B99B66A818472F3AD2 /* InputTranslation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslation.swift; sourceTree = "<group>"; };
 		88FC4C75EA72D359CF88C0F5 /* MultitouchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultitouchManager.swift; sourceTree = "<group>"; };
@@ -317,6 +323,7 @@
 			isa = PBXGroup;
 			children = (
 				33997C526CE3C79D79F6AC92 /* DemoViewModel.swift */,
+				871B6891D66B1771C9F60B48 /* FeedbackViewModel.swift */,
 				AC69641B463FC61F6329B1B1 /* KnobPanelViewModel.swift */,
 				B4F69A27EBAEC2C12A6B2F0D /* UserGuideViewModel.swift */,
 			);
@@ -483,6 +490,7 @@
 				C3A6310E035C008390D7FC8E /* CustomMultiplierTests.swift */,
 				A31EB983132648BE5B011996 /* DemoSliderTargetTests.swift */,
 				150138859D28698EB07164B3 /* FeatureGateTests.swift */,
+				24602BE1862C7BFB5F05AFB2 /* FeedbackViewModelTests.swift */,
 				412FAE1848F7AE48AD20C030 /* FreeEditionPopoverTests.swift */,
 				78D28F4DF30A624A89581773 /* GestureClassifierTests.swift */,
 				0704C959B2850EE4DF5B9648 /* GestureConflictTests.swift */,
@@ -509,6 +517,7 @@
 				008F94919E0680E4A58515E0 /* ReleaseNotesTests.swift */,
 				D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */,
 				FF51B47DC27F97A4D1FB480E /* ScaleResolverTests.swift */,
+				06647F6206A3372DFA8E0D5B /* SettingsWindowLanguageSwitchTests.swift */,
 				E0A1ECB7826EEE6AA49E8BF1 /* StatusBarControllerTests.swift */,
 				92F9A87164F5EE435A917D0A /* SystemServicesTests.swift */,
 				7DEE11CE4A241D8E09F06FE1 /* TargetDetectorTests.swift */,
@@ -633,6 +642,7 @@
 				D9AA75CFB01B353867490AC0 /* CustomMultiplierTests.swift in Sources */,
 				EA6A77CCD1BA63EAFAE99002 /* DemoSliderTargetTests.swift in Sources */,
 				C463D598377098DC39E1C197 /* FeatureGateTests.swift in Sources */,
+				9044A2156D769089977CB93F /* FeedbackViewModelTests.swift in Sources */,
 				01A6460B057DC868BBCB7E3B /* FreeEditionPopoverTests.swift in Sources */,
 				BF29018F2C89BA7835834BC7 /* GestureClassifierTests.swift in Sources */,
 				C9F6F3BCA2F7399BE23BDD76 /* GestureConflictTests.swift in Sources */,
@@ -659,6 +669,7 @@
 				485B7A4425C6798EEE0CC2FD /* ReleaseNotesTests.swift in Sources */,
 				7E88A5B26CC52AA53A804A1D /* ScaleConfigCompatibilityTests.swift in Sources */,
 				F11E3F872A077A8F3BE8ABFE /* ScaleResolverTests.swift in Sources */,
+				902EC63E52F49D3E5B847DA4 /* SettingsWindowLanguageSwitchTests.swift in Sources */,
 				F1A5BD84BB7445DD7F1D9DB7 /* StatusBarControllerTests.swift in Sources */,
 				69196DF1790F7953D566EC24 /* SystemServicesTests.swift in Sources */,
 				81C54DE6F0BD0486FBBF80CA /* TargetDetectorTests.swift in Sources */,
@@ -688,6 +699,7 @@
 				2E5E69A3A010696CE124CDA8 /* DisplayBrightnessService.swift in Sources */,
 				31CDCB6AAB2A916EB1382526 /* DockIconManager.swift in Sources */,
 				E7319043FD2CA4D8536CC9C9 /* FeatureGate.swift in Sources */,
+				062CAE11F0FE4F2E98C8C70B /* FeedbackViewModel.swift in Sources */,
 				E265FDAE703BEA6D8F2F4F7C /* FreeEditionPopoverView.swift in Sources */,
 				C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */,
 				EF138900E1C6F71B57127BE9 /* GlobalTouchHandler.swift in Sources */,
@@ -789,7 +801,6 @@
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = YWUEH5CWCS;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -953,7 +964,6 @@
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = YWUEH5CWCS;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
