@@ -61,5 +61,19 @@ class AppLanguageManagerTests: XCTestCase {
         let finalVolatile = UserDefaults.app.volatileDomain(forName: "NSArgumentDomain")
         XCTAssertNil(finalVolatile["AppleLanguages"])
     }
-}
 
+    func testSetLanguagePostsNotification() {
+        let expectation = expectation(description: "LanguageDidChange Notification")
+        let observer = NotificationCenter.default.addObserver(
+            forName: AppLanguageManager.languageDidChangeNotification,
+            object: nil,
+            queue: nil
+        ) { _ in
+            expectation.fulfill()
+        }
+        
+        AppLanguageManager.shared.currentLanguage = .english
+        wait(for: [expectation], timeout: 1.0)
+        NotificationCenter.default.removeObserver(observer)
+    }
+}

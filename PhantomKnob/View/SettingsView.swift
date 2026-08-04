@@ -126,6 +126,8 @@ struct GeneralSettingsView: View {
     @AppStorage("restoreActiveStateOnStartup", store: .app) private var restoreActiveStateOnStartup = true
     @State private var launchAtLogin = false
 
+    @State private var selectedLanguage: AppLanguageManager.Language = AppLanguageManager.shared.currentLanguage
+
     var body: some View {
         VStack(spacing: 14) {
             // -- Language Section Card --
@@ -146,18 +148,22 @@ struct GeneralSettingsView: View {
                     
                     Spacer()
                     
-                    Picker("", selection: Binding(
-                        get: { AppLanguageManager.shared.currentLanguage },
-                        set: { newLanguage in
-                            let oldLanguage = AppLanguageManager.shared.currentLanguage
-                            guard newLanguage != oldLanguage else { return }
-                            
-                            AppLanguageManager.shared.currentLanguage = newLanguage
-                            
-                            // Prompt user to restart
+                    Picker("", selection: $selectedLanguage) {
+                        ForEach(AppLanguageManager.Language.allCases) { lang in
+                            Text(lang.displayName).tag(lang)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 150)
+                    .onChange(of: selectedLanguage) { newLanguage in
+                        guard newLanguage != AppLanguageManager.shared.currentLanguage else { return }
+                        
+                        AppLanguageManager.shared.currentLanguage = newLanguage
+                        
+                        DispatchQueue.main.async {
                             let alert = NSAlert()
-                            alert.messageText = String(localized: "settings.language.alert.title", defaultValue: "Change Language")
-                            alert.informativeText = String(localized: "settings.language.alert.message", defaultValue: "PhantomKnob must restart to apply the new language settings. Would you like to restart now?")
+                            alert.messageText = String(localized: "settings.language.alert.title", defaultValue: "Restart Required")
+                            alert.informativeText = String(localized: "settings.language.alert.message", defaultValue: "Changing language settings requires restarting PhantomKnob to take full effect.")
                             alert.alertStyle = .informational
                             alert.addButton(withTitle: String(localized: "settings.language.alert.restartNow", defaultValue: "Restart Now"))
                             alert.addButton(withTitle: String(localized: "settings.language.alert.later", defaultValue: "Later"))
@@ -167,45 +173,8 @@ struct GeneralSettingsView: View {
                                 AppLanguageManager.shared.relaunchApp()
                             }
                         }
-                    )) {
-                        ForEach(AppLanguageManager.Language.allCases) { lang in
-                            Text(lang.displayName).tag(lang)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 150)
-                }
-            }
-            .padding(12)
-            .background(Color.white.opacity(0.04))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-            )
-
-            // -- Behavior Section Card --
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 6) {
-                    Image(systemName: "gearshape")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 12, weight: .semibold))
-                    Text(String(localized: "settings.section.behavior", defaultValue: "Behavior"))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.70))
-                }
-                
-                Toggle(isOn: $restoreActiveStateOnStartup) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(String(localized: "settings.general.restoreActiveState", defaultValue: "Restore activation state on startup"))
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.white)
-                        Text(String(localized: "settings.general.restoreActiveState.subtitle", defaultValue: "Automatically resume PhantomKnob if it was active when last quit"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.6))
                     }
                 }
-                .toggleStyle(.switch)
             }
             .padding(12)
             .background(Color.white.opacity(0.04))
@@ -344,6 +313,11 @@ struct GeneralSettingsView: View {
                     .foregroundColor(.white.opacity(0.85))
                     .font(.system(size: 13))
                     
+                    Toggle(String(localized: "settings.startup.restoreActiveState", defaultValue: "Restore previous activation state on startup"), isOn: $restoreActiveStateOnStartup)
+                        .toggleStyle(.checkbox)
+                        .foregroundColor(.white.opacity(0.85))
+                        .font(.system(size: 13))
+                    
                     Toggle(String(localized: "settings.startup.showGuide", defaultValue: "Show User Guide on Startup"), isOn: Binding(
                         get: { !skipUserGuideOnStartup },
                         set: { skipUserGuideOnStartup = !$0 }
@@ -352,7 +326,7 @@ struct GeneralSettingsView: View {
                     .foregroundColor(.white.opacity(0.85))
                     .font(.system(size: 13))
 
-                    Toggle(String(localized: "settings.startup.autoUpdate", defaultValue: "Automatically check for updates"), isOn: Binding(
+                    Toggle(String(localized: "settings.startup.autoUpdate", defaultValue: "Automatically check for updates on startup"), isOn: Binding(
                         get: { UserDefaults.app.object(forKey: "SUEnableAutomaticChecks") as? Bool ?? true },
                         set: { UserDefaults.app.set($0, forKey: "SUEnableAutomaticChecks") }
                     ))

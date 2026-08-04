@@ -3,6 +3,7 @@ import os
 
 public class AppLanguageManager {
     public static let shared = AppLanguageManager()
+    public static let languageDidChangeNotification = Notification.Name("AppLanguageDidChangeNotification")
     
     private let languageKey = "appLanguage"
     
@@ -31,8 +32,13 @@ public class AppLanguageManager {
             return Language(rawValue: val) ?? .system
         }
         set {
+            let oldVal = currentLanguage
             UserDefaults.app.set(newValue.rawValue, forKey: languageKey)
             applyLanguageOverride(newValue)
+            
+            if oldVal != newValue {
+                NotificationCenter.default.post(name: AppLanguageManager.languageDidChangeNotification, object: newValue)
+            }
         }
     }
     
