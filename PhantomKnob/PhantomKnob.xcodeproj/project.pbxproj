@@ -45,6 +45,8 @@
 		48372952AC769B19FEF10F52 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 7EC1E3D674732B23AAA3D06E /* Sentry */; };
 		485B7A4425C6798EEE0CC2FD /* ReleaseNotesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F94919E0680E4A58515E0 /* ReleaseNotesTests.swift */; };
 		4F12C029F2E542B599ADF3C4 /* AppLanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CDEC7A8A488C0D2A64D6AA /* AppLanguageManager.swift */; };
+		516B11B83CEB947FAC26D760 /* SentryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAF89A23E72FF25B57A0D29 /* SentryManager.swift */; };
+		52CDC10E2CCD8DBE80C847CD /* SentryConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71EBB6CE978335A60F7AA85 /* SentryConfigTests.swift */; };
 		5469DDF8E41720D5D140AC2C /* KnobPanelViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B8A0EEE9ADDE36EBD680C /* KnobPanelViewModelTests.swift */; };
 		558A3C01798DAA56EDD11A94 /* release-notes.json in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9DF6DBD27B74032E57BA /* release-notes.json */; };
 		55F5DCD9ECDD28004DFEA03A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F265AA267220CC6CEE2B9C1A /* SettingsView.swift */; };
@@ -184,6 +186,7 @@
 		36DB066BD45933FF9EFDD35B /* KnobCustomizationTriggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobCustomizationTriggerTests.swift; sourceTree = "<group>"; };
 		3A4B06F414ECD11ECEC6940A /* InputTranslationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTranslationTests.swift; sourceTree = "<group>"; };
 		3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderView.swift; sourceTree = "<group>"; };
+		3BAF89A23E72FF25B57A0D29 /* SentryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryManager.swift; sourceTree = "<group>"; };
 		412FAE1848F7AE48AD20C030 /* FreeEditionPopoverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeEditionPopoverTests.swift; sourceTree = "<group>"; };
 		4339B35F28D56220AFFFE149 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizerHUDView.swift; sourceTree = "<group>"; };
@@ -277,6 +280,7 @@
 		EF4E00FEE56575AC0CAE0FEF /* HUDBackdropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDBackdropView.swift; sourceTree = "<group>"; };
 		F09176C4330342A99B8E6D12 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		F265AA267220CC6CEE2B9C1A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F71EBB6CE978335A60F7AA85 /* SentryConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryConfigTests.swift; sourceTree = "<group>"; };
 		F80C2FABCDBC109AD23D3BC9 /* URLSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeHandler.swift; sourceTree = "<group>"; };
 		F964BA6FE16412CB6FD87DD5 /* KnobAlgorithmTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobAlgorithmTests.swift; sourceTree = "<group>"; };
 		FC25D2DC3A258F173AB3BD8C /* AudioControlService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioControlService.swift; sourceTree = "<group>"; };
@@ -384,6 +388,7 @@
 				14058306126BA0F12A966584 /* OverlayController.swift */,
 				A0F3BECF18F2E9EF5F8CA348 /* ReleaseNotesController.swift */,
 				BB013A64BA258E0802863E95 /* ScaleResolver.swift */,
+				3BAF89A23E72FF25B57A0D29 /* SentryManager.swift */,
 				C4DECA527A57B3E32B400EF2 /* SettingsWindowController.swift */,
 				B5C0A6CA8592C5DEE68B94A5 /* SkinPackager.swift */,
 				54A9695AB9CEBBCE4394ED8C /* StatusBarController.swift */,
@@ -526,6 +531,7 @@
 				008F94919E0680E4A58515E0 /* ReleaseNotesTests.swift */,
 				D0CE04E54BEF9716B0636963 /* ScaleConfigCompatibilityTests.swift */,
 				FF51B47DC27F97A4D1FB480E /* ScaleResolverTests.swift */,
+				F71EBB6CE978335A60F7AA85 /* SentryConfigTests.swift */,
 				06647F6206A3372DFA8E0D5B /* SettingsWindowLanguageSwitchTests.swift */,
 				E0A1ECB7826EEE6AA49E8BF1 /* StatusBarControllerTests.swift */,
 				92F9A87164F5EE435A917D0A /* SystemServicesTests.swift */,
@@ -679,6 +685,7 @@
 				485B7A4425C6798EEE0CC2FD /* ReleaseNotesTests.swift in Sources */,
 				7E88A5B26CC52AA53A804A1D /* ScaleConfigCompatibilityTests.swift in Sources */,
 				F11E3F872A077A8F3BE8ABFE /* ScaleResolverTests.swift in Sources */,
+				52CDC10E2CCD8DBE80C847CD /* SentryConfigTests.swift in Sources */,
 				902EC63E52F49D3E5B847DA4 /* SettingsWindowLanguageSwitchTests.swift in Sources */,
 				F1A5BD84BB7445DD7F1D9DB7 /* StatusBarControllerTests.swift in Sources */,
 				69196DF1790F7953D566EC24 /* SystemServicesTests.swift in Sources */,
@@ -758,6 +765,7 @@
 				73535C7231C6DCFB956DBB0F /* RotationDirection.swift in Sources */,
 				19EAA3A782F956431C311D9F /* ScaleResolver.swift in Sources */,
 				86B5FBD17C12E7D00F0BC8AE /* ScrollWheelTranslator.swift in Sources */,
+				516B11B83CEB947FAC26D760 /* SentryManager.swift in Sources */,
 				55F5DCD9ECDD28004DFEA03A /* SettingsView.swift in Sources */,
 				D263B739342BEC17C2AAFDB3 /* SettingsWindowController.swift in Sources */,
 				2B63AE1FF3FF26366FCE53A6 /* SkinPackager.swift in Sources */,
@@ -813,6 +821,7 @@
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = YWUEH5CWCS;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -976,6 +985,7 @@
 				CODE_SIGN_ENTITLEMENTS = PhantomKnob.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = YWUEH5CWCS;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1025,7 +1035,7 @@
 			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.0;
+				minimumVersion = 9.24.0;
 			};
 		};
 		E89DB602AD5E9BEAE9CB587A /* XCRemoteSwiftPackageReference "Sparkle" */ = {
