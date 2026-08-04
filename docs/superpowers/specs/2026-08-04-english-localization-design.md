@@ -18,6 +18,8 @@ PhantomKnob 目前已具备 `AppLanguageManager` 与 `Localizable.xcstrings` 基
 - **硬编码中文扫描与剥离**：
   - 扫描 `PhantomKnob/View/`、`PhantomKnob/Service/`、`PhantomKnob/ViewModel/` 等目录中残留的硬编码中文字符串。
   - 为硬编码字符串分配标准 Key（如 `menu.license.manage`、`status.pro_activated`）并存入 Catalog。
+- **单复数规则（Pluralization）**：
+  - 针对带有数量参数的英文文案，严格使用 String Catalog 原生的 `variations` -> `plural` 变体节点（包含 `one` 与 `other` 分支），确保如 `1 step` 与 `2 steps` 的规范呈现。
 - **冗余/废弃字符串清理（Unused String Cleanup）**：
   1. **清理 `stale` 自动条目**：直接移除被编译器标记为 `"extractionState": "stale"` 的无用 Key。
   2. **扫描未引用的 `manual` Key**：编写自动扫描工具检测 `.swift` 代码库中的 Key 引用，将未在任何 View / Service 中被引用的废弃 Key 从 `Localizable.xcstrings` 中清理，保持 Catalog 精简干净。
