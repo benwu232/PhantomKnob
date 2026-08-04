@@ -46,6 +46,12 @@ struct LicenseWindowView: View {
         }
         .foregroundColor(.white)
         .preferredColorScheme(.dark)
+        .onAppear {
+            self.licenseState = LicenseManager.shared.currentState
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LicenseWindowDidShow"))) { _ in
+            self.licenseState = LicenseManager.shared.currentState
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("LicenseStateDidChange"))) { _ in
             self.licenseState = LicenseManager.shared.currentState
         }
@@ -85,7 +91,7 @@ struct LicenseWindowView: View {
                 .font(.system(size: 18, weight: .bold))
             
             if let savedEmail = UserDefaults.app.string(forKey: "proLicenseEmail") {
-                Text(String(format: "已绑定邮箱: %@", maskEmail(savedEmail)))
+                Text(String(format: String(localized: "license.boundEmail.format", defaultValue: "已绑定邮箱: %@"), maskEmail(savedEmail)))
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -135,10 +141,6 @@ struct LicenseWindowView: View {
                     Image(systemName: "checkmark.circle.fill").foregroundColor(.orange)
                     Text("瞬时启动控制模式 (移除 2 秒等待时间)")
                 }
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill").foregroundColor(.orange)
-                    Text("个性化视觉覆层定制与未来云端预设同步")
-                }
             }
             .font(.system(size: 11))
             .foregroundColor(.white.opacity(0.8))
@@ -163,14 +165,14 @@ struct LicenseWindowView: View {
             if showManualForm {
                 VStack(spacing: 8) {
                     HStack(spacing: 8) {
-                        TextField("购买邮箱", text: $email)
+                        TextField(String(localized: "license.field.email", defaultValue: "购买邮箱"), text: $email)
                             .textFieldStyle(.plain)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color.white.opacity(0.08))
                             .cornerRadius(4)
                         
-                        SecureField("授权码 Key", text: $licenseKey)
+                        SecureField(String(localized: "license.field.key", defaultValue: "授权码 Key"), text: $licenseKey)
                             .textFieldStyle(.plain)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -185,7 +187,7 @@ struct LicenseWindowView: View {
                     }
                     
                     HStack {
-                        Button("手动激活") {
+                        Button(String(localized: "license.button.manualActivate", defaultValue: "手动激活")) {
                               triggerActivation()
                         }
                         .font(.system(size: 11, weight: .medium))
@@ -194,7 +196,7 @@ struct LicenseWindowView: View {
                         
                         Spacer()
                         
-                        Button("取消") {
+                        Button(String(localized: "license.button.cancel", defaultValue: "取消")) {
                             showManualForm = false
                             errorMessage = nil
                         }
@@ -206,7 +208,7 @@ struct LicenseWindowView: View {
                 .padding(.horizontal, 48)
                 .transition(.opacity)
             } else {
-                Button("手动输入授权码...") {
+                Button(String(localized: "license.button.enterCodeManually", defaultValue: "手动输入授权码...")) {
                     withAnimation {
                         showManualForm = true
                     }
@@ -221,7 +223,7 @@ struct LicenseWindowView: View {
     
     private func triggerActivation() {
         guard !email.isEmpty && !licenseKey.isEmpty else {
-            errorMessage = "请完整输入邮箱和授权码"
+            errorMessage = String(localized: "license.error.emptyFields", defaultValue: "请完整输入邮箱和授权码")
             return
         }
         isActivating = true
@@ -229,7 +231,7 @@ struct LicenseWindowView: View {
         LicenseManager.shared.activateOnline(licenseKey: licenseKey.trimmingCharacters(in: .whitespacesAndNewlines), email: email.trimmingCharacters(in: .whitespacesAndNewlines)) { success, error in
             isActivating = false
             if !success {
-                errorMessage = error ?? "激活验证失败"
+                errorMessage = error ?? String(localized: "license.error.failed", defaultValue: "激活验证失败")
             }
         }
     }

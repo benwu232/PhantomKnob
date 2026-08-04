@@ -135,7 +135,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "PhantomKnob uses innovative technology and patented algorithms to introduce knob gestures to your trackpad. Adjust values quickly and precisely on the trackpad just like operating a physical knob. PhantomKnob dual-ring and continuous variable knobs bring you an unprecedented experience."
+            "value": "PhantomKnob uses innovative technology and patented algorithms to bring knob gestures to your trackpad. You can adjust values quickly and precisely on the trackpad, just like using a physical knob. The exclusive Dual-Ring Knob and Continuous Variable Knob bring you an experience that surpasses physical hardware."
           }
         }
       }
@@ -254,7 +254,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Shortcuts Knob Panel"
+            "value": "Express Knob Panel"
           }
         }
       }
@@ -356,7 +356,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bypass Mode"
+            "value": "Hold Option Key"
           }
         }
       }
@@ -373,7 +373,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hold Shift + Fn + Option + Control keys to bypass PhantomKnob control"
+            "value": "Hold the Option key to temporarily toggle the activation state"
           }
         }
       }
@@ -390,7 +390,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toggle Enable/Disable"
+            "value": "Global Toggle Activation Shortcut"
           }
         }
       }
@@ -407,7 +407,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auxiliary Shortcuts"
+            "value": "Auxiliary Keys During Gesture Rotation"
           }
         }
       }
@@ -503,13 +503,13 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "显示 / 隐藏快捷按钮面板"
+            "value": "显示快捷旋钮面板"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open Shortcuts Knob Panel"
+            "value": "Show Express Knob Panel"
           }
         }
       }
@@ -537,13 +537,64 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "打开系统菜单（包含设置、使用引导等）"
+            "value": "打开主菜单（含设置、使用引导等）"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open Main Menu"
+            "value": "Open Main Menu (Settings, User Guide, etc.)"
+          }
+        }
+      }
+    },
+    "hotkey.button.cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "hotkey.button.change": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change..."
+          }
+        }
+      }
+    },
+    "hotkey.reservedBySystem": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该快捷键被系统保留"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This shortcut is reserved by system."
           }
         }
       }
@@ -560,7 +611,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Target Control Detected!"
+            "value": "🎉 Congratulations! You've successfully used the knob gesture. Click Next to continue."
           }
         }
       }
@@ -577,7 +628,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Notice: Please ensure accessibility permission is granted for PhantomKnob."
+            "value": "The system will detect whether your hardware supports knob gestures. If supported, perform the gesture — you will see the knob rotate and hear the volume change."
           }
         }
       }
@@ -594,7 +645,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hover mouse cursor over any slider or knob, then perform a two-finger rotation gesture on your trackpad."
+            "value": "Knob Gesture Tutorial:"
           }
         }
       }
@@ -611,7 +662,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Practice Knob"
+            "value": "Volume Practice Knob"
           }
         }
       }
@@ -628,7 +679,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "1. Move mouse cursor over the practice knob above"
+            "value": "1. PhantomKnob requires Accessibility permission. Grant it if prompted."
           }
         }
       }
@@ -645,7 +696,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "2. Rotate two fingers on trackpad in a circle"
+            "value": "2. Move mouse cursor over the volume practice knob"
           }
         }
       }
@@ -662,7 +713,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "3. Feel tactile feedback and observe numeric adjustment"
+            "value": "3. Place two fingers on the trackpad and perform a rotation gesture"
           }
         }
       }
@@ -679,7 +730,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Experience two-finger knob control on your trackpad"
+            "value": "Detect trackpad hardware support and practice volume knob rotation"
           }
         }
       }
@@ -696,7 +747,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "First Knob Rotation"
+            "value": "Device Detection & Basic Knob Operation"
           }
         }
       }
@@ -747,7 +798,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Outer ring controls fast coarse adjustment"
+            "value": "Continuously variable speed (0.1x – 5.0x)"
           }
         }
       }
@@ -764,7 +815,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inner ring controls smooth fine adjustment"
+            "value": "Speed step scales continuously with gesture radius"
           }
         }
       }
@@ -798,7 +849,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Outer ring: Fast coarse tuning"
+            "value": "Dual ring (outer: 0.1x, inner: 1.0x)"
           }
         }
       }
@@ -815,7 +866,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inner ring: Precise fine tuning"
+            "value": "Automatically switches fine/coarse tuning based on finger distance"
           }
         }
       }
@@ -849,7 +900,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Press C key while turning knob to open Customizer HUD"
+            "value": "While rotating: ↑/↓ adjusts by 1.0x, ←/→ adjusts by 0.1x, number keys 2–9 set multiplier directly."
           }
         }
       }
@@ -866,7 +917,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Adjust response radius, multiplier, and haptic feedback"
+            "value": "Press C key while turning knob to show the customization panel"
           }
         }
       }
@@ -883,7 +934,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Customization Tip"
+            "value": "💡 Use keyboard arrow keys to fine-tune multiplier"
           }
         }
       }
@@ -900,7 +951,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Explore Dual-Ring and Continuous Variable Knobs"
+            "value": "Practice fine adjustment with Dual-Ring and CVK knobs, keyboard tuning, and HUD customization"
           }
         }
       }
@@ -917,7 +968,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Advanced Knob Types"
+            "value": "Advanced Knob Usage & Customization"
           }
         }
       }
@@ -934,7 +985,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hover over sliders in Logic Pro, Final Cut, Lightroom, etc."
+            "value": "After pressing this hotkey or enabling via the menu bar, use knob gestures to control sliders, steppers, or compatible controls under your cursor."
           }
         }
       }
@@ -951,7 +1002,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Universal App Control"
+            "value": "Global Activation Hotkey: ⌘ ⌥ K (Command + Option + K). Customizable in Settings."
           }
         }
       }
@@ -968,7 +1019,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Custom haptic profiles tailored to each specific control"
+            "value": "Hold Option key for temporary knob activation. If already active, holding Option temporarily disables it."
           }
         }
       }
@@ -985,7 +1036,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Smart Tactile Feedback"
+            "value": "Temporary Toggle: Hold Option Key"
           }
         }
       }
@@ -1002,7 +1053,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Instant activation without setup"
+            "value": "The app is optimized for CapCut, QuickTime Player, and other major editing and color grading apps — supporting timeline, volume, and value controls."
           }
         }
       }
@@ -1019,7 +1070,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zero Configuration Needed"
+            "value": "Deep Support for Editing & Multimedia Apps"
           }
         }
       }
@@ -1036,7 +1087,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quickly toggle status or access settings from top bar"
+            "value": "Double-click the status bar icon to open the Express Knob Panel and conveniently adjust volume, screen brightness, and more with knob gestures."
           }
         }
       }
@@ -1053,7 +1104,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Status Bar Menu"
+            "value": "Status Bar Express Panel & Controls"
           }
         }
       }
@@ -1070,7 +1121,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You are ready!"
+            "value": "PhantomKnob is Ready!"
           }
         }
       }
@@ -1104,7 +1155,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Unlock full control of professional creative software"
+            "value": "Learn about activation hotkeys, shortcuts, and supported app list"
           }
         }
       }
@@ -1121,7 +1172,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Start Creating"
+            "value": "Introduction to Features"
           }
         }
       }
@@ -1138,7 +1189,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Master convenient shortcuts for high efficiency"
+            "value": "Quick reference guide for trackpad gesture interactions and keyboard auxiliary shortcuts"
           }
         }
       }
@@ -1206,7 +1257,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "PhantomKnob maps physical knob gestures directly onto your trackpad with high-precision tactile feedback."
+            "value": "PhantomKnob uses innovative technology and patented algorithms to elevate your trackpad experience to a whole new dimension. No additional hardware required — adjust values quickly and precisely using knob gestures on the trackpad, just like a physical knob. The exclusive Dual-Ring Knob and Continuous Variable Knob break physical limits, delivering an experience beyond hardware knobs."
           }
         }
       }
@@ -1359,7 +1410,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Conflict Detected"
+            "value": "⚠️ Control Identifier Conflict (Hierarchy matching enabled automatically)"
           }
         }
       }
@@ -1478,7 +1529,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dual Ring Boundary Settings"
+            "value": "⚙️ Toggle Boundary & Hysteresis Range"
           }
         }
       }
@@ -1920,7 +1971,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Split Boundary Difference"
+            "value": "💡 Split Differentiation Point"
           }
         }
       }
@@ -1993,6 +2044,153 @@
         }
       }
     },
+    "hud.action.arrowDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向下按键" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Down Arrow" } }
+      }
+    },
+    "hud.action.arrowLeft": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向左按键" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Left Arrow" } }
+      }
+    },
+    "hud.action.arrowRight": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向右按键" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Right Arrow" } }
+      }
+    },
+    "hud.action.arrowUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向上按键" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Up Arrow" } }
+      }
+    },
+    "hud.action.decrease": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "递减值" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Decrease Value" } }
+      }
+    },
+    "hud.action.increase": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "递增值" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Increase Value" } }
+      }
+    },
+    "hud.action.scrollDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向下滚动" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Scroll Down" } }
+      }
+    },
+    "hud.action.scrollLeft": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向左滚动" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Scroll Left" } }
+      }
+    },
+    "hud.action.scrollRight": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向右滚动" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Scroll Right" } }
+      }
+    },
+    "hud.action.scrollUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向上滚动" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Scroll Up" } }
+      }
+    },
+    "hud.action.swipeDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向下轻扫" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Swipe Down" } }
+      }
+    },
+    "hud.action.swipeLeft": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向左轻扫" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Swipe Left" } }
+      }
+    },
+    "hud.action.swipeRight": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向右轻扫" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Swipe Right" } }
+      }
+    },
+    "hud.action.swipeUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "向上轻扫" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Swipe Up" } }
+      }
+    },
+    "hud.trans.arrowKeyLeftRight": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "左右方向键" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Left/Right Arrow Keys" } }
+      }
+    },
+    "hud.trans.arrowKeyUpDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "上下方向键" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Up/Down Arrow Keys" } }
+      }
+    },
+    "hud.trans.axWrite": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "无障碍直接写入" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Accessibility Direct Write" } }
+      }
+    },
+    "hud.trans.scrollWheelHorizontal": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "水平滚轮" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Horizontal Scroll Wheel" } }
+      }
+    },
+    "hud.trans.scrollWheelVertical": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "垂直滚轮" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Vertical Scroll Wheel" } }
+      }
+    },
+    "hud.trans.swipeHorizontal": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "双指左右滑动" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Two-Finger Horizontal Swipe" } }
+      }
+    },
+    "hud.trans.swipeVertical": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "双指上下滑动" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Two-Finger Vertical Swipe" } }
+      }
+    },
     "knob.title.backlight": {
       "extractionState": "manual",
       "localizations": {
@@ -2040,6 +2238,142 @@
           "stringUnit": {
             "state": "translated",
             "value": "System Volume"
+          }
+        }
+      }
+    },
+    "license.boundEmail.format": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已绑定邮箱: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bound Email: %@"
+          }
+        }
+      }
+    },
+    "license.button.cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "license.button.enterCodeManually": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手动输入授权码..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter License Key Manually..."
+          }
+        }
+      }
+    },
+    "license.button.manualActivate": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手动激活"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate Manually"
+          }
+        }
+      }
+    },
+    "license.error.emptyFields": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请完整输入邮箱和授权码"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter both email and license key."
+          }
+        }
+      }
+    },
+    "license.error.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "激活验证失败"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activation verification failed."
+          }
+        }
+      }
+    },
+    "license.field.email": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "购买邮箱"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purchased Email"
+          }
+        }
+      }
+    },
+    "license.field.key": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "授权码 Key"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License Key"
           }
         }
       }
@@ -2158,7 +2492,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Shortcuts Knob Panel"
+            "value": "Express Knob Panel"
           }
         }
       }
@@ -2261,7 +2595,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Session Time Limit Remaining"
+            "value": "Session Limit: 15 Minutes"
           }
         }
       }
@@ -2295,7 +2629,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Preferences..."
+            "value": "Settings..."
           }
         }
       }
@@ -2381,6 +2715,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "User Guide..."
+          }
+        }
+      }
+    },
+    "panel.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PhantomKnob 快捷面板"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PhantomKnob Express Panel"
+          }
+        }
+      }
+    },
+    "panel.usage.hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提示：可通过鼠标悬停、键盘左右键或两指左右滑动来切换选择旋钮"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hint: Hover cursor, press Left/Right arrow keys, or swipe two fingers left/right to switch knobs"
           }
         }
       }
@@ -2534,7 +2902,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Global hotkey to toggle activation state"
+            "value": "Enable/Disable knob control mode (or click the status bar icon)"
           }
         }
       }
@@ -2551,7 +2919,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Activation Shortcut"
+            "value": "Global Control Toggle"
           }
         }
       }
@@ -2891,7 +3259,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open Trackpad Preferences"
+            "value": "Re-detect..."
           }
         }
       }
@@ -2908,7 +3276,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ensure trackpad gestures and haptics are enabled"
+            "value": "If you have changed your trackpad device, you can re-run the detection test."
           }
         }
       }
@@ -2925,7 +3293,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "System Trackpad Settings"
+            "value": "Re-detect Trackpad"
           }
         }
       }
@@ -3282,7 +3650,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Next Step"
+            "value": "Start Tutorial"
           }
         }
       }
@@ -3299,7 +3667,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Press the global activation hotkey to quickly enable or disable PhantomKnob."
+            "value": "Rotate two fingers on the trackpad to directly adjust volume, screen brightness, and keyboard backlight."
           }
         }
       }
@@ -3316,7 +3684,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Global Activation Shortcut"
+            "value": "Double-click the status bar icon, or press ⌥Space to open/close the control panel."
           }
         }
       }
@@ -3333,7 +3701,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Global Hotkey Test"
+            "value": "Welcome to PhantomKnob!"
           }
         }
       }
@@ -3350,7 +3718,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Complete Test"
+            "value": "Next"
           }
         }
       }
@@ -3367,7 +3735,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Move cursor over the practice knob and complete a full 360° rotation gesture."
+            "value": "Move the mouse over one of the dials below, then place two fingers on the trackpad and rotate."
           }
         }
       }
@@ -3401,7 +3769,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gesture Rotation Test (360°)"
+            "value": "Gesture Practice (Rotate 360°)"
           }
         }
       }
@@ -3418,7 +3786,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Launch PhantomKnob"
+            "value": "Enable PhantomKnob"
           }
         }
       }
@@ -3435,7 +3803,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tutorial setup complete. Enjoy phantom knob gestures on your trackpad!"
+            "value": "When the panel is visible, gestures adjust the selected control. When hidden, gestures control any slider under your cursor in any app."
           }
         }
       }
@@ -3452,7 +3820,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All Set!"
+            "value": "Congratulations, you've completed the tutorial!"
           }
         }
       }

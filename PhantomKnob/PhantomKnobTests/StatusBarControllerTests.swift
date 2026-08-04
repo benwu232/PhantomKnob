@@ -368,4 +368,40 @@ final class StatusBarControllerTests: XCTestCase {
         UserDefaults.app.set(originalTrialStart, forKey: "proTrialStartDate")
         NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
     }
+
+    func testManageLicenseMenuItemOpensLicenseWindowInProMode() {
+        let controller = StatusBarController()
+        
+        let originalKey = UserDefaults.app.string(forKey: "proLicenseKey")
+        let originalEmail = UserDefaults.app.string(forKey: "proLicenseEmail")
+        
+        // 1. 设置为 Pro 状态
+        UserDefaults.app.set("test-pro-key", forKey: "proLicenseKey")
+        UserDefaults.app.set("test@example.com", forKey: "proLicenseEmail")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+        controller.rebuildMenu()
+        
+        // 2. 找到 "🔑 许可管理..." 菜单项
+        guard let manageMenuItem = controller.menu?.items.first(where: { $0.action == #selector(StatusBarController.buyPro) }) else {
+            XCTFail("未在 Pro 模式菜单中找到许可管理入口")
+            return
+        }
+        
+        // 确保窗口初始处于关闭状态
+        LicenseWindowController.shared.hide()
+        XCTAssertFalse(LicenseWindowController.shared.isVisible)
+        
+        // 3. 模拟菜单项点击，触发 buyPro Action
+        controller.buyPro()
+        
+        // 4. 验证 License 窗口已打开
+        XCTAssertTrue(LicenseWindowController.shared.isVisible, "点击 Pro 模式下的许可管理应成功弹出 License 窗口")
+        
+        // 恢复初始状态
+        LicenseWindowController.shared.hide()
+        UserDefaults.app.set(originalKey, forKey: "proLicenseKey")
+        UserDefaults.app.set(originalEmail, forKey: "proLicenseEmail")
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseStateDidChange"), object: nil)
+    }
 }
+

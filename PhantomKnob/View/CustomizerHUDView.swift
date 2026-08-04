@@ -1206,13 +1206,13 @@ struct CustomizerHUDView: View {
     
     private func transDescription(_ trans: InputTranslation) -> String {
         switch trans {
-        case .axWrite: return "无障碍直接写入"
-        case .scrollWheelVertical: return "垂直滚轮"
-        case .scrollWheelHorizontal: return "水平滚轮"
-        case .arrowKeyUpDown: return "上下方向键"
-        case .arrowKeyLeftRight: return "左右方向键"
-        case .swipeVertical: return "双指上下滑动"
-        case .swipeHorizontal: return "双指左右滑动"
+        case .axWrite: return String(localized: "hud.trans.axWrite", defaultValue: "无障碍直接写入")
+        case .scrollWheelVertical: return String(localized: "hud.trans.scrollWheelVertical", defaultValue: "垂直滚轮")
+        case .scrollWheelHorizontal: return String(localized: "hud.trans.scrollWheelHorizontal", defaultValue: "水平滚轮")
+        case .arrowKeyUpDown: return String(localized: "hud.trans.arrowKeyUpDown", defaultValue: "上下方向键")
+        case .arrowKeyLeftRight: return String(localized: "hud.trans.arrowKeyLeftRight", defaultValue: "左右方向键")
+        case .swipeVertical: return String(localized: "hud.trans.swipeVertical", defaultValue: "双指上下滑动")
+        case .swipeHorizontal: return String(localized: "hud.trans.swipeHorizontal", defaultValue: "双指左右滑动")
         }
     }
     
@@ -1242,20 +1242,20 @@ struct CustomizerHUDView: View {
     
     private func actionDescription(_ action: String) -> String {
         switch action {
-        case "arrowUp": return "向上按键"
-        case "arrowDown": return "向下按键"
-        case "arrowRight": return "向右按键"
-        case "arrowLeft": return "向左按键"
-        case "scrollUp": return "向上滚动"
-        case "scrollDown": return "向下滚动"
-        case "scrollRight": return "向右滚动"
-        case "scrollLeft": return "向左滚动"
-        case "swipeUp": return "向上轻扫"
-        case "swipeDown": return "向下轻扫"
-        case "swipeRight": return "向右轻扫"
-        case "swipeLeft": return "向左轻扫"
-        case "increase": return "递增值"
-        case "decrease": return "递减值"
+        case "arrowUp": return String(localized: "hud.action.arrowUp", defaultValue: "向上按键")
+        case "arrowDown": return String(localized: "hud.action.arrowDown", defaultValue: "向下按键")
+        case "arrowRight": return String(localized: "hud.action.arrowRight", defaultValue: "向右按键")
+        case "arrowLeft": return String(localized: "hud.action.arrowLeft", defaultValue: "向左按键")
+        case "scrollUp": return String(localized: "hud.action.scrollUp", defaultValue: "向上滚动")
+        case "scrollDown": return String(localized: "hud.action.scrollDown", defaultValue: "向下滚动")
+        case "scrollRight": return String(localized: "hud.action.scrollRight", defaultValue: "向右滚动")
+        case "scrollLeft": return String(localized: "hud.action.scrollLeft", defaultValue: "向左滚动")
+        case "swipeUp": return String(localized: "hud.action.swipeUp", defaultValue: "向上轻扫")
+        case "swipeDown": return String(localized: "hud.action.swipeDown", defaultValue: "向下轻扫")
+        case "swipeRight": return String(localized: "hud.action.swipeRight", defaultValue: "向右轻扫")
+        case "swipeLeft": return String(localized: "hud.action.swipeLeft", defaultValue: "向左轻扫")
+        case "increase": return String(localized: "hud.action.increase", defaultValue: "递增值")
+        case "decrease": return String(localized: "hud.action.decrease", defaultValue: "递减值")
         default: return action
         }
     }

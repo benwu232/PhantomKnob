@@ -168,9 +168,20 @@ struct GeneralSettingsView: View {
                             alert.addButton(withTitle: String(localized: "settings.language.alert.restartNow", defaultValue: "Restart Now"))
                             alert.addButton(withTitle: String(localized: "settings.language.alert.later", defaultValue: "Later"))
                             
-                            let response = alert.runModal()
-                            if response == .alertFirstButtonReturn {
-                                AppLanguageManager.shared.relaunchApp()
+                            let completion: (NSApplication.ModalResponse) -> Void = { response in
+                                if response == .alertFirstButtonReturn {
+                                    AppLanguageManager.shared.relaunchApp()
+                                }
+                            }
+                            
+                            if let window = NSApp.keyWindow {
+                                alert.beginSheetModal(for: window, completionHandler: completion)
+                            } else {
+                                NSApp.activate(ignoringOtherApps: true)
+                                alert.window.level = .floating + 1
+                                if alert.runModal() == .alertFirstButtonReturn {
+                                    AppLanguageManager.shared.relaunchApp()
+                                }
                             }
                         }
                     }
@@ -303,7 +314,12 @@ struct GeneralSettingsView: View {
                                 alert.informativeText = error.localizedDescription
                                 alert.alertStyle = .warning
                                 alert.addButton(withTitle: String(localized: "settings.alert.ok", defaultValue: "OK"))
-                                alert.runModal()
+                                
+                                if let window = NSApp.keyWindow {
+                                    alert.beginSheetModal(for: window, completionHandler: nil)
+                                } else {
+                                    alert.runModal()
+                                }
                                 
                                 launchAtLogin = LaunchAtLoginService.shared.isEnabled
                             }

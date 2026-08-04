@@ -39,6 +39,8 @@ class UserGuideViewModel: ObservableObject {
     
     @Published var isGestureActive: Bool = false
     @Published var skipOnNextStartup: Bool = false
+    @Published var isTooClose: Bool = false
+    @Published var isDeadzone: Bool = false
     
     private var tickAccumulator: Double = 0.0
     private let audioService: AudioControlService
@@ -112,6 +114,8 @@ class UserGuideViewModel: ObservableObject {
                 if !active {
                     self?.doubleKnobDiameter = 120.0
                     self?.cvkKnobDiameter = 120.0
+                    self?.isTooClose = false
+                    self?.isDeadzone = false
                 }
             }
             .store(in: &cancellables)
@@ -121,6 +125,8 @@ class UserGuideViewModel: ObservableObject {
                 if type == .none {
                     self?.doubleKnobDiameter = 120.0
                     self?.cvkKnobDiameter = 120.0
+                    self?.isTooClose = false
+                    self?.isDeadzone = false
                 }
             }
             .store(in: &cancellables)
@@ -169,6 +175,7 @@ class UserGuideViewModel: ObservableObject {
                 UserDefaults.app.set(true, forKey: "userGuideTouchpadPracticed")
             }
         } else if currentStep == 3 {
+            guard !isTooClose && !isDeadzone else { return }
             if hoveredKnob == .doubleKnob {
                 doubleKnobAngle -= degrees
                 let knobSpeed = 0.5 * doubleKnobBaseMultiplier * currentMultiplier
@@ -229,14 +236,20 @@ class UserGuideViewModel: ObservableObject {
         guard knobCore.isValid else { return }
         let radius = knobCore.radius
         
+        let tooClose = knobCore.isValid && (radius * 2 < 10.0)
+        self.isTooClose = tooClose
+        
         if hoveredKnob == .doubleKnob {
             let doubleKey = KnobKey(bundleID: "com.phantomknob.controlpanel", axRole: "ControlPanel", identifier: "DoubleKnob")
             let knob = KnobCustomizer.shared.knob(for: doubleKey)
             let doubleConfig = knob?.doubleConfig
             
+            let minInner = doubleConfig?.inner.minRadius ?? 10.0
             let maxInner = doubleConfig?.inner.maxRadius ?? 25.0
             let scaleInner = doubleConfig?.inner.unitPerDegree ?? 1.0
             let scaleOuter = doubleConfig?.outer.unitPerDegree ?? 0.1
+            
+            self.isDeadzone = (radius < minInner)
             
             // 双环：内环对应 scaleInner；外环对应 scaleOuter
             doubleKnobBaseMultiplier = (radius > maxInner) ? scaleOuter : scaleInner
@@ -252,6 +265,8 @@ class UserGuideViewModel: ObservableObject {
             let maxR = cvkConfig?.maxRadius ?? 30.0
             let minScale = cvkConfig?.minScale ?? 0.1
             let maxScale = cvkConfig?.maxScale ?? 5.0
+            
+            self.isDeadzone = (radius < minR)
             
             let r = max(minR, min(maxR, radius))
             let ratio = (r - minR) / (maxR - minR)
@@ -277,5 +292,7 @@ class UserGuideViewModel: ObservableObject {
         cvkKnobAngle = 0.0
         doubleKnobDiameter = 120.0
         cvkKnobDiameter = 120.0
+        isTooClose = false
+        isDeadzone = false
     }
 }

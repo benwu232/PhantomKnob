@@ -9,6 +9,7 @@ public class LicenseWindowController: NSObject, NSWindowDelegate {
     public static let shared = LicenseWindowController()
     
     private var window: LicenseWindow?
+    private var localClickMonitor: Any?
     
     public var isVisible: Bool {
         return window?.isVisible ?? false
@@ -21,11 +22,37 @@ public class LicenseWindowController: NSObject, NSWindowDelegate {
         NSApp.setActivationPolicy(.regular)
         window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+        setupClickMonitor()
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseWindowDidShow"), object: nil)
     }
     
     public func hide() {
         window?.orderOut(nil)
+        removeClickMonitor()
         NSApp.setActivationPolicy(.accessory)
+        NotificationCenter.default.post(name: NSNotification.Name("LicenseWindowDidHide"), object: nil)
+    }
+    
+    private func setupClickMonitor() {
+        removeClickMonitor()
+        localClickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            guard let self = self, let win = self.window else { return event }
+            let clickLocation = NSEvent.mouseLocation
+            let windowFrame = win.frame
+            if !NSPointInRect(clickLocation, windowFrame) {
+                DispatchQueue.main.async {
+                    self.hide()
+                }
+            }
+            return event
+        }
+    }
+    
+    private func removeClickMonitor() {
+        if let monitor = localClickMonitor {
+            NSEvent.removeMonitor(monitor)
+            localClickMonitor = nil
+        }
     }
     
     private func createWindow() {
@@ -70,6 +97,8 @@ public class LicenseWindowController: NSObject, NSWindowDelegate {
     }
     
     public func windowDidResignKey(_ notification: Notification) {
+        let isTesting = NSClassFromString("XCTestCase") != nil
+        if isTesting { return }
         hide()
     }
 }

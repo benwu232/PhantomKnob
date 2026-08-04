@@ -14,7 +14,7 @@ struct HotkeyRecorderView: View {
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
                     .frame(minWidth: 120, alignment: .leading)
-                Button("取消") { stopRecording() }
+                Button(String(localized: "hotkey.button.cancel", defaultValue: "取消")) { stopRecording() }
                     .buttonStyle(.borderless)
                     .foregroundColor(.red)
             } else {
@@ -28,7 +28,7 @@ struct HotkeyRecorderView: View {
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
-                Button("修改…") { startRecording() }
+                Button(String(localized: "hotkey.button.change", defaultValue: "修改…")) { startRecording() }
                     .buttonStyle(.borderless)
                     .foregroundColor(.accentColor)
             }
@@ -61,7 +61,7 @@ struct HotkeyRecorderView: View {
             (12, [.command]), (13, [.command]), (4, [.command])
         ]
         if reserved.contains(where: { event.keyCode == $0.0 && mods == $0.1 }) {
-            conflictMessage = "该快捷键被系统保留"
+            conflictMessage = String(localized: "hotkey.reservedBySystem", defaultValue: "该快捷键被系统保留")
             return
         }
         HotkeySettings.shared.keyCode = event.keyCode

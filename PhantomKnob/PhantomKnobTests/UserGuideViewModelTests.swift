@@ -312,4 +312,55 @@ class UserGuideViewModelTests: XCTestCase {
         XCTAssertEqual(vm.doubleKnobDiameter, 120.0)
         XCTAssertEqual(vm.cvkKnobDiameter, 120.0)
     }
+
+    func testUserGuideStep3KnobTooCloseAndDeadzoneBehavior() {
+        let vm = UserGuideViewModel(audioService: MockAudioControlService())
+        vm.currentStep = 3
+        vm.hoveredKnob = .doubleKnob
+
+        XCTAssertFalse(vm.isTooClose)
+        XCTAssertFalse(vm.isDeadzone)
+
+        // 1. Simulate two-finger distance very close (< 10mm -> radius < 5.0)
+        let pointsTooClose = [
+            0: CGPoint(x: 100, y: 100),
+            1: CGPoint(x: 108, y: 100), // distance = 8, radius = 4.0 (< 5.0)
+        ]
+        NotificationCenter.default.post(
+            name: NSNotification.Name("TouchpadCoordinatesValidated"),
+            object: nil,
+            userInfo: ["points": pointsTooClose]
+        )
+
+        XCTAssertTrue(vm.isTooClose)
+
+        // 2. Test rotation doesn't change value when isTooClose is true
+        let initialVal = vm.doubleKnobVal
+        vm.registerRotation(10.0)
+        XCTAssertEqual(vm.doubleKnobVal, initialVal)
+
+        // 3. Simulate radius in deadzone (e.g. 7.0, where 7.0 < inner.minRadius = 10.0, but > 5.0 so not isTooClose)
+        let pointsDeadzone = [
+            0: CGPoint(x: 100, y: 100),
+            1: CGPoint(x: 114, y: 100), // distance = 14, radius = 7.0
+        ]
+        NotificationCenter.default.post(
+            name: NSNotification.Name("TouchpadCoordinatesValidated"),
+            object: nil,
+            userInfo: ["points": pointsDeadzone]
+        )
+
+        XCTAssertFalse(vm.isTooClose)
+        XCTAssertTrue(vm.isDeadzone)
+
+        // Rotation ignored during deadzone
+        vm.registerRotation(10.0)
+        XCTAssertEqual(vm.doubleKnobVal, initialVal)
+
+        // 4. Hover out resets isTooClose and isDeadzone
+        vm.hoveredKnob = .none
+        XCTAssertFalse(vm.isTooClose)
+        XCTAssertFalse(vm.isDeadzone)
+    }
 }
+
