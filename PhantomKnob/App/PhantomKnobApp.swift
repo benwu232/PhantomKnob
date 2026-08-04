@@ -11,19 +11,7 @@ class AppState: ObservableObject {
     
     init() {
 
-        #if canImport(Sentry)
-        SentrySDK.start { options in
-            options.dsn = "YOUR_SENTRY_DSN"
-            options.environment = "production"
-            options.sampleRate = 1.0
-            options.enableAutoSessionTracking = true
-            options.attachStacktrace = true
-            options.beforeSend = { event in
-                let optOut = UserDefaults.app.bool(forKey: "disableCrashReporting")
-                return optOut ? nil : event
-            }
-        }
-        #endif
+        SentryManager.start()
         
         AnalyticsManager.shared.initialize()
         URLSchemeHandler.shared.startListening()

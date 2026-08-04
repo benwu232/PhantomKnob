@@ -13,7 +13,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "8.0.0"),
+        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.24.0"),
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.5.0"),
         .package(url: "https://github.com/TelemetryDeck/SwiftClient", from: "1.0.0")
     ],
