@@ -6,7 +6,7 @@ public class FeedbackViewModel: ObservableObject {
     @Published public var isCopiedDiagnostics: Bool = false
     
     public let supportEmail = "phantomknob232@gmail.com"
-    public let gitHubIssuesURL = URL(string: "https://github.com/benwu232/PhantomKnob/issues")!
+    public let gitHubIssuesURL = URL(string: "https://github.com/benwu232/PhantomKnob/issues/new")!
     
     public init() {}
     

@@ -25,6 +25,6 @@ final class FeedbackViewModelTests: XCTestCase {
         let viewModel = FeedbackViewModel()
         let url = viewModel.gitHubIssuesURL
         
-        XCTAssertEqual(url.absoluteString, "https://github.com/benwu232/PhantomKnob/issues")
+        XCTAssertEqual(url.absoluteString, "https://github.com/benwu232/PhantomKnob/issues/new")
     }
 }
