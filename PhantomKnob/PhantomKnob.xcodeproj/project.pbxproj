@@ -99,6 +99,7 @@
 		A58333C3C51D7ECE8BC8B514 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5C8E0A0350FB712070D82F /* AnalyticsManager.swift */; };
 		A7BB68C738FBEE344BF85507 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC3304255CD286857823144 /* LocalizationTests.swift */; };
 		B0BAF899FEBBC2AEB0F09C7F /* AppLanguageManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A77841598587C200D25FBF /* AppLanguageManagerTests.swift */; };
+		B6179261B0E38B3142846932 /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA23DA88C2F6EE073458569 /* FeedbackView.swift */; };
 		B68DF231AC772689CF2A5ACC /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77D21A367DF26814BDB1966 /* TutorialView.swift */; };
 		B94BA13F948C499CB5120913 /* TouchpadEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165D5400DF747E8DCDF6022A /* TouchpadEngine.swift */; };
 		BEB79FC6392FC3B4644B4EE2 /* KnobLiftoffFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8FC8A23B8E266E5FD91598 /* KnobLiftoffFilterTests.swift */; };
@@ -157,6 +158,7 @@
 		0960371388A77DEDB4D452D5 /* davinci-resolve.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "davinci-resolve.json"; sourceTree = "<group>"; };
 		0BD747C9F6DC171899EA02CC /* GlobalTouchHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalTouchHandler.swift; sourceTree = "<group>"; };
 		0DFF6C161024FEAF9EB3124E /* LicenseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseState.swift; sourceTree = "<group>"; };
+		0EA23DA88C2F6EE073458569 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
 		12D7CC02AB1BBA3A5A2140E7 /* DetectedTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectedTarget.swift; sourceTree = "<group>"; };
 		131BC13BA4105812935DB9AD /* KeyboardBacklightService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardBacklightService.swift; sourceTree = "<group>"; };
 		14058306126BA0F12A966584 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 			children = (
 				43ABFB23BDFDF56174133BB8 /* CustomizerHUDView.swift */,
 				4339B35F28D56220AFFFE149 /* DesignSystem.swift */,
+				0EA23DA88C2F6EE073458569 /* FeedbackView.swift */,
 				2EDCD49016D1A239A70723C1 /* FreeEditionPopoverView.swift */,
 				3A9240AE6F39B5A430780022 /* HotkeyRecorderView.swift */,
 				AAEDF01CC72784BA849E0EC9 /* HUDCircleButton.swift */,
@@ -699,6 +702,7 @@
 				2E5E69A3A010696CE124CDA8 /* DisplayBrightnessService.swift in Sources */,
 				31CDCB6AAB2A916EB1382526 /* DockIconManager.swift in Sources */,
 				E7319043FD2CA4D8536CC9C9 /* FeatureGate.swift in Sources */,
+				B6179261B0E38B3142846932 /* FeedbackView.swift in Sources */,
 				062CAE11F0FE4F2E98C8C70B /* FeedbackViewModel.swift in Sources */,
 				E265FDAE703BEA6D8F2F4F7C /* FreeEditionPopoverView.swift in Sources */,
 				C8DE49C153610D4D4D4A3098 /* GestureClassifier.swift in Sources */,
