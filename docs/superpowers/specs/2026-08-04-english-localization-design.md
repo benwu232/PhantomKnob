@@ -42,8 +42,8 @@ PhantomKnob 目前已具备 `AppLanguageManager` 与 `Localizable.xcstrings` 基
 - `LicenseManager`、`KnobStateManager` 的 HUD 提示及日志/通知统一采用 `String(localized: "key")`。
 
 ### 2.3 语言切换与重启流程
-- 维持 `AppLanguageManager` 现有的 `AppleLanguages` 覆盖机制。
-- 语言更改后通过 `relaunchApp()` 实现平滑重启以完全重加载 AppKit/NSBundle 资源。
+- 严格维持 `AppLanguageManager` 的标准 macOS App 重启机制（`AppleLanguages` + `relaunchApp()`）。
+- 不引入自定义 Bundle 拦截与 Swizzling，所有视图与后台 Service 统一依托原生 `Bundle.main` 与系统 `NSBundle` 生命周期，确保内存与资源加载绝对稳定。
 
 ---
 
