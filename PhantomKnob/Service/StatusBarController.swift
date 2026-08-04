@@ -442,31 +442,7 @@ class StatusBarController: ObservableObject {
     }
 
     @objc private func sendFeedback() {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
-        let os = ProcessInfo.processInfo.operatingSystemVersionString
-        let model = Host.current().localizedName ?? "Unknown Mac"
-        let license = "\(LicenseManager.shared.currentState)"
-
-        let subject = "PhantomKnob Feedback (v\(version) build \(build))"
-        let body = """
-        
-        
-        ---
-        App: PhantomKnob v\(version) (\(build))
-        macOS: \(os)
-        Device: \(model)
-        License: \(license)
-        """
-
-        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let mailto = "mailto:support@phantomknob.com?subject=\(encodedSubject)&body=\(encodedBody)"
-
-        if let url = URL(string: mailto) {
-            NSWorkspace.shared.open(url)
-        }
-        
+        FeedbackWindowController.shared.show()
         AnalyticsManager.shared.trackEvent("feedbackClicked")
     }
     
