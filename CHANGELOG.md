@@ -5,60 +5,26 @@ All notable changes to PhantomKnob will be documented in this file.
 ## [0.9.1] - 2026-08-05
 
 ### 🇨🇳 中文
-#### 🚀 新特性
-- implement automated bilingual changelog generation in release script
-- update SUFeedURL to GitHub Releases raw appcast.xml URL
-- integrate software update UI into GeneralSettingsView and AboutView with menu item validation
-- enhance UpdateManager with reactive properties and SPUUpdaterDelegate
-- configure Sentry SDK integration and untrack build artifacts
-#### 🐛 修复
-- cleanup dist before build and upload exact release DMG in GitHub Actions workflow
-- remove duplicate top Software Update card from GeneralSettingsView
-- reorder Software Update section below Startup and add Chinese/English localizations
-#### 📝 文档
-- consolidate bilingual release notes into CHANGELOG.md and remove CHANGELOG_zh.md
-- add implementation plan for Sparkle 2 auto update framework
-- add E2E automated update testing strategy to design spec
-- add design spec for Sparkle 2 auto update framework
-#### 🔧 构建与维护
-- add one-click deploy.sh script for automated GitHub release
-- save clean project files
-- add release_update.sh script for Sparkle packaging and signing
-- commit previous knob animation default updates
-- upgrade Sentry SDK to 9.24.0, implement SentryManager, and configure build settings
-- update TelemetryManager app ID to production value
-#### ✨ 其他变更
-- test: add test_update_flow.sh script for local E2E update testing
-- test: add logger category and failing unit tests for UpdateManager (TDD RED)
+#### 🚀 新功能与优化
+- 新增【软件更新】设置控制面板，支持查看上次检查时间与手动检查更新
+- 支持后台自动检测更新与静默下载体验
+- 全面完善软件界面与通知的中英文本地化支持
+- 支持触控板设备重新检测与启动时自动恢复前次激活状态
+#### 🐛 问题修复
+- 修复通用设置面板中软件更新卡片显示重复的问题
+- 优化通用设置面板的卡片层次分布，提升使用体验
 
 ---
 
 ### 🇺🇸 English
-#### Features
-- implement automated bilingual changelog generation in release script
-- update SUFeedURL to GitHub Releases raw appcast.xml URL
-- integrate software update UI into GeneralSettingsView and AboutView with menu item validation
-- enhance UpdateManager with reactive properties and SPUUpdaterDelegate
-- configure Sentry SDK integration and untrack build artifacts
-#### Bug Fixes
-- cleanup dist before build and upload exact release DMG in GitHub Actions workflow
-- remove duplicate top Software Update card from GeneralSettingsView
-- reorder Software Update section below Startup and add Chinese/English localizations
-#### Documentation
-- consolidate bilingual release notes into CHANGELOG.md and remove CHANGELOG_zh.md
-- add implementation plan for Sparkle 2 auto update framework
-- add E2E automated update testing strategy to design spec
-- add design spec for Sparkle 2 auto update framework
-#### Chore & Maintenance
-- add one-click deploy.sh script for automated GitHub release
-- save clean project files
-- add release_update.sh script for Sparkle packaging and signing
-- commit previous knob animation default updates
-- upgrade Sentry SDK to 9.24.0, implement SentryManager, and configure build settings
-- update TelemetryManager app ID to production value
-#### Other Changes
-- test: add test_update_flow.sh script for local E2E update testing
-- test: add logger category and failing unit tests for UpdateManager (TDD RED)
+#### 🚀 Features & Improvements
+- Added Software Update settings panel with manual check & automatic download options
+- Supported automatic background update detection and release verification
+- Completed full English and Simplified Chinese localization across settings and dialogs
+- Supported asynchronous trackpad re-detection and startup state restoration
+#### 🐛 Bug Fixes
+- Fixed duplicate software update section card in General Settings
+- Refined General Settings card layout and visual hierarchy
 
 
 ## [0.9.0] - 2026-08-05
