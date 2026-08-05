@@ -176,7 +176,7 @@ struct HUDAnimationModifier: ViewModifier {
         let entranceType = animations?.entrance.type ?? .simpleCenterScaleIn
         let exitType = animations?.exit.type ?? .simpleCenterScaleOut
         let entranceDuration = animations?.entrance.duration ?? 0.30
-        let exitDuration = animations?.exit.duration ?? 0.30
+        let exitDuration = animations?.exit.duration ?? 0.50
 
         let targetScale: CGFloat = {
             if isExitingAnimated {

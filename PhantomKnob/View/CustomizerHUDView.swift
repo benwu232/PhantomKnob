@@ -1025,7 +1025,7 @@ struct CustomizerHUDView: View {
         
         self.activeColorTarget = .global
         
-        self.animationMode = .none
+        self.animationMode = .scale
         self.entranceDuration = 0.30
         self.exitDuration = 0.50
     }
@@ -1044,7 +1044,7 @@ struct CustomizerHUDView: View {
             self.themeColor = existing.themeColor ?? "#0A84FF"
             self.configType = existing.configType
             if let overrides = existing.skinOverrides {
-                self.animationMode = overrides.animationMode ?? .none
+                self.animationMode = overrides.animationMode ?? .scale
                 var entrance = overrides.entranceDuration ?? 0.30
                 var exit = overrides.exitDuration ?? 0.50
                 // 非 none 模式时长归一化：历史脏数据（0 时长）恢复默认，面板正确展示

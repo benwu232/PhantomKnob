@@ -35,8 +35,8 @@ public final class HUDSkinManager {
             ),
             customImageAssets: nil,
             animations: HUDAnimationConfig(
-                entrance: HUDEntranceAnimation(type: .simpleCenterScaleIn, duration: 0.25, springBounciness: 0.2),
-                exit: HUDExitAnimation(type: .simpleCenterScaleOut, duration: 0.20)
+                entrance: HUDEntranceAnimation(type: .simpleCenterScaleIn, duration: 0.30, springBounciness: 0.2),
+                exit: HUDExitAnimation(type: .simpleCenterScaleOut, duration: 0.50)
             )
         )
     }

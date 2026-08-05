@@ -58,6 +58,15 @@ final class HUDSkinTests: XCTestCase {
         XCTAssertEqual(resolved.appearance.backdrop.opacity, 0.9)
     }
 
+    func testDefaultKnobAnimationConfig() {
+        let manager = HUDSkinManager.shared
+        let defaultSkin = manager.defaultSkin
+        XCTAssertEqual(defaultSkin.animations.entrance.type, .simpleCenterScaleIn, "默认进出特效必须为 放大缩小 (simpleCenterScaleIn)")
+        XCTAssertEqual(defaultSkin.animations.exit.type, .simpleCenterScaleOut, "默认进出特效必须为 放大缩小 (simpleCenterScaleOut)")
+        XCTAssertEqual(defaultSkin.animations.entrance.duration, 0.30, accuracy: 0.001, "进入动画默认时长必须为 0.3")
+        XCTAssertEqual(defaultSkin.animations.exit.duration, 0.50, accuracy: 0.001, "退出动画默认时长必须为 0.5")
+    }
+
     func testResolveSkinAnimationMode() {
         let manager = HUDSkinManager.shared
 
