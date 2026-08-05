@@ -90,13 +90,16 @@ PhantomKnob 目前已引入 Sparkle 2 依赖并在 `Info.plist` 中配置了 `SU
 
 ---
 
-## 6. 测试与验证策略
-
-### 6.1 单元测试 (`PhantomKnobTests/UpdateManagerTests.swift`)
+### 6.2 单元与委托代理测试 (`PhantomKnobTests/UpdateManagerTests.swift`)
 遵循项目 TDD 策略：
 * 测试 `UpdateManager.shared` 单例正确响应 Sparkle 状态。
-* 测试 `automaticallyChecksForUpdates` 与 `automaticallyDownloadsUpdates` 的 UserDefaults持久化绑定。
+* 测试 `automaticallyChecksForUpdates` 与 `automaticallyDownloadsUpdates` 的 UserDefaults 持久化绑定。
+* Mock 模拟 `SPUUpdaterDelegate` 代理回调，验证在接收到 `didDownloadUpdate` 与 `didAbortWithError` 时的埋点与日志行为。
 
-### 6.2 手动与容错验证
-* 使用本地 HTTP Server 托管测试 `appcast.xml` 模拟版本升号（如 `0.9.0` -> `0.9.1`），验证自动更新下载与一键重启覆盖流程。
-* 模拟网络不可用场景，验证无阻塞提示及日志捕获。
+### 6.3 完整 E2E 自动升级全流程自动化验证脚本 (`scripts/test_update_flow.sh`)
+为验证“检查 -> 后台静默下载 -> 校验签名 -> 解压安装 -> 替换重启”的全链路，提供专门的 E2E 测试验证方案：
+1. **准备测试目标**：自动化脚本编译一个高版本号的 Dummy App（例如 `v9.9.9`），并生成对应的测试用 Ed25519 签名与 `test_appcast.xml`。
+2. **本地服务托管**：通过后台 Python 启动 `http://localhost:8080/test_appcast.xml`。
+3. **注入与触发**：运行带有测试 `SUFeedURL` 参数的本地应用实例，触发后台自动下载。
+4. **校验结果**：断言测试安装包是否成功解压至 Sparkle 的安装缓存区，并验证应用接收到 `SPUUpdater` 的重启就绪通知。
+
