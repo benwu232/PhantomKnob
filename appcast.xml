@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>PhantomKnob Updates</title>
+    <link>https://github.com/benwu232/PhantomKnob/releases</link>
+    <description>Most recent updates for PhantomKnob.</description>
+    <language>en</language>
+    <item>
+      <title>PhantomKnob v0.9.1</title>
+      <pubDate>Wed, 05 Aug 2026 12:00:00 +0000</pubDate>
+      <sparkle:version>0.9.1</sparkle:version>
+      <sparkle:shortVersionString>0.9.1</sparkle:shortVersionString>
+      <sparkle:releaseNotesLink>https://github.com/benwu232/PhantomKnob/releases/tag/v0.9.1</sparkle:releaseNotesLink>
+      <enclosure url="https://github.com/benwu232/PhantomKnob/releases/download/v0.9.1/PhantomKnob_v0.9.1.dmg"
+                 sparkle:version="0.9.1"
+                 sparkle:shortVersionString="0.9.1"
+                 type="application/octet-stream" />
+    </item>
+  </channel>
+</rss>
