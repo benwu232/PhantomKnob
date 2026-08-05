@@ -8,11 +8,11 @@
     <item>
       <title>PhantomKnob v0.9.3</title>
       <pubDate>Wed, 05 Aug 2026 21:49:04 +0000</pubDate>
-      <sparkle:version>0.9.3</sparkle:version>
+      <sparkle:version>670</sparkle:version>
       <sparkle:shortVersionString>0.9.3</sparkle:shortVersionString>
       <sparkle:releaseNotesLink>https://github.com/benwu232/PhantomKnob/releases/tag/v0.9.3</sparkle:releaseNotesLink>
       <enclosure url="https://github.com/benwu232/PhantomKnob/releases/download/v0.9.3/PhantomKnob_v0.9.3.dmg"
-                 sparkle:version="0.9.3"
+                 sparkle:version="670"
                  sparkle:shortVersionString="0.9.3"
                  type="application/octet-stream" />
     </item>
