@@ -91,3 +91,44 @@ jobs:
           token: ${{ secrets.PHANTOM_KNOB_RELEASE }}
           files: dist/PhantomKnob_${{ github.ref_name }}.dmg
           generate_release_notes: true
+
+      - name: Update appcast.xml in Distribution Repo
+        env:
+          GH_TOKEN: ${{ secrets.PHANTOM_KNOB_RELEASE }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          CLEAN_VER="${TAG_NAME#v}"
+          PUB_DATE=$(date -u +"%a, %d %b %Y %H:%M:%S +0000")
+          
+          git clone https://x-access-token:${GH_TOKEN}@github.com/benwu232/PhantomKnob.git /tmp/dist_repo
+          cd /tmp/dist_repo
+          
+          cat <<EOF > appcast.xml
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>PhantomKnob Updates</title>
+    <link>https://github.com/benwu232/PhantomKnob/releases</link>
+    <description>Most recent updates for PhantomKnob.</description>
+    <language>en</language>
+    <item>
+      <title>PhantomKnob ${TAG_NAME}</title>
+      <pubDate>${PUB_DATE}</pubDate>
+      <sparkle:version>${CLEAN_VER}</sparkle:version>
+      <sparkle:shortVersionString>${CLEAN_VER}</sparkle:shortVersionString>
+      <sparkle:releaseNotesLink>https://github.com/benwu232/PhantomKnob/releases/tag/${TAG_NAME}</sparkle:releaseNotesLink>
+      <enclosure url="https://github.com/benwu232/PhantomKnob/releases/download/${TAG_NAME}/PhantomKnob_${TAG_NAME}.dmg"
+                 sparkle:version="${CLEAN_VER}"
+                 sparkle:shortVersionString="${CLEAN_VER}"
+                 type="application/octet-stream" />
+    </item>
+  </channel>
+</rss>
+EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add appcast.xml
+          git commit -m "chore: update appcast.xml for ${TAG_NAME}" || true
+          git push origin main
+

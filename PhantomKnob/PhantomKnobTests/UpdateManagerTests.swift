@@ -33,4 +33,11 @@ final class UpdateManagerTests: XCTestCase {
         manager.automaticallyDownloadsUpdates = true
         XCTAssertTrue(UserDefaults.standard.bool(forKey: "SUAutomaticallyUpdate"))
     }
+    
+    func testSUFeedURLConfigurationValid() {
+        let feedURLString = Bundle.main.object(forInfoDictionaryKey: "SUFeedURL") as? String
+        XCTAssertNotNil(feedURLString, "SUFeedURL should be configured in Info.plist")
+        XCTAssertTrue(feedURLString?.hasPrefix("https://") == true, "SUFeedURL must use HTTPS scheme")
+    }
 }
+
