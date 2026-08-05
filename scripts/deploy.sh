@@ -20,6 +20,14 @@ fi
 
 CURRENT_BRANCH=$(git branch --show-current)
 
+echo "==> [0/3] Generating automated bilingual Changelog for $VERSION..."
+python3 scripts/generate_changelog.py "$VERSION"
+if [ -n "$(git status --porcelain CHANGELOG.md)" ]; then
+    echo "==> Committing updated CHANGELOG.md..."
+    git add CHANGELOG.md
+    git commit -m "docs: auto-generate changelog for $VERSION"
+fi
+
 echo "==> [1/3] Merging changes from branch '$CURRENT_BRANCH' into 'main'..."
 git checkout main
 git merge "$CURRENT_BRANCH" --no-edit
