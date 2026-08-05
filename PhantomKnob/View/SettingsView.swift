@@ -131,64 +131,6 @@ struct GeneralSettingsView: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            // -- Software Update Section Card --
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 12, weight: .semibold))
-                    Text(String(localized: "settings.section.update", defaultValue: "Software Update"))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.70))
-                }
-                
-                Toggle(String(localized: "settings.update.autoCheck", defaultValue: "Automatically check for updates"), isOn: $updateManager.automaticallyChecksForUpdates)
-                    .toggleStyle(.checkbox)
-                    .foregroundColor(.white.opacity(0.85))
-                    .font(.system(size: 13))
-
-                Toggle(String(localized: "settings.update.autoDownload", defaultValue: "Automatically download updates in background"), isOn: $updateManager.automaticallyDownloadsUpdates)
-                    .toggleStyle(.checkbox)
-                    .foregroundColor(.white.opacity(0.85))
-                    .font(.system(size: 13))
-
-                HStack {
-                    if let lastDate = updateManager.lastUpdateCheckDate {
-                        Text("\(String(localized: "settings.update.lastCheck", defaultValue: "Last checked:")) \(lastDate.formatted(date: .numeric, time: .shortened))")
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.5))
-                    } else {
-                        Text(String(localized: "settings.update.neverChecked", defaultValue: "Last checked: Never"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.5))
-                    }
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        UpdateManager.shared.checkForUpdates()
-                    }) {
-                        Text(String(localized: "settings.update.checkNow", defaultValue: "Check for Updates..."))
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 5)
-                            .background(Color.white.opacity(0.15))
-                            .cornerRadius(6)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!updateManager.canCheckForUpdates)
-                }
-            }
-            .padding(12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white.opacity(0.04))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-            )
-
             // -- Language Section Card --
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 6) {
