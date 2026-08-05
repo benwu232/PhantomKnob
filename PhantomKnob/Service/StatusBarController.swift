@@ -3,7 +3,7 @@ import SwiftUI
 import Combine
 import os
 
-class StatusBarController: ObservableObject {
+class StatusBarController: NSObject, ObservableObject {
     var statusItem: NSStatusItem?
     var menu: NSMenu?
     private var globalHotkeyMonitor: Any?
@@ -20,7 +20,8 @@ class StatusBarController: ObservableObject {
     
     var onToggleHotkey: (() -> Void)?
     
-    init() {
+    override init() {
+        super.init()
         PKLogger.statusBar.info("init() called")
         setupStatusBar()
         setupGlobalHotkey()
@@ -632,3 +633,15 @@ extension NSImage {
         return tintedImage
     }
 }
+
+// MARK: - NSMenuItemValidation
+
+extension StatusBarController: NSMenuItemValidation {
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(checkForUpdates) {
+            return UpdateManager.shared.canCheckForUpdates
+        }
+        return true
+    }
+}
+
