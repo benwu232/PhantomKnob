@@ -82,7 +82,7 @@ targets:
         LSApplicationCategoryType: public.app-category.utilities
         NSHumanReadableCopyright: "Copyright © 2025 Ben Wu. All rights reserved."
         LSUIElement: true
-        SUFeedURL: "https://phantomknob.com/appcast.xml"
+        SUFeedURL: "https://raw.githubusercontent.com/benwu232/PhantomKnob/main/appcast.xml"
         SUPublicEDKey: "5CmEsYugmzzvzy/eL9awVk3/bqjCwAap9i0K3ao/3sM="
         SUEnableAutomaticChecks: true
         CFBundleURLTypes:

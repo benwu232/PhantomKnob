@@ -54,7 +54,7 @@ PhantomKnob 目前已引入 Sparkle 2 依赖并在 `Info.plist` 中配置了 `SU
 在 `PhantomKnob/Info.plist` 与 `project.yml` 中维持如下配置标准：
 ```xml
 <key>SUFeedURL</key>
-<string>https://phantomknob.com/appcast.xml</string>
+<string>https://raw.githubusercontent.com/benwu232/PhantomKnob/main/appcast.xml</string>
 <key>SUPublicEDKey</key>
 <string>5CmEsYugmzzvzy/eL9awVk3/bqjCwAap9i0K3ao/3sM=</string>
 <key>SUEnableAutomaticChecks</key>
