@@ -2,7 +2,7 @@
 
 All notable changes to PhantomKnob will be documented in this file.
 
-## [0.9.1] - 2026-08-05
+## [0.9.2] - 2026-08-05
 
 ### 🇨🇳 中文
 #### 🚀 新功能与优化
