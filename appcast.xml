@@ -14,7 +14,8 @@
       <enclosure url="https://github.com/benwu232/PhantomKnob/releases/download/v0.9.5/PhantomKnob_v0.9.5.dmg"
                  sparkle:version="680"
                  sparkle:shortVersionString="0.9.5"
-                 length="7506584"
+                 sparkle:edSignature="JENzLmQwCsIUv3PxX6kFI1KH2hvTEFdOaFPEohSGE8vZfkx1daJkpJZXHIa2MigH6OTE3AXNhg62zm+IxifiCA=="
+                 length="7506968"
                  type="application/octet-stream" />
     </item>
   </channel>
