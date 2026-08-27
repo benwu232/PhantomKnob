@@ -7,14 +7,14 @@
     <language>en</language>
     <item>
       <title>PhantomKnob v1.0.0</title>
-      <pubDate>Wed, 26 Aug 2026 23:14:35 +0000</pubDate>
-      <sparkle:version>974</sparkle:version>
+      <pubDate>Thu, 27 Aug 2026 07:58:58 +0000</pubDate>
+      <sparkle:version>990</sparkle:version>
       <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
       <sparkle:releaseNotesLink>https://github.com/benwu232/PhantomKnob/releases/tag/v1.0.0</sparkle:releaseNotesLink>
       <enclosure url="https://github.com/benwu232/PhantomKnob/releases/download/v1.0.0/PhantomKnob_v1.0.0.dmg"
-                 sparkle:version="974"
+                 sparkle:version="990"
                  sparkle:shortVersionString="1.0.0"
-                 sparkle:edSignature="Rk2WoFkbmLKmqyFJ0AQ2TL9LFimpWfk1PMjS3Y1tryV5HXXfdzFBPTA18iIBhWNGwBNTPUkvHzw9+qfkZInKAw==" length="8294564"
+                 sparkle:edSignature="id/pn8FC172qiHESFRmPRDjcWSjX488oatX2LYBlnNSYyTt5Ol0NEqrkDP8BH41v9pYrrsbkUCUsd/T79ICZCg==" length="8310265"
                  type="application/octet-stream" />
     </item>
   </channel>
