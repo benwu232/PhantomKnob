@@ -658,12 +658,12 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   ticks(rotor,110,110,86,60,12,5,1.55,"#0a84ff",0.55);
   el("circle",{cx:"163",cy:110,r:8,fill:"#0a84ff",filter:"url(#dotGlow)"},rotor);
 
-  var CX=110,CY=110,TR=53,REST=240;
+  var CX=110,CY=110,TR=53,REST=60*4; // idle center value=60 -> angle=240; hand authored at 12/6 rest pose
   var angle=0,value=60,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
 
   function render(){
     rotor.setAttribute("transform","rotate("+(-angle).toFixed(2)+" "+CX+" "+CY+")");
-    hand.setAttribute("transform","rotate("+(-(angle-REST)).toFixed(2)+" 110 110)");
+    hand.setAttribute("transform","rotate("+(-(angle-REST)).toFixed(2)+" "+CX+" "+CY+")");
     if(startAngle!==null){
       var d=angle-startAngle;
       if(d>360){startAngle=angle-360;d=360;}
