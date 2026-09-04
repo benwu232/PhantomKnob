@@ -290,13 +290,21 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
               <path id="htrail" fill="none" stroke="#0a84ff" stroke-opacity="0.65" stroke-width="2.4" stroke-linecap="round" d=""/>
               <g id="rotor"></g>
               <g id="hand" transform="rotate(0 110 110)">
+                <!-- phantom hand, authored at rest pose (12/6 o'clock grip); JS rotates it with the knob -->
+                <!-- contact shadow under middle fingertip -->
                 <ellipse cx="110" cy="192" rx="11" ry="4.5" fill="rgba(0,0,0,0.30)" filter="url(#softBlur)"/>
+                <!-- middle finger crossing the knob face (semi-transparent so ticks ghost through) -->
                 <path d="M104 40 C104 62 105 100 105 150 C105 172 105 184 106 190 C106.5 194.5 108 197.5 110 197.5 C112 197.5 113.5 194.5 114 190 C115 184 115 172 115 150 C115 100 116 62 116 40 Z" fill="#f3d3bd" fill-opacity="0.88"/>
+                <!-- hand back + wrist, gradient fade towards top -->
                 <path d="M90 2 C88 14 84 24 80 34 C78 42 80 50 88 54 C96 58 124 58 132 54 C140 50 142 42 140 34 C136 24 132 14 130 2 Z" fill="url(#wristFade)" stroke="url(#wristFade)" stroke-width="1.2"/>
+                <!-- hand back shading -->
                 <path d="M84 36 C82 44 85 51 92 53 C88 48 87 42 87 36 Z" fill="#e3b89c" opacity="0.85"/>
+                <!-- thumb pressing the top rim -->
                 <path d="M86 32 C88 24 95 17 103 16 C109 15.5 112 19 112 23 C112 27.5 108 30.5 102 31.5 C96 32.5 91 33.5 86 34 Z" fill="#f3d3bd" stroke="#d9a988" stroke-width="1.2"/>
+                <!-- fingertip pads (page pink accent) -->
                 <circle cx="106" cy="22" r="6" fill="#f2c4cd"/>
                 <circle cx="110" cy="196" r="6" fill="#f2c4cd"/>
+                <!-- press halos -->
                 <circle cx="106" cy="22" r="10.5" fill="none" stroke="rgba(242,196,205,0.45)" stroke-width="1.5"/>
                 <circle cx="110" cy="196" r="10.5" fill="none" stroke="rgba(242,196,205,0.45)" stroke-width="1.5"/>
               </g>
@@ -666,10 +674,11 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   var rAngle=document.getElementById("rAngle");
   var holder=document.getElementById("knobHolder");
 
-  ticks(rotor,110,110,86,60,12,5,1.55,"#0a84ff",0.55);
-  el("circle",{cx:"163",cy:110,r:8,fill:"#0a84ff",filter:"url(#dotGlow)"},rotor);
-
   var CX=110,CY=110,TR=53,REST=60*4; // idle center value=60 -> angle=240; hand authored at 12/6 rest pose
+
+  ticks(rotor,110,110,86,60,12,5,1.55,"#0a84ff",0.55);
+  el("circle",{cx:CX+TR,cy:CY,r:8,fill:"#0a84ff",filter:"url(#dotGlow)"},rotor);
+
   var angle=0,value=60,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
 
   function render(){
