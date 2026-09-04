@@ -614,8 +614,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       var g=el("g",{},svg);
       ticks(g,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
       var rot=el("g",{transform:"rotate(-38 "+cx+" "+cy+")"},svg);
-      needle(rot,cx,cy,8,r*0.62-4,blue,3);
-      el("circle",{cx:cx,cy:cy,r:19,fill:"rgba(10,132,255,0.2)",stroke:blue,"stroke-width":1.4},svg);
+      el("circle",{cx:(cx+r*0.62).toFixed(1),cy:cy,r:8,fill:blue,filter:"url(#dotGlow)"},rot);
       var t=el("text",{x:cx,y:cy+24,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":9,fill:"rgba(255,255,255,0.4)"},svg);
       t.textContent="1.0x";
     }
