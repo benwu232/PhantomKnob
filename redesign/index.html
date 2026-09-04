@@ -646,6 +646,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   document.querySelectorAll('svg[data-knob]').forEach(function(s){buildKnob(s,s.getAttribute("data-knob"));});
 
   var rotor=document.getElementById("rotor");
+  var hand=document.getElementById("hand");
   var trail=document.getElementById("htrail");
   var hv=document.getElementById("hv");
   var sv=document.getElementById("sv");
@@ -655,13 +656,14 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   var holder=document.getElementById("knobHolder");
 
   ticks(rotor,110,110,86,60,12,5,1.55,"#0a84ff",0.55);
-  needle(rotor,110,110,8,50,"#0a84ff",3);
+  el("circle",{cx:"163",cy:110,r:8,fill:"#0a84ff",filter:"url(#dotGlow)"},rotor);
 
-  var CX=110,CY=110,TR=53;
-  var angle=0,value=65,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
+  var CX=110,CY=110,TR=53,REST=240;
+  var angle=0,value=60,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
 
   function render(){
     rotor.setAttribute("transform","rotate("+(-angle).toFixed(2)+" "+CX+" "+CY+")");
+    hand.setAttribute("transform","rotate("+(-(angle-REST)).toFixed(2)+" 110 110)");
     if(startAngle!==null){
       var d=angle-startAngle;
       if(d>360){startAngle=angle-360;d=360;}
@@ -687,7 +689,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   function idleLoop(ts){
     if(!idle)return;
     idleT=ts/1000;
-    value=62.5+17.5*Math.sin(idleT*0.55);
+    value=60+10*Math.sin(idleT*0.55);
     angle=value*4;
     render();
     raf=requestAnimationFrame(idleLoop);
@@ -734,7 +736,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 
   if(reduced){
     idle=false;
-    value=65;angle=65*4;startAngle=angle-40;
+    value=60;angle=60*4;startAngle=angle-40;
     render();
   }else{
     raf=requestAnimationFrame(idleLoop);
