@@ -274,6 +274,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             <div class="knob-value"><div class="v" id="hv">60%</div><div class="t">饱和度</div></div>
             <svg viewBox="0 0 220 220" aria-hidden="true">
               <defs>
+                <!-- dotGlow is shared across inline SVGs: hero dot (#rotor) and 03 single card dot -->
                 <filter id="dotGlow" x="-120%" y="-120%" width="340%" height="340%">
                   <feDropShadow dx="0" dy="0" stdDeviation="2.2" flood-color="#0a84ff" flood-opacity="0.55"/>
                 </filter>
@@ -608,6 +609,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   }
 
   function buildKnob(svg,type){
+    // single matches the app's dot indicator; double/cvk keep legacy needle style (pending redesign)
     var cx=110,cy=110,r=86;
     var blue="#0a84ff",green="#30d158";
     if(type==="single"){
