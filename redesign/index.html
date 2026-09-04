@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhantomKnob 幻影旋钮 — 你的触控板，还藏着一个旋钮</title>
+<meta name="description" content="PhantomKnob 把创新手势科技带进 macOS：双指一转，精准调节任何 App 里的滑块、色轮与时间轴。无需外接硬件，免费下载。">
+<link rel="icon" type="image/png" href="assets/appicon32.png">
+<link rel="apple-touch-icon" href="assets/appicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d0f;
+  --panel:#121215;
+  --panel-2:#16161a;
+  --line:rgba(255,255,255,0.08);
+  --line-soft:rgba(255,255,255,0.05);
+  --amber:#ff9f0a;
+  --amber-deep:#e8890a;
+  --amber-soft:rgba(255,159,10,0.12);
+  --ink:#f2efe7;
+  --ink-2:rgba(242,239,231,0.64);
+  --ink-3:rgba(242,239,231,0.40);
+  --pk-blue:#0a84ff;
+  --pk-green:#30d158;
+  --pk-pink:#f2c4cd;
+  --font-head:'Space Grotesk',-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;
+  --font-body:-apple-system,'PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{overflow-x:hidden;font-size:16px;line-height:1.75;background:
+  radial-gradient(1200px 600px at 85% -10%,rgba(255,159,10,0.05),transparent 60%),
+  radial-gradient(900px 500px at -10% 40%,rgba(10,132,255,0.04),transparent 55%),
+  var(--bg)}
+::selection{background:rgba(255,159,10,0.30);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--font-mono)}
+
+/* ---------- nav ---------- */
+header{position:fixed;inset:0 0 auto 0;z-index:100;height:64px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(13,13,15,0.72);border-bottom:1px solid var(--line-soft)}
+.nav{max-width:var(--maxw);margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:1.02rem;letter-spacing:-0.01em}
+.brand img{width:26px;height:26px;border-radius:7px}
+.brand .zh{color:var(--ink-3);font-weight:500;font-size:0.82rem;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{color:var(--ink-2);font-size:0.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a .n{font-family:var(--font-mono);font-size:0.68rem;color:var(--amber);margin-right:5px;letter-spacing:0.06em}
+.nav-cta{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:9px;background:var(--amber);color:#17120b;font-weight:600;font-size:0.88rem;transition:transform .2s,background .2s}
+.nav-cta:hover{background:#ffb03d;transform:translateY(-1px)}
+@media (max-width:860px){.nav-links a{display:none}.nav-links a.nav-cta{display:inline-flex}}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:12px;font-size:1rem;font-weight:600;transition:transform .2s,background .2s,border-color .2s;border:none}
+.btn svg{flex:none}
+.btn-primary{background:var(--amber);color:#17120b}
+.btn-primary:hover{background:#ffb03d;transform:translateY(-2px)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.16);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+/* ---------- hero ---------- */
+.hero{padding:150px 0 90px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:10px;height:32px;padding:0 14px;border:1px solid rgba(255,159,10,0.35);border-radius:999px;font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.08em;color:var(--amber);background:var(--amber-soft)}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-family:var(--font-head);font-weight:700;font-size:clamp(2.3rem,4.6vw,3.45rem);line-height:1.16;letter-spacing:-0.02em;margin:22px 0 20px}
+h1 .turn{display:inline-block;color:var(--amber);position:relative}
+.hero-sub{color:var(--ink-2);font-size:1.08rem;line-height:1.8;max-width:33em}
+.hero-actions{display:flex;gap:14px;margin:32px 0 22px;flex-wrap:wrap}
+.hero-meta{font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.05em;color:var(--ink-3)}
+.hero-meta span{margin-right:18px}
+.hero-meta b{color:var(--ink-2);font-weight:500}
+
+/* ---------- instrument stage ---------- */
+.stage{position:relative;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,0.028),rgba(255,255,255,0.008));padding:34px 30px 28px;box-shadow:0 24px 70px rgba(0,0,0,0.45)}
+.stage::before,.stage::after,.stage .ck::before,.stage .ck::after{content:"";position:absolute;width:14px;height:14px;border-color:rgba(255,159,10,0.55);border-style:solid;border-width:0}
+.stage::before{top:-1px;left:-1px;border-top-width:1.5px;border-left-width:1.5px}
+.stage::after{top:-1px;right:-1px;border-top-width:1.5px;border-right-width:1.5px}
+.stage .ck::before{bottom:-1px;left:-1px;border-bottom-width:1.5px;border-left-width:1.5px}
+.stage .ck::after{bottom:-1px;right:-1px;border-bottom-width:1.5px;border-right-width:1.5px}
+.stage-tag{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.14em;color:var(--ink-3);margin-bottom:8px}
+.stage-tag b{color:var(--amber);font-weight:500}
+.knob-zone{display:flex;justify-content:center;padding:6px 0 2px;touch-action:none;user-select:none;-webkit-user-select:none}
+.knob-holder{position:relative;width:300px;height:300px;cursor:grab}
+.knob-holder:active{cursor:grabbing}
+.knob-holder svg{width:100%;height:100%;display:block}
+.knob-value{position:absolute;top:8px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
+.knob-value .v{font-family:var(--font-mono);font-weight:600;font-size:2rem;color:#7abbff;letter-spacing:-0.03em;line-height:1.1}
+.knob-value .t{font-size:0.72rem;color:rgba(255,255,255,0.55);letter-spacing:0.2em;margin-top:2px}
+.readouts{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap}
+.chip{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.06em;color:var(--ink-2);border:1px solid var(--line);border-radius:7px;padding:5px 10px;background:rgba(0,0,0,0.25)}
+.chip b{color:var(--amber);font-weight:500}
+.demo-slider{margin-top:20px}
+.demo-slider .row{display:flex;justify-content:space-between;align-items:baseline;font-size:0.8rem;color:var(--ink-2);margin-bottom:9px}
+.demo-slider .row .val{font-family:var(--font-mono);color:#7abbff;font-size:0.82rem}
+.track{position:relative;height:8px;border-radius:99px;background:rgba(255,255,255,0.07);overflow:visible}
+.track .fill{position:absolute;inset:0 auto 0 0;width:65%;border-radius:99px;background:linear-gradient(90deg,rgba(10,132,255,0.55),var(--pk-blue))}
+.track .thumb{position:absolute;top:50%;left:65%;width:18px;height:18px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,0.5),0 0 0 4px rgba(10,132,255,0.18)}
+.hint{text-align:center;margin-top:18px;font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.1em;color:var(--ink-3)}
+.hint .arrows{color:var(--amber)}
+
+/* ---------- sections ---------- */
+section{padding:96px 0}
+.sec-head{margin-bottom:52px}
+.sec-index{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.sec-index .num{font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.16em;color:var(--amber)}
+.sec-index .rule{flex:1;max-width:120px;height:1px;background:linear-gradient(90deg,rgba(255,159,10,0.5),transparent)}
+.sec-title{font-family:var(--font-head);font-weight:700;font-size:clamp(1.6rem,3vw,2.15rem);letter-spacing:-0.02em;line-height:1.25}
+.sec-desc{color:var(--ink-2);margin-top:12px;max-width:36em}
+
+/* principle steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 24px;position:relative;overflow:hidden}
+.step .idx{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--amber);margin-bottom:14px}
+.step .fig{height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;border:1px solid var(--line-soft);border-radius:10px;background:rgba(0,0,0,0.22)}
+.step h3{font-family:var(--font-head);font-size:1.12rem;font-weight:600;margin-bottom:8px}
+.step p{color:var(--ink-2);font-size:0.92rem;line-height:1.7}
+.step .kbd{font-family:var(--font-mono);font-size:0.8em;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink)}
+
+/* feature cards */
+.cards4{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.fcard{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.022),transparent),var(--panel);padding:30px 28px;transition:border-color .25s,transform .25s}
+.fcard:hover{border-color:rgba(255,159,10,0.4);transform:translateY(-3px)}
+.fcard .fi{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--amber-soft);color:var(--amber);margin-bottom:18px}
+.fcard h3{font-family:var(--font-head);font-size:1.18rem;font-weight:600;margin-bottom:9px}
+.fcard p{color:var(--ink-2);font-size:0.94rem}
+
+/* knob types */
+.knobs3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.kcard{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 24px 22px;text-align:center}
+.kcard .fig{display:flex;justify-content:center;margin-bottom:6px}
+.kcard svg{width:190px;height:190px}
+.kcard h3{font-family:var(--font-head);font-size:1.14rem;font-weight:600}
+.kcard .en{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);margin:4px 0 10px}
+.kcard p{color:var(--ink-2);font-size:0.9rem;line-height:1.65;min-height:4.4em}
+.kcard .spec{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--ink-3);letter-spacing:0.04em;line-height:2}
+.kcard .spec b{color:var(--amber);font-weight:500}
+
+/* showcase placeholders */
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.shot{border:1px dashed rgba(255,255,255,0.18);border-radius:16px;background:rgba(255,255,255,0.015);padding:22px;position:relative}
+.shot .ph{height:170px;border-radius:10px;background:
+  repeating-linear-gradient(45deg,rgba(255,255,255,0.025) 0 10px,transparent 10px 20px),rgba(0,0,0,0.25);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;border:1px solid var(--line-soft)}
+.shot .ph .app{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.14em;color:var(--ink-3)}
+.shot .ph .todo{font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.1em;color:rgba(255,159,10,0.75);border:1px solid rgba(255,159,10,0.3);border-radius:5px;padding:2px 8px}
+.shot h3{font-family:var(--font-head);font-size:1.05rem;font-weight:600;margin:16px 0 6px}
+.shot p{color:var(--ink-2);font-size:0.88rem}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto}
+.plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative}
+.plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
+.plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
+.plan h3{font-family:var(--font-head);font-size:1.2rem;font-weight:600}
+.plan .pd{color:var(--ink-3);font-size:0.86rem;margin-top:4px}
+.plan .price{font-family:var(--font-mono);font-size:2.5rem;font-weight:600;letter-spacing:-0.03em;margin:18px 0 2px}
+.plan .price small{font-size:0.95rem;color:var(--ink-3);font-weight:400;letter-spacing:0}
+.plan .ps{font-size:0.8rem;color:var(--ink-3);margin-bottom:20px}
+.plan ul{list-style:none;margin-bottom:26px}
+.plan li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--ink-2);font-size:0.92rem}
+.plan li svg{flex:none;margin-top:5px;color:var(--amber)}
+.plan li.dim{color:var(--ink-3)}
+.plan li b{color:var(--ink);font-weight:600}
+.plan .btn{width:100%;justify-content:center}
+.plan .upgrade-note{margin-top:12px;font-size:0.76rem;color:var(--ink-3);text-align:center;line-height:1.6}
+.btn-inapp{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;border:1px solid rgba(255,159,10,0.5);background:var(--amber-soft);color:var(--amber);font-weight:600;font-size:1rem}
+
+/* faq */
+.faq-list{max-width:760px;margin:0 auto}
+.qa{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:12px;overflow:hidden}
+.qa button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;background:none;border:none;color:var(--ink);padding:20px 24px;font-size:1rem;font-weight:600;text-align:left;font-family:var(--font-head)}
+.qa button .pm{flex:none;font-family:var(--font-mono);color:var(--amber);font-size:1.1rem;transition:transform .25s}
+.qa[data-open="true"] button .pm{transform:rotate(45deg)}
+.qa .ans{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.qa .ans p{padding:0 24px 20px;color:var(--ink-2);font-size:0.93rem}
+.qa .ans .kbd{font-family:var(--font-mono);font-size:0.8em;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--ink)}
+
+/* final cta */
+.final{padding:110px 0 120px;text-align:center;position:relative;overflow:hidden}
+.final .ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:640px;height:640px;border:1px solid rgba(255,159,10,0.12);border-radius:50%;pointer-events:none}
+.final .ring::before{content:"";position:absolute;inset:70px;border:1px dashed rgba(255,159,10,0.14);border-radius:50%}
+.final h2{font-family:var(--font-head);font-size:clamp(1.9rem,4vw,2.8rem);letter-spacing:-0.02em;margin-bottom:14px}
+.final p{color:var(--ink-2);margin-bottom:34px}
+.final .hero-meta{margin-top:20px}
+
+/* footer */
+footer{border-top:1px solid var(--line-soft);padding:34px 0}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot .brand{font-size:0.92rem}
+.foot .brand img{width:22px;height:22px}
+.foot-links{display:flex;gap:22px;font-size:0.85rem;color:var(--ink-2)}
+.foot-links a:hover{color:var(--ink)}
+.foot .pn{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.14em;color:var(--ink-3)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.rv.in{opacity:1;transform:none}
+
+/* responsive */
+@media (max-width:1020px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .steps,.knobs3,.shots{grid-template-columns:1fr 1fr}
+}
+@media (max-width:680px){
+  section{padding:70px 0}
+  .hero{padding:120px 0 70px}
+  .steps,.cards4,.knobs3,.shots,.plans{grid-template-columns:1fr}
+  .knob-holder{width:250px;height:250px}
+  .stage{padding:26px 20px 24px}
+  .stage-tag span:last-child{display:none}
+  .foot{justify-content:center;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav" aria-label="主导航">
+    <a class="brand" href="#top">
+      <img src="assets/appicon.png" alt="PhantomKnob 应用图标">
+      PhantomKnob<span class="zh">幻影旋钮</span>
+    </a>
+    <div class="nav-links">
+      <a href="#principle"><span class="n">01</span>原理</a>
+      <a href="#knobs"><span class="n">02</span>旋钮</a>
+      <a href="#scenes"><span class="n">03</span>场景</a>
+      <a href="#pricing"><span class="n">04</span>定价</a>
+      <a href="#faq"><span class="n">05</span>FAQ</a>
+      <a class="nav-cta" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-label="产品介绍">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="badge"><span class="dot"></span>为 MAC 而生的全新交互 · PK-01</span>
+        <h1>你的触控板，<br>还藏着一个<span class="turn">旋钮</span>。</h1>
+        <p class="hero-sub">PhantomKnob 把创新手势科技带进 macOS：双指一转，精准调节一切。突破物理旋钮的限制，快慢由心。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
+            <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+            下载免费版
+          </a>
+          <a class="btn btn-ghost" href="#principle">看它如何工作 ↓</a>
+        </div>
+        <p class="hero-meta"><span><b>macOS 13+</b></span><span><b>Apple Silicon &amp; Intel</b></span><span>无需任何硬件</span></p>
+      </div>
+
+      <div class="stage" id="stage">
+        <span class="ck" aria-hidden="true"></span>
+        <div class="stage-tag mono"><span>KNOB / <b>ACTIVE</b></span><span>SOURCE · TRACKPAD</span></div>
+        <div class="knob-zone">
+          <div class="knob-holder" id="knobHolder" role="slider" aria-label="演示旋钮：按住拖动旋转" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65" tabindex="0">
+            <div class="knob-value"><div class="v" id="hv">65%</div><div class="t">饱和度</div></div>
+            <svg viewBox="0 0 220 220" aria-hidden="true">
+              <circle cx="110" cy="110" r="92" fill="rgba(255,255,255,0.028)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+              <path id="htrail" fill="none" stroke="#0a84ff" stroke-opacity="0.65" stroke-width="2.4" stroke-linecap="round" d=""/>
+              <g id="rotor"></g>
+              <circle cx="110" cy="110" r="19" fill="rgba(10,132,255,0.2)" stroke="#0a84ff" stroke-width="1.4"/>
+              <circle id="f1" cx="110" cy="110" r="9" fill="#f2c4cd" opacity="0"/>
+              <circle id="f2" cx="110" cy="110" r="9" fill="#f2c4cd" opacity="0"/>
+            </svg>
+          </div>
+        </div>
+        <div class="readouts mono">
+          <span class="chip">∠ <b id="rAngle">0.0°</b></span>
+          <span class="chip">SCALE <b>1.0x</b></span>
+          <span class="chip">MODE <b>KNOB</b></span>
+        </div>
+        <div class="demo-slider">
+          <div class="row"><span>饱和度 · DaVinci Resolve</span><span class="val" id="sv">65%</span></div>
+          <div class="track"><div class="fill" id="sfill"></div><div class="thumb" id="sthumb"></div></div>
+        </div>
+        <p class="hint">按住并<span class="arrows">↻ 拖动旋转</span> · 模拟双指手势</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 PRINCIPLE -->
+  <section id="principle">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">01 / PRINCIPLE</span><span class="rule"></span></div>
+        <h2 class="sec-title">三秒看懂的工作原理</h2>
+        <p class="sec-desc">没有驱动盘，没有学习成本。一个你早已会做的手势，只是第一次有了用处。</p>
+      </div>
+      <div class="steps">
+        <div class="step rv">
+          <div class="idx mono">STEP 1</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <rect x="20" y="52" width="110" height="7" rx="3.5" stroke="rgba(255,255,255,0.25)"/>
+              <rect x="20" y="52" width="58" height="7" rx="3.5" fill="#0a84ff" fill-opacity="0.7"/>
+              <circle cx="78" cy="55.5" r="7" fill="#fff"/>
+              <path d="M96 12l6 16-6-2.5-3 6-4-2 3-6-5-3z" fill="#ff9f0a"/>
+              <rect x="30" y="26" width="46" height="10" rx="5" stroke="rgba(255,255,255,0.3)"/>
+            </svg>
+          </div>
+          <h3>悬停</h3>
+          <p>光标指向任意滑块、色轮或时间轴。PhantomKnob 通过辅助功能 API 立刻识别它。</p>
+        </div>
+        <div class="step rv">
+          <div class="idx mono">STEP 2</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <rect x="35" y="10" width="80" height="64" rx="12" stroke="rgba(255,255,255,0.3)"/>
+              <circle cx="63" cy="34" r="5.5" fill="#f2c4cd"/>
+              <circle cx="88" cy="50" r="5.5" fill="#f2c4cd"/>
+              <path d="M52 30a26 26 0 0 1 24-12" stroke="#ff9f0a" stroke-width="2" stroke-linecap="round"/>
+              <path d="M73 14l6 4-7 3z" fill="#ff9f0a"/>
+              <path d="M99 55a26 26 0 0 1-24 11" stroke="#ff9f0a" stroke-width="2" stroke-linecap="round"/>
+              <path d="M78 70l-6-4 7-3z" fill="#ff9f0a"/>
+            </svg>
+          </div>
+          <h3>旋转</h3>
+          <p>双指在触控板上画圆。旋转角度一旦超过 5°，屏幕上浮现旋钮 HUD。</p>
+        </div>
+        <div class="step rv">
+          <div class="idx mono">STEP 3</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <rect x="20" y="52" width="110" height="7" rx="3.5" stroke="rgba(255,255,255,0.25)"/>
+              <rect x="20" y="52" width="86" height="7" rx="3.5" fill="#0a84ff" fill-opacity="0.7"/>
+              <circle cx="106" cy="55.5" r="7" fill="#fff"/>
+              <text x="20" y="30" font-family="IBM Plex Mono,monospace" font-size="17" font-weight="600" fill="#7abbff">86%</text>
+              <text x="103" y="30" font-family="IBM Plex Mono,monospace" font-size="11" fill="rgba(255,255,255,0.45)">+21%</text>
+            </svg>
+          </div>
+          <h3>调节</h3>
+          <p>旋钮随手指转动，数值实时变化。按住 <span class="kbd">1–9</span> 数字键，速度即刻倍增。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 WHY -->
+  <section id="why">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">02 / WHY</span><span class="rule"></span></div>
+        <h2 class="sec-title">为什么这是一件新事物</h2>
+        <p class="sec-desc">不是又一个手势增强工具。它把一种从未存在的输入维度，装进你的触控板。</p>
+      </div>
+      <div class="cards4">
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <h3>零硬件成本</h3>
+          <p>实体旋钮控制器动辄数百元，还要占掉一块桌面。你的触控板与生俱来，MacBook 带到哪，旋钮就转到哪。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg></div>
+          <h3>突破物理限制</h3>
+          <p>双环旋钮同时驱动两个参数；无级变速 CVK 沿半径分区调速。这些是物理旋钮永远做不到的事。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div>
+          <h3>系统级兼容</h3>
+          <p>基于 macOS 辅助功能 API，识别光标下的任意可调控件。不挑 App，无需逐个适配，内置预设开箱即用。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
+          <h3>原有手势零干扰</h3>
+          <p>滚动、捏合、轻扫一切照旧。仅当旋转角度超过阈值时才接管输入，绝不误触发。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 KNOB TYPES -->
+  <section id="knobs">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">03 / KNOBS</span><span class="rule"></span></div>
+        <h2 class="sec-title">三种旋钮，各司其职</h2>
+        <p class="sec-desc">旋钮的形态决定手感。从单参数精调，到双参数同控，再到无级变速。</p>
+      </div>
+      <div class="knobs3">
+        <div class="kcard rv">
+          <div class="fig"><svg viewBox="0 0 200 200" aria-hidden="true" data-knob="single"></svg></div>
+          <h3>单旋钮</h3>
+          <div class="en mono">FIXED</div>
+          <p>一个旋钮，锁定一个参数。为精确、专注的单目标调节而生。</p>
+          <div class="spec">映射 <b>1 → 1</b> · 7 种输出方式<br>AX 写回 / 滚轮 / 方向键 / 手势</div>
+        </div>
+        <div class="kcard rv">
+          <div class="fig"><svg viewBox="0 0 200 200" aria-hidden="true" data-knob="double"></svg></div>
+          <h3>双环旋钮</h3>
+          <div class="en mono">DOUBLE</div>
+          <p>外环与内环各自独立，两个参数同屏同调，一次手势两倍效率。</p>
+          <div class="spec">映射 <b>2 → 2</b> · 内外环独立配色<br>双指半径决定驱动哪一环</div>
+        </div>
+        <div class="kcard rv">
+          <div class="fig"><svg viewBox="0 0 200 200" aria-hidden="true" data-knob="cvk"></svg></div>
+          <h3>无级变速</h3>
+          <div class="en mono">CVK</div>
+          <p>沿半径划分速度区间，指尖落点就是挡位，粗调与微调无缝切换。</p>
+          <div class="spec">倍率 <b>0.1x – 10x</b> 连续可变<br>底部实时显示当前倍率</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 SCENES -->
+  <section id="scenes">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">04 / SCENES</span><span class="rule"></span></div>
+        <h2 class="sec-title">为创作者的每一个转轮而生</h2>
+        <p class="sec-desc">内置规则库预适配主流创作软件。打开 App，直接旋转，零配置。</p>
+      </div>
+      <div class="shots">
+        <div class="shot rv">
+          <div class="ph"><span class="app">DAVINCI RESOLVE</span><span class="todo mono">真实截图 · 待补</span></div>
+          <h3>调色 · 色轮与色相</h3>
+          <p>色轮、饱和度、色温毫秒级响应，调色节奏不被鼠标拖断。</p>
+        </div>
+        <div class="shot rv">
+          <div class="ph"><span class="app">FINAL CUT PRO</span><span class="todo mono">真实截图 · 待补</span></div>
+          <h3>剪辑 · 时间轴</h3>
+          <p>快扫整段时间线，再逐帧精修入点——一手掌握两种速度。</p>
+        </div>
+        <div class="shot rv">
+          <div class="ph"><span class="app">LOGIC PRO</span><span class="todo mono">真实截图 · 待补</span></div>
+          <h3>混音 · 推子与旋钮</h3>
+          <p>增益、声像、 sends 全部交给指尖，混音手感回到硬件时代。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 PRICING -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">05 / PRICING</span><span class="rule"></span></div>
+        <h2 class="sec-title">免费开始，需要时升级</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">免费版解锁全部功能。Pro 只是去掉摩擦——立即激活、无限时长、完整自定义。</p>
+      </div>
+      <div class="plans">
+        <div class="plan rv">
+          <h3>免费版</h3>
+          <p class="pd">建立手感，体验全部核心能力。</p>
+          <div class="price">$0</div>
+          <div class="ps">永久免费</div>
+          <ul>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全部旋钮样式与规则</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>快捷键与速度微调</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>单色灰色 HUD</li>
+            <li class="dim">15 分钟会话（可随时重启）</li>
+            <li class="dim">2 秒激活延迟</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" style="width:100%;justify-content:center">下载免费版</a>
+        </div>
+        <div class="plan pro rv">
+          <span class="tag">RECOMMENDED</span>
+          <h3>Pro</h3>
+          <p class="pd">去掉所有限制，完整手感。</p>
+          <div class="price">$16.99 <small>/ 一次性买断</small></div>
+          <div class="ps">含后续更新 · 无订阅</div>
+          <ul>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>即时激活</b>，0 延迟</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>无限会话时长</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>HUD 颜色与尺寸自定义</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>自定义规则 iCloud 同步</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>优先邮件支持</li>
+          </ul>
+          <span class="btn-inapp" id="upgradeBtn" role="button" tabindex="0">在 App 内升级 →</span>
+          <p class="upgrade-note">打开 PhantomKnob 设置即可完成升级，无需重新下载。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">06 / FAQ</span><span class="rule"></span></div>
+        <h2 class="sec-title">常见问题</h2>
+      </div>
+      <div class="faq-list">
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">辅助功能权限安全吗？<span class="pm">+</span></button>
+          <div class="ans"><p>权限仅用于检测光标下的控件并发送滚轮 / 按键事件。所有手势数据都在本机处理，绝不联网传输。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">15 分钟免费会话结束后会怎样？<span class="pm">+</span></button>
+          <div class="ans"><p>控制模式自动关闭，没有惩罚也没有冷却。通过菜单栏或 <span class="kbd">⌘⌥K</span> 即刻重启会话，只引入短暂的激活延迟。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">我的触控板兼容吗？<span class="pm">+</span></button>
+          <div class="ans"><p>所有支持多点触控的 Mac 触控板均可使用，包括每台 MacBook 的内置触控板与 Apple Magic Trackpad。App 内置兼容性检测，下载前即可验证。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">能为没有预设的 App 建规则吗？<span class="pm">+</span></button>
+          <div class="ans"><p>可以。悬停任意滑块，按 <span class="kbd">C</span> 键选择映射方式即可。配置一次永久生效，还能导出 .pkp 旋钮包分享给他人。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final">
+    <div class="ring" aria-hidden="true"></div>
+    <div class="wrap rv">
+      <h2>现在，转动你的触控板</h2>
+      <p>免费下载 PhantomKnob，几秒钟验证兼容性，立即开始旋转。</p>
+      <a class="btn btn-primary" style="height:58px;padding:0 34px;font-size:1.05rem" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+        下载免费版
+      </a>
+      <p class="hero-meta">无需注册 · 免费版内可随时升级 Pro</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#top"><img src="assets/appicon.png" alt="">PhantomKnob<span class="zh">幻影旋钮</span></a>
+    <div class="foot-links">
+      <a href="../privacy.html">隐私政策</a>
+      <a href="../terms.html">服务条款</a>
+    </div>
+    <span class="pn">PK-LP-01 · REV A · © 2026 BEN WU</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg";
+  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function el(name,attrs,parent){
+    var n=document.createElementNS(NS,name);
+    for(var k in attrs)n.setAttribute(k,attrs[k]);
+    if(parent)parent.appendChild(n);
+    return n;
+  }
+
+  function ticks(g,cx,cy,r,count,baseLen,majorEvery,majorMul,color,opacityBase,rotDeg){
+    rotDeg=rotDeg||0;
+    for(var i=0;i<count;i++){
+      var a=(i*2*Math.PI/count)+rotDeg*Math.PI/180;
+      var major=(i%majorEvery===0);
+      var len=major?baseLen*majorMul:baseLen;
+      var x1=cx+Math.cos(a)*(r-len), y1=cy+Math.sin(a)*(r-len);
+      var x2=cx+Math.cos(a)*r, y2=cy+Math.sin(a)*r;
+      var dist=Math.min(i,count-i)/(count/2);
+      var op=opacityBase*(1-0.6*dist);
+      el("line",{x1:x1.toFixed(2),y1:y1.toFixed(2),x2:x2.toFixed(2),y2:y2.toFixed(2),
+        stroke:color,"stroke-opacity":op.toFixed(3),"stroke-width":major?2.2:1.3},g);
+    }
+  }
+
+  function needle(g,cx,cy,innerR,outerR,color,width){
+    el("line",{x1:cx+innerR,y1:cy,x2:cx+outerR,y2:cy,stroke:color,"stroke-width":width,"stroke-linecap":"round"},g);
+  }
+
+  function arcPath(cx,cy,r,a0,a1){
+    var rad0=a0*Math.PI/180, rad1=a1*Math.PI/180;
+    var x0=cx+r*Math.cos(rad0), y0=cy+r*Math.sin(rad0);
+    var x1=cx+r*Math.cos(rad1), y1=cy+r*Math.sin(rad1);
+    var large=Math.abs(a1-a0)>180?1:0;
+    var sweep=a1>a0?1:0;
+    return "M"+x0.toFixed(2)+" "+y0.toFixed(2)+" A"+r+" "+r+" 0 "+large+" "+sweep+" "+x1.toFixed(2)+" "+y1.toFixed(2);
+  }
+
+  function buildKnob(svg,type){
+    var cx=110,cy=110,r=86;
+    var blue="#0a84ff",green="#30d158";
+    if(type==="single"){
+      var g=el("g",{},svg);
+      ticks(g,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      var rot=el("g",{transform:"rotate(-38 "+cx+" "+cy+")"},svg);
+      needle(rot,cx,cy,8,r*0.62-4,blue,3);
+      el("circle",{cx:cx,cy:cy,r:19,fill:"rgba(10,132,255,0.2)",stroke:blue,"stroke-width":1.4},svg);
+      var t=el("text",{x:cx,y:cy+24,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":9,fill:"rgba(255,255,255,0.4)"},svg);
+      t.textContent="1.0x";
+    }
+    if(type==="double"){
+      var go=el("g",{},svg);
+      ticks(go,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      var roto=el("g",{transform:"rotate(24 "+cx+" "+cy+")"},svg);
+      needle(roto,cx-r*0.66+6,cy,12,r*0.66-6,blue,3);
+      var ri=r*0.58;
+      var gi=el("g",{},svg);
+      ticks(gi,cx,cy,ri,36,ri*0.2,6,1.5,green,0.5);
+      var roti=el("g",{transform:"rotate(-64 "+cx+" "+cy+")"},svg);
+      needle(roti,cx,cy,8,ri-4,green,2.6);
+      el("circle",{cx:cx,cy:cy,r:14,fill:"rgba(48,209,88,0.16)",stroke:green,"stroke-width":1.2},svg);
+      var lo=el("text",{x:cx+r*0.86,y:cy+30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(122,187,255,0.75)"},svg);
+      lo.textContent="HUE";
+      var li=el("text",{x:cx,y:cy+ri+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(48,209,88,0.75)"},svg);
+      li.textContent="SAT";
+    }
+    if(type==="cvk"){
+      var gc=el("g",{},svg);
+      ticks(gc,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      el("circle",{cx:cx,cy:cy,r:r*0.52,fill:"rgba(48,209,88,0.07)",stroke:green,"stroke-opacity":0.35,"stroke-width":1},svg);
+      el("path",{d:arcPath(cx,cy,r*0.52,-210,-150),stroke:green,"stroke-opacity":0.5,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
+      el("path",{d:arcPath(cx,cy,r*0.36,-200,-160),stroke:green,"stroke-opacity":0.35,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
+      var rotc=el("g",{transform:"rotate(-12 "+cx+" "+cy+")"},svg);
+      needle(rotc,cx,cy,8,r*0.62-4,blue,3);
+      el("circle",{cx:cx,cy:cy,r:16,fill:"rgba(10,132,255,0.18)",stroke:blue,"stroke-width":1.3},svg);
+      var z1=el("text",{x:cx-r*0.42,y:cy-r*0.42,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
+      z1.textContent="10x";
+      var z2=el("text",{x:cx+r*0.30,y:cy+r*0.30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
+      z2.textContent="0.1x";
+      var sc=el("text",{x:cx,y:cy+r*0.52+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":10,"font-weight":"600",fill:"rgba(48,209,88,0.85)"},svg);
+      sc.textContent="2.5x";
+    }
+  }
+
+  document.querySelectorAll('svg[data-knob]').forEach(function(s){buildKnob(s,s.getAttribute("data-knob"));});
+
+  var rotor=document.getElementById("rotor");
+  var trail=document.getElementById("htrail");
+  var hv=document.getElementById("hv");
+  var sv=document.getElementById("sv");
+  var sfill=document.getElementById("sfill");
+  var sthumb=document.getElementById("sthumb");
+  var rAngle=document.getElementById("rAngle");
+  var holder=document.getElementById("knobHolder");
+  var f1=document.getElementById("f1");
+  var f2=document.getElementById("f2");
+
+  ticks(rotor,110,110,86,60,12,5,1.55,"#0a84ff",0.55);
+  needle(rotor,110,110,8,50,"#0a84ff",3);
+
+  var CX=110,CY=110,TR=53;
+  var angle=0,value=65,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
+
+  function placeFingers(a){
+    var rad=a*Math.PI/180;
+    var rr=86;
+    f1.setAttribute("cx",(CX+rr*Math.cos(rad-0.42)).toFixed(2));
+    f1.setAttribute("cy",(CY+rr*Math.sin(rad-0.42)).toFixed(2));
+    f2.setAttribute("cx",(CX+rr*Math.cos(rad+0.42)).toFixed(2));
+    f2.setAttribute("cy",(CY+rr*Math.sin(rad+0.42)).toFixed(2));
+  }
+
+  function render(){
+    rotor.setAttribute("transform","rotate("+(-angle).toFixed(2)+" "+CX+" "+CY+")");
+    if(startAngle!==null){
+      var d=angle-startAngle;
+      if(d>360){startAngle=angle-360;d=360;}
+      if(d<-360){startAngle=angle+360;d=-360;}
+      if(Math.abs(d)>10){
+        var s=d>0?startAngle+10:startAngle-10;
+        trail.setAttribute("d",arcPath(CX,CY,TR,s,angle));
+      }else{
+        trail.setAttribute("d","");
+      }
+    }else{
+      trail.setAttribute("d","");
+    }
+    var v=Math.round(value);
+    hv.textContent=v+"%";
+    sv.textContent=v+"%";
+    rAngle.textContent=(((angle%360)+360)%360).toFixed(1)+"\u00B0";
+    sfill.style.width=v+"%";
+    sthumb.style.left=v+"%";
+    holder.setAttribute("aria-valuenow",v);
+    placeFingers(-angle);
+  }
+
+  function idleLoop(ts){
+    if(!idle)return;
+    idleT=ts/1000;
+    value=62.5+17.5*Math.sin(idleT*0.55);
+    angle=value*4;
+    render();
+    raf=requestAnimationFrame(idleLoop);
+  }
+
+  function pointerAngle(e){
+    var rect=holder.getBoundingClientRect();
+    var scale=220/rect.width;
+    var x=(e.clientX-rect.left)*scale-CX;
+    var y=(e.clientY-rect.top)*scale-CY;
+    return Math.atan2(y,x)*180/Math.PI;
+  }
+
+  holder.addEventListener("pointerdown",function(e){
+    if(idle){idle=false;if(raf)cancelAnimationFrame(raf);}
+    dragging=true;
+    holder.setPointerCapture(e.pointerId);
+    lastA=pointerAngle(e);
+    startAngle=angle;
+    f1.setAttribute("opacity","0.95");
+    f2.setAttribute("opacity","0.95");
+    e.preventDefault();
+  });
+  holder.addEventListener("pointermove",function(e){
+    if(!dragging)return;
+    var a=pointerAngle(e);
+    var d=a-lastA;
+    if(d>180)d-=360;
+    if(d<-180)d+=360;
+    lastA=a;
+    angle+=d;
+    value=Math.max(0,Math.min(100,value+d*0.22));
+    render();
+  });
+  function endDrag(){
+    if(!dragging)return;
+    dragging=false;
+    f1.setAttribute("opacity","0");
+    f2.setAttribute("opacity","0");
+  }
+  holder.addEventListener("pointerup",endDrag);
+  holder.addEventListener("pointercancel",endDrag);
+  holder.addEventListener("keydown",function(e){
+    if(idle){idle=false;if(raf)cancelAnimationFrame(raf);startAngle=angle;}
+    if(e.key==="ArrowRight"||e.key==="ArrowUp"){value=Math.min(100,value+2);angle+=8;render();e.preventDefault();}
+    if(e.key==="ArrowLeft"||e.key==="ArrowDown"){value=Math.max(0,value-2);angle-=8;render();e.preventDefault();}
+  });
+
+  if(reduced){
+    idle=false;
+    value=65;angle=65*4;startAngle=angle-40;
+    render();
+  }else{
+    raf=requestAnimationFrame(idleLoop);
+  }
+
+  var upgradeBtn=document.getElementById("upgradeBtn");
+  function upgradeFeedback(){
+    var old=upgradeBtn.textContent;
+    upgradeBtn.textContent="已打开 App？在设置 → 许可证中升级";
+    setTimeout(function(){upgradeBtn.textContent=old;},2400);
+  }
+  upgradeBtn.addEventListener("click",upgradeFeedback);
+  upgradeBtn.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();upgradeFeedback();}});
+
+  document.querySelectorAll(".qa").forEach(function(qa){
+    var btn=qa.querySelector("button");
+    var ans=qa.querySelector(".ans");
+    btn.addEventListener("click",function(){
+      var open=qa.getAttribute("data-open")==="true";
+      document.querySelectorAll(".qa").forEach(function(o){
+        o.setAttribute("data-open","false");
+        o.querySelector("button").setAttribute("aria-expanded","false");
+        o.querySelector(".ans").style.maxHeight="0px";
+      });
+      if(!open){
+        qa.setAttribute("data-open","true");
+        btn.setAttribute("aria-expanded","true");
+        ans.style.maxHeight=ans.scrollHeight+"px";
+      }
+    });
+  });
+
+  if("IntersectionObserver" in window && !reduced){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target);}
+      });
+    },{threshold:0.12});
+    document.querySelectorAll(".rv").forEach(function(n){io.observe(n);});
+  }else{
+    document.querySelectorAll(".rv").forEach(function(n){n.classList.add("in");});
+  }
+})();
+</script>
+</body>
+</html>
