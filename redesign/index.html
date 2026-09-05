@@ -274,40 +274,33 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             <div class="knob-value"><div class="v" id="hv">60%</div><div class="t">饱和度</div></div>
             <svg viewBox="0 0 220 220" aria-hidden="true">
               <defs>
-                <!-- dotGlow is shared across inline SVGs: hero dot (#rotor) and 03 single card dot -->
+                <!-- dotGlow: used by the 03 single card dot -->
                 <filter id="dotGlow" x="-120%" y="-120%" width="340%" height="340%">
                   <feDropShadow dx="0" dy="0" stdDeviation="2.2" flood-color="#0a84ff" flood-opacity="0.55"/>
                 </filter>
-                <filter id="softBlur" x="-80%" y="-80%" width="260%" height="260%">
-                  <feGaussianBlur stdDeviation="2.5"/>
+                <!-- cyan glow for the hero capsule indicator (logo language) -->
+                <!-- fixed userSpaceOnUse region: a <line> has a zero-height bbox, percentage regions collapse and erase the element -->
+                <filter id="capsuleGlow" filterUnits="userSpaceOnUse" x="104" y="86" width="84" height="48">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#67d5fa" flood-opacity="0.7"/>
                 </filter>
-                <linearGradient id="wristFade" gradientUnits="userSpaceOnUse" x1="0" y1="2" x2="0" y2="24">
-                  <stop offset="0" stop-color="#f3d3bd" stop-opacity="0"/>
-                  <stop offset="1" stop-color="#f3d3bd" stop-opacity="1"/>
+                <!-- soft shadow under the touch pads -->
+                <filter id="padShadow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#000000" flood-opacity="0.35"/>
+                </filter>
+                <!-- logo ring gradient: light azure -> indigo; userSpaceOnUse so the span (32->188) covers the ring band in user coords -->
+                <linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="32" y1="110" x2="188" y2="110">
+                  <stop offset="0" stop-color="#4da3f7"/>
+                  <stop offset="0.55" stop-color="#3b7bf0"/>
+                  <stop offset="1" stop-color="#4f46e5"/>
+                </linearGradient>
+                <!-- touch pad gradient: cream pink, lighter top -->
+                <linearGradient id="padGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f8dfe3"/>
+                  <stop offset="1" stop-color="#eab7c3"/>
                 </linearGradient>
               </defs>
-              <circle cx="110" cy="110" r="92" fill="rgba(255,255,255,0.028)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
-              <path id="htrail" fill="none" stroke="#0a84ff" stroke-opacity="0.65" stroke-width="2.4" stroke-linecap="round" d=""/>
+              <path id="htrail" fill="none" stroke="#5ac8fa" stroke-opacity="0.5" stroke-width="2.4" stroke-linecap="round" d=""/>
               <g id="rotor"></g>
-              <g id="hand" transform="rotate(0 110 110)">
-                <!-- phantom hand, authored at rest pose (12/6 o'clock grip); JS rotates it with the knob -->
-                <!-- contact shadow under middle fingertip -->
-                <ellipse cx="110" cy="192" rx="11" ry="4.5" fill="rgba(0,0,0,0.30)" filter="url(#softBlur)"/>
-                <!-- middle finger crossing the knob face (semi-transparent so ticks ghost through) -->
-                <path d="M104 40 C104 62 105 100 105 150 C105 172 105 184 106 190 C106.5 194.5 108 197.5 110 197.5 C112 197.5 113.5 194.5 114 190 C115 184 115 172 115 150 C115 100 116 62 116 40 Z" fill="#f3d3bd" fill-opacity="0.88"/>
-                <!-- hand back + wrist, gradient fade towards top -->
-                <path d="M90 2 C88 14 84 24 80 34 C78 42 80 50 88 54 C96 58 124 58 132 54 C140 50 142 42 140 34 C136 24 132 14 130 2 Z" fill="url(#wristFade)" stroke="url(#wristFade)" stroke-width="1.2"/>
-                <!-- hand back shading -->
-                <path d="M84 36 C82 44 85 51 92 53 C88 48 87 42 87 36 Z" fill="#e3b89c" opacity="0.85"/>
-                <!-- thumb pressing the top rim -->
-                <path d="M86 32 C88 24 95 17 103 16 C109 15.5 112 19 112 23 C112 27.5 108 30.5 102 31.5 C96 32.5 91 33.5 86 34 Z" fill="#f3d3bd" stroke="#d9a988" stroke-width="1.2"/>
-                <!-- fingertip pads (page pink accent) -->
-                <circle cx="106" cy="22" r="6" fill="#f2c4cd"/>
-                <circle cx="110" cy="196" r="6" fill="#f2c4cd"/>
-                <!-- press halos -->
-                <circle cx="106" cy="22" r="10.5" fill="none" stroke="rgba(242,196,205,0.45)" stroke-width="1.5"/>
-                <circle cx="110" cy="196" r="10.5" fill="none" stroke="rgba(242,196,205,0.45)" stroke-width="1.5"/>
-              </g>
             </svg>
           </div>
         </div>
@@ -665,7 +658,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   document.querySelectorAll('svg[data-knob]').forEach(function(s){buildKnob(s,s.getAttribute("data-knob"));});
 
   var rotor=document.getElementById("rotor");
-  var hand=document.getElementById("hand");
   var trail=document.getElementById("htrail");
   var hv=document.getElementById("hv");
   var sv=document.getElementById("sv");
@@ -674,16 +666,24 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   var rAngle=document.getElementById("rAngle");
   var holder=document.getElementById("knobHolder");
 
-  var CX=110,CY=110,TR=53,REST=60*4; // idle center value=60 -> angle=240; hand authored at 12/6 rest pose
+  var CX=110,CY=110,TR=53;
 
-  ticks(rotor,110,110,86,60,12,5,1.55,"#0a84ff",0.55);
-  el("circle",{cx:CX+TR,cy:CY,r:8,fill:"#0a84ff",filter:"url(#dotGlow)"},rotor);
+  // hero knob = living logo: gradient ring body, two touch pads, radial cyan capsule indicator
+  el("circle",{cx:CX,cy:CY,r:78,fill:"none",stroke:"url(#ringGrad)","stroke-width":27},rotor);
+  function pad(px,py){
+    // concentric touch ripples, then the pad itself
+    el("circle",{cx:px,cy:py,r:22,fill:"none",stroke:"rgba(255,255,255,0.10)","stroke-width":1},rotor);
+    el("circle",{cx:px,cy:py,r:28,fill:"none",stroke:"rgba(255,255,255,0.05)","stroke-width":1},rotor);
+    el("circle",{cx:px,cy:py,r:16,fill:"url(#padGrad)",filter:"url(#padShadow)"},rotor);
+  }
+  pad(CX,CY-78);
+  pad(CX,CY+78);
+  el("line",{x1:CX+16,y1:CY,x2:CX+TR,y2:CY,stroke:"#7ddcfc","stroke-width":11,"stroke-linecap":"round",filter:"url(#capsuleGlow)"},rotor);
 
   var angle=0,value=60,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
 
   function render(){
     rotor.setAttribute("transform","rotate("+(-angle).toFixed(2)+" "+CX+" "+CY+")");
-    hand.setAttribute("transform","rotate("+(-(angle-REST)).toFixed(2)+" "+CX+" "+CY+")");
     if(startAngle!==null){
       var d=angle-startAngle;
       if(d>360){startAngle=angle-360;d=360;}
