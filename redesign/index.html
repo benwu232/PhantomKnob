@@ -82,7 +82,7 @@ h1 .turn{display:inline-block;color:var(--amber);position:relative}
 .hero-meta b{color:var(--ink-2);font-weight:500}
 
 /* ---------- instrument stage ---------- */
-.stage{position:relative;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,0.028),rgba(255,255,255,0.008));padding:34px 30px 28px;box-shadow:0 24px 70px rgba(0,0,0,0.45)}
+.stage{position:relative;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,0.028),rgba(255,255,255,0.008));padding:24px 26px 16px;aspect-ratio:1.43/1;box-shadow:0 24px 70px rgba(0,0,0,0.45)}
 .stage::before,.stage::after,.stage .ck::before,.stage .ck::after{content:"";position:absolute;width:14px;height:14px;border-color:rgba(255,159,10,0.55);border-style:solid;border-width:0}
 .stage::before{top:-1px;left:-1px;border-top-width:1.5px;border-left-width:1.5px}
 .stage::after{top:-1px;right:-1px;border-top-width:1.5px;border-right-width:1.5px}
@@ -91,22 +91,21 @@ h1 .turn{display:inline-block;color:var(--amber);position:relative}
 .stage-tag{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.14em;color:var(--ink-3);margin-bottom:8px}
 .stage-tag b{color:var(--amber);font-weight:500}
 .knob-zone{display:flex;justify-content:center;padding:6px 0 2px;touch-action:none;user-select:none;-webkit-user-select:none}
-.knob-holder{position:relative;width:300px;height:300px;cursor:grab}
+.knob-holder{position:relative;width:min(300px,42%);aspect-ratio:1/1;margin:0 auto;cursor:grab}
 .knob-holder:active{cursor:grabbing}
 .knob-holder svg{width:100%;height:100%;display:block}
 .knob-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-.knob-value .v{font-family:var(--font-mono);font-weight:600;font-size:2rem;color:#7abbff;letter-spacing:-0.03em;line-height:1.1}
-.knob-value .t{font-size:0.72rem;color:rgba(255,255,255,0.55);letter-spacing:0.2em;margin-top:2px}
-.readouts{display:flex;justify-content:center;gap:8px;margin-top:18px;flex-wrap:wrap}
+.knob-value .v{font-family:var(--font-mono);font-weight:600;font-size:1.6rem;color:#7abbff;letter-spacing:-0.03em;line-height:1.1;text-shadow:0 1px 10px rgba(0,0,0,0.85),0 0 4px rgba(0,0,0,0.7)}
+.readouts{display:flex;justify-content:center;gap:8px;margin-top:10px;flex-wrap:wrap}
 .chip{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.06em;color:var(--ink-2);border:1px solid var(--line);border-radius:7px;padding:5px 10px;background:rgba(0,0,0,0.25)}
 .chip b{color:var(--amber);font-weight:500}
-.demo-slider{margin-top:20px}
-.demo-slider .row{display:flex;justify-content:space-between;align-items:baseline;font-size:0.8rem;color:var(--ink-2);margin-bottom:9px}
+.demo-slider{margin-top:12px}
+.demo-slider .row{display:flex;justify-content:flex-end;align-items:baseline;font-size:0.8rem;color:var(--ink-2);margin-bottom:6px}
 .demo-slider .row .val{font-family:var(--font-mono);color:#7abbff;font-size:0.82rem}
 .track{position:relative;height:8px;border-radius:99px;background:rgba(255,255,255,0.07);overflow:visible}
 .track .fill{position:absolute;inset:0 auto 0 0;width:60%;border-radius:99px;background:linear-gradient(90deg,rgba(10,132,255,0.55),var(--pk-blue))}
 .track .thumb{position:absolute;top:50%;left:60%;width:18px;height:18px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,0.5),0 0 0 4px rgba(10,132,255,0.18)}
-.hint{text-align:center;margin-top:18px;font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.1em;color:var(--ink-3)}
+.hint{text-align:center;margin-top:10px;font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.1em;color:var(--ink-3)}
 .hint .arrows{color:var(--amber)}
 
 /* ---------- sections ---------- */
@@ -212,13 +211,17 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   .hero-grid{grid-template-columns:1fr;gap:44px}
   .steps,.knobs3,.shots{grid-template-columns:1fr 1fr}
 }
+@media (max-width:1000px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+}
 @media (max-width:680px){
   section{padding:70px 0}
   .hero{padding:120px 0 70px}
   .steps,.cards4,.knobs3,.shots,.plans{grid-template-columns:1fr}
   .knob-holder{width:250px;height:250px}
-  .stage{padding:26px 20px 24px}
+  .stage{aspect-ratio:auto;padding:26px 20px 24px}
   .stage-tag span:last-child{display:none}
+  .knob-value .v{font-size:2rem}
   .foot{justify-content:center;text-align:center}
 }
 @media (prefers-reduced-motion:reduce){
@@ -271,7 +274,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         <div class="stage-tag mono"><span>KNOB / <b>ACTIVE</b></span><span>SOURCE · TRACKPAD</span></div>
         <div class="knob-zone">
           <div class="knob-holder" id="knobHolder" role="slider" aria-label="演示旋钮：按住拖动旋转" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60" tabindex="0">
-            <div class="knob-value"><div class="v" id="hv">60%</div><div class="t">饱和度</div></div>
+            <div class="knob-value"><div class="v" id="hv">60%</div></div>
             <svg viewBox="0 0 220 220" aria-hidden="true">
               <defs>
                 <!-- dotGlow: used by the 03 single card dot -->
@@ -279,8 +282,9 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
                   <feDropShadow dx="0" dy="0" stdDeviation="2.2" flood-color="#0a84ff" flood-opacity="0.55"/>
                 </filter>
                 <!-- cyan glow for the hero capsule indicator (logo language) -->
-                <!-- fixed userSpaceOnUse region: a <line> has a zero-height bbox, percentage regions collapse and erase the element -->
-                <filter id="capsuleGlow" filterUnits="userSpaceOnUse" x="104" y="86" width="84" height="48">
+                <!-- fixed userSpaceOnUse region: a <line> has a zero-height bbox, percentage regions collapse and erase the element;
+                     region covers the capsule authored at 225 deg (ends ~(72.5,98.7)) plus stroke and glow -->
+                <filter id="capsuleGlow" filterUnits="userSpaceOnUse" x="52" y="52" width="68" height="68">
                   <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#67d5fa" flood-opacity="0.7"/>
                 </filter>
                 <!-- soft shadow under the touch pads -->
@@ -310,7 +314,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
           <span class="chip">MODE <b>KNOB</b></span>
         </div>
         <div class="demo-slider">
-          <div class="row"><span>饱和度 · DaVinci Resolve</span><span class="val" id="sv">60%</span></div>
+          <div class="row"><span class="val" id="sv">60%</span></div>
           <div class="track"><div class="fill" id="sfill"></div><div class="thumb" id="sthumb"></div></div>
         </div>
         <p class="hint">按住并<span class="arrows">↻ 拖动旋转</span> · 模拟双指手势</p>
@@ -667,18 +671,23 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   var holder=document.getElementById("knobHolder");
 
   var CX=110,CY=110,TR=53;
+  var POSE=240; // static offset so the rest pose (value 60 -> angle 240) reproduces the logo freeze-frame
 
-  // hero knob = living logo: gradient ring body, two touch pads, radial cyan capsule indicator
-  el("circle",{cx:CX,cy:CY,r:78,fill:"none",stroke:"url(#ringGrad)","stroke-width":27},rotor);
-  function pad(px,py){
+  // hero knob = living logo: gradient ring body, two touch pads, radial cyan capsule indicator;
+  // authored in the logo pose (capsule upper-left at 225 deg, pads at 1:30/7:30), offset by POSE inside the rotor
+  var pose=el("g",{transform:"rotate("+POSE+" "+CX+" "+CY+")"},rotor);
+  el("circle",{cx:CX,cy:CY,r:78,fill:"none",stroke:"url(#ringGrad)","stroke-width":21},pose);
+  function pad(deg){
     // concentric touch ripples, then the pad itself
-    el("circle",{cx:px,cy:py,r:22,fill:"none",stroke:"rgba(255,255,255,0.10)","stroke-width":1},rotor);
-    el("circle",{cx:px,cy:py,r:28,fill:"none",stroke:"rgba(255,255,255,0.05)","stroke-width":1},rotor);
-    el("circle",{cx:px,cy:py,r:16,fill:"url(#padGrad)",filter:"url(#padShadow)"},rotor);
+    var a=deg*Math.PI/180,px=(CX+78*Math.cos(a)).toFixed(1),py=(CY+78*Math.sin(a)).toFixed(1);
+    el("circle",{cx:px,cy:py,r:22,fill:"none",stroke:"rgba(255,255,255,0.10)","stroke-width":1},pose);
+    el("circle",{cx:px,cy:py,r:28,fill:"none",stroke:"rgba(255,255,255,0.05)","stroke-width":1},pose);
+    el("circle",{cx:px,cy:py,r:16,fill:"url(#padGrad)",filter:"url(#padShadow)"},pose);
   }
-  pad(CX,CY-78);
-  pad(CX,CY+78);
-  el("line",{x1:CX+16,y1:CY,x2:CX+TR,y2:CY,stroke:"#7ddcfc","stroke-width":11,"stroke-linecap":"round",filter:"url(#capsuleGlow)"},rotor);
+  pad(315);
+  pad(135);
+  var ca=225*Math.PI/180,cc=Math.cos(ca),ss=Math.sin(ca);
+  el("line",{x1:(CX+16*cc).toFixed(1),y1:(CY+16*ss).toFixed(1),x2:(CX+TR*cc).toFixed(1),y2:(CY+TR*ss).toFixed(1),stroke:"#7ddcfc","stroke-width":11,"stroke-linecap":"round",filter:"url(#capsuleGlow)"},pose);
 
   var angle=0,value=60,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
 
