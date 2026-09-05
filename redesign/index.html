@@ -89,14 +89,10 @@ h1 .turn{display:inline-block;color:var(--amber);position:relative}
 .stage .ck::before{bottom:-1px;left:-1px;border-bottom-width:1.5px;border-left-width:1.5px}
 .stage .ck::after{bottom:-1px;right:-1px;border-bottom-width:1.5px;border-right-width:1.5px}
 .knob-zone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;touch-action:none;user-select:none;-webkit-user-select:none}
-.knob-holder{position:relative;width:min(300px,54%);aspect-ratio:1/1;cursor:grab}
+.knob-holder{position:relative;width:min(300px,60%);aspect-ratio:1/1;cursor:grab}
 .knob-holder:active{cursor:grabbing}
 .knob-holder svg{width:100%;height:100%;display:block}
 .knob-readout{font-family:var(--font-mono);font-weight:600;font-size:0.82rem;color:#7abbff;letter-spacing:-0.02em;opacity:0.95}
-.demo-slider{width:100%}
-.track{position:relative;height:8px;border-radius:99px;background:rgba(255,255,255,0.07);overflow:visible}
-.track .fill{position:absolute;inset:0 auto 0 0;width:60%;border-radius:99px;background:linear-gradient(90deg,rgba(10,132,255,0.55),var(--pk-blue))}
-.track .thumb{position:absolute;top:50%;left:60%;width:18px;height:18px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,0.5),0 0 0 4px rgba(10,132,255,0.18)}
 
 /* ---------- sections ---------- */
 section{padding:96px 0}
@@ -294,9 +290,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             </svg>
           </div>
           <div class="knob-readout mono" id="hv">60%</div>
-        </div>
-        <div class="demo-slider">
-          <div class="track"><div class="fill" id="sfill"></div><div class="thumb" id="sthumb"></div></div>
         </div>
       </div>
     </div>
@@ -644,8 +637,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   var rotor=document.getElementById("rotor");
   var trail=document.getElementById("htrail");
   var hv=document.getElementById("hv");
-  var sfill=document.getElementById("sfill");
-  var sthumb=document.getElementById("sthumb");
   var holder=document.getElementById("knobHolder");
 
   var CX=110,CY=110,TR=53;
@@ -686,8 +677,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     }
     var v=Math.round(value);
     hv.textContent=v+"%";
-    sfill.style.width=v+"%";
-    sthumb.style.left=v+"%";
     holder.setAttribute("aria-valuenow",v);
   }
 
