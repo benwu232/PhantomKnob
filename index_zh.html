@@ -1,401 +1,844 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phantom Knob &mdash; Mac 触控板上的全新手势</title>
-    <meta name="description" content="在 Mac 触控板上解锁双指旋转手势。指向任意滑块，旋转双指，即刻精准控制数值。无需额外硬件。">
-    <link rel="icon" href="assets/logo.png">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhantomKnob 幻影旋钮 — 你的触控板，还藏着一个旋钮</title>
+<meta name="description" content="PhantomKnob 把 Mac 触控板变成一颗万能虚拟旋钮：双指旋转，隔空调节任意 App 的滑块、进度条与色轮。系统音量亮度一键旋钮，支持 DaVinci / CapCut / Logic 等专业软件。无需硬件，免费下载。">
+<link rel="icon" type="image/png" href="assets/appicon32.png">
+<link rel="apple-touch-icon" href="assets/appicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d0f;
+  --panel:#121215;
+  --panel-2:#16161a;
+  --line:rgba(255,255,255,0.08);
+  --line-soft:rgba(255,255,255,0.05);
+  --amber:#ff9f0a;
+  --amber-deep:#e8890a;
+  --amber-soft:rgba(255,159,10,0.12);
+  --ink:#f2efe7;
+  --ink-2:rgba(242,239,231,0.64);
+  --ink-3:rgba(242,239,231,0.40);
+  --pk-blue:#0a84ff;
+  --pk-green:#30d158;
+  --pk-pink:#f2c4cd;
+  --font-head:'Space Grotesk',-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;
+  --font-body:-apple-system,'PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{overflow-x:hidden;font-size:16px;line-height:1.75;background:
+  radial-gradient(1200px 600px at 85% -10%,rgba(255,159,10,0.05),transparent 60%),
+  radial-gradient(900px 500px at -10% 40%,rgba(10,132,255,0.04),transparent 55%),
+  var(--bg)}
+::selection{background:rgba(255,159,10,0.30);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--font-mono)}
+
+/* ---------- nav ---------- */
+header{position:fixed;inset:0 0 auto 0;z-index:100;height:64px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(13,13,15,0.72);border-bottom:1px solid var(--line-soft)}
+.nav{max-width:var(--maxw);margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:1.02rem;letter-spacing:-0.01em}
+.brand img{width:26px;height:26px;border-radius:7px}
+.brand .zh{color:var(--ink-3);font-weight:500;font-size:0.82rem;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{color:var(--ink-2);font-size:0.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a .n{font-family:var(--font-mono);font-size:0.68rem;color:var(--amber);margin-right:5px;letter-spacing:0.06em}
+.nav-cta{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:9px;background:var(--amber);color:#17120b;font-weight:600;font-size:0.88rem;transition:transform .2s,background .2s}
+.nav-cta:hover{background:#ffb03d;transform:translateY(-1px)}
+@media (max-width:860px){.nav-links a{display:none}.nav-links a.nav-cta{display:inline-flex}}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:12px;font-size:1rem;font-weight:600;transition:transform .2s,background .2s,border-color .2s;border:none}
+.btn svg{flex:none}
+.btn-primary{background:var(--amber);color:#17120b}
+.btn-primary:hover{background:#ffb03d;transform:translateY(-2px)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.16);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+/* ---------- hero ---------- */
+.hero{padding:150px 0 90px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:10px;height:32px;padding:0 14px;border:1px solid rgba(255,159,10,0.35);border-radius:999px;font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.08em;color:var(--amber);background:var(--amber-soft)}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-family:var(--font-head);font-weight:700;font-size:clamp(2.3rem,4.6vw,3.45rem);line-height:1.16;letter-spacing:-0.02em;margin:22px 0 20px}
+h1 .turn{display:inline-block;color:var(--amber);position:relative}
+.hero-sub{color:var(--ink-2);font-size:1.08rem;line-height:1.8;max-width:33em}
+.hero-actions{display:flex;gap:14px;margin:32px 0 22px;flex-wrap:wrap}
+.hero-meta{font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.05em;color:var(--ink-3)}
+.hero-meta span{margin-right:18px}
+.hero-meta b{color:var(--ink-2);font-weight:500}
+
+/* ---------- instrument stage ---------- */
+.stage{position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,0.028),rgba(255,255,255,0.008));padding:20px 26px 18px;aspect-ratio:1.43/1;box-shadow:0 24px 70px rgba(0,0,0,0.45)}
+.stage::before,.stage::after,.stage .ck::before,.stage .ck::after{content:"";position:absolute;width:14px;height:14px;border-color:rgba(255,159,10,0.55);border-style:solid;border-width:0}
+.stage::before{top:-1px;left:-1px;border-top-width:1.5px;border-left-width:1.5px}
+.stage::after{top:-1px;right:-1px;border-top-width:1.5px;border-right-width:1.5px}
+.stage .ck::before{bottom:-1px;left:-1px;border-bottom-width:1.5px;border-left-width:1.5px}
+.stage .ck::after{bottom:-1px;right:-1px;border-bottom-width:1.5px;border-right-width:1.5px}
+.knob-zone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;touch-action:none;user-select:none;-webkit-user-select:none}
+.knob-holder{position:relative;width:min(300px,60%);aspect-ratio:1/1;cursor:grab}
+.knob-holder:active{cursor:grabbing}
+.knob-holder svg{width:100%;height:100%;display:block}
+.knob-readout{font-family:var(--font-mono);font-weight:600;font-size:0.82rem;color:#7abbff;letter-spacing:-0.02em;opacity:0.95}
+
+/* ---------- sections ---------- */
+section{padding:96px 0}
+.sec-head{margin-bottom:52px}
+.sec-index{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.sec-index .num{font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.16em;color:var(--amber)}
+.sec-index .rule{flex:1;max-width:120px;height:1px;background:linear-gradient(90deg,rgba(255,159,10,0.5),transparent)}
+.sec-title{font-family:var(--font-head);font-weight:700;font-size:clamp(1.6rem,3vw,2.15rem);letter-spacing:-0.02em;line-height:1.25}
+.sec-desc{color:var(--ink-2);margin-top:12px;max-width:36em}
+
+/* principle steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 24px;position:relative;overflow:hidden}
+.step .idx{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--amber);margin-bottom:14px}
+.step .fig{height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;border:1px solid var(--line-soft);border-radius:10px;background:rgba(0,0,0,0.22)}
+.step h3{font-family:var(--font-head);font-size:1.12rem;font-weight:600;margin-bottom:8px}
+.step p{color:var(--ink-2);font-size:0.92rem;line-height:1.7}
+.step .kbd{font-family:var(--font-mono);font-size:0.8em;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink)}
+
+/* feature cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.fcard{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.022),transparent),var(--panel);padding:30px 28px;transition:border-color .25s,transform .25s}
+.fcard:hover{border-color:rgba(255,159,10,0.4);transform:translateY(-3px)}
+.fcard .fi{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--amber-soft);color:var(--amber);margin-bottom:18px}
+.fcard h3{font-family:var(--font-head);font-size:1.18rem;font-weight:600;margin-bottom:9px}
+.fcard p{color:var(--ink-2);font-size:0.94rem}
+
+/* knob types */
+.knobs3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.kcard{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 24px 22px;text-align:center}
+.kcard .fig{display:flex;justify-content:center;margin-bottom:6px}
+.kcard svg{width:190px;height:190px}
+.kcard h3{font-family:var(--font-head);font-size:1.14rem;font-weight:600}
+.kcard .en{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);margin:4px 0 10px}
+.kcard p{color:var(--ink-2);font-size:0.9rem;line-height:1.65;min-height:4.4em}
+.kcard .spec{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--ink-3);letter-spacing:0.04em;line-height:2}
+.kcard .spec b{color:var(--amber);font-weight:500}
+
+/* showcase placeholders */
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.shot{border:1px dashed rgba(255,255,255,0.18);border-radius:16px;background:rgba(255,255,255,0.015);padding:22px;position:relative}
+.shot .ph{height:170px;border-radius:10px;background:
+  repeating-linear-gradient(45deg,rgba(255,255,255,0.025) 0 10px,transparent 10px 20px),rgba(0,0,0,0.25);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;border:1px solid var(--line-soft)}
+.shot .ph .app{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.14em;color:var(--ink-3)}
+.shot .ph .todo{font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.1em;color:rgba(255,159,10,0.75);border:1px solid rgba(255,159,10,0.3);border-radius:5px;padding:2px 8px}
+.shot h3{font-family:var(--font-head);font-size:1.05rem;font-weight:600;margin:16px 0 6px}
+.shot p{color:var(--ink-2);font-size:0.88rem}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto}
+.plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative}
+.plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
+.plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
+.plan h3{font-family:var(--font-head);font-size:1.2rem;font-weight:600}
+.plan .pd{color:var(--ink-3);font-size:0.86rem;margin-top:4px}
+.plan .price{font-family:var(--font-mono);font-size:2.5rem;font-weight:600;letter-spacing:-0.03em;margin:18px 0 2px}
+.plan .price small{font-size:0.95rem;color:var(--ink-3);font-weight:400;letter-spacing:0}
+.plan .ps{font-size:0.8rem;color:var(--ink-3);margin-bottom:20px}
+.plan .price .orig{font-size:1.2rem;color:var(--ink-3);font-weight:400;letter-spacing:0;text-decoration:line-through;text-decoration-color:rgba(255,159,10,0.55);text-decoration-thickness:2px;margin-right:9px}
+.plan .save-badge{display:inline-block;vertical-align:4px;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.07em;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(255,159,10,0.35);border-radius:6px;padding:3px 9px;margin-left:9px;font-weight:500}
+.plan .ps.deadline{color:var(--amber);margin-bottom:4px}
+.plan ul{list-style:none;margin-bottom:26px}
+.plan li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--ink-2);font-size:0.92rem}
+.plan li svg{flex:none;margin-top:5px;color:var(--amber)}
+.plan li.dim{color:var(--ink-3)}
+.plan li b{color:var(--ink);font-weight:600}
+.plan .btn{width:100%;justify-content:center}
+.plan .upgrade-note{margin-top:12px;font-size:0.76rem;color:var(--ink-3);text-align:center;line-height:1.6}
+.btn-inapp{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;border:1px solid rgba(255,159,10,0.5);background:var(--amber-soft);color:var(--amber);font-weight:600;font-size:1rem}
+
+/* faq */
+.faq-list{max-width:760px;margin:0 auto}
+.qa{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:12px;overflow:hidden}
+.qa button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;background:none;border:none;color:var(--ink);padding:20px 24px;font-size:1rem;font-weight:600;text-align:left;font-family:var(--font-head)}
+.qa button .pm{flex:none;font-family:var(--font-mono);color:var(--amber);font-size:1.1rem;transition:transform .25s}
+.qa[data-open="true"] button .pm{transform:rotate(45deg)}
+.qa .ans{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.qa .ans p{padding:0 24px 20px;color:var(--ink-2);font-size:0.93rem}
+.qa .ans .kbd{font-family:var(--font-mono);font-size:0.8em;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--ink)}
+
+/* final cta */
+.final{padding:110px 0 120px;text-align:center;position:relative;overflow:hidden}
+.final .ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:640px;height:640px;border:1px solid rgba(255,159,10,0.12);border-radius:50%;pointer-events:none}
+.final .ring::before{content:"";position:absolute;inset:70px;border:1px dashed rgba(255,159,10,0.14);border-radius:50%}
+.final h2{font-family:var(--font-head);font-size:clamp(1.9rem,4vw,2.8rem);letter-spacing:-0.02em;margin-bottom:14px}
+.final p{color:var(--ink-2);margin-bottom:34px}
+.final .hero-meta{margin-top:20px}
+
+/* footer */
+footer{border-top:1px solid var(--line-soft);padding:34px 0}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot .brand{font-size:0.92rem}
+.foot .brand img{width:22px;height:22px}
+.foot-links{display:flex;gap:22px;font-size:0.85rem;color:var(--ink-2)}
+.foot-links a:hover{color:var(--ink)}
+.foot .pn{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.14em;color:var(--ink-3)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.rv.in{opacity:1;transform:none}
+
+/* responsive */
+@media (max-width:1020px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .steps,.cards3,.knobs3,.shots{grid-template-columns:1fr 1fr}
+}
+@media (max-width:1000px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+}
+@media (max-width:680px){
+  section{padding:70px 0}
+  .hero{padding:120px 0 70px}
+  .steps,.cards3,.knobs3,.shots,.plans{grid-template-columns:1fr}
+  .knob-holder{width:250px;height:250px}
+  .stage{aspect-ratio:auto;padding:26px 20px 24px}
+  .foot{justify-content:center;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="nav-container">
-            <a href="#" class="logo-link">
-                <img src="assets/logo.png" alt="Phantom Knob Logo" class="logo-img">
-                Phantom Knob
-            </a>
-            <nav class="nav-menu">
-                <a href="#showcase" class="nav-link">演示</a>
-                <a href="#features" class="nav-link">功能</a>
-                <a href="#pricing" class="nav-link">价格</a>
-                <a href="#faq" class="nav-link">常见问题</a>
-                <a href="#pricing" class="nav-btn">立即体验</a>
-            </nav>
+
+<header>
+  <nav class="nav" aria-label="主导航">
+    <a class="brand" href="#top">
+      <img src="assets/appicon.png" alt="PhantomKnob 应用图标">
+      PhantomKnob<span class="zh">幻影旋钮</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features"><span class="n">01</span>功能</a>
+      <a href="#scenes"><span class="n">02</span>场景</a>
+      <a href="#start"><span class="n">03</span>上手</a>
+      <a href="#principle"><span class="n">04</span>原理</a>
+      <a href="#trust"><span class="n">05</span>安全</a>
+      <a href="#pricing"><span class="n">06</span>定价</a>
+      <a href="#faq"><span class="n">07</span>FAQ</a>
+      <a class="nav-cta" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-label="产品介绍">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="badge"><span class="dot"></span>全新手势交互</span>
+        <h1>您的触控板，<br>还藏着一个<span class="turn">旋钮</span></h1>
+          <p class="hero-sub">双指旋转即可调节任意 App 里的滑块、进度条和色轮。无需额外硬件，释放触控板的潜力。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
+            <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+            下载免费版
+          </a>
+          <!-- <a class="btn btn-ghost" href="#features">先看看它能干什么 ↓</a> -->
         </div>
-    </header>
+        <p class="hero-meta"><span><b>macOS 13+</b></span><span><b>Apple Silicon &amp; Intel</b></span><span>支持MacBook和妙控板</span></p>
+      </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="section-container hero-grid">
-            <div class="hero-content">
-                <div class="section-tag">一种你从未尝试过的手势</div>
-                <h1 class="hero-title">幻影旋钮，自然手势。<span>快速精准，全新体验。</span></h1>
-                <p class="hero-desc">PhantomKnob 使用创新技术把触控板体验带入全新维度。无需外接硬件，即可在触控板上像使用实体旋钮一样用旋转手势快速精确地调整数值。而独创的双环旋钮与无级变速旋钮更突破了物理限制，为您带来超越实体旋钮的全新体验。</p>
-                <div class="hero-actions">
-                    <a href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" class="btn-primary">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        下载免费版
-                    </a>
-                    <a href="#showcase" class="btn-secondary">观看演示</a>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="visual-container">
-                    <div class="dial-track">
-                        <div class="dial-center" id="interactive-dial">
-                            <div class="dial-pointer"></div>
-                        </div>
-                    </div>
-                    <div class="trackpad-indicator" id="dial-status">拖动旋钮体验: 0&deg;</div>
-                </div>
-            </div>
+      <div class="stage" id="stage">
+        <span class="ck" aria-hidden="true"></span>
+        <div class="knob-zone">
+          <div class="knob-holder" id="knobHolder" role="slider" aria-label="演示旋钮：按住拖动旋转" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60" tabindex="0">
+            <svg viewBox="0 0 220 220" aria-hidden="true">
+              <defs>
+                <!-- dotGlow: used by the 03 single card dot -->
+                <filter id="dotGlow" x="-120%" y="-120%" width="340%" height="340%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="2.2" flood-color="#0a84ff" flood-opacity="0.55"/>
+                </filter>
+                <!-- cyan glow for the hero capsule indicator (logo language) -->
+                <!-- fixed userSpaceOnUse region: a <line> has a zero-height bbox, percentage regions collapse and erase the element;
+                     region covers the capsule authored at 225 deg (ends ~(72.5,98.7)) plus stroke and glow -->
+                <filter id="capsuleGlow" filterUnits="userSpaceOnUse" x="52" y="52" width="68" height="68">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#67d5fa" flood-opacity="0.7"/>
+                </filter>
+                <!-- soft shadow under the touch pads -->
+                <filter id="padShadow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#000000" flood-opacity="0.35"/>
+                </filter>
+                <!-- logo ring gradient: light azure -> indigo; userSpaceOnUse so the span (32->188) covers the ring band in user coords -->
+                <linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="32" y1="110" x2="188" y2="110">
+                  <stop offset="0" stop-color="#4da3f7"/>
+                  <stop offset="0.55" stop-color="#3b7bf0"/>
+                  <stop offset="1" stop-color="#4f46e5"/>
+                </linearGradient>
+                <!-- touch pad gradient: cream pink, lighter top -->
+                <linearGradient id="padGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f8dfe3"/>
+                  <stop offset="1" stop-color="#eab7c3"/>
+                </linearGradient>
+              </defs>
+              <path id="htrail" fill="none" stroke="#5ac8fa" stroke-opacity="0.5" stroke-width="2.4" stroke-linecap="round" d=""/>
+              <g id="rotor"></g>
+            </svg>
+          </div>
+          <div class="knob-readout mono" id="hv">60%</div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Showcase Gallery Section -->
-    <section id="showcase" class="showcase">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-tag">演示</div>
-                <h2 class="section-title">观看 Phantom Knob 实际效果</h2>
-                <p>体验自然的触控板手势如何变成流畅的旋钮控制动作。</p>
-            </div>
-            
-            <div class="showcase-content">
-                <!-- 演示视频区域 -->
-                <div class="video-container">
-                    <div class="video-box card-glow">
-                        <div class="video-placeholder">
-                            <div class="play-button">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                            </div>
-                            <div class="placeholder-text">
-                                <h3>观看快速演示</h3>
-                                <p>触控板精准模拟（30 秒演示即将推出）</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 截图网格 -->
-                <div class="screenshots-grid">
-                    <div class="screenshot-card">
-                        <div class="screenshot-img-wrapper">
-                            <img src="assets/screenshot_overlay.png" alt="DaVinci Resolve Timeline Dial Overlay">
-                        </div>
-                        <div class="screenshot-info">
-                            <h4>时间线旋钮覆层</h4>
-                            <p>高对比度覆层跟随光标位置实时显示</p>
-                        </div>
-                    </div>
-                    <div class="screenshot-card">
-                        <div class="screenshot-img-wrapper">
-                            <img src="assets/screenshot_hud.png" alt="Customizer HUD Configurator">
-                        </div>
-                        <div class="screenshot-info">
-                            <h4>旋钮定制面板</h4>
-                            <p>按 C 键即可为任意滑块快速配置控制规则</p>
-                        </div>
-                    </div>
-                    <div class="screenshot-card">
-                        <div class="screenshot-img-wrapper">
-                            <img src="assets/screenshot_settings.png" alt="macOS Custom Settings View">
-                        </div>
-                        <div class="screenshot-info">
-                            <h4>设置与快捷键</h4>
-                            <p>精细调节手势速度、倍率和语言偏好</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <!-- 01 FEATURES -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">01 / FEATURES</span><span class="rule"></span></div>
+        <h2 class="sec-title">为触控板扩展新维度</h2>
+        <p class="sec-desc">使用创新技术把旋钮手势装入您的触控板 —— 光标指哪，旋钮就控制哪。</p>
+      </div>
+      <div class="cards3">
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>简单易学</h3>
+          <p>在触控板上做画圆旋转的手势——动作简单，操作自然，零学习成本。</p>
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-tag">为什么选择 PhantomKnob</div>
-                <h2 class="section-title">一个手势，无限控制。</h2>
-                <p>一种全新的交互方式，改变你与 Mac 上每一个滑块、旋钮和时间线的工作方式。</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                    </div>
-                    <h3 class="feature-title">全新手势</h3>
-                    <p class="feature-desc">你的触控板早就能做到这一点——只是没人告诉你。双指旋转，就是你指尖下的物理旋钮。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <h3 class="feature-title">快速且精准</h3>
-                    <p class="feature-desc">三种变速模式让你几秒内扫过整条时间线，再精确微调到单帧。按住数字键 1–9 可实时成倍调速。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <h3 class="feature-title">零硬件，随身携带</h3>
-                    <p class="feature-desc">不需要上千元的控制台，不需要线缆，不需要桌面空间。你的触控板就是唯一需要的旋钮——并且它跟着你的 MacBook 随身携带。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                    </div>
-                    <h3 class="feature-title">全局通用</h3>
-                    <p class="feature-desc">光标悬停在任意 App 的任意滑块上，旋转即可。PhantomKnob 借助 macOS 辅助功能 API 在系统级别检测并控制 UI 元素。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <h3 class="feature-title">不干扰原有手势</h3>
-                    <p class="feature-desc">滚动、捏合、轻扫——全部正常工作。PhantomKnob 只在你主动选择时才激活，智能检测绝不会误触发。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    </div>
-                    <h3 class="feature-title">专业软件预设</h3>
-                    <p class="feature-desc">内置 DaVinci Resolve、剪映 (CapCut)、Logic Pro 等专业软件的优化预设。打开应用即可开始旋转，无需任何配置。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                    </div>
-                    <h3 class="feature-title">旋钮定制</h3>
-                    <p class="feature-desc">悬停目标滑块，按 C 键即可为其指定旋钮样式、映射规则与控制布局。一次配置，永久生效。</p>
-                </div>
-            </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></div>
+          <h3>快速且精确</h3>
+          <p>旋钮使用角度变化控制变量，天然具有快速精确的特点。并且在旋转旋钮时，可以按数字键和方向键实时调整速度。</p>
         </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-tag">价格</div>
-                <h2 class="section-title">免费开始，爱用再升级。</h2>
-                <p>免费版包含全部核心功能。Pro 版可消除摩擦——瞬时激活、无限会话时间以及完全自定义。</p>
-            </div>
-            <div class="pricing-cards">
-                <!-- Free Plan -->
-                <div class="pricing-card">
-                    <h3 class="plan-name">免费版</h3>
-                    <p class="plan-desc">非常适合入门并建立精确调整的习惯。</p>
-                    <div class="plan-price">&yen;0</div>
-                    <div class="price-sub">永久免费</div>
-                    <div class="pricing-features-title">包含：</div>
-                    <ul class="plan-features">
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            所有旋钮样式与规则
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            键盘快捷键与微调
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            固定单色灰色覆层
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            15分钟活跃会话限制
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            2秒激活延迟
-                        </li>
-                    </ul>
-                    <a href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" class="plan-btn free" id="free-download-btn">下载 DMG</a>
-                </div>
-                <!-- Pro Plan -->
-                <div class="pricing-card pro">
-                    <div class="pricing-badge">推荐</div>
-                    <h3 class="plan-name">Pro 版许可</h3>
-                    <p class="plan-desc">解锁完整体验。无延迟、无限制、不妥协。</p>
-                    <div class="plan-price">&yen;89<span> / 一次性</span></div>
-                    <div class="price-sub">终身授权与更新</div>
-                    <div class="pricing-features-title">包含免费版所有功能，并解锁：</div>
-                    <ul class="plan-features">
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            <strong>瞬时激活</strong>（0秒延迟）
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            <strong>无限会话时间</strong>（不超时自动断开）
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            <strong>覆层自定义</strong>（颜色与尺寸）
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            iCloud 规则云同步
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            优先邮件支持
-                        </li>
-                        <li>
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
-                            <strong>零输入一键激活</strong>（购买后直接唤醒自动授权）
-                        </li>
-                    </ul>
-                    <a href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" class="plan-btn pro">购买许可</a>
-                </div>
-            </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M4 12l4-4M4 12l4 4"/><path d="M20 5v3M20 16v3"/></svg></div>
+          <h3>不干扰原有手势</h3>
+          <p>需要快捷键进入激活状态；在激活状态里，双指旋转超过阈值才唤醒旋钮，避免误触发。其余手势不受影响。</p>
         </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq" class="faq">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-tag">常见问题</div>
-                <h2 class="section-title">常见问题解答</h2>
-                <p>有关于 Phantom Knob 的疑问？请在下方寻找答案。</p>
-            </div>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        Phantom Knob 是如何捕捉触控板旋转手势的？
-                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Phantom Knob 直接绑定 macOS Multitouch API 来监控原始手指坐标。通过分析它们的空间排列与触摸动态，它能以极高精度识别圆形旋转手势，并向目标应用窗口发送精准对应的滚动滚轮或键盘按键事件。</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        辅助功能（Accessibility）权限安全吗？
-                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-                    </div>
-                    <div class="faq-answer">
-                        <p>完全安全。Phantom Knob 申请辅助功能权限仅仅用于识别光标下的可调 UI 元素，并模拟滚动与按键以达到调整参数的目的。所有的手势数据处理均在本地进行，绝不会向网络发送任何信息。</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        当免费版的 15 分钟会话到期时会发生什么？
-                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-                    </div>
-                    <div class="faq-answer">
-                        <p>当会话限时结束，Phantom Knob 将自动退出参数控制状态。这没有任何惩罚或强制收费——你只需点击菜单栏或按下全局热键组合（&#8984;&#8997;K）即可重新开始新的一段会话，这仅仅会引入 2 秒的激活延迟。</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        我可以为自定义应用建立控制规则吗？
-                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-                    </div>
-                    <div class="faq-answer">
-                        <p>当然可以！只需将光标悬停在任意自定义滑块上，按下自定义热键（默认是 C），然后从弹出的 HUD 配置面板中选择合适的控制布局映射方式，就能即刻对其进行旋转手势控制。</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        它能兼容我的触控板吗？
-                        <svg class="faq-icon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-                    </div>
-                    <div class="faq-answer">
-                        <p>PhantomKnob 与任何支持多点触控（Multi-Touch）的 Mac 触控板兼容——包括每一款 MacBook 的内置触控板和 Apple Magic Trackpad。应用中内置了兼容性测试模块，几秒钟即可确认你的硬件是否支持。</p>
-                    </div>
-                </div>
-            </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg></div>
+          <h3>三种类型，超越实体旋钮</h3>
+          <p>单旋钮模拟实体旋钮；双环旋钮内外环对应两种速度，可在使用中随时切换；无级变速旋钮速度随旋钮大小变化，快慢随心。</p>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-info">
-                <img src="assets/logo.png" alt="Phantom Knob Logo" class="footer-logo">
-                <span>&copy; 2026 Phantom Knob. 保留所有权利。</span>
-            </div>
-            <div class="footer-links">
-                <a href="privacy.html" class="footer-link">隐私政策</a>
-                <a href="terms.html" class="footer-link">服务条款</a>
-            </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><path d="M12 4a8 8 0 0 1 8 8" stroke-linecap="round"/></svg></div>
+          <h3>单指转不停</h3>
+          <p>当需要连续旋转时，抬起一指，用剩余单指继续旋转，接力不断线，长调节任务一次完成。</p>
         </div>
-    </footer>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9a5 5 0 0 1 0 6"/></svg></div>
+          <h3>快捷旋钮面板</h3>
+          <p>双击图标，弹出旋钮面板，可快速调节系统音量、屏幕亮度、键盘背光，不用进系统设置翻菜单。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 20V9"/></svg></div>
+          <h3>专业软件支持</h3>
+          <p>除了对常用软件的支持以外，还在不断增加对各种专业软件的支持。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8 15l8-6M6.5 12a1.2 1.2 0 1 0 0 .01M17.5 12a1.2 1.2 0 1 0 0 .01"/></svg></div>
+          <h3>随心定制</h3>
+          <p>可以根据需求，定制旋钮的类型、行为、外观（包括颜色、轮廓、指针、轨迹）等，还能换上自己的贴图。你的旋钮你做主！</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15v-4M12 15l-2-2M12 15l2-2"/><path d="M6 11a5 5 0 0 1 9.6-2M18 13a5 5 0 0 1-9.6 2"/></svg></div>
+          <h3>分享给好友</h3>
+          <p>精心定制一个旋钮后，一条 <span style="font-family:var(--font-mono);font-size:0.85em;color:var(--amber)">phantomknob://</span> 链接发出去，好友点开即得同款。</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Interactive JS Dial Logic -->
-    <script>
-        const dial = document.getElementById('interactive-dial');
-        const status = document.getElementById('dial-status');
-        let isDragging = false;
-        let startAngle = 0;
-        let currentAngle = 0;
+  <!-- 02 SCENES -->
+  <section id="scenes">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">02 / SCENES</span><span class="rule"></span></div>
+        <h2 class="sec-title">为技术极客和专业人士而生</h2>
+        <p class="sec-desc">内置对常用软件、开发工具和专业软件的支持（持续更新中）。打开 App，直接旋转，零配置。</p>
+      </div>
+      <div class="shots">
+        <div class="shot rv">
+          <div class="ph"><span class="app">DAVINCI RESOLVE</span><span class="todo mono">真实截图 · 待补</span></div>
+          <h3>调色师 · 色轮终于有手感</h3>
+          <p>DaVinci 的 Lift / Gamma / Gain 色轮实时跟着转——看着画面即时变色，比拖滑块快得多，也稳得多。</p>
+        </div>
+        <div class="shot rv">
+          <div class="ph"><span class="app">FINAL CUT PRO / CAPCUT</span><span class="todo mono">真实截图 · 待补</span></div>
+          <h3>剪辑师 · 像搓胶片一样准</h3>
+          <p>时间线快扫入点，再单指接力逐帧精修；CapCut 关键帧微调也同样顺手。</p>
+        </div>
+        <div class="shot rv">
+          <div class="ph"><span class="app">LOGIC PRO</span><span class="todo mono">真实截图 · 待补</span></div>
+          <h3>音乐人 · 推子的实体感</h3>
+          <p>增益、声像、sends 全部交给指尖。这本来就是搓的东西，只是这次不用插电。</p>
+        </div>
+        <div class="shot rv">
+          <div class="ph"><span class="app">SYSTEM / BROWSER</span><span class="todo mono">真实截图 · 待补</span></div>
+          <h3>日常玩家 · 旋钮一直都在</h3>
+          <p>音量、亮度、浏览器、任何 App 里的滑块——随手一转就到，随心所欲。</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function getCenter(el) {
-            const rect = el.getBoundingClientRect();
-            return {
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2
-            };
-        }
+  <!-- 03 GET STARTED -->
+  <section id="start">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">03 / START</span><span class="rule"></span></div>
+        <h2 class="sec-title">上手简单</h2>
+        <p class="sec-desc"> 熟悉的手势，全新的用途。</p>
+      </div>
+      <div class="steps">
+        <div class="step rv">
+          <div class="idx mono">STEP 1</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <path d="M75 14l16 18h-10v22h-12V32H59z" fill="#ff9f0a" opacity="0.9"/>
+              <rect x="52" y="62" width="46" height="8" rx="4" stroke="rgba(255,255,255,0.3)"/>
+            </svg>
+          </div>
+          <h3>下载安装 Mac App</h3>
+          <p>DMG 直链下载，已通过 Apple 公证。免费版即含全部核心功能，首次启动会顺手完成一次触控板兼容性检测。</p>
+        </div>
+        <div class="step rv">
+          <div class="idx mono">STEP 2</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <rect x="30" y="16" width="90" height="56" rx="9" stroke="rgba(255,255,255,0.3)"/>
+              <path d="M66 36l-5 3 0 6 5 3z" fill="#ff9f0a"/>
+              <rect x="70" y="34" width="34" height="5" rx="2.5" stroke="rgba(255,255,255,0.35)"/>
+              <rect x="70" y="44" width="24" height="5" rx="2.5" stroke="rgba(255,255,255,0.2)"/>
+              <circle cx="117" cy="24" r="7" fill="#30d158" opacity="0.9"/>
+              <path d="M114 24l2.2 2.2 4-4.4" stroke="#0d0d0f" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>授予辅助功能权限</h3>
+          <p>第一次运行系统会弹出一次授权提示——这正是它能"隔空"控制其他 App 的原因（<a href="#trust" style="color:var(--amber)">安全与隐私</a>一节有完整解释）。数据全程留在本机。</p>
+        </div>
+        <div class="step rv">
+          <div class="idx mono">STEP 3</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <rect x="30" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"/>
+              <rect x="72" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"/>
+              <rect x="66" y="22" width="6" height="22" fill="#0d0d0f"/>
+              <rect x="78" y="14" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
+              <rect x="78" y="30" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
+              <text x="75" y="72" font-family="IBM Plex Mono,monospace" font-size="12" fill="rgba(255,255,255,0.55)" text-anchor="middle">唤醒旋钮</text>
+            </svg>
+          </div>
+          <h3><span class="kbd">⌘⌥K</span> 双指旋转</h3>
+          <p>按下快捷键进入旋钮模式，鼠标悬停在目标上，双指旋转——欢迎来到新世界！</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function getAngle(event, center) {
-            const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-            const clientY = event.touches ? event.touches[0].clientY : event.clientY;
-            return Math.atan2(clientY - center.y, clientX - center.x);
-        }
+  <!-- 04 PRINCIPLE -->
+  <section id="principle">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">04 / PRINCIPLE</span><span class="rule"></span></div>
+        <h2 class="sec-title">运行原理</h2>
+        <p class="sec-desc">如果你是技术极客，下面是PhantomKnob的运行原理。</p>
+      </div>
+      <div class="cards3">
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="4"/><circle cx="10" cy="15" r="1.3"/><circle cx="14" cy="15" r="1.3"/><path d="M8 10a4 4 0 0 1 8 0" stroke-linecap="round"/></svg></div>
+          <h3>1 · 识别目标控件</h3>
+          <p>鼠标悬停在屏幕上时，通过调用系统api识别鼠标下方的app和控件。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="M4 10h16M8 14h8"/><circle cx="15" cy="4.5" r="2.5"/></svg></div>
+          <h3>2 · 拦截/屏蔽系统默认手势</h3>
+          <p>避免新手势和旧手势发生冲突。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M12 12a4 4 0 0 1 8 0M15 12v6M12 4v2"/><path d="M20 12l-2-2m2 2l-2 2" stroke-linecap="round"/></svg></div>
+          <h3>3 · 构建旋钮</h3>
+          <p>获取触点坐标，使用创新算法构建旋钮并计算其参数（包括旋转的角度，旋钮的直径等）。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M12 12a4 4 0 0 1 8 0M15 12v6M12 4v2"/><path d="M20 12l-2-2m2 2l-2 2" stroke-linecap="round"/></svg></div>
+          <h3>4 · 映射事件</h3>
+          <p>把旋钮的变化映射为相关控件支持的事件（如方向键、鼠标滚动、两指滑动等）。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M12 12a4 4 0 0 1 8 0M15 12v6M12 4v2"/><path d="M20 12l-2-2m2 2l-2 2" stroke-linecap="round"/></svg></div>
+          <h3>5 · 发送事件</h3>
+          <p>把事件插入操作系统事件流。</p>
+        </div>
+ 
+      </div>
+    </div>
+  </section>
 
-        function handleStart(e) {
-            isDragging = true;
-            dial.style.cursor = 'grabbing';
-            const center = getCenter(dial);
-            const angle = getAngle(e, center);
-            startAngle = angle - currentAngle;
-            e.preventDefault();
-        }
+  <!-- 05 TRUST -->
+  <section id="trust">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div class="sec-index"><span class="num">05 / TRUST</span><span class="rule"></span></div>
+        <h2 class="sec-title">安全与隐私</h2>
+        <p class="sec-desc">权限、隐私与分发渠道，每一个决定都经得起追问。</p>
+      </div>
+      <div class="cards3">
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/></svg></div>
+          <h3>为什么不上架 App Store？</h3>
+          <p>因为使用了 Apple 的非公开 API 并拦截系统事件，所以无法上架——BetterTouchTool 等同类软件面临同样的取舍。但不在 App Store 不等于没有审核：安装包已通过 Apple 公证（Notarized），每个版本都经过 Apple 的恶意软件扫描。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="16" r="4"/><path d="M11 13L21 3M16.5 7.5l3 3M13.5 10.5l2 2"/></svg></div>
+          <h3>为什么要辅助功能权限？</h3>
+          <p>MacOS 对"一个 App 能看见并操作另一个 App"管控极严，辅助功能 API 是唯一的正规通道。PhantomKnob 用它做且只做三件事：读取悬停位置的控件、拦截触控板手势、发送调节事件。权限在技术上"能"读键盘，与 PhantomKnob "在读"是两回事——拦截范围仅限手势事件，不监听、不记录任何键盘输入，处理全程在本机。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
+          <h3>隐私 · 全程不出本机</h3>
+          <p>PhantomKnob 无账号、无广告，完全离线可用，运行时不收集任何数据；授权校验全部在本地完成，崩溃报告可在设置中关闭。</p>
+        </div>
+      </div>
+      <!-- <div class="rv" style="margin-top:18px;border:1px solid rgba(255,159,10,0.3);border-radius:16px;background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 55%),var(--panel);padding:30px 32px">
+        <div class="mono" style="font-size:0.68rem;letter-spacing:0.16em;color:var(--amber);margin-bottom:12px">WHY REVERSIBLE</div>
+        <h3 style="font-family:var(--font-head);font-size:1.15rem;font-weight:600;margin-bottom:8px">随时可以反悔</h3>
+        <p style="color:var(--ink-2);font-size:0.95rem;line-height:1.8">不喜欢，随时走人：权限在 系统设置 → 隐私与安全性 → 辅助功能 里一关即回收；卸载只需把 PhantomKnob 移入废纸篓。没有账号可注销，没有订阅可取消，不会留着东西纠缠你。</p>
+      </div> -->
+    </div>
+  </section>
 
-        function handleMove(e) {
-            if (!isDragging) return;
-            const center = getCenter(dial);
-            const angle = getAngle(e, center);
-            currentAngle = angle - startAngle;
-            
-            const degrees = Math.round((currentAngle * 180) / Math.PI) % 360;
-            const positiveDegrees = degrees < 0 ? degrees + 360 : degrees;
-            
-            dial.style.transform = `rotate(${currentAngle}rad)`;
-            status.textContent = `拖拽进行旋转练习: ${positiveDegrees}°`;
-        }
+  <!-- 06 PRICING -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">06 / PRICING</span><span class="rule"></span></div>
+        <h2 class="sec-title">从免费开始，需要时再升级</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">免费版解锁全部功能。Pro 只是去掉摩擦——使用更顺畅。</p>
+      </div>
+      <div class="plans">
+        <div class="plan rv">
+          <h3>免费版</h3>
+          <p class="pd">建立手感，体验全部核心能力。</p>
+          <div class="price">$0</div>
+          <div class="ps">永久免费</div>
+          <ul>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>14天试用Pro版</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全部旋钮类型与定制</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>常用及专业软件支持</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>快捷键与快捷面板</li>
+            <li class="dim">15 分钟会话（可随时重启）</li>
+            <li class="dim">激活延迟</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" style="width:100%;justify-content:center">下载免费版</a>
+        </div>
+        <div class="plan pro rv">
+          <span class="tag">早鸟价 · 10/15 截止</span>
+          <h3>Pro</h3>
+          <p class="pd">去掉所有限制，尽享丝滑体验。</p>
+          <div class="price"><s class="orig">$24.99</s> $16.99 <small>/ 一次性买断</small><span class="save-badge">省 $8 · 32% OFF</span></div>
+          <div class="ps deadline">10 月 15 日后恢复原价 $24.99</div>
+          <div class="ps">含后续更新 · 无订阅</div>
+          <ul>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>无限会话时长</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg> iCloud 同步</li>
+            <!-- <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>优先邮件支持</li> -->
+          </ul>
+          <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">立即购买 →</a>
+          <p class="upgrade-note">已安装免费版？在 App 菜单「关于 PhantomKnob…」中即可升级，无需重新下载。</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function handleEnd() {
-            isDragging = false;
-            dial.style.cursor = 'grab';
-        }
+  <!-- 07 FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">07 / FAQ</span><span class="rule"></span></div>
+        <h2 class="sec-title">常见问题</h2>
+      </div>
+      <div class="faq-list">
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">辅助功能权限安全吗？<span class="pm">+</span></button>
+          <div class="ans"><p>权限只用于读取悬停控件与发送滚动 / 按键事件，拦截范围仅限触控板手势，不读取键盘输入，处理全程在本机。<a href="#trust" style="color:var(--amber)">详见"安全与隐私"一节</a>。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">15 分钟免费会话结束后会怎样？<span class="pm">+</span></button>
+          <div class="ans"><p>控制模式自动关闭，没有惩罚也没有冷却。通过菜单栏或 <span class="kbd">⌘⌥K</span> 即刻重启会话，只引入短暂的激活延迟。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">我的触控板兼容吗？<span class="pm">+</span></button>
+          <div class="ans"><p>所有支持多点触控的 Mac 触控板均可使用，包括每台 MacBook 的内置触控板与 Apple Magic Trackpad。App 内置兼容性检测，第一次运行即可验证。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">能为没有预设的 App 建规则吗？<span class="pm">+</span></button>
+          <div class="ans"><p>可以。悬停任意滑块，按 <span class="kbd">C</span> 键选择映射方式即可。配置一次永久生效，还能导出 .pkp 旋钮包分享给他人。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">早鸟价什么时候结束？<span class="pm">+</span></button>
+          <div class="ans"><p>10 月 15 日后，Pro 恢复原价 $24.99。现在购买为 $16.99 早鸟价——一次性买断、含后续更新，涨价不影响已购用户。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        dial.addEventListener('mousedown', handleStart);
-        window.addEventListener('mousemove', handleMove);
-        window.addEventListener('mouseup', handleEnd);
+  <!-- FINAL CTA -->
+  <section class="final">
+    <div class="ring" aria-hidden="true"></div>
+    <div class="wrap rv">
+      <h2>方寸之间，掌驭万物</h2>
+      <p>免费下载 PhantomKnob，几秒钟验证兼容性，立即开始旋转。</p>
+      <a class="btn btn-primary" style="height:58px;padding:0 34px;font-size:1.05rem" href="https://github.com/benwu232/PhantomKnob/releases/latest/">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+        下载免费版
+      </a>
+      <p class="hero-meta">无需注册 · 免费版内可随时升级 Pro</p>
+    </div>
+  </section>
 
-        dial.addEventListener('touchstart', handleStart);
-        window.addEventListener('touchmove', handleMove);
-        window.addEventListener('touchend', handleEnd);
+</main>
 
-        // FAQ Toggle Logic
-        const faqItems = document.querySelectorAll('.faq-item');
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
-            question.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
-                faqItems.forEach(i => i.classList.remove('active'));
-                if (!isActive) {
-                    item.classList.add('active');
-                }
-            });
-        });
-    </script>
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#top"><img src="assets/appicon.png" alt="">PhantomKnob<span class="zh">幻影旋钮</span></a>
+    <div class="foot-links">
+      <a href="../privacy.html">隐私政策</a>
+      <a href="../terms.html">服务条款</a>
+    </div>
+    <span class="pn">PK-LP-01 · REV A · © 2026 BEN WU</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg";
+  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function el(name,attrs,parent){
+    var n=document.createElementNS(NS,name);
+    for(var k in attrs)n.setAttribute(k,attrs[k]);
+    if(parent)parent.appendChild(n);
+    return n;
+  }
+
+  function ticks(g,cx,cy,r,count,baseLen,majorEvery,majorMul,color,opacityBase,rotDeg){
+    rotDeg=rotDeg||0;
+    for(var i=0;i<count;i++){
+      var a=(i*2*Math.PI/count)+rotDeg*Math.PI/180;
+      var major=(i%majorEvery===0);
+      var len=major?baseLen*majorMul:baseLen;
+      var x1=cx+Math.cos(a)*(r-len), y1=cy+Math.sin(a)*(r-len);
+      var x2=cx+Math.cos(a)*r, y2=cy+Math.sin(a)*r;
+      var dist=Math.min(i,count-i)/(count/2);
+      var op=opacityBase*(1-0.6*dist);
+      el("line",{x1:x1.toFixed(2),y1:y1.toFixed(2),x2:x2.toFixed(2),y2:y2.toFixed(2),
+        stroke:color,"stroke-opacity":op.toFixed(3),"stroke-width":major?2.2:1.3},g);
+    }
+  }
+
+  function needle(g,cx,cy,innerR,outerR,color,width){
+    el("line",{x1:cx+innerR,y1:cy,x2:cx+outerR,y2:cy,stroke:color,"stroke-width":width,"stroke-linecap":"round"},g);
+  }
+
+  function arcPath(cx,cy,r,a0,a1){
+    var rad0=a0*Math.PI/180, rad1=a1*Math.PI/180;
+    var x0=cx+r*Math.cos(rad0), y0=cy+r*Math.sin(rad0);
+    var x1=cx+r*Math.cos(rad1), y1=cy+r*Math.sin(rad1);
+    var large=Math.abs(a1-a0)>180?1:0;
+    var sweep=a1>a0?1:0;
+    return "M"+x0.toFixed(2)+" "+y0.toFixed(2)+" A"+r+" "+r+" 0 "+large+" "+sweep+" "+x1.toFixed(2)+" "+y1.toFixed(2);
+  }
+
+  function buildKnob(svg,type){
+    // single matches the app's dot indicator; double/cvk keep legacy needle style (pending redesign)
+    var cx=110,cy=110,r=86;
+    var blue="#0a84ff",green="#30d158";
+    if(type==="single"){
+      var g=el("g",{},svg);
+      ticks(g,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      var rot=el("g",{transform:"rotate(-38 "+cx+" "+cy+")"},svg);
+      el("circle",{cx:(cx+r*0.62).toFixed(1),cy:cy,r:8,fill:blue,filter:"url(#dotGlow)"},rot);
+      var t=el("text",{x:cx,y:cy+24,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":9,fill:"rgba(255,255,255,0.4)"},svg);
+      t.textContent="1.0x";
+    }
+    if(type==="double"){
+      var go=el("g",{},svg);
+      ticks(go,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      var roto=el("g",{transform:"rotate(24 "+cx+" "+cy+")"},svg);
+      needle(roto,cx-r*0.66+6,cy,12,r*0.66-6,blue,3);
+      var ri=r*0.58;
+      var gi=el("g",{},svg);
+      ticks(gi,cx,cy,ri,36,ri*0.2,6,1.5,green,0.5);
+      var roti=el("g",{transform:"rotate(-64 "+cx+" "+cy+")"},svg);
+      needle(roti,cx,cy,8,ri-4,green,2.6);
+      el("circle",{cx:cx,cy:cy,r:14,fill:"rgba(48,209,88,0.16)",stroke:green,"stroke-width":1.2},svg);
+      var lo=el("text",{x:cx+r*0.86,y:cy+30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(122,187,255,0.75)"},svg);
+      lo.textContent="HUE";
+      var li=el("text",{x:cx,y:cy+ri+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(48,209,88,0.75)"},svg);
+      li.textContent="SAT";
+    }
+    if(type==="cvk"){
+      var gc=el("g",{},svg);
+      ticks(gc,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      el("circle",{cx:cx,cy:cy,r:r*0.52,fill:"rgba(48,209,88,0.07)",stroke:green,"stroke-opacity":0.35,"stroke-width":1},svg);
+      el("path",{d:arcPath(cx,cy,r*0.52,-210,-150),stroke:green,"stroke-opacity":0.5,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
+      el("path",{d:arcPath(cx,cy,r*0.36,-200,-160),stroke:green,"stroke-opacity":0.35,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
+      var rotc=el("g",{transform:"rotate(-12 "+cx+" "+cy+")"},svg);
+      needle(rotc,cx,cy,8,r*0.62-4,blue,3);
+      el("circle",{cx:cx,cy:cy,r:16,fill:"rgba(10,132,255,0.18)",stroke:blue,"stroke-width":1.3},svg);
+      var z1=el("text",{x:cx-r*0.42,y:cy-r*0.42,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
+      z1.textContent="10x";
+      var z2=el("text",{x:cx+r*0.30,y:cy+r*0.30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
+      z2.textContent="0.1x";
+      var sc=el("text",{x:cx,y:cy+r*0.52+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":10,"font-weight":"600",fill:"rgba(48,209,88,0.85)"},svg);
+      sc.textContent="2.5x";
+    }
+  }
+
+  document.querySelectorAll('svg[data-knob]').forEach(function(s){buildKnob(s,s.getAttribute("data-knob"));});
+
+  var rotor=document.getElementById("rotor");
+  var trail=document.getElementById("htrail");
+  var hv=document.getElementById("hv");
+  var holder=document.getElementById("knobHolder");
+
+  var CX=110,CY=110,TR=53;
+  var POSE=240; // static offset so the rest pose (value 60 -> angle 240) reproduces the logo freeze-frame
+
+  // hero knob = living logo: gradient ring body, two touch pads, radial cyan capsule indicator;
+  // authored in the logo pose (capsule upper-left at 225 deg, pads at 1:30/7:30), offset by POSE inside the rotor
+  var pose=el("g",{transform:"rotate("+POSE+" "+CX+" "+CY+")"},rotor);
+  el("circle",{cx:CX,cy:CY,r:78,fill:"none",stroke:"url(#ringGrad)","stroke-width":21},pose);
+  function pad(deg){
+    // concentric touch ripples, then the pad itself
+    var a=deg*Math.PI/180,px=(CX+78*Math.cos(a)).toFixed(1),py=(CY+78*Math.sin(a)).toFixed(1);
+    el("circle",{cx:px,cy:py,r:22,fill:"none",stroke:"rgba(255,255,255,0.10)","stroke-width":1},pose);
+    el("circle",{cx:px,cy:py,r:28,fill:"none",stroke:"rgba(255,255,255,0.05)","stroke-width":1},pose);
+    el("circle",{cx:px,cy:py,r:16,fill:"url(#padGrad)",filter:"url(#padShadow)"},pose);
+  }
+  pad(315);
+  pad(135);
+  var ca=225*Math.PI/180,cc=Math.cos(ca),ss=Math.sin(ca);
+  el("line",{x1:(CX+16*cc).toFixed(1),y1:(CY+16*ss).toFixed(1),x2:(CX+TR*cc).toFixed(1),y2:(CY+TR*ss).toFixed(1),stroke:"#7ddcfc","stroke-width":11,"stroke-linecap":"round",filter:"url(#capsuleGlow)"},pose);
+
+  var angle=0,value=60,startAngle=null,dragging=false,lastA=0,idle=true,idleT=0,raf=null;
+
+  function render(){
+    rotor.setAttribute("transform","rotate("+(-angle).toFixed(2)+" "+CX+" "+CY+")");
+    if(startAngle!==null){
+      var d=angle-startAngle;
+      if(d>360){startAngle=angle-360;d=360;}
+      if(d<-360){startAngle=angle+360;d=-360;}
+      if(Math.abs(d)>10){
+        var s=d>0?startAngle+10:startAngle-10;
+        trail.setAttribute("d",arcPath(CX,CY,TR,s,angle));
+      }else{
+        trail.setAttribute("d","");
+      }
+    }else{
+      trail.setAttribute("d","");
+    }
+    var v=Math.round(value);
+    hv.textContent=v+"%";
+    holder.setAttribute("aria-valuenow",v);
+  }
+
+  function idleLoop(ts){
+    if(!idle)return;
+    idleT=ts/1000;
+    value=60+10*Math.sin(idleT*0.55);
+    angle=value*4;
+    render();
+    raf=requestAnimationFrame(idleLoop);
+  }
+
+  function pointerAngle(e){
+    var rect=holder.getBoundingClientRect();
+    var scale=220/rect.width;
+    var x=(e.clientX-rect.left)*scale-CX;
+    var y=(e.clientY-rect.top)*scale-CY;
+    return Math.atan2(y,x)*180/Math.PI;
+  }
+
+  holder.addEventListener("pointerdown",function(e){
+    if(idle){idle=false;if(raf)cancelAnimationFrame(raf);}
+    dragging=true;
+    holder.setPointerCapture(e.pointerId);
+    lastA=pointerAngle(e);
+    startAngle=angle;
+    e.preventDefault();
+  });
+  holder.addEventListener("pointermove",function(e){
+    if(!dragging)return;
+    var a=pointerAngle(e);
+    var d=a-lastA;
+    if(d>180)d-=360;
+    if(d<-180)d+=360;
+    lastA=a;
+    angle+=d;
+    value=Math.max(0,Math.min(100,value+d*0.22));
+    render();
+  });
+  function endDrag(){
+    if(!dragging)return;
+    dragging=false;
+  }
+  holder.addEventListener("pointerup",endDrag);
+  holder.addEventListener("pointercancel",endDrag);
+  holder.addEventListener("keydown",function(e){
+    if(idle){idle=false;if(raf)cancelAnimationFrame(raf);startAngle=angle;}
+    if(e.key==="ArrowRight"||e.key==="ArrowUp"){value=Math.min(100,value+2);angle+=8;render();e.preventDefault();}
+    if(e.key==="ArrowLeft"||e.key==="ArrowDown"){value=Math.max(0,value-2);angle-=8;render();e.preventDefault();}
+  });
+
+  if(reduced){
+    idle=false;
+    value=60;angle=60*4;startAngle=angle-40;
+    render();
+  }else{
+    raf=requestAnimationFrame(idleLoop);
+  }
+
+  document.querySelectorAll(".qa").forEach(function(qa){
+    var btn=qa.querySelector("button");
+    var ans=qa.querySelector(".ans");
+    btn.addEventListener("click",function(){
+      var open=qa.getAttribute("data-open")==="true";
+      document.querySelectorAll(".qa").forEach(function(o){
+        o.setAttribute("data-open","false");
+        o.querySelector("button").setAttribute("aria-expanded","false");
+        o.querySelector(".ans").style.maxHeight="0px";
+      });
+      if(!open){
+        qa.setAttribute("data-open","true");
+        btn.setAttribute("aria-expanded","true");
+        ans.style.maxHeight=ans.scrollHeight+"px";
+      }
+    });
+  });
+
+  if("IntersectionObserver" in window && !reduced){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target);}
+      });
+    },{threshold:0.12});
+    document.querySelectorAll(".rv").forEach(function(n){io.observe(n);});
+  }else{
+    document.querySelectorAll(".rv").forEach(function(n){n.classList.add("in");});
+  }
+})();
+</script>
 </body>
 </html>
