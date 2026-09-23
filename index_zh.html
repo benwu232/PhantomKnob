@@ -1,13 +1,1331 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>PhantomKnob 幻影旋钮</title>
-    <meta http-equiv="refresh" content="0; url=./">
-    <link rel="canonical" href="./">
-    <script>if (location.hash) { location.replace("./" + location.hash); }</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhantomKnob 幻影旋钮 2.0 — 解锁封印在触控板里的魔法旋钮</title>
+<meta name="description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：三指轻旋随心调控系统音量与屏幕亮度（支持外接显示器 DDC），双指旋转隔空接管任意 App 的滑块、进度条与色轮。无需硬件，免费下载。">
+<link rel="icon" type="image/png" href="assets/appicon32.png">
+<link rel="apple-touch-icon" href="assets/appicon.png">
+
+<!-- Open Graph / 微信 / Messages / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://benwu232.github.io/PhantomKnob/">
+<meta property="og:title" content="PhantomKnob — 解锁封印在触控板里的魔法旋钮">
+<meta property="og:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：三指轻旋调音量亮度（支持外接显示器 DDC），双指旋转隔空接管任意 App 的滑块与色轮。无需硬件，免费下载。">
+<meta property="og:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta itemprop="name" content="PhantomKnob 幻影旋钮">
+<meta itemprop="description" content="把 Mac 触控板变成一颗万能虚拟旋钮：双指旋转，隔空调节任意 App 的滑块、进度条与色轮。">
+<meta itemprop="image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PhantomKnob 幻影旋钮 2.0 — 解锁封印在触控板里的魔法旋钮">
+<meta name="twitter:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能旋钮：三指轻旋调音量亮度，双指旋转隔空接管任意 App 的滑块与色轮。无需硬件，免费下载。">
+<meta name="twitter:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d0f;
+  --panel:#121215;
+  --panel-2:#16161a;
+  --line:rgba(255,255,255,0.08);
+  --line-soft:rgba(255,255,255,0.05);
+  --amber:#ff9f0a;
+  --amber-deep:#e8890a;
+  --amber-soft:rgba(255,159,10,0.12);
+  --ink:#f2efe7;
+  --ink-2:rgba(242,239,231,0.64);
+  --ink-3:rgba(242,239,231,0.40);
+  --pk-blue:#0a84ff;
+  --pk-green:#30d158;
+  --pk-pink:#f2c4cd;
+  --font-head:'Space Grotesk',-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;
+  --font-body:-apple-system,'PingFang SC','Hiragino Sans GB','Noto Sans SC',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{overflow-x:hidden;font-size:16px;line-height:1.75;background:
+  radial-gradient(1200px 600px at 85% -10%,rgba(255,159,10,0.05),transparent 60%),
+  radial-gradient(900px 500px at -10% 40%,rgba(10,132,255,0.04),transparent 55%),
+  var(--bg)}
+::selection{background:rgba(255,159,10,0.30);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--font-mono)}
+
+/* ---------- nav ---------- */
+header{position:fixed;inset:0 0 auto 0;z-index:100;height:64px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(13,13,15,0.72);border-bottom:1px solid var(--line-soft)}
+.nav{max-width:var(--maxw);margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:1.02rem;letter-spacing:-0.01em}
+.brand img{width:26px;height:26px;border-radius:7px}
+.brand .zh{color:var(--ink-3);font-weight:500;font-size:0.82rem;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{color:var(--ink-2);font-size:0.9rem;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a .n{font-family:var(--font-mono);font-size:0.68rem;color:var(--amber);margin-right:5px;letter-spacing:0.06em}
+.nav-cta{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:9px;background:var(--amber);color:#17120b;font-weight:600;font-size:0.88rem;transition:transform .2s,background .2s}
+.nav-cta:hover{background:#ffb03d;transform:translateY(-1px)}
+@media (max-width:860px){.nav-links a{display:none}.nav-links a.nav-cta{display:inline-flex}}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:12px;font-size:1rem;font-weight:600;transition:transform .2s,background .2s,border-color .2s;border:none}
+.btn svg{flex:none}
+.btn-primary{background:var(--amber);color:#17120b}
+.btn-primary:hover{background:#ffb03d;transform:translateY(-2px)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.16);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+/* ---------- hero ---------- */
+.hero{padding:150px 0 90px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:10px;height:32px;padding:0 14px;border:1px solid rgba(255,159,10,0.35);border-radius:999px;font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.08em;color:var(--amber);background:var(--amber-soft)}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-family:var(--font-head);font-weight:700;font-size:clamp(2.3rem,4.6vw,3.45rem);line-height:1.16;letter-spacing:-0.02em;margin:22px 0 20px}
+h1 .turn{display:inline-block;color:var(--amber);position:relative}
+.hero-sub{color:var(--ink-2);font-size:1.08rem;line-height:1.8;max-width:33em}
+.hero-actions{display:flex;gap:14px;margin:32px 0 22px;flex-wrap:wrap}
+.hero-meta{font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.05em;color:var(--ink-3)}
+.hero-meta span{margin-right:18px}
+.hero-meta b{color:var(--ink-2);font-weight:500}
+
+/* ---------- hero header top row & quote ---------- */
+.hero-top-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.hero-quote{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.025);font-size:0.78rem;color:var(--ink-2);line-height:1.4}
+.hero-quote .hq-text{font-style:italic;color:var(--ink)}
+.hero-quote .hq-author{font-family:var(--font-mono);color:var(--amber);font-size:0.72rem;letter-spacing:0.04em}
+
+/* ---------- MacBook glass trackpad stage ---------- */
+.stage{position:relative;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.12);border-radius:22px;background:radial-gradient(120% 90% at 50% 15%, rgba(255,255,255,0.045) 0%, rgba(13,16,22,0.85) 100%), #0d0f14;padding:24px 28px 20px;aspect-ratio:1.52/1;box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 24px rgba(0,0,0,0.6), 0 28px 75px rgba(0,0,0,0.55);overflow:hidden}
+.stage::before{content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;background:linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 45%, rgba(255,255,255,0.015) 100%)}
+.knob-zone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;user-select:none;-webkit-user-select:none;position:relative}
+.knob-holder{position:relative;width:min(280px,58%);aspect-ratio:1/1}
+.knob-holder svg{width:100%;height:100%;display:block}
+.knob-readout{font-family:var(--font-mono);font-weight:600;font-size:0.92rem;color:#7abbff;letter-spacing:-0.02em;opacity:0.95;min-height:1.4em;line-height:1.4}
+.replay-btn{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;color:var(--ink-2);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);cursor:pointer;transition:color .2s, border-color .2s, background .2s, transform .2s;z-index:10}
+.replay-btn:hover{color:var(--amber);border-color:var(--amber);background:var(--amber-soft);transform:rotate(-45deg)}
+
+/* ---------- sections ---------- */
+section{padding:96px 0}
+.sec-head{margin-bottom:52px}
+.sec-index{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.sec-index .num{font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.16em;color:var(--amber)}
+.sec-index .rule{flex:1;max-width:120px;height:1px;background:linear-gradient(90deg,rgba(255,159,10,0.5),transparent)}
+.sec-title{font-family:var(--font-head);font-weight:700;font-size:clamp(1.6rem,3vw,2.15rem);letter-spacing:-0.02em;line-height:1.25}
+.sec-desc{color:var(--ink-2);margin-top:12px;max-width:36em}
+
+/* principle steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 24px;position:relative;overflow:hidden}
+.step .idx{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.14em;color:var(--amber);margin-bottom:14px}
+.step .fig{height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;border:1px solid var(--line-soft);border-radius:10px;background:rgba(0,0,0,0.22)}
+.step h3{font-family:var(--font-head);font-size:1.12rem;font-weight:600;margin-bottom:8px}
+.step p{color:var(--ink-2);font-size:0.92rem;line-height:1.7}
+.step .kbd{font-family:var(--font-mono);font-size:0.8em;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink)}
+
+/* feature cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.fcard{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.022),transparent),var(--panel);padding:30px 28px;transition:border-color .25s,transform .25s}
+.fcard:hover{border-color:rgba(255,159,10,0.4);transform:translateY(-3px)}
+.fcard .fi{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--amber-soft);color:var(--amber);margin-bottom:18px}
+.fcard h3{font-family:var(--font-head);font-size:1.18rem;font-weight:600;margin-bottom:9px}
+.fcard p{color:var(--ink-2);font-size:0.94rem}
+
+/* knob types */
+.knobs3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.kcard{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 24px 22px;text-align:center}
+.kcard .fig{display:flex;justify-content:center;margin-bottom:6px}
+.kcard svg{width:190px;height:190px}
+.kcard h3{font-family:var(--font-head);font-size:1.14rem;font-weight:600}
+.kcard .en{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);margin:4px 0 10px}
+.kcard p{color:var(--ink-2);font-size:0.9rem;line-height:1.65;min-height:4.4em}
+.kcard .spec{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--ink-3);letter-spacing:0.04em;line-height:2}
+.kcard .spec b{color:var(--amber);font-weight:500}
+
+/* showcase placeholders */
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.shot{border:1px dashed rgba(255,255,255,0.18);border-radius:16px;background:rgba(255,255,255,0.015);padding:22px;position:relative}
+.shot .ph{height:170px;border-radius:10px;background:
+  repeating-linear-gradient(45deg,rgba(255,255,255,0.025) 0 10px,transparent 10px 20px),rgba(0,0,0,0.25);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;border:1px solid var(--line-soft)}
+.shot .ph .app{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.14em;color:var(--ink-3)}
+.shot .ph .todo{font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.1em;color:rgba(255,159,10,0.75);border:1px solid rgba(255,159,10,0.3);border-radius:5px;padding:2px 8px}
+.shot h3{font-family:var(--font-head);font-size:1.05rem;font-weight:600;margin:16px 0 6px}
+.shot p{color:var(--ink-2);font-size:0.88rem}
+
+/* vs physical knobs */
+.vs-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.vs-cards .en{display:block;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);margin:2px 0 10px}
+.vs-lead{grid-column:1/-1;display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:center;background:linear-gradient(120deg,rgba(255,159,10,0.06),transparent 55%),var(--panel);border-color:rgba(255,159,10,0.22)}
+.vs-sum{border:1px dashed rgba(255,159,10,0.3);border-radius:16px;padding:28px 32px;margin-top:22px;text-align:center;background:linear-gradient(180deg,rgba(255,159,10,0.04),transparent 60%)}
+.vs-sum p{color:var(--ink-2);font-size:0.98rem;line-height:1.8}
+.vs-sum b{color:var(--amber);font-weight:600}
+.vs-sum .btn{margin-top:16px}
+@media (max-width:680px){
+  .vs-cards{grid-template-columns:1fr}
+  .vs-lead{grid-template-columns:1fr}
+  .vs-sum{padding:24px 20px}
+}
+
+
+/* customize */
+.sub-head{display:flex;align-items:center;gap:12px;margin:52px 0 22px}
+.sub-head .n{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.14em;color:var(--amber)}
+.sub-head h3{font-family:var(--font-head);font-size:1.22rem;font-weight:600;letter-spacing:-0.01em}
+.cz-lead{color:var(--ink-2);font-size:1.02rem;line-height:1.85;max-width:46em;margin-bottom:28px}
+.cz-lead b{color:var(--ink);font-weight:600}
+.flow{display:grid;grid-template-columns:1fr 22px 1fr 22px 1fr 22px 1fr;gap:6px;align-items:center;margin:28px 0 34px}
+.fnode{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.fnode .fi{color:var(--amber)}
+.fnode b{font-family:var(--font-head);font-weight:600;font-size:0.95rem}
+.fnode span{font-size:0.76rem;color:var(--ink-3);line-height:1.5}
+.farr{display:flex;align-items:center;justify-content:center;color:rgba(255,159,10,0.55)}
+.ckbd{font-family:var(--font-mono);font-size:0.82em;border:1px solid var(--line);border-radius:5px;padding:2px 7px;background:rgba(255,255,255,0.04);color:var(--amber)}
+.note-panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:24px 28px;color:var(--ink-2);font-size:0.96rem;line-height:1.8}
+.lang-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:8px;font-family:var(--font-mono);font-size:0.8rem;color:var(--ink-2);border:1px solid var(--line);background:rgba(255,255,255,0.03);transition:color .2s,border-color .2s,background .2s}
+.lang-btn:hover{color:var(--ink);border-color:var(--amber);background:var(--amber-soft)}
+@media (max-width:860px){.nav-links a{display:none}.nav-links a.nav-cta,.nav-links a.lang-btn{display:inline-flex}}
+@media (max-width:760px){.flow{grid-template-columns:1fr;gap:10px}.farr{transform:rotate(90deg)}}
+
+/* dual wings layout */
+.dual-wings{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:1080px;margin:0 auto}
+.wing-card{border:1px solid var(--line);border-radius:20px;background:var(--panel);padding:36px 32px;display:flex;flex-direction:column;position:relative;transition:border-color .25s,box-shadow .25s}
+.wing-card:hover{border-color:rgba(255,159,10,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.35)}
+.wing-card.pro-card{border-color:rgba(255,159,10,0.35);background:linear-gradient(180deg,rgba(255,159,10,0.04),transparent 45%),var(--panel)}
+.wing-tags{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.wing-tag{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:rgba(255,255,255,0.03);color:var(--ink-2)}
+.wing-tag.highlight{border-color:rgba(255,159,10,0.4);color:var(--amber);background:var(--amber-soft);font-weight:500}
+.wing-card h3{font-family:var(--font-head);font-size:1.35rem;font-weight:700;line-height:1.3;margin-bottom:12px}
+.wing-desc{color:var(--ink-2);font-size:0.95rem;line-height:1.7;margin-bottom:16px}
+.wing-list{list-style:none;display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.wing-item{display:flex;gap:12px;align-items:flex-start}
+.wing-item-icon{flex:none;width:30px;height:30px;border-radius:8px;background:rgba(255,159,10,0.12);border:1px solid rgba(255,159,10,0.25);display:flex;align-items:center;justify-content:center;color:var(--amber);margin-top:2px}
+.wing-item-content b{display:block;font-size:0.95rem;color:var(--ink);margin-bottom:3px}
+.wing-item-content p{font-size:0.86rem;color:var(--ink-3);line-height:1.6}
+
+/* tp-mini-stage */
+.tp-mini-stage{border:1px solid rgba(255,255,255,0.08);border-radius:14px;background:rgba(255,255,255,0.02);padding:14px 16px 12px;margin:2px 0 16px}
+.tp-trackpad{display:grid;grid-template-columns:1fr 1px 1fr;gap:12px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,159,10,0.22);border-radius:10px;padding:12px 14px}
+.tp-zone{display:flex;flex-direction:column;gap:3px}
+.tp-zone-pill{font-family:var(--font-mono);font-size:0.68rem;color:var(--amber);letter-spacing:0.06em;font-weight:600}
+.tp-zone-action{display:flex;align-items:center;gap:6px;font-size:0.86rem;font-weight:600;color:var(--ink)}
+.tp-zone-action svg{color:var(--amber);flex:none}
+.tp-zone-hint{font-size:0.75rem;color:var(--ink-3);line-height:1.4}
+.tp-divider{background:rgba(255,255,255,0.08);height:100%}
+.tp-badge-bar{margin-top:10px;display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:0.7rem;color:var(--ink-3);flex-wrap:wrap;gap:6px}
+
+/* vs grid3 */
+.vs-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1080px;margin:0 auto}
+.vs-col{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:30px 24px;display:flex;flex-direction:column;transition:border-color .25s}
+.vs-col:hover{border-color:rgba(255,159,10,0.35)}
+.vs-col-badge{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.12em;color:var(--amber);margin-bottom:8px;text-transform:uppercase;font-weight:500}
+.vs-col h3{font-family:var(--font-head);font-size:1.2rem;font-weight:600;margin-bottom:18px}
+.vs-contrast-box{border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.vs-contrast-box .label{font-size:0.75rem;font-family:var(--font-mono);margin-bottom:6px;font-weight:600}
+.vs-contrast-box.bad{background:rgba(255,69,58,0.06);border:1px solid rgba(255,69,58,0.2)}
+.vs-contrast-box.bad .label{color:#ff6961}
+.vs-contrast-box.bad p{font-size:0.86rem;color:var(--ink-3);line-height:1.55}
+.vs-contrast-box.good{background:rgba(255,159,10,0.06);border:1px solid rgba(255,159,10,0.3)}
+.vs-contrast-box.good .label{color:var(--amber)}
+.vs-contrast-box.good p{font-size:0.88rem;color:var(--ink-2);line-height:1.55}
+.vs-contrast-box.good b{color:var(--ink)}
+
+/* advanced accordion */
+.adv-accordion{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.adv-item{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;transition:border-color .25s}
+.adv-item[open]{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.03),transparent 30%),var(--panel)}
+.adv-summary{display:flex;justify-content:space-between;align-items:center;padding:20px 26px;font-family:var(--font-head);font-size:1.08rem;font-weight:600;color:var(--ink);cursor:pointer;user-select:none;list-style:none}
+.adv-summary::-webkit-details-marker{display:none}
+.adv-summary:hover{color:var(--amber)}
+.adv-icon{font-family:var(--font-mono);font-size:1.3rem;color:var(--amber);transition:transform .25s cubic-bezier(0.16,1,0.3,1);line-height:1}
+.adv-item[open] .adv-icon{transform:rotate(45deg)}
+.adv-body{padding:0 26px 26px;border-top:1px solid rgba(255,255,255,0.05);padding-top:22px}
+
+@media (max-width:860px){
+  .dual-wings,.vs-grid3{grid-template-columns:1fr;gap:18px}
+  .wing-card{padding:26px 22px}
+  .adv-summary{padding:18px 20px;font-size:0.98rem}
+  .adv-body{padding:0 18px 20px;padding-top:18px}
+  .tp-trackpad{grid-template-columns:1fr;gap:10px}
+  .tp-divider{display:none}
+}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto}
+.plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative}
+.plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
+.plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
+.plan h3{font-family:var(--font-head);font-size:1.2rem;font-weight:600}
+.plan .pd{color:var(--ink-3);font-size:0.86rem;margin-top:4px}
+.plan .price{font-family:var(--font-mono);font-size:2.5rem;font-weight:600;letter-spacing:-0.03em;margin:18px 0 2px}
+.plan .price small{font-size:0.95rem;color:var(--ink-3);font-weight:400;letter-spacing:0}
+.plan .ps{font-size:0.8rem;color:var(--ink-3);margin-bottom:20px}
+.plan .price .orig{font-size:1.2rem;color:var(--ink-3);font-weight:400;letter-spacing:0;margin-right:9px}
+.plan .price .orig .orig-num{text-decoration:line-through;text-decoration-color:rgba(255,159,10,0.55);text-decoration-thickness:2px}
+.math-tip{position:relative;display:inline-flex;align-items:baseline;cursor:help}
+.math-tip .math-const{font-family:var(--font-mono);font-size:0.46em;color:var(--ink-3);margin-left:3px;letter-spacing:0.04em;font-weight:500;opacity:0.85;display:inline-block}
+.math-tip .tip-box{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(20,17,14,0.96);border:1px solid rgba(255,159,10,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--ink);padding:6px 11px;border-radius:7px;font-family:var(--font-mono);font-size:0.72rem;font-weight:400;text-decoration:none !important;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.55);transition:opacity .2s cubic-bezier(.16,1,.3,1),transform .2s cubic-bezier(.16,1,.3,1);z-index:30}
+.math-tip .tip-box::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:rgba(20,17,14,0.96) transparent transparent transparent}
+.math-tip:hover .tip-box,.math-tip:focus-visible .tip-box{visibility:visible;opacity:1;transform:translateX(-50%) translateY(0)}
+.plan .pay-note{margin-top:10px;font-size:0.74rem;color:var(--ink-3);text-align:center;font-family:var(--font-mono);letter-spacing:0.02em}
+.plan .save-badge{display:inline-block;vertical-align:4px;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.07em;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(255,159,10,0.35);border-radius:6px;padding:3px 9px;margin-left:9px;font-weight:500}
+.plan .ps.deadline{color:var(--amber);margin-bottom:4px}
+.plan ul{list-style:none;margin-bottom:26px}
+.plan li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--ink-2);font-size:0.92rem}
+.plan li svg{flex:none;margin-top:5px;color:var(--amber)}
+.plan li.dim{color:var(--ink-3)}
+.plan li b{color:var(--ink);font-weight:600}
+.plan .btn{width:100%;justify-content:center}
+.plan .upgrade-note{margin-top:12px;font-size:0.76rem;color:var(--ink-3);text-align:center;line-height:1.6}
+.btn-inapp{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;border:1px solid rgba(255,159,10,0.5);background:var(--amber-soft);color:var(--amber);font-weight:600;font-size:1rem}
+
+/* faq */
+.faq-list{max-width:760px;margin:0 auto}
+.qa{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:12px;overflow:hidden}
+.qa button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;background:none;border:none;color:var(--ink);padding:20px 24px;font-size:1rem;font-weight:600;text-align:left;font-family:var(--font-head)}
+.qa button .pm{flex:none;font-family:var(--font-mono);color:var(--amber);font-size:1.1rem;transition:transform .25s}
+.qa[data-open="true"] button .pm{transform:rotate(45deg)}
+.qa .ans{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.qa .ans p{padding:0 24px 20px;color:var(--ink-2);font-size:0.93rem}
+.qa .ans .kbd{font-family:var(--font-mono);font-size:0.8em;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--ink)}
+
+/* final cta */
+.final{padding:110px 0 120px;text-align:center;position:relative;overflow:hidden}
+.final .ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:640px;height:640px;border:1px solid rgba(255,159,10,0.12);border-radius:50%;pointer-events:none}
+.final .ring::before{content:"";position:absolute;inset:70px;border:1px dashed rgba(255,159,10,0.14);border-radius:50%}
+.final h2{font-family:var(--font-head);font-size:clamp(1.9rem,4vw,2.8rem);letter-spacing:-0.02em;margin-bottom:14px}
+.final p{color:var(--ink-2);margin-bottom:34px}
+.final .hero-meta{margin-top:20px}
+
+/* footer */
+footer{border-top:1px solid var(--line-soft);padding:34px 0}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot .brand{font-size:0.92rem}
+.foot .brand img{width:22px;height:22px}
+.foot-links{display:flex;gap:22px;font-size:0.85rem;color:var(--ink-2)}
+.foot-links a:hover{color:var(--ink)}
+.foot .pn{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.14em;color:var(--ink-3)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.rv.in{opacity:1;transform:none}
+
+/* responsive */
+@media (max-width:1020px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .steps,.cards3,.knobs3,.shots{grid-template-columns:1fr 1fr}
+}
+@media (max-width:1000px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+}
+@media (max-width:680px){
+  section{padding:70px 0}
+  .hero{padding:120px 0 70px}
+  .steps,.cards3,.knobs3,.shots,.plans{grid-template-columns:1fr}
+  .knob-holder{width:250px;height:250px}
+  .stage{aspect-ratio:auto;padding:26px 20px 24px}
+  .foot{justify-content:center;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
 </head>
 <body>
-    <p>页面已迁移，正在跳转… <a href="./">如果没有自动跳转，请点击这里</a></p>
+
+<header>
+  <nav class="nav" aria-label="主导航">
+    <a class="brand" href="#top">
+      <img src="assets/appicon.png" alt="PhantomKnob 应用图标">
+      PhantomKnob<span class="zh">幻影旋钮</span>
+    </a>
+    <div class="nav-links">
+      <a href="#scenes"><span class="n">01</span>场景</a>
+      <a href="#vs"><span class="n">02</span>对比优势</a>
+      <a href="#start"><span class="n">03</span>上手与安全</a>
+      <a href="#advanced"><span class="n">04</span>深入探索</a>
+      <a href="#pricing"><span class="n">05</span>定价</a>
+      <a href="#faq"><span class="n">06</span>FAQ</a>
+      <a href="./" class="lang-btn" title="English Version">🌐 EN</a>
+      <a class="nav-cta" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-label="产品介绍">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="hero-top-row">
+          <span class="badge"><span class="dot"></span>✨ v2.0.0</span>
+          <div class="hero-quote">
+            <span class="hq-text">“任何足够先进的技术，皆与魔法无异。”</span>
+            <span class="hq-author">— 阿瑟·C·克拉克</span>
+          </div>
+        </div>
+        <h1>解锁封印在触控板里的<br><span class="turn">魔法旋钮</span></h1>
+        <p class="hero-sub">无需额外硬件和繁琐连线，把触控板变为随身携带的实体旋钮与创意控制台，尤其适合移动场景。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
+            <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+            下载免费版
+          </a>
+          <!-- <a class="btn btn-ghost" href="#features">先看看它能干什么 ↓</a> -->
+        </div>
+        <p class="hero-meta"><span><b>macOS 13+</b></span><span><b>Apple Silicon &amp; Intel</b></span><span>支持 MacBook 和妙控板</span></p>
+      </div>
+
+      <div class="stage" id="stage">
+        <button class="replay-btn" id="replayBtn" title="重播解封仪式" aria-label="重播解封仪式">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        </button>
+        <div class="knob-zone">
+          <div class="knob-holder" id="knobHolder" aria-label="PhantomKnob 解锁封印动画">
+            <svg viewBox="0 0 220 220" aria-hidden="true" id="heroSvg">
+              <defs>
+                <filter id="capsuleGlow" filterUnits="userSpaceOnUse" x="20" y="20" width="180" height="180">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="#67d5fa" flood-opacity="0.8"/>
+                </filter>
+                <filter id="padShadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.45"/>
+                </filter>
+                <linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="32" y1="110" x2="188" y2="110">
+                  <stop offset="0" stop-color="#4da3f7"/>
+                  <stop offset="0.55" stop-color="#3b7bf0"/>
+                  <stop offset="1" stop-color="#4f46e5"/>
+                </linearGradient>
+                <linearGradient id="padGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f8dfe3"/>
+                  <stop offset="1" stop-color="#eab7c3"/>
+                </linearGradient>
+              </defs>
+              <path id="htrail" fill="none" stroke="#5ac8fa" stroke-opacity="0.65" stroke-width="2.6" stroke-linecap="round" d=""/>
+              <g id="logoAssembly">
+                <g id="knobBody">
+                  <circle id="knobRing" cx="110" cy="110" r="78" fill="none" stroke="url(#ringGrad)" stroke-width="21"/>
+                  <path id="drawArc1" fill="none" stroke="url(#ringGrad)" stroke-width="21" d=""/>
+                  <path id="drawArc2" fill="none" stroke="url(#ringGrad)" stroke-width="21" d=""/>
+                  <line id="knobNeedle" x1="98.7" y1="98.7" x2="72.5" y2="72.5" stroke="#7ddcfc" stroke-width="11" stroke-linecap="round" filter="url(#capsuleGlow)"/>
+                </g>
+                <g id="touchPoints">
+                  <g id="padG1">
+                    <circle id="rip1a" cx="165.15" cy="54.85" r="22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
+                    <circle id="rip1b" cx="165.15" cy="54.85" r="30" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                    <circle cx="165.15" cy="54.85" r="16" fill="url(#padGrad)" filter="url(#padShadow)"/>
+                  </g>
+                  <g id="padG2">
+                    <circle id="rip2a" cx="54.85" cy="165.15" r="22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
+                    <circle id="rip2b" cx="54.85" cy="165.15" r="30" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                    <circle cx="54.85" cy="165.15" r="16" fill="url(#padGrad)" filter="url(#padShadow)"/>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <div class="knob-readout mono" id="hv"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 FEATURES -->
+    <!-- 01 SCENES -->
+    <!-- 01 SCENES -->
+  <section id="scenes">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">01 / SCENES</span><span class="rule"></span></div>
+        <h2 class="sec-title">两大核心应用：为技术极客与专业人士量身定制</h2>
+        <!-- <p class="sec-desc" style="margin-left:auto;margin-right:auto"><s>无需额外硬件。在日常中享受三指盲调的乐趣，在专业创作中解放双手提升效率。</s></p> -->
+      </div>
+      <div class="dual-wings">
+        <!-- Wing 1: Geek System Quick Knob -->
+        <div class="wing-card rv">
+          <div class="wing-tags">
+            <span class="wing-tag highlight">交互极客首选</span>
+            <span class="wing-tag">系统级快捷交互</span>
+            <span class="wing-tag">零按键干扰</span>
+          </div>
+          <h3>系统快捷旋钮<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">极致体验，高效优雅</span></h3>
+          <p class="wing-desc">三指旋钮：无需寻找光标，无需特定位置，随心盲操。</p>
+
+
+
+          <ul class="wing-list">
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>三指旋钮 · 支持盲操</b>
+                <p>触控板左侧旋转调音量，右侧旋转调亮度（如果有多屏，只调节鼠标所在屏幕）。无需繁琐操作，无需视线转移，保持专注。</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>酷炫动画特效 · 体验非凡</b>
+                <p>内置多款入场与出场动画特效。每一次转动都极具科技仪式感，让指尖操作兼具实用与视觉愉悦。</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>支持多显示器独立调节亮度</b>
+                <p>当有多台显示器时，只调节鼠标所在屏幕的亮度。支持通过 DDC/CI 协议调节外接显示器亮度，省去繁琐操作，多屏用户首选。</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>日常高频场景举例</b>
+                <p><b>1. 沉浸影音娱乐</b>全屏观影或戴耳机听歌时，随手一转即调音量，优雅从容。<br><b>2. 深夜暗光护眼</b>关灯码字或夜读，右侧轻旋柔和降光，无缝呵护双眼。<br><b>3. 突发快速静音</b>会议通话或突发状况时，反向轻转瞬间压低音量，从容自如。</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Wing 2: Pro Creative Controller Alternative -->
+        <div class="wing-card pro-card rv">
+          <div class="wing-tags">
+            <span class="wing-tag highlight">生产力跃升</span>
+            <span class="wing-tag">DaVinci Resolve 调色台平替</span>
+            <span class="wing-tag">代替外接控制台</span>
+          </div>
+          <h3>移动创意控制台<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">部分代替外接实体旋钮或控制台，专业提效</span></h3>
+          <p class="wing-desc">两指旋钮：先定位，后控制，既快速又精准。</p>
+          <ul class="wing-list">
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>三种旋钮类型，适用于不同的应用场景</b>
+                <p>1. 单旋钮模拟实体旋钮；<br>2. 双环旋钮内外环对应两种速度，可在使用中随时切换；<br>3. 无级变速旋钮速度随旋钮大小变化，快慢随心。</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="4.5"/><path d="M12 3v2M12 19v2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>单指续转</b>
+                <p>当需要连续旋转时，抬起一指，用剩余单指继续旋转，长调节任务不会断线。支持所有的旋钮类型。</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>旋钮定制</b>
+                <p>可针对具体应用适配行为，还可定制旋钮的外观和动画效果。能力超强，不落俗套。不断增加对专业软件的预设旋钮。</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><circle cx="4" cy="12" r="2"/><circle cx="12" cy="10" r="2"/><circle cx="20" cy="14" r="2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>应用场景举例</b>
+                <p>1. 用双环旋钮在Xcode里浏览代码，内环快速移动，外环慢速阅读。<br> 2. 用无级变速旋钮在视频编辑软件（Capcut/Davinci Resolve）中的时间线上随意变速定位，既能快速浏览，也能逐帧微调。<br>3. 光标悬停在 Lift / Gamma / Gain 色轮与滑块的数值上直接旋转，获得媲美实体调色台的顺滑手感和专注的工作流。<br>4. 微调曝光、高光、阴影与曲线色调。眼睛关注照片细节，手指在触控板上自然微转，直觉调色一气呵成。</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 VS HARDWARE -->
+  <section id="vs">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">02 / VS HARDWARE</span><span class="rule"></span></div>
+        <h2 class="sec-title">为什么选择触控板，而不是实体控制台？</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">调色、剪辑与混音需要好旋钮——但这不意味着你要随身携带笨重的外设。</p>
+      </div>
+      <div class="vs-grid3">
+        <!-- Contrast 1 -->
+        <div class="vs-col rv">
+          <span class="vs-col-badge">01 · 移动出行与场景</span>
+          <h3>轻便无负重 · 随行即用</h3>
+          <div class="vs-contrast-box bad">
+            <div class="label">✕ 传统实体控制台（TourBox / 剪辑台）</div>
+            <p>重达 300g~800g，必须装包随身携带，易刮蹭碰撞。在高铁小桌板、飞机经济舱、咖啡馆局促小圆桌或膝上办公时，根本没有多余空间拿出来摆放。</p>
+          </div>
+          <div class="vs-contrast-box good">
+            <div class="label">✓ PhantomKnob 幻影旋钮</div>
+            <p><b>零额外硬件，零携带负重，无繁琐接线</b>。只要带上 MacBook，你的专属旋转控制台就已经随身就位。咖啡馆、旅行中，随时随地展开专业级工作流。</p>
+          </div>
+        </div>
+
+        <!-- Contrast 2 -->
+        <div class="vs-col rv">
+          <span class="vs-col-badge">02 · 拥有成本与门槛</span>
+          <h3>十倍价格差 · 极高回报</h3>
+          <div class="vs-contrast-box bad">
+            <div class="label">✕ 传统实体控制台</div>
+            <p>入门外接硬件旋钮动辄 $150 ~ $300，专业级视频/音频调色台甚至高达 $600~$2000+。购买门槛高，若闲置则成为积灰的沉没成本。</p>
+          </div>
+          <div class="vs-contrast-box good">
+            <div class="label">✓ PhantomKnob 幻影旋钮</div>
+            <p><b>不足实体硬件 1/10 的价格</b>。无需买新硬件，以极低代价彻底解锁封印在触控板里的硬件潜能。</p>
+          </div>
+        </div>
+
+        <!-- Contrast 3 -->
+        <div class="vs-col rv">
+          <span class="vs-col-badge">03 · 桌面纯净与线缆</span>
+          <h3>无线缆拘束 · 纯净优雅</h3>
+          <div class="vs-contrast-box bad">
+            <div class="label">✕ 传统实体控制台</div>
+            <p>多占用一个 USB 接口或需要额外 Type-C 扩展坞，桌面线缆缠绕；无线版本需要定期充电并忍受蓝牙连接延迟与偶发休眠断连。</p>
+          </div>
+          <div class="vs-contrast-box good">
+            <div class="label">✓ PhantomKnob 幻影旋钮</div>
+            <p><b>无繁琐连线、零电池负担</b>。基于 创新技术和专利算法，在触控板上模拟并超越物理旋钮的体验，极速响应，极简纯粹。</p>
+          </div>
+        </div>
+      </div>
+      <div class="vs-sum rv" style="margin-top:32px">
+        <p>无需再为外接控制器纠结预算与背包重量——立即免费体验触控板的全新交互维度</p>
+        <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 ONBOARD & TRUST -->
+  <section id="start">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">03 / ONBOARD &amp; TRUST</span><span class="rule"></span></div>
+        <h2 class="sec-title">上手极其简单 · 安全注重隐私</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">3 秒熟悉自然手势，纯本机离线运行，安全透明无负担。</p>
+      </div>
+      <div class="steps">
+        <div class="step rv">
+          <div class="idx mono">STEP 1</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <path d="M75 14l16 18h-10v22h-12V32H59z" fill="#ff9f0a" opacity="0.9"/>
+              <rect x="52" y="62" width="46" height="8" rx="4" stroke="rgba(255,255,255,0.3)"/>
+            </svg>
+          </div>
+          <h3>下载安装 Mac App</h3>
+          <p>DMG 直链下载，已通过 Apple 官方公证（Notarized）。免费版即含全部核心能力，首次启动自动完成触控板兼容性测试。</p>
+        </div>
+        <div class="step rv">
+          <div class="idx mono">STEP 2</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <rect x="30" y="16" width="90" height="56" rx="9" stroke="rgba(255,255,255,0.3)"/>
+              <path d="M66 36l-5 3 0 6 5 3z" fill="#ff9f0a"/>
+              <rect x="70" y="34" width="34" height="5" rx="2.5" stroke="rgba(255,255,255,0.35)"/>
+              <rect x="70" y="44" width="24" height="5" rx="2.5" stroke="rgba(255,255,255,0.2)"/>
+              <circle cx="117" cy="24" r="7" fill="#30d158" opacity="0.9"/>
+              <path d="M114 24l2.2 2.2 4-4.4" stroke="#0d0d0f" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>授予辅助功能权限</h3>
+          <p>macOS 对跨 App 控制管理严格，辅助功能是唯一正规通道。仅用于读取悬停位置控件并发送调节事件，绝不读取键盘输入，全程在本机。</p>
+        </div>
+        <div class="step rv">
+          <div class="idx mono">STEP 3</div>
+          <div class="fig">
+            <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
+              <rect x="30" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"/>
+              <rect x="72" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"/>
+              <rect x="66" y="22" width="6" height="22" fill="#0d0d0f"/>
+              <rect x="78" y="14" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
+              <rect x="78" y="30" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
+              <text x="75" y="72" font-family="IBM Plex Mono,monospace" font-size="12" fill="rgba(255,255,255,0.55)" text-anchor="middle">唤醒旋钮</text>
+            </svg>
+          </div>
+          <h3>启用旋钮</h3>
+          <p>点击任务栏图标或按 <span class="kbd">⌘⌥K</span> 启用旋钮手势（图标变为绿色）。然后就可以体验PhantomKnob了。</p>
+        </div>
+      </div>
+
+      <!-- Trust Cards with ID -->
+      <div class="cards3" id="trust" style="margin-top:28px">
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
+          <h3>Apple 官方公证背书</h3>
+          <p>每个正式发布版本均通过 Apple 官方服务器恶意代码扫描公证与签名，确保安全无篡改。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="8" cy="16" r="4"/><path d="M11 13L21 3M16.5 7.5l3 3M13.5 10.5l2 2"/></svg></div>
+          <h3>零键盘读取 · 纯手势拦截</h3>
+          <p>辅助功能权限用于读取悬停鼠标下的控件并注入旋转事件，拦截范围限定在触控板多点触控手势和'c'键。</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/></svg></div>
+          <h3>100% 离线运行 · 无账号追踪</h3>
+          <p>无服务器后端、无账号注册、无网络隐私上报、无订阅陷阱。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 ADVANCED -->
+  <section id="advanced">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">04 / ADVANCED</span><span class="rule"></span></div>
+        <h2 class="sec-title">深入探索 · 底层技术与高级定制</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">专为技术爱好者与硬核玩家准备。无需了解这些，你也可以直接开箱即用。</p>
+      </div>
+      <div class="adv-accordion">
+        <!-- Drawer 1: Principle with ID -->
+        <details class="adv-item rv" id="principle">
+          <summary class="adv-summary">
+            <span>▸ 01 / 旋钮手势工作的基本原理</span>
+            <span class="adv-icon">+</span>
+          </summary>
+          <div class="adv-body">
+            <div class="cards3" style="margin-bottom:10px">
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="4"/><circle cx="10" cy="15" r="1.3"/><circle cx="14" cy="15" r="1.3"/><path d="M8 10a4 4 0 0 1 8 0"/></svg></div>
+                <h3>1 · 识别目标控件</h3>
+                <p>鼠标悬停在屏幕上时，通过系统 Accessibility API 毫秒级识别鼠标下方的具体 App 窗口与可调控滑块元素。</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 10h16M8 14h8"/><circle cx="15" cy="4.5" r="2.5"/></svg></div>
+                <h3>2 · 识别旋钮手势并处理</h3>
+                <p>判断当前的手势是否是旋钮手势。如果是，则拦截触点事件，防止与原生手势冲突。</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+                <h3>3 · 计算旋钮参数</h3>
+                <p>根据触点确定当前旋钮手势的类型。提取两个最高权重的触点坐标，用它们重建旋钮（方便后续显示）并记录旋钮旋转的角度，然后把旋转角度映射为调整值。</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <h3>4 · 事件合成与直接注入</h3>
+                <p>将角度增量按定制的旋钮行为转化为方向键、鼠标滚轮等事件，插入 macOS 全局事件流，实现对目标控件的控制。</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8 15l8-6"/></svg></div>
+                <h3>5 · GPU 渲染动画效果</h3>
+                <p>采用 Metal / CoreAnimation 硬件加速渲染 HUD 入场出场动画效果，做出酷炫效果的同时对CPU 消耗微乎其微。</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 12l4-4M4 12l4 4"/></svg></div>
+                <h3>6 · 单指续转</h3>
+                <p>当抬起一指时，系统自动锁定旋钮中心，平滑过渡到单指调控。</p>
+              </div>
+
+            </div>
+          </div>
+        </details>
+
+        <!-- Drawer 2: Customize with ID -->
+        <details class="adv-item rv" id="customize">
+          <summary class="adv-summary">
+            <span>▸ 02 / 如何为软件定制旋钮</span>
+            <span class="adv-icon">+</span>
+          </summary>
+          <div class="adv-body">
+            <div class="cards3" style="margin-bottom:10px">
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <h3>1 · 了解控件的控制方式确定确定旋钮的行为</h3>
+                <p>旋钮手势并不是macOS原生手势，它只能通过模拟成目标控件可接受的输入方式来控制目标控件。通常目标控件可接受鼠标滚轮、方向键或两指平移等输入方式的控制。可通过简单的实验了解目标控件的控制方式。</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg></div>
+                <h3>2 · 在旋钮管理器中设置</h3>
+                <p>把鼠标移到目标控件上，做旋钮手势，这时会出现旋钮HUD ，但调整时控件不一定响应。这时按‘c'键调出旋钮管理器，在其中旋钮行为里指定上一步找到的控制方式，之后旋钮就可以控制该控件了。</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+                <h3>3 · 其它定制</h3>
+                <p> 还可在旋钮管理器里为这个旋钮命名、选择类型、颜色、样式、速度等。</p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+  <!-- 05 PRICING -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">05 / PRICING</span><span class="rule"></span></div>
+        <h2 class="sec-title">从免费开始，需要时再升级</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">免费版解锁全部功能。Pro 只是去掉摩擦——使用更顺畅。</p>
+      </div>
+      <div class="plans">
+        <div class="plan rv">
+          <h3>免费版</h3>
+          <p class="pd">建立手感，体验全部核心能力。</p>
+          <div class="price">$0</div>
+          <div class="ps">永久免费</div>
+          <ul>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>14 天全功能试用 Pro 版</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>普通双指旋钮 + 三指系统快捷旋钮</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>经典动效（边沿划入 / 淡入 / 缩放）+ 10 Pro 动效/日</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全部旋钮类型与定制功能</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>常用及专业软件支持</li>
+            <li class="dim">15 分钟会话（可随时重启）</li>
+            <li class="dim">激活延迟</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" style="width:100%;justify-content:center">下载免费版</a>
+        </div>
+        <div class="plan pro rv">
+          <span class="tag">首发限定 · 10/31 截止</span>
+          <h3>Pro</h3>
+          <p class="pd">去掉所有限制，尽享丝滑体验。</p>
+          <div class="price">
+            <span class="math-tip orig" tabindex="0">
+              <s class="orig-num">$27.18</s><span class="math-const">10e</span>
+              <span class="tip-box">e = 2.718281... 自然底数</span>
+            </span>
+            <span class="math-tip cur-price" tabindex="0">
+              $16.18<span class="math-const">10φ</span>
+              <span class="tip-box">φ = 1.618033... 黄金分割比</span>
+            </span>
+            <small>/ 一次性买断</small>
+            <span class="save-badge">省 $11 · 40.5% OFF</span>
+          </div>
+          <div class="ps deadline">2026 年 10 月 31 日后恢复原价 $27.18</div>
+          <div class="ps">一次性买断 · 含后续更新 · 无订阅</div>
+          <ul>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>支持同时激活 3 台个人 Mac</b>（配置随 iCloud 自动同步）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 专属Pro HUD 动效（空间裂缝与空间扭曲）</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>零延迟即刻激活 &amp; 无限连续会话时长</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>专业工作流预设（DaVinci Resolve、剪映/FCP、Logic Pro）</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>外接显示器 DDC 硬件调光支持</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>v2.x 所有版本永久免费更新</li>
+          </ul>
+          <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">立即购买 →</a>
+          <div class="pay-note">全渠道纯美元结算 · 支持信用卡 / Apple Pay / PayPal</div>
+          <p class="upgrade-note">已安装免费版？在 App 菜单「关于 PhantomKnob…」中即可升级，无需重新下载。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">06 / FAQ</span><span class="rule"></span></div>
+        <h2 class="sec-title">常见问题</h2>
+      </div>
+      <div class="faq-list">
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">辅助功能权限安全吗？<span class="pm">+</span></button>
+          <div class="ans"><p>权限只用于读取悬停控件与发送滚动 / 按键事件，拦截范围仅限触控板手势，不读取键盘输入，处理全程在本机。<a href="#trust" style="color:var(--amber)">详见"安全与隐私"一节</a>。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">15 分钟免费会话结束后会怎样？<span class="pm">+</span></button>
+          <div class="ans"><p>控制模式自动关闭，没有惩罚也没有冷却。通过触控板三指轻旋或 <span class="kbd">⌘⌥K</span> 即刻随手重启会话，只引入短暂的激活延迟。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">我的触控板兼容吗？<span class="pm">+</span></button>
+          <div class="ans"><p>所有支持多点触控的 Mac 触控板均可使用，包括每台 MacBook 的内置触控板与 Apple Magic Trackpad。App 内置兼容性检测，第一次运行即可验证。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">能为没有预设的 App 建规则吗？<span class="pm">+</span></button>
+          <div class="ans"><p>可以。悬停任意滑块，按 <span class="kbd">C</span> 就地快速定制，配置一次永久生效。选类型、配行为的完整方法，<a href="#customize" style="color:var(--amber)">详见"怎样定制旋钮"一节</a>。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">早鸟价什么时候结束？<span class="pm">+</span></button>
+          <div class="ans"><p>首发早鸟特惠将于 <b>2026 年 10 月 31 日</b>截止。在此期间购买享受 <b>$16.18</b> 特惠（10φ 黄金分割比），到期后将严格恢复正式买断价 <b>$27.18</b>（10e 自然底数）。一次性买断，包含 v1.x 所有版本后续免费更新，涨价不影响已购用户。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">购买 1 个许可证支持几台 Mac 激活？<span class="pm">+</span></button>
+          <div class="ans"><p>单 License 支持同时激活 <b>3 台您本人的个人 Mac</b>（例如 MacBook 笔记本 + Mac Studio / Mac mini 台式机），偏好配置随 iCloud 跨设备自动同步，充分满足个人多场景协同需求；不支持多人拼单或商业工作室共享。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final">
+    <div class="ring" aria-hidden="true"></div>
+    <div class="wrap rv">
+      <h2>方寸之间，掌驭万物</h2>
+      <p>免费下载 PhantomKnob，几秒钟验证兼容性，立即开始旋转。</p>
+      <a class="btn btn-primary" style="height:58px;padding:0 34px;font-size:1.05rem" href="https://github.com/benwu232/PhantomKnob/releases/latest/">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+        下载免费版
+      </a>
+      <p class="hero-meta">无需注册 · 免费版内可随时升级 Pro</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#top"><img src="assets/appicon.png" alt="">PhantomKnob<span class="zh">幻影旋钮</span></a>
+    <div class="foot-links">
+      <a href="./">English</a>
+      <a href="privacy.html">隐私政策</a>
+      <a href="terms.html">服务条款</a>
+    </div>
+    <span class="pn">PK-LP-01 · REV A · © 2026 BEN WU</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg";
+  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function el(name,attrs,parent){
+    var n=document.createElementNS(NS,name);
+    for(var k in attrs)n.setAttribute(k,attrs[k]);
+    if(parent)parent.appendChild(n);
+    return n;
+  }
+
+  function ticks(g,cx,cy,r,count,baseLen,majorEvery,majorMul,color,opacityBase,rotDeg){
+    rotDeg=rotDeg||0;
+    for(var i=0;i<count;i++){
+      var a=(i*2*Math.PI/count)+rotDeg*Math.PI/180;
+      var major=(i%majorEvery===0);
+      var len=major?baseLen*majorMul:baseLen;
+      var x1=cx+Math.cos(a)*(r-len), y1=cy+Math.sin(a)*(r-len);
+      var x2=cx+Math.cos(a)*r, y2=cy+Math.sin(a)*r;
+      var dist=Math.min(i,count-i)/(count/2);
+      var op=opacityBase*(1-0.6*dist);
+      el("line",{x1:x1.toFixed(2),y1:y1.toFixed(2),x2:x2.toFixed(2),y2:y2.toFixed(2),
+        stroke:color,"stroke-opacity":op.toFixed(3),"stroke-width":major?2.2:1.3},g);
+    }
+  }
+
+  function needle(g,cx,cy,innerR,outerR,color,width){
+    el("line",{x1:cx+innerR,y1:cy,x2:cx+outerR,y2:cy,stroke:color,"stroke-width":width,"stroke-linecap":"round"},g);
+  }
+
+  function arcPath(cx,cy,r,a0,a1){
+    var rad0=a0*Math.PI/180, rad1=a1*Math.PI/180;
+    var x0=cx+r*Math.cos(rad0), y0=cy+r*Math.sin(rad0);
+    var x1=cx+r*Math.cos(rad1), y1=cy+r*Math.sin(rad1);
+    var large=Math.abs(a1-a0)>180?1:0;
+    var sweep=a1>a0?1:0;
+    return "M"+x0.toFixed(2)+" "+y0.toFixed(2)+" A"+r+" "+r+" 0 "+large+" "+sweep+" "+x1.toFixed(2)+" "+y1.toFixed(2);
+  }
+
+  function buildKnob(svg,type){
+    // single matches the app's dot indicator; double/cvk keep legacy needle style (pending redesign)
+    var cx=110,cy=110,r=86;
+    var blue="#0a84ff",green="#30d158";
+    if(type==="single"){
+      var g=el("g",{},svg);
+      ticks(g,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      var rot=el("g",{transform:"rotate(-38 "+cx+" "+cy+")"},svg);
+      el("circle",{cx:(cx+r*0.62).toFixed(1),cy:cy,r:8,fill:blue,filter:"url(#dotGlow)"},rot);
+      var t=el("text",{x:cx,y:cy+24,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":9,fill:"rgba(255,255,255,0.4)"},svg);
+      t.textContent="1.0x";
+    }
+    if(type==="double"){
+      var go=el("g",{},svg);
+      ticks(go,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      var roto=el("g",{transform:"rotate(24 "+cx+" "+cy+")"},svg);
+      needle(roto,cx-r*0.66+6,cy,12,r*0.66-6,blue,3);
+      var ri=r*0.58;
+      var gi=el("g",{},svg);
+      ticks(gi,cx,cy,ri,36,ri*0.2,6,1.5,green,0.5);
+      var roti=el("g",{transform:"rotate(-64 "+cx+" "+cy+")"},svg);
+      needle(roti,cx,cy,8,ri-4,green,2.6);
+      el("circle",{cx:cx,cy:cy,r:14,fill:"rgba(48,209,88,0.16)",stroke:green,"stroke-width":1.2},svg);
+      var lo=el("text",{x:cx+r*0.86,y:cy+30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(122,187,255,0.75)"},svg);
+      lo.textContent="1.0x";
+      var li=el("text",{x:cx,y:cy+ri+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(48,209,88,0.75)"},svg);
+      li.textContent="0.1x";
+    }
+    if(type==="cvk"){
+      var gc=el("g",{},svg);
+      ticks(gc,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
+      el("circle",{cx:cx,cy:cy,r:r*0.52,fill:"rgba(48,209,88,0.07)",stroke:green,"stroke-opacity":0.35,"stroke-width":1},svg);
+      el("path",{d:arcPath(cx,cy,r*0.52,-210,-150),stroke:green,"stroke-opacity":0.5,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
+      el("path",{d:arcPath(cx,cy,r*0.36,-200,-160),stroke:green,"stroke-opacity":0.35,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
+      var rotc=el("g",{transform:"rotate(-12 "+cx+" "+cy+")"},svg);
+      needle(rotc,cx,cy,8,r*0.62-4,blue,3);
+      el("circle",{cx:cx,cy:cy,r:16,fill:"rgba(10,132,255,0.18)",stroke:blue,"stroke-width":1.3},svg);
+      var z1=el("text",{x:cx-r*0.42,y:cy-r*0.42,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
+      z1.textContent="10x";
+      var z2=el("text",{x:cx+r*0.30,y:cy+r*0.30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
+      z2.textContent="0.1x";
+      var sc=el("text",{x:cx,y:cy+r*0.52+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":10,"font-weight":"600",fill:"rgba(48,209,88,0.85)"},svg);
+      sc.textContent="2.5x";
+    }
+  }
+
+  document.querySelectorAll('svg[data-knob]').forEach(function(s){buildKnob(s,s.getAttribute("data-knob"));});
+
+  var stage = document.getElementById("stage");
+  var replayBtn = document.getElementById("replayBtn");
+  var logoAssembly = document.getElementById("logoAssembly");
+  var knobBody = document.getElementById("knobBody");
+  var knobRing = document.getElementById("knobRing");
+  var drawArc1 = document.getElementById("drawArc1");
+  var drawArc2 = document.getElementById("drawArc2");
+  var knobNeedle = document.getElementById("knobNeedle");
+  var touchPoints = document.getElementById("touchPoints");
+  var padG1 = document.getElementById("padG1");
+  var padG2 = document.getElementById("padG2");
+  var rip1a = document.getElementById("rip1a");
+  var rip1b = document.getElementById("rip1b");
+  var rip2a = document.getElementById("rip2a");
+  var rip2b = document.getElementById("rip2b");
+  var htrail = document.getElementById("htrail");
+  var hv = document.getElementById("hv");
+
+  var isHovered = false;
+  stage.addEventListener("mouseenter", function(){ isHovered = true; });
+  stage.addEventListener("mouseleave", function(){ isHovered = false; });
+
+  var startTs = null;
+  var rafId = null;
+
+  function easeInCubic(x){ return x * x * x; }
+  function easeOutCubic(x){ return 1 - Math.pow(1 - x, 3); }
+  function easeInOutCubic(x){ return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+
+  function resetToLogoPose(){
+    touchPoints.style.opacity = "1";
+    knobBody.style.opacity = "1";
+    knobRing.style.opacity = "1";
+    drawArc1.setAttribute("d", "");
+    drawArc2.setAttribute("d", "");
+    knobNeedle.style.opacity = "1";
+    knobNeedle.setAttribute("x2", "72.52");
+    knobNeedle.setAttribute("y2", "72.52");
+    padG1.setAttribute("transform", "translate(165.15 54.85) scale(1) translate(-165.15 -54.85)");
+    padG2.setAttribute("transform", "translate(54.85 165.15) scale(1) translate(-54.85 -165.15)");
+    rip1a.style.opacity = "0";
+    rip1b.style.opacity = "0";
+    rip2a.style.opacity = "0";
+    rip2b.style.opacity = "0";
+    logoAssembly.setAttribute("transform", "rotate(216 110 110)");
+    logoAssembly.style.opacity = "1";
+    htrail.setAttribute("d", arcPath(110, 110, 53, 225, 225 + 216));
+    htrail.style.opacity = "1";
+    hv.textContent = "60%";
+    hv.style.opacity = "1";
+  }
+
+  function tick(ts){
+    if(!startTs) startTs = ts;
+    var t = ts - startTs;
+
+    if(reduced){
+      resetToLogoPose();
+      return;
+    }
+
+    if(isHovered && t >= 8050){
+      startTs = ts - 5600;
+      t = 5600;
+    }
+
+    var CYCLE = 11250;
+    if(t >= CYCLE){
+      startTs = ts;
+      t = 0;
+    }
+
+    // Phase 0: Blank Trackpad Silence (1.2s: 0ms ~ 1200ms)
+    if(t < 1200){
+      touchPoints.style.opacity = "0";
+      knobBody.style.opacity = "0";
+      knobRing.style.opacity = "0";
+      drawArc1.setAttribute("d", "");
+      drawArc2.setAttribute("d", "");
+      knobNeedle.style.opacity = "0";
+      logoAssembly.setAttribute("transform", "rotate(0 110 110)");
+      logoAssembly.style.opacity = "1";
+      padG1.setAttribute("transform", "translate(165.15 54.85) scale(0) translate(-165.15 -54.85)");
+      padG2.setAttribute("transform", "translate(54.85 165.15) scale(0) translate(-54.85 -165.15)");
+      rip1a.style.opacity = "0";
+      rip1b.style.opacity = "0";
+      rip2a.style.opacity = "0";
+      rip2b.style.opacity = "0";
+      htrail.setAttribute("d", "");
+      htrail.style.opacity = "0";
+      hv.textContent = "";
+      hv.style.opacity = "0";
+    }
+    // Phase 1: Touchdown & Shockwave Ripples (1.0s: 1200ms ~ 2200ms)
+    else if(t < 2200){
+      var p = (t - 1200) / 1000;
+      var ep = easeOutCubic(p);
+      touchPoints.style.opacity = String(Math.min(1, ep * 1.25));
+      var padScale = Math.min(1.0, ep * 1.06);
+      padG1.setAttribute("transform", "translate(165.15 54.85) scale(" + padScale.toFixed(3) + ") translate(-165.15 -54.85)");
+      padG2.setAttribute("transform", "translate(54.85 165.15) scale(" + padScale.toFixed(3) + ") translate(-54.85 -165.15)");
+
+      var rA = 16 + ep * 20;
+      rip1a.setAttribute("r", rA.toFixed(1));
+      rip2a.setAttribute("r", rA.toFixed(1));
+      rip1a.style.opacity = String((1 - ep) * 0.7);
+      rip2a.style.opacity = String((1 - ep) * 0.7);
+
+      if(p > 0.25){
+        var p2 = (p - 0.25) / 0.75;
+        var rB = 16 + p2 * 28;
+        rip1b.setAttribute("r", rB.toFixed(1));
+        rip2b.setAttribute("r", rB.toFixed(1));
+        rip1b.style.opacity = String((1 - p2) * 0.5);
+        rip2b.style.opacity = String((1 - p2) * 0.5);
+      } else {
+        rip1b.style.opacity = "0";
+        rip2b.style.opacity = "0";
+      }
+
+      knobBody.style.opacity = "0";
+      knobRing.style.opacity = "0";
+      drawArc1.setAttribute("d", "");
+      drawArc2.setAttribute("d", "");
+      knobNeedle.style.opacity = "0";
+      logoAssembly.setAttribute("transform", "rotate(0 110 110)");
+      htrail.setAttribute("d", "");
+      hv.textContent = "";
+      hv.style.opacity = "0";
+    }
+    // Phase 2: Dual-Arc Ring Extrusion (1.3s: 2200ms ~ 3500ms) - Slowed by 2x
+    else if(t < 3500){
+      var p = (t - 2200) / 1300;
+      var ep = easeInOutCubic(p);
+      touchPoints.style.opacity = "1";
+      padG1.setAttribute("transform", "translate(165.15 54.85) scale(1) translate(-165.15 -54.85)");
+      padG2.setAttribute("transform", "translate(54.85 165.15) scale(1) translate(-54.85 -165.15)");
+      rip1a.style.opacity = "0";
+      rip1b.style.opacity = "0";
+      rip2a.style.opacity = "0";
+      rip2b.style.opacity = "0";
+
+      knobBody.style.opacity = "1";
+      knobRing.style.opacity = "0";
+      var span = Math.min(89.8, Math.max(0.1, 90 * ep));
+      drawArc1.setAttribute("d", arcPath(110, 110, 78, 315 - span, 315 + span));
+      drawArc2.setAttribute("d", arcPath(110, 110, 78, 135 - span, 135 + span));
+      drawArc1.style.opacity = "1";
+      drawArc2.style.opacity = "1";
+
+      knobNeedle.style.opacity = "0";
+      logoAssembly.setAttribute("transform", "rotate(0 110 110)");
+      htrail.setAttribute("d", "");
+      hv.textContent = "";
+      hv.style.opacity = "0";
+    }
+    // Phase 3: Capsule Needle Ignition & Shoot (0.5s: 3500ms ~ 4000ms) - Slowed by 2x
+    else if(t < 4000){
+      var p = (t - 3500) / 500;
+      var ep = easeOutCubic(p);
+      touchPoints.style.opacity = "1";
+      padG1.setAttribute("transform", "translate(165.15 54.85) scale(1) translate(-165.15 -54.85)");
+      padG2.setAttribute("transform", "translate(54.85 165.15) scale(1) translate(-54.85 -165.15)");
+
+      knobBody.style.opacity = "1";
+      knobRing.style.opacity = "1";
+      drawArc1.setAttribute("d", "");
+      drawArc2.setAttribute("d", "");
+
+      knobNeedle.style.opacity = "1";
+      var rTip = 16 + 37 * ep;
+      var x2 = 110 - 0.70710678 * rTip;
+      var y2 = 110 - 0.70710678 * rTip;
+      knobNeedle.setAttribute("x2", x2.toFixed(2));
+      knobNeedle.setAttribute("y2", y2.toFixed(2));
+
+      logoAssembly.setAttribute("transform", "rotate(0 110 110)");
+      htrail.setAttribute("d", "");
+      hv.textContent = "";
+      hv.style.opacity = "0";
+    }
+    // Phase 4: Rotation & Dynamic Dialing to 60% (1.6s: 4000ms ~ 5600ms)
+    else if(t < 5600){
+      var p = (t - 4000) / 1600;
+      var ep = easeInOutCubic(p);
+      touchPoints.style.opacity = "1";
+      padG1.setAttribute("transform", "translate(165.15 54.85) scale(1) translate(-165.15 -54.85)");
+      padG2.setAttribute("transform", "translate(54.85 165.15) scale(1) translate(-54.85 -165.15)");
+
+      knobBody.style.opacity = "1";
+      knobRing.style.opacity = "1";
+      drawArc1.setAttribute("d", "");
+      drawArc2.setAttribute("d", "");
+      knobNeedle.style.opacity = "1";
+      knobNeedle.setAttribute("x2", "72.52");
+      knobNeedle.setAttribute("y2", "72.52");
+
+      var curAngle = 216 * ep;
+      logoAssembly.setAttribute("transform", "rotate(" + curAngle.toFixed(2) + " 110 110)");
+
+      var curVal = Math.round(60 * ep);
+      if(curVal > 0){
+        hv.textContent = curVal + "%";
+        hv.style.opacity = String(Math.min(1, ep * 3));
+      } else {
+        hv.textContent = "";
+        hv.style.opacity = "0";
+      }
+
+      if(curAngle > 5){
+        htrail.setAttribute("d", arcPath(110, 110, 53, 225, 225 + curAngle));
+        htrail.style.opacity = "1";
+      } else {
+        htrail.setAttribute("d", "");
+      }
+    }
+    // Phase 5: Golden Hold & Subtle Breathing (2.5s: 5600ms ~ 8100ms)
+    else if(t < 8100){
+      touchPoints.style.opacity = "1";
+      padG1.setAttribute("transform", "translate(165.15 54.85) scale(1) translate(-165.15 -54.85)");
+      padG2.setAttribute("transform", "translate(54.85 165.15) scale(1) translate(-54.85 -165.15)");
+
+      knobRing.style.opacity = "1";
+      drawArc1.setAttribute("d", "");
+      drawArc2.setAttribute("d", "");
+      knobNeedle.style.opacity = "1";
+      knobNeedle.setAttribute("x2", "72.52");
+      knobNeedle.setAttribute("y2", "72.52");
+
+      logoAssembly.setAttribute("transform", "rotate(216 110 110)");
+      logoAssembly.style.opacity = "1";
+      htrail.setAttribute("d", arcPath(110, 110, 53, 225, 225 + 216));
+      htrail.style.opacity = "1";
+      hv.textContent = "60%";
+      hv.style.opacity = "1";
+
+      var breath = 0.92 + 0.08 * Math.sin((t - 5600) * 0.003);
+      knobBody.style.opacity = breath.toFixed(3);
+    }
+    // Phase 6A: Fingers Lift Off Glass (0.5s: 8100ms ~ 8600ms) - Touch points shrink to 0
+    else if(t < 8600){
+      var p = (t - 8100) / 500;
+      var ep = easeInCubic(p);
+      var liftScale = Math.max(0, 1 - ep);
+      padG1.setAttribute("transform", "translate(165.15 54.85) scale(" + liftScale.toFixed(3) + ") translate(-165.15 -54.85)");
+      padG2.setAttribute("transform", "translate(54.85 165.15) scale(" + liftScale.toFixed(3) + ") translate(-54.85 -165.15)");
+      touchPoints.style.opacity = liftScale.toFixed(3);
+
+      knobBody.style.opacity = "1";
+      logoAssembly.setAttribute("transform", "rotate(216 110 110)");
+      htrail.setAttribute("d", arcPath(110, 110, 53, 225, 225 + 216));
+      htrail.style.opacity = "1";
+      hv.textContent = "60%";
+      hv.style.opacity = "1";
+    }
+    // Phase 6B: Pause 1 (Hands Off, Knob & Trail Suspended Still) (0.5s: 8600ms ~ 9100ms)
+    else if(t < 9100){
+      touchPoints.style.opacity = "0";
+      knobBody.style.opacity = "1";
+      logoAssembly.setAttribute("transform", "rotate(216 110 110)");
+      htrail.setAttribute("d", arcPath(110, 110, 53, 225, 225 + 216));
+      htrail.style.opacity = "1";
+      hv.textContent = "60%";
+      hv.style.opacity = "1";
+    }
+    // Phase 6C: Trail Arc & 60% Readout Fade Out (0.35s: 9100ms ~ 9450ms)
+    else if(t < 9450){
+      touchPoints.style.opacity = "0";
+
+      var p = (t - 9100) / 350;
+      var fade = Math.max(0, 1 - p);
+      htrail.style.opacity = fade.toFixed(3);
+      hv.style.opacity = (fade * 0.9).toFixed(3);
+
+      knobBody.style.opacity = "1";
+      logoAssembly.setAttribute("transform", "rotate(216 110 110)");
+    }
+    // Phase 6D: Pause 2 (Isolated Pure Logo Solo) (0.6s: 9450ms ~ 10050ms) - Extended to 0.6s
+    else if(t < 10050){
+      touchPoints.style.opacity = "0";
+      htrail.style.opacity = "0";
+      hv.style.opacity = "0";
+      hv.textContent = "";
+
+      knobBody.style.opacity = "1";
+      logoAssembly.setAttribute("transform", "rotate(216 110 110)");
+    }
+    // Phase 6E: Virtual Knob Body Slow Elegant Dissolve (1.2s: 10050ms ~ 11250ms) - Slower and gentler
+    else if(t < 11250){
+      touchPoints.style.opacity = "0";
+      htrail.style.opacity = "0";
+      hv.style.opacity = "0";
+      hv.textContent = "";
+
+      var p = (t - 10050) / 1200;
+      var bodyFade = Math.max(0, 1 - easeOutCubic(p));
+      knobBody.style.opacity = bodyFade.toFixed(3);
+      logoAssembly.setAttribute("transform", "rotate(216 110 110)");
+    }
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function restartAnimation(){
+    if(rafId) cancelAnimationFrame(rafId);
+    startTs = performance.now() - 900;
+    rafId = requestAnimationFrame(tick);
+  }
+
+  replayBtn.addEventListener("click", function(e){
+    e.preventDefault();
+    restartAnimation();
+  });
+
+  rafId = requestAnimationFrame(tick);
+
+  document.querySelectorAll(".qa").forEach(function(qa){
+    var btn=qa.querySelector("button");
+    var ans=qa.querySelector(".ans");
+    btn.addEventListener("click",function(){
+      var open=qa.getAttribute("data-open")==="true";
+      document.querySelectorAll(".qa").forEach(function(o){
+        o.setAttribute("data-open","false");
+        o.querySelector("button").setAttribute("aria-expanded","false");
+        o.querySelector(".ans").style.maxHeight="0px";
+      });
+      if(!open){
+        qa.setAttribute("data-open","true");
+        btn.setAttribute("aria-expanded","true");
+        ans.style.maxHeight=ans.scrollHeight+"px";
+      }
+    });
+  });
+
+  if("IntersectionObserver" in window && !reduced){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target);}
+      });
+    },{threshold:0.12});
+    document.querySelectorAll(".rv").forEach(function(n){io.observe(n);});
+  }else{
+    document.querySelectorAll(".rv").forEach(function(n){n.classList.add("in");});
+  }
+})();
+</script>
 </body>
 </html>
