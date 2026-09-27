@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PhantomKnob 幻影旋钮 2.0 — 解锁封印在触控板里的魔法旋钮</title>
-<meta name="description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：三指轻旋随心调控系统音量与屏幕亮度（支持外接显示器 DDC），双指旋转隔空接管任意 App 的滑块、进度条与色轮。无需硬件，免费下载。">
+<meta name="description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
 <link rel="icon" type="image/png" href="assets/appicon32.png">
 <link rel="apple-touch-icon" href="assets/appicon.png">
 
@@ -12,18 +12,18 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://benwu232.github.io/PhantomKnob/">
 <meta property="og:title" content="PhantomKnob — 解锁封印在触控板里的魔法旋钮">
-<meta property="og:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：三指轻旋调音量亮度（支持外接显示器 DDC），双指旋转隔空接管任意 App 的滑块与色轮。无需硬件，免费下载。">
+<meta property="og:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
 <meta property="og:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
 <meta itemprop="name" content="PhantomKnob 幻影旋钮">
-<meta itemprop="description" content="把 Mac 触控板变成一颗万能虚拟旋钮：双指旋转，隔空调节任意 App 的滑块、进度条与色轮。">
+<meta itemprop="description" content="把 Mac 触控板变成一颗万能虚拟旋钮：双指旋转，隔空调节任意 App 的滑块、进度条与色轮。全天常驻就绪，心流零打断。">
 <meta itemprop="image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PhantomKnob 幻影旋钮 2.0 — 解锁封印在触控板里的魔法旋钮">
-<meta name="twitter:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能旋钮：三指轻旋调音量亮度，双指旋转隔空接管任意 App 的滑块与色轮。无需硬件，免费下载。">
+<meta name="twitter:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
 <meta name="twitter:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -261,32 +261,38 @@ section{padding:96px 0}
 }
 
 /* pricing */
-.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto}
-.plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative}
+.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto;align-items:stretch}
+.plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative;display:flex;flex-direction:column}
 .plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
 .plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
+.plan .tag.free-tag{background:rgba(255,255,255,0.06);color:var(--ink-2);border:1px solid var(--line);letter-spacing:0.12em}
+.plan-head{min-height:195px;display:flex;flex-direction:column}
 .plan h3{font-family:var(--font-head);font-size:1.2rem;font-weight:600}
-.plan .pd{color:var(--ink-3);font-size:0.86rem;margin-top:4px}
-.plan .price{font-family:var(--font-mono);font-size:2.5rem;font-weight:600;letter-spacing:-0.03em;margin:18px 0 2px}
-.plan .price small{font-size:0.95rem;color:var(--ink-3);font-weight:400;letter-spacing:0}
-.plan .ps{font-size:0.8rem;color:var(--ink-3);margin-bottom:20px}
-.plan .price .orig{font-size:1.2rem;color:var(--ink-3);font-weight:400;letter-spacing:0;margin-right:9px}
+.plan .pd{color:var(--ink-3);font-size:0.86rem;margin-top:4px;min-height:40px;line-height:1.55}
+.plan .price{font-family:var(--font-mono);font-size:2.5rem;font-weight:600;letter-spacing:-0.03em;margin:14px 0 0;line-height:1.1;display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 10px}
+.plan .price-num{display:inline-flex;align-items:baseline}
+.plan .price small{font-size:0.95rem;color:var(--ink-3);font-weight:400;letter-spacing:0;white-space:nowrap}
+.plan .price .orig{font-size:1.15rem;color:var(--ink-3);font-weight:400;letter-spacing:0;white-space:nowrap}
 .plan .price .orig .orig-num{text-decoration:line-through;text-decoration-color:rgba(255,159,10,0.55);text-decoration-thickness:2px}
-.math-tip{position:relative;display:inline-flex;align-items:baseline;cursor:help}
+.math-tip{position:relative;display:inline-flex;align-items:baseline;cursor:help;white-space:nowrap}
 .math-tip .math-const{font-family:var(--font-mono);font-size:0.46em;color:var(--ink-3);margin-left:3px;letter-spacing:0.04em;font-weight:500;opacity:0.85;display:inline-block}
 .math-tip .tip-box{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(20,17,14,0.96);border:1px solid rgba(255,159,10,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--ink);padding:6px 11px;border-radius:7px;font-family:var(--font-mono);font-size:0.72rem;font-weight:400;text-decoration:none !important;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.55);transition:opacity .2s cubic-bezier(.16,1,.3,1),transform .2s cubic-bezier(.16,1,.3,1);z-index:30}
 .math-tip .tip-box::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:rgba(20,17,14,0.96) transparent transparent transparent}
 .math-tip:hover .tip-box,.math-tip:focus-visible .tip-box{visibility:visible;opacity:1;transform:translateX(-50%) translateY(0)}
-.plan .pay-note{margin-top:10px;font-size:0.74rem;color:var(--ink-3);text-align:center;font-family:var(--font-mono);letter-spacing:0.02em}
-.plan .save-badge{display:inline-block;vertical-align:4px;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.07em;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(255,159,10,0.35);border-radius:6px;padding:3px 9px;margin-left:9px;font-weight:500}
-.plan .ps.deadline{color:var(--amber);margin-bottom:4px}
-.plan ul{list-style:none;margin-bottom:26px}
-.plan li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--ink-2);font-size:0.92rem}
-.plan li svg{flex:none;margin-top:5px;color:var(--amber)}
+.plan .save-badge{display:inline-block;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.07em;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(255,159,10,0.35);border-radius:6px;padding:3px 9px;font-weight:500;white-space:nowrap;align-self:center}
+.plan .price-cycle{font-size:0.82rem;color:var(--ink-2);margin-top:6px;font-weight:500;white-space:nowrap}
+.plan .ps{font-size:0.8rem;color:var(--ink-3);margin-top:4px}
+.plan .ps.deadline{color:var(--amber)}
+.plan .ps.sub-line{color:var(--ink-3)}
+.plan ul{list-style:none;margin-top:20px;margin-bottom:26px;display:flex;flex-direction:column}
+.plan li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--ink-2);font-size:0.92rem;min-height:56px;box-sizing:border-box;line-height:1.55}
+.plan li svg{flex:none;margin-top:4px;color:var(--amber)}
 .plan li.dim{color:var(--ink-3)}
 .plan li b{color:var(--ink);font-weight:600}
+.plan .plan-foot{margin-top:auto}
 .plan .btn{width:100%;justify-content:center}
-.plan .upgrade-note{margin-top:12px;font-size:0.76rem;color:var(--ink-3);text-align:center;line-height:1.6}
+.plan .pay-note{margin-top:10px;font-size:0.74rem;color:var(--ink-3);text-align:center;font-family:var(--font-mono);letter-spacing:0.02em;min-height:18px;line-height:1.5}
+.plan .upgrade-note{margin-top:12px;font-size:0.76rem;color:var(--ink-3);text-align:center;line-height:1.6;min-height:38px}
 .btn-inapp{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;border:1px solid rgba(255,159,10,0.5);background:var(--amber-soft);color:var(--amber);font-weight:600;font-size:1rem}
 
 /* faq */
@@ -386,7 +392,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
           </a>
           <!-- <a class="btn btn-ghost" href="#features">先看看它能干什么 ↓</a> -->
         </div>
-        <p class="hero-meta"><span><b>macOS 13+</b></span><span><b>Apple Silicon &amp; Intel</b></span><span>支持 MacBook 和妙控板</span></p>
+        <p class="hero-meta"><span><b>全天常驻 · 零心流打断</b></span><span><b>常用工具全免 + 5 款专业 App 深度定制</b></span><span>macOS 13+ · 支持 MacBook &amp; 妙控板</span></p>
       </div>
 
       <div class="stage" id="stage">
@@ -449,7 +455,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     <div class="wrap">
       <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
         <div class="sec-index" style="justify-content:center"><span class="num">01 / SCENES</span><span class="rule"></span></div>
-        <h2 class="sec-title">两大核心应用：为技术极客与专业人士量身定制</h2>
+        <h2 class="sec-title">两大核心场景：为技术极客与专业人士量身定制</h2>
         <!-- <p class="sec-desc" style="margin-left:auto;margin-right:auto"><s>无需额外硬件。在日常中享受三指盲调的乐趣，在专业创作中解放双手提升效率。</s></p> -->
       </div>
       <div class="dual-wings">
@@ -461,7 +467,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             <span class="wing-tag">零按键干扰</span>
           </div>
           <h3>系统快捷旋钮<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">极致体验，高效优雅</span></h3>
-          <p class="wing-desc">三指旋钮：无需寻找光标，无需特定位置，随心盲操。</p>
+          <p class="wing-desc">三指旋钮：手感定位，随心盲操。</p>
 
 
 
@@ -472,7 +478,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
               </div>
               <div class="wing-item-content">
                 <b>三指旋钮 · 支持盲操</b>
-                <p>触控板左侧旋转调音量，右侧旋转调亮度（如果有多屏，只调节鼠标所在屏幕）。无需繁琐操作，无需视线转移，保持专注。</p>
+                <p>触控板左侧旋转调音量，右侧旋转调亮度。无需繁琐操作，无需视线转移，保持专注。</p>
               </div>
             </li>
             <li class="wing-item">
@@ -529,8 +535,8 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="4.5"/><path d="M12 3v2M12 19v2"/></svg>
               </div>
               <div class="wing-item-content">
-                <b>单指续转</b>
-                <p>当需要连续旋转时，抬起一指，用剩余单指继续旋转，长调节任务不会断线。支持所有的旋钮类型。</p>
+                <b>单指飞轮</b>
+                <p>Pro 版支持无限飞轮续转：抬起一指，用剩余单指继续围绕虚拟中心旋转，长调节不断线；Free 版两指抬一指平滑阻尼刹停。</p>
               </div>
             </li>
             <li class="wing-item">
@@ -732,8 +738,8 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
               </div>
               <div class="fcard">
                 <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 12l4-4M4 12l4 4"/></svg></div>
-                <h3>6 · 单指续转</h3>
-                <p>当抬起一指时，系统自动锁定旋钮中心，平滑过渡到单指调控。</p>
+                <h3>6 · 单指续转（Pro 专属）</h3>
+                <p>Pro 版在抬起一指时，系统自动锁定虚拟中心并补偿 180° 相位偏置，平滑过渡到单指飞轮长程调控；Free 版则自然物理阻尼刹停。</p>
               </div>
 
             </div>
@@ -775,54 +781,76 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
         <div class="sec-index" style="justify-content:center"><span class="num">05 / PRICING</span><span class="rule"></span></div>
         <h2 class="sec-title">从免费开始，需要时再升级</h2>
-        <p class="sec-desc" style="margin-left:auto;margin-right:auto">免费版解锁全部功能。Pro 只是去掉摩擦——使用更顺畅。</p>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">日常工具全免，Free 版支持定制 5 个专业软件；Pro 版解锁无限软件生态、单指飞轮手感、DDC/CI外接屏硬件调光与超酷旋钮动画效果。</p>
       </div>
       <div class="plans">
+        <!-- Plan 1: Free -->
         <div class="plan rv">
-          <h3>免费版</h3>
-          <p class="pd">建立手感，体验全部核心能力。</p>
-          <div class="price">$0</div>
-          <div class="ps">永久免费</div>
+          <span class="tag free-tag">长期维护 · 开箱即用</span>
+          <div class="plan-head">
+            <h3>免费版</h3>
+            <p class="pd">全天常驻，专注创作。日常与常规创作开箱即用，无需为未用到的特性买单。</p>
+            <div class="price">
+              <span class="price-num">$0</span>
+            </div>
+            <div class="price-cycle">/ 永久免费 · 基础功能无限制</div>
+            <div class="ps sub-line">无需注册 · 零隐私追踪 · 纯本机运行</div>
+          </div>
           <ul>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>14 天全功能试用 Pro 版</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>普通双指旋钮 + 三指系统快捷旋钮</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>经典动效（边沿划入 / 淡入 / 缩放）+ 10 Pro 动效/日</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>全部旋钮类型与定制功能</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>常用及专业软件支持</li>
-            <li class="dim">15 分钟会话（可随时重启）</li>
-            <li class="dim">激活延迟</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>14 天 Pro 全功能试用</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>设置和旋钮定制存在本地</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>三指旋钮 + 两指旋钮</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>支持单旋钮，试用期结束后新增旋钮不支持双环旋钮和无级变速旋钮</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>支持调节内置屏与 Apple 官方显示器亮度</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>支持 5 款专业创作 App 深度定制（可随时更换）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>中心贴图内置 24+ 款精工矢量图章 (SF Symbols)</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>经典入场离场动画效果 + 每日 10 次 Pro 动画效果尝鲜</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>免费版功能持续维护，到期自建规则永久可用</span></li>
           </ul>
-          <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" style="width:100%;justify-content:center">下载免费版</a>
+          <div class="plan-foot">
+            <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+            <div class="pay-note">Apple 官方安全公证 · 100% 本机离线运行 · 零隐私追踪</div>
+            <p class="upgrade-note">支持 macOS 13+ · 内置硬件兼容性检测 · 菜单内随时可升级 Pro</p>
+          </div>
         </div>
+
+        <!-- Plan 2: Pro -->
         <div class="plan pro rv">
           <span class="tag">首发限定 · 10/31 截止</span>
-          <h3>Pro</h3>
-          <p class="pd">去掉所有限制，尽享丝滑体验。</p>
-          <div class="price">
-            <span class="math-tip orig" tabindex="0">
-              <s class="orig-num">$27.18</s><span class="math-const">10e</span>
-              <span class="tip-box">e = 2.718281... 自然底数</span>
-            </span>
-            <span class="math-tip cur-price" tabindex="0">
-              $16.18<span class="math-const">10φ</span>
-              <span class="tip-box">φ = 1.618033... 黄金分割比</span>
-            </span>
-            <small>/ 一次性买断</small>
-            <span class="save-badge">省 $11 · 40.5% OFF</span>
+          <div class="plan-head">
+            <h3>Pro</h3>
+            <p class="pd">生理极限手感，硬核硬件控制，无限创作生态。</p>
+            <div class="price">
+              <span class="math-tip orig" tabindex="0">
+                <s class="orig-num">$27.18</s><span class="math-const">10e</span>
+                <span class="tip-box">e = 2.718281... 自然底数</span>
+              </span>
+              <span class="math-tip cur-price" tabindex="0">
+                $16.18<span class="math-const">10φ</span>
+                <span class="tip-box">φ = 1.618033... 黄金分割比</span>
+              </span>
+              <span class="save-badge">省 $11 · 40.5% OFF</span>
+            </div>
+            <div class="price-cycle">/ 一次性买断 · 终身使用 · 无任何订阅</div>
+            <div class="ps deadline">2026 年 10 月 31 日后恢复原价 $27.18</div>
           </div>
-          <div class="ps deadline">2026 年 10 月 31 日后恢复原价 $27.18</div>
-          <div class="ps">一次性买断 · 含后续更新 · 无订阅</div>
           <ul>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>支持同时激活 3 台个人 Mac</b>（配置随 iCloud 自动同步）</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 专属Pro HUD 动效（空间裂缝与空间扭曲）</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>零延迟即刻激活 &amp; 无限连续会话时长</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>专业工作流预设（DaVinci Resolve、剪映/FCP、Logic Pro）</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>外接显示器 DDC 硬件调光支持</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>v2.x 所有版本永久免费更新</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 支持同时激活 3 台个人 Mac</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 配置和旋钮定制随 iCloud 自动同步</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 三指旋钮 + 两指旋钮 + 单指飞轮续转</b>（突破手腕生理限制，长调节不断线）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 支持单旋钮 + 双环旋钮 + 无级变速旋钮</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 除内置屏和Apple官方显示器外还支持通过 DDC/CI 调节第三方外接显示器亮度</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 解锁无限专业应用全功能生态</b>（彻底解除 5 槽位限制）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 中心贴图支持从本地导入自定义图章</b>（我的旋钮我做主）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 规则包一键导出打包分享</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 尊享全部入场离场动画效果</b>（数量持续扩充）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ v2.x 所有后续版本永久免费更新</b>，一次买断终身享用</span></li>
           </ul>
-          <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">立即购买 →</a>
-          <div class="pay-note">全渠道纯美元结算 · 支持信用卡 / Apple Pay / PayPal</div>
-          <p class="upgrade-note">已安装免费版？在 App 菜单「关于 PhantomKnob…」中即可升级，无需重新下载。</p>
+          <div class="plan-foot">
+            <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">立即购买 →</a>
+            <div class="pay-note">全渠道纯美元结算 · 支持信用卡 / Apple Pay / PayPal</div>
+            <p class="upgrade-note">已安装免费版？在 App 菜单「关于 PhantomKnob…」中即可升级，无需重新下载。</p>
+          </div>
         </div>
       </div>
     </div>
@@ -841,8 +869,16 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
           <div class="ans"><p>权限只用于读取悬停控件与发送滚动 / 按键事件，拦截范围仅限触控板手势，不读取键盘输入，处理全程在本机。<a href="#trust" style="color:var(--amber)">详见"安全与隐私"一节</a>。</p></div>
         </div>
         <div class="qa rv" data-open="false">
-          <button aria-expanded="false">15 分钟免费会话结束后会怎样？<span class="pm">+</span></button>
-          <div class="ans"><p>控制模式自动关闭，没有惩罚也没有冷却。通过触控板三指轻旋或 <span class="kbd">⌘⌥K</span> 即刻随手重启会话，只引入短暂的激活延迟。</p></div>
+          <button aria-expanded="false">为什么外环反而速度更慢？<span class="pm">+</span></button>
+          <div class="ans"><p>因为旋钮使用角度变化来调节变量的，半径越大，旋转相同角度时，边缘移动的距离越长，因此相同线速度下感觉更慢。所以大的旋钮天然适合速度更慢、精度更高的场景。这和人的直觉相反。当然双环旋钮和无级变速旋钮的设置都是很灵活的，您完全可以按照您的想法设置不同的规则（比如外环速度快，内环速度慢）。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">5 个专业创作 App 槽位不够用怎么办？<span class="pm">+</span></button>
+          <div class="ans"><p>首先，Chrome、Safari、Xcode、VS Code 等日常高频工具全部免配额且终身免费；针对 DaVinci Resolve、Final Cut Pro、Lightroom、Logic Pro 等专业创作工具，免费版提供 5 个全功能活跃槽位（单旋钮 / 双环 / CVK 自由开放）。第 6 款及以上超量软件仍可免费配置标准单旋钮，更支持随时把超量软件调换入活跃槽位，灵活性极高。如需同时管理数十款专业软件的高阶双环生态，升级 Pro 即可彻底解锁无限软件生态。</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">单指无限飞轮续转和外接屏调光分别是什么？<span class="pm">+</span></button>
+          <div class="ans"><p><b>单指无限飞轮续转</b>：双指起旋后，若抬起一指，系统自动启用动态中心锁定与 180° 相位补偿算法，允许你用单指绕圆心持续无限旋转，彻底突破人手腕生理翻转角度极限，是长程视频时间线穿梭与大范围调值的刚需神器（免费版抬指则停止）。<br><br><b>外接显示器硬件调光</b>：macOS 原生不支持第三方非苹果外接屏（Dell / LG / ASUS 等）的键盘亮度键控制。PhantomKnob 底层直接写入 DDC/CI 硬件协议，Pro 版让你无需安装额外繁重工具，直接在触控板上旋转调节外接显示器的物理背光（鼠标在哪个显示器，就调节它的亮度）。</p></div>
         </div>
         <div class="qa rv" data-open="false">
           <button aria-expanded="false">我的触控板兼容吗？<span class="pm">+</span></button>
@@ -851,14 +887,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         <div class="qa rv" data-open="false">
           <button aria-expanded="false">能为没有预设的 App 建规则吗？<span class="pm">+</span></button>
           <div class="ans"><p>可以。悬停任意滑块，按 <span class="kbd">C</span> 就地快速定制，配置一次永久生效。选类型、配行为的完整方法，<a href="#customize" style="color:var(--amber)">详见"怎样定制旋钮"一节</a>。</p></div>
-        </div>
-        <div class="qa rv" data-open="false">
-          <button aria-expanded="false">早鸟价什么时候结束？<span class="pm">+</span></button>
-          <div class="ans"><p>首发早鸟特惠将于 <b>2026 年 10 月 31 日</b>截止。在此期间购买享受 <b>$16.18</b> 特惠（10φ 黄金分割比），到期后将严格恢复正式买断价 <b>$27.18</b>（10e 自然底数）。一次性买断，包含 v1.x 所有版本后续免费更新，涨价不影响已购用户。</p></div>
-        </div>
-        <div class="qa rv" data-open="false">
-          <button aria-expanded="false">购买 1 个许可证支持几台 Mac 激活？<span class="pm">+</span></button>
-          <div class="ans"><p>单 License 支持同时激活 <b>3 台您本人的个人 Mac</b>（例如 MacBook 笔记本 + Mac Studio / Mac mini 台式机），偏好配置随 iCloud 跨设备自动同步，充分满足个人多场景协同需求；不支持多人拼单或商业工作室共享。</p></div>
         </div>
       </div>
     </div>
@@ -874,7 +902,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
         下载免费版
       </a>
-      <p class="hero-meta">无需注册 · 免费版内可随时升级 Pro</p>
+      <p class="hero-meta">无需注册 · 全天常驻无打断 · 免费版内可随时升级 Pro</p>
     </div>
   </section>
 
