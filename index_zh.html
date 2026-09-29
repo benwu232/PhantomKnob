@@ -33,6 +33,33 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script>
+// Prevent root-domain Service Worker (e.g. from benwu232.github.io Jekyll Chirpy) from intercepting/caching PhantomKnob
+(function(){
+  try {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        for (var i = 0; i < regs.length; i++) {
+          var scope = regs[i].scope || "";
+          if (scope.indexOf("benwu232.github.io") !== -1 && !scope.includes("/PhantomKnob/")) {
+            regs[i].unregister();
+          }
+        }
+      });
+    }
+    if ("caches" in window) {
+      caches.keys().then(function(keys){
+        for (var i = 0; i < keys.length; i++) {
+          if (keys[i].indexOf("chirpy") !== -1) {
+            caches.delete(keys[i]);
+          }
+        }
+      });
+    }
+  } catch(e) {}
+})();
+</script>
 <style>
 :root{
   --bg:#0d0d0f;
@@ -538,7 +565,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     <div class="wrap hero-grid">
       <div>
         <div class="hero-top-row">
-          <span class="badge"><span class="dot"></span>✨ v2.0.0</span>
+          <!-- <span class="badge"><span class="dot"></span>✨ v2.0.0</span> -->
           <div class="hero-quote">
             <span class="hq-text">“任何足够先进的技术，皆与魔法无异。”</span>
             <span class="hq-author">— 阿瑟·C·克拉克</span>

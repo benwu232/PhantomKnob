@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PhantomKnob 2.0 — The Magical Rotary Knob Inside Your Mac Trackpad</title>
+<title>PhantomKnob — The Magical Rotary Knob Inside Your Mac Trackpad</title>
 <meta name="description" content="PhantomKnob turns your Mac trackpad into a physical rotary dial and creative grading console. 3-finger rotation for instant volume and brightness (with external monitor DDC support); 2-finger rotation for app sliders, playheads, and color wheels. Free download.">
 <link rel="icon" type="image/png" href="assets/appicon32.png">
 <link rel="apple-touch-icon" href="assets/appicon.png">
@@ -36,6 +36,45 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <script>
+// Prevent root-domain Service Worker (e.g. from benwu232.github.io Jekyll Chirpy) from intercepting/caching PhantomKnob
+(function(){
+  try {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        for (var i = 0; i < regs.length; i++) {
+          var scope = regs[i].scope || "";
+          if (scope.indexOf("benwu232.github.io") !== -1 && !scope.includes("/PhantomKnob/")) {
+            regs[i].unregister();
+          }
+        }
+      });
+    }
+    if ("caches" in window) {
+      caches.keys().then(function(keys){
+        for (var i = 0; i < keys.length; i++) {
+          if (keys[i].indexOf("chirpy") !== -1) {
+            caches.delete(keys[i]);
+          }
+        }
+      });
+    }
+  } catch(e) {}
+})();
+
+// Helper to resolve subpage URL safely even without trailing slash
+function getSubpageUrl(targetFile, hash) {
+  var url = new URL(window.location.href);
+  var path = url.pathname;
+  if (path.endsWith(".html")) {
+    path = path.substring(0, path.lastIndexOf("/") + 1);
+  } else if (!path.endsWith("/")) {
+    path = path + "/";
+  }
+  url.pathname = path + targetFile;
+  url.hash = hash || url.hash || "";
+  return url.href;
+}
+
 // Smart language redirect for first-time Chinese visitors
 (function(){
   try {
@@ -51,12 +90,10 @@
       }
       if (isZh) {
         var hash = window.location.hash || "";
-        window.location.replace("index_zh.html" + hash);
+        window.location.replace(getSubpageUrl("index_zh.html", hash));
       }
     }
   } catch(e) {}
-
-
 })();
 </script>
 
@@ -1055,7 +1092,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         localStorage.setItem("pk_preferred_lang", "zh");
       } catch(err){}
       var hash = window.location.hash || "";
-      window.location.href = "index_zh.html" + hash;
+      window.location.href = getSubpageUrl("index_zh.html", hash);
     });
   }
 
