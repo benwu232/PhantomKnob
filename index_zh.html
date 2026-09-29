@@ -8,9 +8,14 @@
 <link rel="icon" type="image/png" href="assets/appicon32.png">
 <link rel="apple-touch-icon" href="assets/appicon.png">
 
+<!-- Hreflang Tags for International SEO -->
+<link rel="alternate" hreflang="en" href="https://benwu232.github.io/PhantomKnob/">
+<link rel="alternate" hreflang="zh-CN" href="https://benwu232.github.io/PhantomKnob/index_zh.html">
+<link rel="alternate" hreflang="x-default" href="https://benwu232.github.io/PhantomKnob/">
+
 <!-- Open Graph / 微信 / Messages / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://benwu232.github.io/PhantomKnob/">
+<meta property="og:url" content="https://benwu232.github.io/PhantomKnob/index_zh.html">
 <meta property="og:title" content="PhantomKnob — 解锁封印在触控板里的魔法旋钮">
 <meta property="og:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
 <meta property="og:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
@@ -347,6 +352,162 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
   .rv{opacity:1;transform:none}
 }
+
+/* ---------- Video Modal & Demo Buttons ---------- */
+.btn-demo{cursor:pointer;font-family:inherit;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);color:var(--ink)}
+.btn-demo:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-soft);transform:translateY(-2px)}
+.btn-demo svg{fill:currentColor}
+.stage-demo-badge{
+  position:absolute;
+  top:16px;
+  left:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:30px;
+  padding:0 12px;
+  border-radius:999px;
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  letter-spacing:0.04em;
+  color:var(--ink);
+  background:rgba(18,18,21,0.75);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  cursor:pointer;
+  z-index:10;
+  transition:all .2s ease;
+}
+.stage-demo-badge svg{color:var(--amber);flex:none}
+.stage-demo-badge:hover{
+  background:rgba(255,159,10,0.16);
+  border-color:var(--amber);
+  color:#fff;
+  transform:translateY(-1px);
+}
+
+.video-modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(5,5,8,0.85);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+.video-modal-backdrop.active{
+  opacity:1;
+  pointer-events:auto;
+}
+.video-modal-box{
+  position:relative;
+  width:100%;
+  max-width:960px;
+  background:var(--panel);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 30px 90px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+  transform:scale(0.96);
+  transition:transform .25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.video-modal-backdrop.active .video-modal-box{
+  transform:scale(1);
+}
+.video-modal-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.65);
+  border:1px solid rgba(255,255,255,0.15);
+  color:var(--ink-2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:20;
+  transition:all .2s ease;
+}
+.video-modal-close:hover{
+  color:#fff;
+  background:rgba(255,255,255,0.15);
+  border-color:rgba(255,255,255,0.3);
+  transform:scale(1.05);
+}
+.video-player-container{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  background:#000;
+}
+.video-iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:none;
+}
+.video-modal-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(255,255,255,0.02);
+  border-top:1px solid var(--line-soft);
+  gap:16px;
+  flex-wrap:wrap;
+}
+.video-modal-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:0.86rem;
+  color:var(--ink);
+}
+.v-badge{
+  padding:2px 8px;
+  background:var(--amber-soft);
+  border:1px solid rgba(255,159,10,0.3);
+  border-radius:4px;
+  font-size:0.72rem;
+  font-family:var(--font-mono);
+  color:var(--amber);
+  font-weight:600;
+}
+.v-title{
+  color:var(--ink-2);
+  font-size:0.84rem;
+}
+.video-external-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.78rem;
+  font-family:var(--font-mono);
+  color:var(--ink-3);
+  text-decoration:none;
+  transition:color .2s;
+}
+.video-external-link:hover{
+  color:var(--amber);
+}
+@media (max-width:680px){
+  .video-modal-footer{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+}
 </style>
 </head>
 <body>
@@ -364,7 +525,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       <a href="#advanced"><span class="n">04</span>深入探索</a>
       <a href="#pricing"><span class="n">05</span>定价</a>
       <a href="#faq"><span class="n">06</span>FAQ</a>
-      <a href="./" class="lang-btn" title="English Version">🌐 EN</a>
+      <a href="./" class="lang-btn" id="lang-switch" title="English Version">🌐 EN</a>
       <a class="nav-cta" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
     </div>
   </nav>
@@ -391,11 +552,19 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             下载免费版
           </a>
           <!-- <a class="btn btn-ghost" href="#features">先看看它能干什么 ↓</a> -->
+                  <button class="btn btn-demo" id="heroDemoBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            观看 45 秒实机演示
+          </button>
         </div>
         <p class="hero-meta"><span><b>全天常驻 · 零心流打断</b></span><span><b>常用工具全免 + 5 款专业 App 深度定制</b></span><span>macOS 13+ · 支持 MacBook &amp; 妙控板</span></p>
       </div>
 
-      <div class="stage" id="stage">
+            <div class="stage" id="stage">
+        <button class="stage-demo-badge" id="stageDemoBtn" aria-label="观看实机演示">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          <span>实操演示</span>
+        </button>
         <button class="replay-btn" id="replayBtn" title="重播解封仪式" aria-label="重播解封仪式">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
         </button>
@@ -467,7 +636,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             <span class="wing-tag">零按键干扰</span>
           </div>
           <h3>系统快捷旋钮<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">极致体验，高效优雅</span></h3>
-          <p class="wing-desc">三指旋钮：手感定位，随心盲操。</p>
+          <p class="wing-desc">三指旋钮：手感定位，体验非凡。</p>
 
 
 
@@ -486,7 +655,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
               </div>
               <div class="wing-item-content">
-                <b>酷炫动画特效 · 体验非凡</b>
+                <b>酷炫动画特效</b>
                 <p>内置多款入场与出场动画特效。每一次转动都极具科技仪式感，让指尖操作兼具实用与视觉愉悦。</p>
               </div>
             </li>
@@ -505,7 +674,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
               </div>
               <div class="wing-item-content">
                 <b>日常高频场景举例</b>
-                <p><b>1. 沉浸影音娱乐</b>全屏观影或戴耳机听歌时，随手一转即调音量，优雅从容。<br><b>2. 深夜暗光护眼</b>关灯码字或夜读，右侧轻旋柔和降光，无缝呵护双眼。<br><b>3. 突发快速静音</b>会议通话或突发状况时，反向轻转瞬间压低音量，从容自如。</p>
+                <p>1. 沉浸影音娱乐<br>全屏观影或戴耳机听歌时，随手一转即调音量，优雅从容。<br>2. 深夜暗光护眼<br>关灯码字或夜读，右侧轻旋柔和降光，无缝呵护双眼。<br>3. 突发快速静音<br>会议通话或突发状况时，反向轻转瞬间压低音量，从容自如。</p>
               </div>
             </li>
           </ul>
@@ -515,7 +684,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         <div class="wing-card pro-card rv">
           <div class="wing-tags">
             <span class="wing-tag highlight">生产力跃升</span>
-            <span class="wing-tag">DaVinci Resolve 调色台平替</span>
+            <span class="wing-tag">专业剪辑控制台平替</span>
             <span class="wing-tag">代替外接控制台</span>
           </div>
           <h3>移动创意控制台<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">部分代替外接实体旋钮或控制台，专业提效</span></h3>
@@ -554,7 +723,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
               </div>
               <div class="wing-item-content">
                 <b>应用场景举例</b>
-                <p>1. 用双环旋钮在Xcode里浏览代码，内环快速移动，外环慢速阅读。<br> 2. 用无级变速旋钮在视频编辑软件（Capcut/Davinci Resolve）中的时间线上随意变速定位，既能快速浏览，也能逐帧微调。<br>3. 光标悬停在 Lift / Gamma / Gain 色轮与滑块的数值上直接旋转，获得媲美实体调色台的顺滑手感和专注的工作流。<br>4. 微调曝光、高光、阴影与曲线色调。眼睛关注照片细节，手指在触控板上自然微转，直觉调色一气呵成。</p>
+                <p>1. 用双环旋钮在Xcode里浏览代码，内环快速移动，外环慢速阅读。<br> 2. 用无级变速旋钮在视频编辑软件（Final Cut Pro / 剪映 / Premiere）中的时间线上随意变速定位，既能快速浏览，也能逐帧微调。<br>3. 光标悬停在 Final Cut Pro 与专业音频插件的各类旋钮与数值框上直接旋转，获得媲美实体调音调色台的顺滑手感。<br>4. 微调曝光、高光、阴影与曲线色调。眼睛关注画面细节，手指在触控板上自然微转，直觉调色一气呵成。</p>
               </div>
             </li>
           </ul>
@@ -842,7 +1011,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 除内置屏和Apple官方显示器外还支持通过 DDC/CI 调节第三方外接显示器亮度</b></span></li>
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 解锁无限专业应用全功能生态</b>（彻底解除 5 槽位限制）</span></li>
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 中心贴图支持从本地导入自定义图章</b>（我的旋钮我做主）</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 规则包一键导出打包分享</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 规则包一键导出打包分享</b></span></li>
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 尊享全部入场离场动画效果</b>（数量持续扩充）</span></li>
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ v2.x 所有后续版本永久免费更新</b>，一次买断终身享用</span></li>
           </ul>
@@ -874,7 +1043,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         </div>
         <div class="qa rv" data-open="false">
           <button aria-expanded="false">5 个专业创作 App 槽位不够用怎么办？<span class="pm">+</span></button>
-          <div class="ans"><p>首先，Chrome、Safari、Xcode、VS Code 等日常高频工具全部免配额且终身免费；针对 DaVinci Resolve、Final Cut Pro、Lightroom、Logic Pro 等专业创作工具，免费版提供 5 个全功能活跃槽位（单旋钮 / 双环 / CVK 自由开放）。第 6 款及以上超量软件仍可免费配置标准单旋钮，更支持随时把超量软件调换入活跃槽位，灵活性极高。如需同时管理数十款专业软件的高阶双环生态，升级 Pro 即可彻底解锁无限软件生态。</p></div>
+          <div class="ans"><p>首先，Chrome、Safari、Xcode、VS Code 等日常高频工具全部免配额且终身免费；针对 Final Cut Pro、剪映 / CapCut、Lightroom、Logic Pro 等专业创作工具，免费版提供 5 个全功能活跃槽位（单旋钮 / 双环 / CVK 自由开放）。第 6 款及以上超量软件仍可免费配置标准单旋钮，更支持随时把超量软件调换入活跃槽位，灵活性极高。如需同时管理数十款专业软件的高阶双环生态，升级 Pro 即可彻底解锁无限软件生态。</p></div>
         </div>
         <div class="qa rv" data-open="false">
           <button aria-expanded="false">单指无限飞轮续转和外接屏调光分别是什么？<span class="pm">+</span></button>
@@ -923,6 +1092,25 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 <script>
 (function(){
   "use strict";
+
+  // Remember preference as Chinese
+  try {
+    localStorage.setItem("pk_preferred_lang", "zh");
+  } catch(err){}
+
+  // Smart Language Switcher: Preserves current hash and records preference
+  var langSwitch = document.getElementById("lang-switch");
+  if(langSwitch){
+    langSwitch.addEventListener("click", function(e){
+      e.preventDefault();
+      try {
+        localStorage.setItem("pk_preferred_lang", "en");
+      } catch(err){}
+      var hash = window.location.hash || "";
+      window.location.href = "./" + hash;
+    });
+  }
+
   var NS="http://www.w3.org/2000/svg";
   var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -1353,7 +1541,92 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   }else{
     document.querySelectorAll(".rv").forEach(function(n){n.classList.add("in");});
   }
+
+  // Video Modal Logic
+  (function(){
+    var modal = document.getElementById("videoModal");
+    var iframe = document.getElementById("videoIframe");
+    var heroBtn = document.getElementById("heroDemoBtn");
+    var stageBtn = document.getElementById("stageDemoBtn");
+    var closeBtn = document.getElementById("videoModalClose");
+    var extLink = document.getElementById("videoExternalLink");
+
+    var isZh = document.documentElement.lang.startsWith("zh");
+    var videoConfig = {
+      embedUrl: isZh 
+        ? "https://player.bilibili.com/player.html?isOutside=true&high_quality=1&danmaku=0&autoplay=1"
+        : "https://www.youtube-nocookie.com/embed/placeholder?autoplay=1&rel=0&modestbranding=1",
+      externalUrl: isZh
+        ? "https://www.bilibili.com"
+        : "https://www.youtube.com"
+    };
+
+    function openModal(){
+      if(!modal) return;
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      if(iframe && !iframe.getAttribute("src")){
+        iframe.src = videoConfig.embedUrl;
+      }
+      if(extLink){
+        extLink.href = videoConfig.externalUrl;
+      }
+    }
+
+    function closeModal(){
+      if(!modal) return;
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      if(iframe){
+        iframe.src = "";
+      }
+    }
+
+    if(heroBtn) heroBtn.addEventListener("click", openModal);
+    if(stageBtn) stageBtn.addEventListener("click", openModal);
+    if(closeBtn) closeBtn.addEventListener("click", closeModal);
+
+    if(modal){
+      modal.addEventListener("click", function(e){
+        if(e.target === modal){
+          closeModal();
+        }
+      });
+    }
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && modal && modal.classList.contains("active")){
+        closeModal();
+      }
+    });
+  })();
+
 })();
 </script>
+
+  <!-- Video Modal -->
+  <div class="video-modal-backdrop" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="PhantomKnob 实机演示视频">
+    <div class="video-modal-box">
+      <button class="video-modal-close" id="videoModalClose" aria-label="关闭视频 (Esc)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div class="video-player-container">
+        <iframe id="videoIframe" class="video-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <div class="video-modal-footer">
+        <div class="video-modal-info">
+          <span class="v-badge">实机实拍</span>
+          <span class="v-title">Mac 触控板变物理旋钮 · CapCut 剪映、Safari、QuickTime 与系统三指实操</span>
+        </div>
+        <a class="video-external-link" id="videoExternalLink" href="https://www.bilibili.com" target="_blank" rel="noopener noreferrer">
+          在 Bilibili 打开原片
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

@@ -3,31 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PhantomKnob 2.0 — The Magical Rotary Knob Inside Your Trackpad</title>
-<meta name="description" content="PhantomKnob turns your Mac trackpad into a physical rotary knob. 3-finger rotation for instant system volume & brightness (with external monitor DDC support); 2-finger rotation to control any app sliders, playheads, and color wheels. Free download.">
+<title>PhantomKnob 2.0 — The Magical Rotary Knob Inside Your Mac Trackpad</title>
+<meta name="description" content="PhantomKnob turns your Mac trackpad into a physical rotary dial and creative grading console. 3-finger rotation for instant volume and brightness (with external monitor DDC support); 2-finger rotation for app sliders, playheads, and color wheels. Free download.">
 <link rel="icon" type="image/png" href="assets/appicon32.png">
 <link rel="apple-touch-icon" href="assets/appicon.png">
+
+<!-- Hreflang Tags for International SEO -->
+<link rel="alternate" hreflang="en" href="https://benwu232.github.io/PhantomKnob/">
+<link rel="alternate" hreflang="zh-CN" href="https://benwu232.github.io/PhantomKnob/index_zh.html">
+<link rel="alternate" hreflang="x-default" href="https://benwu232.github.io/PhantomKnob/">
 
 <!-- Open Graph / Messages / Social Cards -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://benwu232.github.io/PhantomKnob/">
-<meta property="og:title" content="PhantomKnob 2.0 — The Magical Rotary Knob Inside Your Trackpad">
-<meta property="og:description" content="PhantomKnob turns your Mac trackpad into a physical rotary knob. 3-finger rotation for instant system volume & brightness (with external monitor DDC support); 2-finger rotation to control any app sliders, playheads, and color wheels. Free download.">
+<meta property="og:title" content="PhantomKnob — The Magical Rotary Knob Inside Your Trackpad">
+<meta property="og:description" content="Turn your Mac trackpad into a versatile physical dial. 3-finger rotation for instant system volume & monitor brightness; 2-finger rotation to drive Final Cut Pro, CapCut timeline scrubbers, and precision sliders. No extra hardware required.">
 <meta property="og:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
 <meta itemprop="name" content="PhantomKnob">
-<meta itemprop="description" content="Turn your Mac trackpad into a physical rotary knob for sliders, playheads, and volume.">
+<meta itemprop="description" content="Unlock the magical rotary knob hidden inside your Mac trackpad for sliders, timelines, color wheels, and volume.">
 <meta itemprop="image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PhantomKnob 2.0 — The Magical Rotary Knob Inside Your Trackpad">
-<meta name="twitter:description" content="PhantomKnob turns your Mac trackpad into a physical rotary knob. 3-finger rotation for volume & brightness; 2-finger rotation to control app sliders and color wheels.">
+<meta name="twitter:description" content="Turn your Mac trackpad into a physical rotary dial. Zero-hardware creative editing console, external monitor DDC dimming, and stepless slider control.">
 <meta name="twitter:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script>
+// Smart language redirect for first-time Chinese visitors
+(function(){
+  try {
+    var pref = localStorage.getItem("pk_preferred_lang");
+    if (!pref) {
+      var langs = navigator.languages || [navigator.language || ""];
+      var isZh = false;
+      for (var i = 0; i < langs.length; i++) {
+        if (langs[i] && langs[i].toLowerCase().indexOf("zh") === 0) {
+          isZh = true;
+          break;
+        }
+      }
+      if (isZh) {
+        var hash = window.location.hash || "";
+        window.location.replace("index_zh.html" + hash);
+      }
+    }
+  } catch(e) {}
+
+
+})();
+</script>
+
 <style>
 :root{
   --bg:#0d0d0f;
@@ -67,14 +99,15 @@ header{position:fixed;inset:0 0 auto 0;z-index:100;height:64px;backdrop-filter:b
 .nav{max-width:var(--maxw);margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:1.02rem;letter-spacing:-0.01em}
 .brand img{width:26px;height:26px;border-radius:7px}
-.brand .zh{color:var(--ink-3);font-weight:500;font-size:0.82rem;margin-left:2px}
 .nav-links{display:flex;align-items:center;gap:26px}
 .nav-links a{color:var(--ink-2);font-size:0.9rem;transition:color .2s}
 .nav-links a:hover{color:var(--ink)}
 .nav-links a .n{font-family:var(--font-mono);font-size:0.68rem;color:var(--amber);margin-right:5px;letter-spacing:0.06em}
 .nav-cta{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:9px;background:var(--amber);color:#17120b;font-weight:600;font-size:0.88rem;transition:transform .2s,background .2s}
 .nav-cta:hover{background:#ffb03d;transform:translateY(-1px)}
-@media (max-width:860px){.nav-links a{display:none}.nav-links a.nav-cta{display:inline-flex}}
+.lang-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:8px;font-family:var(--font-mono);font-size:0.8rem;color:var(--ink-2);border:1px solid var(--line);background:rgba(255,255,255,0.03);transition:color .2s,border-color .2s,background .2s}
+.lang-btn:hover{color:var(--ink);border-color:var(--amber);background:var(--amber-soft)}
+@media (max-width:860px){.nav-links a{display:none}.nav-links a.nav-cta,.nav-links a.lang-btn{display:inline-flex}}
 
 /* ---------- buttons ---------- */
 .btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 26px;border-radius:12px;font-size:1rem;font-weight:600;transition:transform .2s,background .2s,border-color .2s;border:none}
@@ -141,83 +174,93 @@ section{padding:96px 0}
 .fcard h3{font-family:var(--font-head);font-size:1.18rem;font-weight:600;margin-bottom:9px}
 .fcard p{color:var(--ink-2);font-size:0.94rem}
 
-/* knob types */
-.knobs3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.kcard{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:26px 24px 22px;text-align:center}
-.kcard .fig{display:flex;justify-content:center;margin-bottom:6px}
-.kcard svg{width:190px;height:190px}
-.kcard h3{font-family:var(--font-head);font-size:1.14rem;font-weight:600}
-.kcard .en{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);margin:4px 0 10px}
-.kcard p{color:var(--ink-2);font-size:0.9rem;line-height:1.65;min-height:4.4em}
-.kcard .spec{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--ink-3);letter-spacing:0.04em;line-height:2}
-.kcard .spec b{color:var(--amber);font-weight:500}
+/* dual wings layout */
+.dual-wings{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:1080px;margin:0 auto}
+.wing-card{border:1px solid var(--line);border-radius:20px;background:var(--panel);padding:36px 32px;display:flex;flex-direction:column;position:relative;transition:border-color .25s,box-shadow .25s}
+.wing-card:hover{border-color:rgba(255,159,10,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.35)}
+.wing-card.pro-card{border-color:rgba(255,159,10,0.35);background:linear-gradient(180deg,rgba(255,159,10,0.04),transparent 45%),var(--panel)}
+.wing-tags{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.wing-tag{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:rgba(255,255,255,0.03);color:var(--ink-2)}
+.wing-tag.highlight{border-color:rgba(255,159,10,0.4);color:var(--amber);background:var(--amber-soft);font-weight:500}
+.wing-card h3{font-family:var(--font-head);font-size:1.35rem;font-weight:700;line-height:1.3;margin-bottom:12px}
+.wing-desc{color:var(--ink-2);font-size:0.95rem;line-height:1.7;margin-bottom:16px}
+.wing-list{list-style:none;display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.wing-item{display:flex;gap:12px;align-items:flex-start}
+.wing-item-icon{flex:none;width:30px;height:30px;border-radius:8px;background:rgba(255,159,10,0.12);border:1px solid rgba(255,159,10,0.25);display:flex;align-items:center;justify-content:center;color:var(--amber);margin-top:2px}
+.wing-item-content b{display:block;font-size:0.95rem;color:var(--ink);margin-bottom:3px}
+.wing-item-content p{font-size:0.86rem;color:var(--ink-3);line-height:1.6}
 
-/* showcase placeholders */
-.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.shot{border:1px dashed rgba(255,255,255,0.18);border-radius:16px;background:rgba(255,255,255,0.015);padding:22px;position:relative}
-.shot .ph{height:170px;border-radius:10px;background:
-  repeating-linear-gradient(45deg,rgba(255,255,255,0.025) 0 10px,transparent 10px 20px),rgba(0,0,0,0.25);
-  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;border:1px solid var(--line-soft)}
-.shot .ph .app{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.14em;color:var(--ink-3)}
-.shot .ph .todo{font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.1em;color:rgba(255,159,10,0.75);border:1px solid rgba(255,159,10,0.3);border-radius:5px;padding:2px 8px}
-.shot h3{font-family:var(--font-head);font-size:1.05rem;font-weight:600;margin:16px 0 6px}
-.shot p{color:var(--ink-2);font-size:0.88rem}
-
-/* vs physical knobs */
-.vs-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.vs-cards .en{display:block;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);margin:2px 0 10px}
-.vs-lead{grid-column:1/-1;display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:center;background:linear-gradient(120deg,rgba(255,159,10,0.06),transparent 55%),var(--panel);border-color:rgba(255,159,10,0.22)}
+/* vs grid3 */
+.vs-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1080px;margin:0 auto}
+.vs-col{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:30px 24px;display:flex;flex-direction:column;transition:border-color .25s}
+.vs-col:hover{border-color:rgba(255,159,10,0.35)}
+.vs-col-badge{font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.12em;color:var(--amber);margin-bottom:8px;text-transform:uppercase;font-weight:500}
+.vs-col h3{font-family:var(--font-head);font-size:1.2rem;font-weight:600;margin-bottom:18px}
+.vs-contrast-box{border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.vs-contrast-box .label{font-size:0.75rem;font-family:var(--font-mono);margin-bottom:6px;font-weight:600}
+.vs-contrast-box.bad{background:rgba(255,69,58,0.06);border:1px solid rgba(255,69,58,0.2)}
+.vs-contrast-box.bad .label{color:#ff6961}
+.vs-contrast-box.bad p{font-size:0.86rem;color:var(--ink-3);line-height:1.55}
+.vs-contrast-box.good{background:rgba(255,159,10,0.06);border:1px solid rgba(255,159,10,0.3)}
+.vs-contrast-box.good .label{color:var(--amber)}
+.vs-contrast-box.good p{font-size:0.88rem;color:var(--ink-2);line-height:1.55}
+.vs-contrast-box.good b{color:var(--ink)}
 .vs-sum{border:1px dashed rgba(255,159,10,0.3);border-radius:16px;padding:28px 32px;margin-top:22px;text-align:center;background:linear-gradient(180deg,rgba(255,159,10,0.04),transparent 60%)}
 .vs-sum p{color:var(--ink-2);font-size:0.98rem;line-height:1.8}
 .vs-sum b{color:var(--amber);font-weight:600}
 .vs-sum .btn{margin-top:16px}
-@media (max-width:680px){
-  .vs-cards{grid-template-columns:1fr}
-  .vs-lead{grid-template-columns:1fr}
-  .vs-sum{padding:24px 20px}
+
+/* advanced accordion */
+.adv-accordion{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.adv-item{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;transition:border-color .25s}
+.adv-item[open]{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.03),transparent 30%),var(--panel)}
+.adv-summary{display:flex;justify-content:space-between;align-items:center;padding:20px 26px;font-family:var(--font-head);font-size:1.08rem;font-weight:600;color:var(--ink);cursor:pointer;user-select:none;list-style:none}
+.adv-summary::-webkit-details-marker{display:none}
+.adv-summary:hover{color:var(--amber)}
+.adv-icon{font-family:var(--font-mono);font-size:1.3rem;color:var(--amber);transition:transform .25s cubic-bezier(0.16,1,0.3,1);line-height:1}
+.adv-item[open] .adv-icon{transform:rotate(45deg)}
+.adv-body{padding:0 26px 26px;border-top:1px solid rgba(255,255,255,0.05);padding-top:22px}
+
+@media (max-width:860px){
+  .dual-wings,.vs-grid3{grid-template-columns:1fr;gap:18px}
+  .wing-card{padding:26px 22px}
+  .adv-summary{padding:18px 20px;font-size:0.98rem}
+  .adv-body{padding:0 18px 20px;padding-top:18px}
 }
 
-
-/* customize */
-.sub-head{display:flex;align-items:center;gap:12px;margin:52px 0 22px}
-.sub-head .n{font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.14em;color:var(--amber)}
-.sub-head h3{font-family:var(--font-head);font-size:1.22rem;font-weight:600;letter-spacing:-0.01em}
-.cz-lead{color:var(--ink-2);font-size:1.02rem;line-height:1.85;max-width:46em;margin-bottom:28px}
-.cz-lead b{color:var(--ink);font-weight:600}
-.flow{display:grid;grid-template-columns:1fr 22px 1fr 22px 1fr 22px 1fr;gap:6px;align-items:center;margin:28px 0 34px}
-.fnode{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
-.fnode .fi{color:var(--amber)}
-.fnode b{font-family:var(--font-head);font-weight:600;font-size:0.95rem}
-.fnode span{font-size:0.76rem;color:var(--ink-3);line-height:1.5}
-.farr{display:flex;align-items:center;justify-content:center;color:rgba(255,159,10,0.55)}
-.ckbd{font-family:var(--font-mono);font-size:0.82em;border:1px solid var(--line);border-radius:5px;padding:2px 7px;background:rgba(255,255,255,0.04);color:var(--amber)}
-.note-panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:24px 28px;color:var(--ink-2);font-size:0.96rem;line-height:1.8}
-.lang-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:8px;font-family:var(--font-mono);font-size:0.8rem;color:var(--ink-2);border:1px solid var(--line);background:rgba(255,255,255,0.03);transition:color .2s,border-color .2s,background .2s}
-.lang-btn:hover{color:var(--ink);border-color:var(--amber);background:var(--amber-soft)}
-@media (max-width:860px){.nav-links a{display:none}.nav-links a.nav-cta,.nav-links a.lang-btn{display:inline-flex}}
-@media (max-width:760px){.flow{grid-template-columns:1fr;gap:10px}.farr{transform:rotate(90deg)}}
-
 /* pricing */
-.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto}
-.plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative}
+.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto;align-items:stretch}
+.plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative;display:flex;flex-direction:column}
 .plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
 .plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
+.plan .tag.free-tag{background:rgba(255,255,255,0.06);color:var(--ink-2);border:1px solid var(--line);letter-spacing:0.12em}
+.plan-head{min-height:195px;display:flex;flex-direction:column}
 .plan h3{font-family:var(--font-head);font-size:1.2rem;font-weight:600}
-.plan .pd{color:var(--ink-3);font-size:0.86rem;margin-top:4px}
-.plan .price{font-family:var(--font-mono);font-size:2.5rem;font-weight:600;letter-spacing:-0.03em;margin:18px 0 2px}
-.plan .price small{font-size:0.95rem;color:var(--ink-3);font-weight:400;letter-spacing:0}
-.plan .ps{font-size:0.8rem;color:var(--ink-3);margin-bottom:20px}
-.plan .price .orig{font-size:1.2rem;color:var(--ink-3);font-weight:400;letter-spacing:0;text-decoration:line-through;text-decoration-color:rgba(255,159,10,0.55);text-decoration-thickness:2px;margin-right:9px}
-.plan .save-badge{display:inline-block;vertical-align:4px;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.07em;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(255,159,10,0.35);border-radius:6px;padding:3px 9px;margin-left:9px;font-weight:500}
-.plan .ps.deadline{color:var(--amber);margin-bottom:4px}
-.plan ul{list-style:none;margin-bottom:26px}
-.plan li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--ink-2);font-size:0.92rem}
-.plan li svg{flex:none;margin-top:5px;color:var(--amber)}
+.plan .pd{color:var(--ink-3);font-size:0.86rem;margin-top:4px;min-height:40px;line-height:1.55}
+.plan .price{font-family:var(--font-mono);font-size:2.5rem;font-weight:600;letter-spacing:-0.03em;margin:14px 0 0;line-height:1.1;display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 10px}
+.plan .price-num{display:inline-flex;align-items:baseline}
+.plan .price small{font-size:0.95rem;color:var(--ink-3);font-weight:400;letter-spacing:0;white-space:nowrap}
+.plan .price .orig{font-size:1.15rem;color:var(--ink-3);font-weight:400;letter-spacing:0;white-space:nowrap}
+.plan .price .orig .orig-num{text-decoration:line-through;text-decoration-color:rgba(255,159,10,0.55);text-decoration-thickness:2px}
+.math-tip{position:relative;display:inline-flex;align-items:baseline;cursor:help;white-space:nowrap}
+.math-tip .math-const{font-family:var(--font-mono);font-size:0.46em;color:var(--ink-3);margin-left:3px;letter-spacing:0.04em;font-weight:500;opacity:0.85;display:inline-block}
+.math-tip .tip-box{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(20,17,14,0.96);border:1px solid rgba(255,159,10,0.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--ink);padding:6px 11px;border-radius:7px;font-family:var(--font-mono);font-size:0.72rem;font-weight:400;text-decoration:none !important;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.55);transition:opacity .2s cubic-bezier(.16,1,.3,1),transform .2s cubic-bezier(.16,1,.3,1);z-index:30}
+.math-tip .tip-box::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:rgba(20,17,14,0.96) transparent transparent transparent}
+.math-tip:hover .tip-box,.math-tip:focus-visible .tip-box{visibility:visible;opacity:1;transform:translateX(-50%) translateY(0)}
+.plan .save-badge{display:inline-block;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.07em;color:var(--amber);background:var(--amber-soft);border:1px solid rgba(255,159,10,0.35);border-radius:6px;padding:3px 9px;font-weight:500;white-space:nowrap;align-self:center}
+.plan .price-cycle{font-size:0.82rem;color:var(--ink-2);margin-top:6px;font-weight:500;white-space:nowrap}
+.plan .ps{font-size:0.8rem;color:var(--ink-3);margin-top:4px}
+.plan .ps.deadline{color:var(--amber)}
+.plan .ps.sub-line{color:var(--ink-3)}
+.plan ul{list-style:none;margin-top:20px;margin-bottom:26px;display:flex;flex-direction:column}
+.plan li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;color:var(--ink-2);font-size:0.92rem;min-height:56px;box-sizing:border-box;line-height:1.55}
+.plan li svg{flex:none;margin-top:4px;color:var(--amber)}
 .plan li.dim{color:var(--ink-3)}
 .plan li b{color:var(--ink);font-weight:600}
+.plan .plan-foot{margin-top:auto}
 .plan .btn{width:100%;justify-content:center}
-.plan .upgrade-note{margin-top:12px;font-size:0.76rem;color:var(--ink-3);text-align:center;line-height:1.6}
-.btn-inapp{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:12px;border:1px solid rgba(255,159,10,0.5);background:var(--amber-soft);color:var(--amber);font-weight:600;font-size:1rem}
+.plan .pay-note{margin-top:10px;font-size:0.74rem;color:var(--ink-3);text-align:center;font-family:var(--font-mono);letter-spacing:0.02em;min-height:18px;line-height:1.5}
+.plan .upgrade-note{margin-top:12px;font-size:0.76rem;color:var(--ink-3);text-align:center;line-height:1.6;min-height:38px}
 
 /* faq */
 .faq-list{max-width:760px;margin:0 auto}
@@ -253,15 +296,12 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 /* responsive */
 @media (max-width:1020px){
   .hero-grid{grid-template-columns:1fr;gap:44px}
-  .steps,.cards3,.knobs3,.shots{grid-template-columns:1fr 1fr}
-}
-@media (max-width:1000px){
-  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .steps,.cards3,.shots{grid-template-columns:1fr 1fr}
 }
 @media (max-width:680px){
   section{padding:70px 0}
   .hero{padding:120px 0 70px}
-  .steps,.cards3,.knobs3,.shots,.plans{grid-template-columns:1fr}
+  .steps,.cards3,.plans{grid-template-columns:1fr}
   .knob-holder{width:250px;height:250px}
   .stage{aspect-ratio:auto;padding:26px 20px 24px}
   .foot{justify-content:center;text-align:center}
@@ -270,6 +310,162 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
   .rv{opacity:1;transform:none}
+}
+
+/* ---------- Video Modal & Demo Buttons ---------- */
+.btn-demo{cursor:pointer;font-family:inherit;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);color:var(--ink)}
+.btn-demo:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-soft);transform:translateY(-2px)}
+.btn-demo svg{fill:currentColor}
+.stage-demo-badge{
+  position:absolute;
+  top:16px;
+  left:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:30px;
+  padding:0 12px;
+  border-radius:999px;
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  letter-spacing:0.04em;
+  color:var(--ink);
+  background:rgba(18,18,21,0.75);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  cursor:pointer;
+  z-index:10;
+  transition:all .2s ease;
+}
+.stage-demo-badge svg{color:var(--amber);flex:none}
+.stage-demo-badge:hover{
+  background:rgba(255,159,10,0.16);
+  border-color:var(--amber);
+  color:#fff;
+  transform:translateY(-1px);
+}
+
+.video-modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(5,5,8,0.85);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+.video-modal-backdrop.active{
+  opacity:1;
+  pointer-events:auto;
+}
+.video-modal-box{
+  position:relative;
+  width:100%;
+  max-width:960px;
+  background:var(--panel);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 30px 90px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+  transform:scale(0.96);
+  transition:transform .25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.video-modal-backdrop.active .video-modal-box{
+  transform:scale(1);
+}
+.video-modal-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.65);
+  border:1px solid rgba(255,255,255,0.15);
+  color:var(--ink-2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:20;
+  transition:all .2s ease;
+}
+.video-modal-close:hover{
+  color:#fff;
+  background:rgba(255,255,255,0.15);
+  border-color:rgba(255,255,255,0.3);
+  transform:scale(1.05);
+}
+.video-player-container{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  background:#000;
+}
+.video-iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:none;
+}
+.video-modal-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(255,255,255,0.02);
+  border-top:1px solid var(--line-soft);
+  gap:16px;
+  flex-wrap:wrap;
+}
+.video-modal-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:0.86rem;
+  color:var(--ink);
+}
+.v-badge{
+  padding:2px 8px;
+  background:var(--amber-soft);
+  border:1px solid rgba(255,159,10,0.3);
+  border-radius:4px;
+  font-size:0.72rem;
+  font-family:var(--font-mono);
+  color:var(--amber);
+  font-weight:600;
+}
+.v-title{
+  color:var(--ink-2);
+  font-size:0.84rem;
+}
+.video-external-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.78rem;
+  font-family:var(--font-mono);
+  color:var(--ink-3);
+  text-decoration:none;
+  transition:color .2s;
+}
+.video-external-link:hover{
+  color:var(--amber);
+}
+@media (max-width:680px){
+  .video-modal-footer{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
 }
 </style>
 </head>
@@ -282,16 +478,13 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       PhantomKnob
     </a>
     <div class="nav-links">
-      <a href="#features"><span class="n">01</span>Features</a>
-      <a href="#scenes"><span class="n">02</span>Showcase</a>
-      <a href="#vs"><span class="n">03</span>VS</a>
-      <a href="#start"><span class="n">04</span>Start</a>
-      <a href="#principle"><span class="n">05</span>Principle</a>
-      <a href="#customize"><span class="n">06</span>Customize</a>
-      <a href="#trust"><span class="n">07</span>Security</a>
-      <a href="#pricing"><span class="n">08</span>Pricing</a>
-      <a href="#faq"><span class="n">09</span>FAQ</a>
-      <a href="index_zh.html" class="lang-btn" title="Switch to Chinese">🌐 中文</a>
+      <a href="#scenes"><span class="n">01</span>Use Cases</a>
+      <a href="#vs"><span class="n">02</span>Why Trackpad</a>
+      <a href="#start"><span class="n">03</span>Getting Started</a>
+      <a href="#advanced"><span class="n">04</span>Deep Dive</a>
+      <a href="#pricing"><span class="n">05</span>Pricing</a>
+      <a href="#faq"><span class="n">06</span>FAQ</a>
+      <a href="index_zh.html" class="lang-btn" id="lang-switch" title="切换为中文">🌐 中文</a>
       <a class="nav-cta" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">Download Free</a>
     </div>
   </nav>
@@ -304,30 +497,37 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     <div class="wrap hero-grid">
       <div>
         <div class="hero-top-row">
-          <span class="badge"><span class="dot"></span>✨ v2.0.0</span>
+          <span class="badge"><span class="dot"></span>✨ v2.2.1</span>
           <div class="hero-quote">
             <span class="hq-text">“Any sufficiently advanced technology is indistinguishable from magic.”</span>
             <span class="hq-author">— Arthur C. Clarke</span>
           </div>
         </div>
-        <h1>Unlock the Magical Knob<br>Sealed Inside Your <span class="turn">Trackpad</span></h1>
-        <p class="hero-sub">Turn your Mac trackpad into a physical rotary knob for system volume, brightness, and creative workflows.</p>
+        <h1>Unlock the Magical Rotary Knob<br><span class="turn">Inside Your Trackpad</span></h1>
+        <p class="hero-sub">Transform your Mac trackpad into a physical rotary dial and creative grading console. Zero extra hardware, zero tangled cables—engineered for seamless mobile workflow.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
             <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
             Download Free
           </a>
-          <!-- <a class="btn btn-ghost" href="#features">See what it can do ↓</a> -->
+                  <button class="btn btn-demo" id="heroDemoBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Watch 45s Live Demo
+          </button>
         </div>
-        <p class="hero-meta"><span><b>macOS 13+</b></span><span><b>Apple Silicon &amp; Intel</b></span><span>Supports MacBook &amp; Magic Trackpad</span></p>
+        <p class="hero-meta"><span><b>Always Resident · Zero Flow Interruption</b></span><span><b>Daily Tools Free + 5 Pro App Slots</b></span><span>macOS 13+ · MacBook &amp; Magic Trackpad</span></p>
       </div>
 
-      <div class="stage" id="stage">
-        <button class="replay-btn" id="replayBtn" title="Replay Unlocking Ritual" aria-label="Replay Unlocking Ritual">
+            <div class="stage" id="stage">
+        <button class="stage-demo-badge" id="stageDemoBtn" aria-label="Watch Live Demo">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          <span>Live Demo</span>
+        </button>
+        <button class="replay-btn" id="replayBtn" title="Replay Unsealing Ritual" aria-label="Replay Unsealing Ritual">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
         </button>
         <div class="knob-zone">
-          <div class="knob-holder" id="knobHolder" aria-label="PhantomKnob Unlocking Animation">
+          <div class="knob-holder" id="knobHolder" aria-label="PhantomKnob Trackpad Unsealing Animation">
             <svg viewBox="0 0 220 220" aria-hidden="true" id="heroSvg">
               <defs>
                 <filter id="capsuleGlow" filterUnits="userSpaceOnUse" x="20" y="20" width="180" height="180">
@@ -375,163 +575,181 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     </div>
   </section>
 
-  <!-- 01 FEATURES -->
-  <section id="features">
-    <div class="wrap">
-      <div class="sec-head rv">
-        <div class="sec-index"><span class="num">01 / FEATURES</span><span class="rule"></span></div>
-        <h2 class="sec-title">A New Dimension for Your Trackpad</h2>
-        <p class="sec-desc">Bring physical rotary gestures to your trackpad with innovative touch math — wherever your cursor points, the knob commands.</p>
-      </div>
-      <div class="cards3">
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h3>Easy to Learn</h3>
-          <p>Make circular gestures on the trackpad — intuitive, natural, with zero learning curve.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></div>
-          <h3>Fast &amp; Precise</h3>
-          <p>Rotational angular math delivers fluid precision. Easily adjust sensitivity on the fly with number or arrow keys.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M4 12l4-4M4 12l4 4"/><path d="M20 5v3M20 16v3"/></svg></div>
-          <h3>Dual Gestures · Dedicated Roles</h3>
-          <p>Three fingers rotate anywhere for global volume and brightness; two fingers take over onscreen controls. Responds past threshold without interfering with macOS gestures.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg></div>
-          <h3>Three Knob Types</h3>
-          <p>Single knob for physical 1:1 feel; Dual-Ring knob with outer/inner rings for dual speeds; Continuous knob with size-driven dynamic speed.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><path d="M12 4a8 8 0 0 1 8 8" stroke-linecap="round"/></svg></div>
-          <h3>Single-Finger Continuation</h3>
-          <p>Need continuous rotation? Lift one finger and keep spinning with the remaining finger along the trajectory seamlessly.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9a5 5 0 0 1 0 6"/></svg></div>
-          <h3>System Quick Knob</h3>
-          <p>Rotate three fingers anywhere on the trackpad (or Shift+2-finger) to summon an edge capsule HUD for volume and brightness, with hardware DDC support for external monitors.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 20V9"/></svg></div>
-          <h3>Pro Creative Apps</h3>
-          <p>Built-in out-of-the-box support for DaVinci Resolve, Final Cut Pro, CapCut, Premiere, Logic Pro, and everyday apps.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8 15l8-6M6.5 12a1.2 1.2 0 1 0 0 .01M17.5 12a1.2 1.2 0 1 0 0 .01"/></svg></div>
-          <h3>Customization &amp; Pro Motion</h3>
-          <p>Customize types, behaviors, and custom skins. Features classic Edge Slide and Pro-exclusive Spacetime Warp &amp; Spatial Rift animations.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15v-4M12 15l-2-2M12 15l2-2"/><path d="M6 11a5 5 0 0 1 9.6-2M18 13a5 5 0 0 1-9.6 2"/></svg></div>
-          <h3>One-Click Sharing</h3>
-          <p>Craft the perfect knob setup and share it instantly via .pkp package or <span style="font-family:var(--font-mono);font-size:0.85em;color:var(--amber)">phantomknob://</span> deep links.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 02 SCENES -->
+  <!-- 01 SCENES -->
   <section id="scenes">
     <div class="wrap">
-      <div class="sec-head rv">
-        <div class="sec-index"><span class="num">02 / SCENES</span><span class="rule"></span></div>
-        <h2 class="sec-title">Built for Creators &amp; Power Users</h2>
-        <p class="sec-desc">Out-of-the-box support for creative tools and everyday software. Open your app and rotate.</p>
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">01 / SCENES</span><span class="rule"></span></div>
+        <h2 class="sec-title">Two Core Paradigms: Crafted for Tech Geeks and Creative Pros</h2>
       </div>
-      <div class="shots">
-        <div class="shot rv">
-          <div class="ph"><span class="app">DAVINCI RESOLVE</span><span class="todo mono">Showcase</span></div>
-          <h3>Colorists · Color Wheels with Real Feel</h3>
-          <p>Lift / Gamma / Gain wheels follow your fingertips in real time. Far faster and steadier than dragging sliders.</p>
+      <div class="dual-wings">
+        <!-- Wing 1: Quick System Knob -->
+        <div class="wing-card rv">
+          <div class="wing-tags">
+            <span class="wing-tag highlight">Power User Choice</span>
+            <span class="wing-tag">System-Level Shortcuts</span>
+            <span class="wing-tag">Zero Keystroke Friction</span>
+          </div>
+          <h3>System Quick Knob<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">Fluid, elegant, and lightning-fast</span></h3>
+          <p class="wing-desc">3-finger rotation: spatial tactile positioning for effortless blind control.</p>
+
+          <ul class="wing-list">
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>3-Finger Rotation · Blind Operation</b>
+                <p>Rotate on the left side of your trackpad for volume; rotate on the right side for brightness. No menu digging, no visual distraction—keep complete focus.</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>Stunning Visual Effects · Futuristic HUD</b>
+                <p>Equipped with slick entrance and exit animation effects. Every fingertip rotation feels like a refined sci-fi ritual, blending tactical utility with aesthetic delight.</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>Independent Multi-Monitor DDC Brightness</b>
+                <p>In multi-display setups, it automatically adjusts the exact screen under your mouse cursor. Supports hardware DDC/CI dimming for external third-party monitors without touching clunky buttons.</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>Everyday High-Frequency Scenarios</b>
+                <p><b>1. Immersive Media</b>: Effortlessly twist to dial volume while watching full-screen movies or listening with headphones.<br><b>2. Late-Night Eye Comfort</b>: Gently spin on the right side to dim display luminance during late coding sessions.<br><b>3. Instant Mute</b>: Reverse-flick to instantly silence audio when taking sudden video calls.</p>
+              </div>
+            </li>
+          </ul>
         </div>
-        <div class="shot rv">
-          <div class="ph"><span class="app">FINAL CUT PRO / CAPCUT</span><span class="todo mono">Showcase</span></div>
-          <h3>Video Editors · Precision Timeline Scrubbing</h3>
-          <p>Sweep the timeline quickly, then single-finger continue for frame-by-frame precision. CapCut &amp; Final Cut run effortlessly.</p>
-        </div>
-        <div class="shot rv">
-          <div class="ph"><span class="app">LOGIC PRO</span><span class="todo mono">Showcase</span></div>
-          <h3>Musicians · Real Console Faders</h3>
-          <p>Gain, pan, sends, and plugin dials right under your fingertips. Physical feel without bulky external hardware.</p>
-        </div>
-        <div class="shot rv">
-          <div class="ph"><span class="app">SYSTEM / BROWSER</span><span class="todo mono">Showcase</span></div>
-          <h3>Daily Power Users · Always There</h3>
-          <p>Volume, brightness, browser scrolling, and sliders in any app — one twist away.</p>
+
+        <!-- Wing 2: Pro Creative Controller Alternative -->
+        <div class="wing-card pro-card rv">
+          <div class="wing-tags">
+            <span class="wing-tag highlight">Productivity Leap</span>
+            <span class="wing-tag">Pro Video Console Alternative</span>
+            <span class="wing-tag">Zero Hardware Footprint</span>
+          </div>
+          <h3>Mobile Creative Console<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">A software-native alternative to bulky physical panels</span></h3>
+          <p class="wing-desc">2-finger rotation: locate first, control second. Swift, intuitive, and razor-sharp.</p>
+          <ul class="wing-list">
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>Three Versatile Knob Models for Any Task</b>
+                <p>1. <b>Single Knob</b>: Direct tactile simulation of a physical knob;<br>2. <b>Double-Ring Knob</b>: Inner/outer rings mapped to dual speeds (fast shuttle vs fine tweak);<br>3. <b>Continuous Variable Knob (CVK)</b>: Dynamic velocity scaled to knob diameter.</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="4.5"/><path d="M12 3v2M12 19v2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>Single-Finger Infinite Flywheel</b>
+                <p>Pro unlocks endless flywheel momentum: lift one finger, and keep spinning with your remaining single finger around the virtual center for seamless long-range adjustments. Free tier smoothly brakes with physical inertia damping.</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>Per-App Tailored Customization</b>
+                <p>Customize rotation behaviors, visual themes, colors, and animation styles for any target application. Continuously expanding library of pro software presets.</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><circle cx="4" cy="12" r="2"/><circle cx="12" cy="10" r="2"/><circle cx="20" cy="14" r="2"/></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>Creative Workflow Scenarios</b>
+                <p><b>1. Xcode & Code Navigation</b>: Double-ring knob flies through code on the inner ring, while the outer ring walks line by line.<br><b>2. Timeline Scrubbing (Final Cut Pro / Premiere / CapCut)</b>: Continuous variable speed for rapid shuttle browsing and frame-by-frame precision.<br><b>3. Creative Precision Dials</b>: Hover over parameters, dials, and values in Final Cut Pro, Logic Pro, or plugins to rotate directly, mirroring hardware surface knobs.<br><b>4. Photo Retouching</b>: Finely tune Exposure, Shadows, and Curves in Lightroom / Photoshop with eyes locked on your image.</p>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 03 VS PHYSICAL KNOBS -->
+  <!-- 02 VS HARDWARE -->
   <section id="vs">
     <div class="wrap">
-      <div class="sec-head rv">
-        <div class="sec-index"><span class="num">03 / VS PHYSICAL KNOBS</span><span class="rule"></span></div>
-        <h2 class="sec-title">The Ultimate Knob is Already on Your Mac</h2>
-        <p class="sec-desc">Color grading, editing, and mixing deserve dedicated knobs — but you don't need a bulky $1,000 console cluttering your desk. PhantomKnob puts it right on your trackpad.</p>
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">02 / VS HARDWARE</span><span class="rule"></span></div>
+        <h2 class="sec-title">Why Your Trackpad Beats a Bulky Physical Hardware Console</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">Grading, editing, and sound design demand tactile control—not a heavy, cable-tangled brick in your backpack.</p>
       </div>
-      <div class="vs-cards">
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <h3>Affordable</h3>
-          <span class="en">A FRACTION OF THE PRICE</span>
-          <p>Physical consoles cost hundreds or thousands of dollars. PhantomKnob starts free, and Pro costs just a fraction.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 3.8a2.2 2.2 0 0 0-3.1 0L8 12.8V16h3.2l9-9a2.2 2.2 0 0 0 0-3.2z"/><path d="M16 5l3 3"/><path d="M3 21c2-4 6-6 9-6"/></svg></div>
-          <h3>Lightweight</h3>
-          <span class="en">TRAVEL LIGHT</span>
-          <p>No heavy gear to carry. When working on the go, you'll never pack extra hardware again — the knob travels with your trackpad.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6M9 13h4"/></svg></div>
-          <h3>Zero Footprint</h3>
-          <span class="en">ZERO FOOTPRINT</span>
-          <p>Pure software, zero clutter. Takes up no desk space, requires no cables or power adapters — keeping your desk clean and minimal.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12c0-2.2 1.8-4 4-4 3 0 5 8 8 8a4 4 0 0 0 0-8c-3 0-5 8-8 8-2.2 0-4-1.8-4-4z"/></svg></div>
-          <h3>Infinite Knobs</h3>
-          <span class="en">INFINITE KNOBS</span>
-          <p>Hardware consoles have a fixed number of knobs. PhantomKnob gives you limitless virtual knobs wherever your cursor points.</p>
-        </div>
-        <div class="fcard vs-lead rv">
-          <div>
-            <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2" stroke-linecap="round"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg></div>
-            <h3>Beyond Physical</h3>
-            <span class="en">BEYOND PHYSICAL</span>
-            <p>Single knob faithfully recreates physical inertia; Dual-Ring and Continuous knobs go beyond hardware limits to deliver speeds physical dials simply can't offer.</p>
+      <div class="vs-grid3">
+        <!-- Contrast 1 -->
+        <div class="vs-col rv">
+          <span class="vs-col-badge">01 · Mobility &amp; Travel</span>
+          <h3>Zero Weight · Ready Anywhere</h3>
+          <div class="vs-contrast-box bad">
+            <div class="label">✕ Traditional Hardware Consoles (TourBox / Editing Panels)</div>
+            <p>Weighs 300g~800g, eats up backpack space, and risks scratches. In train tray tables, airplane economy seats, cramped cafe tables, or lap setups, there simply isn't room to deploy it.</p>
           </div>
-          <svg viewBox="0 0 320 120" aria-hidden="true">
-            <g fill="none" stroke-width="1.4">
-              <circle cx="60" cy="60" r="34" stroke="rgba(10,132,255,0.7)"/><circle cx="60" cy="60" r="3" fill="#0a84ff"/>
-              <circle cx="160" cy="60" r="34" stroke="rgba(10,132,255,0.7)"/><circle cx="160" cy="60" r="20" stroke="rgba(48,209,88,0.7)"/>
-              <circle cx="266" cy="60" r="34" stroke="rgba(10,132,255,0.7)"/><circle cx="266" cy="60" r="24" stroke="rgba(48,209,88,0.55)" stroke-dasharray="4 4"/><circle cx="266" cy="60" r="14" stroke="rgba(48,209,88,0.7)"/>
-            </g>
-            <g font-family="IBM Plex Mono,monospace" font-size="8.5" fill="rgba(242,239,231,0.45)" text-anchor="middle">
-              <text x="60" y="112">Single · 1:1</text><text x="160" y="112">Dual-Ring · Dual</text><text x="266" y="112">Continuous · Dynamic</text>
-            </g>
-          </svg>
+          <div class="vs-contrast-box good">
+            <div class="label">✓ PhantomKnob</div>
+            <p><b>Zero extra hardware, zero backpack weight, zero cable clutter</b>. As long as you have your MacBook, your pro rotary console is already deployed. Work in cafes, airports, and client sets with total freedom.</p>
+          </div>
+        </div>
+
+        <!-- Contrast 2 -->
+        <div class="vs-col rv">
+          <span class="vs-col-badge">02 · Cost &amp; Barrier to Entry</span>
+          <h3>10x Cost Savings · Instant ROI</h3>
+          <div class="vs-contrast-box bad">
+            <div class="label">✕ Traditional Hardware Consoles</div>
+            <p>Entry-level physical dials cost $150 ~ $300, while dedicated video/audio grading panels climb to $800 ~ $2,000+. High financial barrier, often ending up as unused desk clutter.</p>
+          </div>
+          <div class="vs-contrast-box good">
+            <div class="label">✓ PhantomKnob</div>
+            <p><b>Less than 1/10th the cost of physical hardware</b>. Unlock the dormant tactile potential of your built-in trackpad without buying single-purpose accessories.</p>
+          </div>
+        </div>
+
+        <!-- Contrast 3 -->
+        <div class="vs-col rv">
+          <span class="vs-col-badge">03 · Desk Cleanliness &amp; Cables</span>
+          <h3>Zero Clutter · Pure Elegance</h3>
+          <div class="vs-contrast-box bad">
+            <div class="label">✕ Traditional Hardware Consoles</div>
+            <p>Eats up precious USB-C ports or requires clunky dongles, creating cable mess. Wireless units demand frequent recharging, suffering Bluetooth latency and wake-up disconnects.</p>
+          </div>
+          <div class="vs-contrast-box good">
+            <div class="label">✓ PhantomKnob</div>
+            <p><b>Zero cables, zero battery anxiety</b>. Powered by proprietary algorithms, it simulates and transcends physical dials with native macOS responsiveness and purity.</p>
+          </div>
         </div>
       </div>
-      <div class="vs-sum rv">
-        <p>Physical consoles are great, but bulky and expensive. PhantomKnob is lightweight, elegant, and costs just a <b>fraction</b> of the price.<br>Why not start free and upgrade when you're ready?</p>
+      <div class="vs-sum rv" style="margin-top:32px">
+        <p>Skip the budget dilemmas and backpack fatigue—experience the next tactile dimension of your trackpad for free</p>
         <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">Download Free</a>
       </div>
     </div>
   </section>
 
-  <!-- 04 GET STARTED -->
+  <!-- 03 ONBOARD & TRUST -->
   <section id="start">
     <div class="wrap">
-      <div class="sec-head rv">
-        <div class="sec-index"><span class="num">04 / START</span><span class="rule"></span></div>
-        <h2 class="sec-title">Get Started in Seconds</h2>
-        <p class="sec-desc">Familiar gestures, brand new capabilities.</p>
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">03 / ONBOARD &amp; TRUST</span><span class="rule"></span></div>
+        <h2 class="sec-title">Effortlessly Simple · Privacy-First &amp; Secure</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">Master natural gestures in 3 seconds. 100% on-device offline execution, zero telemetry.</p>
       </div>
       <div class="steps">
         <div class="step rv">
@@ -542,8 +760,8 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
               <rect x="52" y="62" width="46" height="8" rx="4" stroke="rgba(255,255,255,0.3)"/>
             </svg>
           </div>
-          <h3>Download Mac App</h3>
-          <p>Direct DMG download, notarized by Apple. Free edition includes all core features with trackpad compatibility check.</p>
+          <h3>Download &amp; Install Mac App</h3>
+          <p>Direct DMG download, officially notarized by Apple. The free edition includes all core capabilities and tests trackpad hardware compatibility upon first launch.</p>
         </div>
         <div class="step rv">
           <div class="idx mono">STEP 2</div>
@@ -558,7 +776,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             </svg>
           </div>
           <h3>Grant Accessibility Permission</h3>
-          <p>A one-time system prompt allows PhantomKnob to send scroll and key events to target apps (<a href="#trust" style="color:var(--amber)">Security &amp; Privacy</a> section has details). 100% on-device.</p>
+          <p>macOS strictly regulates cross-application control; Accessibility is the official mechanism. Used solely to inspect hovered controls and emit rotation events. Never reads keystrokes.</p>
         </div>
         <div class="step rv">
           <div class="idx mono">STEP 3</div>
@@ -569,248 +787,228 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
               <rect x="66" y="22" width="6" height="22" fill="#0d0d0f"/>
               <rect x="78" y="14" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
               <rect x="78" y="30" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
-              <text x="75" y="72" font-family="IBM Plex Mono,monospace" font-size="12" fill="rgba(255,255,255,0.55)" text-anchor="middle">SPIN KNOB</text>
+              <text x="75" y="72" font-family="IBM Plex Mono,monospace" font-size="12" fill="rgba(255,255,255,0.55)" text-anchor="middle">Arm Knob</text>
             </svg>
           </div>
-          <h3>Spin to Command</h3>
-          <p>Rotate three fingers anywhere for volume/brightness; or press <span class="kbd">⌘⌥K</span> and hover over any slider to rotate two fingers.</p>
+          <h3>Enable &amp; Start Rotating</h3>
+          <p>Click the menu bar icon or press <span class="kbd">⌘⌥K</span> to arm gestures (icon turns green). Hover your cursor over any slider or playhead and twist!</p>
+        </div>
+      </div>
+
+      <!-- Trust Cards with ID -->
+      <div class="cards3" id="trust" style="margin-top:28px">
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
+          <h3>Apple Notarization Endorsed</h3>
+          <p>Every release is scanned for malicious code and cryptographically notarized by Apple servers, guaranteeing tamper-proof security.</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="8" cy="16" r="4"/><path d="M11 13L21 3M16.5 7.5l3 3M13.5 10.5l2 2"/></svg></div>
+          <h3>Zero Keystroke Logging · Pure Gestures</h3>
+          <p>Accessibility permissions are used strictly to identify hovered elements and synthesize rotational events. Interception is restricted to trackpad touchpoints and the 'C' key customization shortcut.</p>
+        </div>
+        <div class="fcard rv">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/></svg></div>
+          <h3>100% Offline · Zero Account Tracking</h3>
+          <p>No backend servers, no mandatory account registration, no telemetry tracking, and zero subscription entrapment.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 05 PRINCIPLE -->
-  <section id="principle">
+  <!-- 04 ADVANCED -->
+  <section id="advanced">
     <div class="wrap">
-      <div class="sec-head rv">
-        <div class="sec-index"><span class="num">05 / PRINCIPLE</span><span class="rule"></span></div>
-        <h2 class="sec-title">How It Works</h2>
-        <p class="sec-desc">For tech enthusiasts, here is what happens under the hood.</p>
+      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-index" style="justify-content:center"><span class="num">04 / ADVANCED</span><span class="rule"></span></div>
+        <h2 class="sec-title">Deep Dive · Under the Hood &amp; Advanced Customization</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">For tech enthusiasts and pro power users. PhantomKnob works seamlessly out of the box without needing to know any of this.</p>
       </div>
-      <div class="cards3">
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="4"/><circle cx="10" cy="15" r="1.3"/><circle cx="14" cy="15" r="1.3"/><path d="M8 10a4 4 0 0 1 8 0" stroke-linecap="round"/></svg></div>
-          <h3>1 · Detect Target Control</h3>
-          <p>Queries accessibility APIs under the mouse cursor to identify the target application and UI element.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="M4 10h16M8 14h8"/><circle cx="15" cy="4.5" r="2.5"/></svg></div>
-          <h3>2 · Suppress Default Gestures</h3>
-          <p>Prevents conflicts with native macOS trackpad gestures during active knob rotation.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M12 12a4 4 0 0 1 8 0M15 12v6M12 4v2"/><path d="M20 12l-2-2m2 2l-2 2" stroke-linecap="round"/></svg></div>
-          <h3>3 · Construct Virtual Knob</h3>
-          <p>Captures multi-touch coordinates and calculates angular displacement, radius, and rotation delta with proprietary algorithms.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M12 12a4 4 0 0 1 8 0M15 12v6M12 4v2"/><path d="M20 12l-2-2m2 2l-2 2" stroke-linecap="round"/></svg></div>
-          <h3>4 · Map to Target Actions</h3>
-          <p>Translates angular changes into target-compatible events (wheel delta, arrow keys, continuous steps).</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M12 12a4 4 0 0 1 8 0M15 12v6M12 4v2"/><path d="M20 12l-2-2m2 2l-2 2" stroke-linecap="round"/></svg></div>
-          <h3>5 · Inject Event Stream</h3>
-          <p>Injects synthetic events into the macOS event stream as native hardware input.</p>
-        </div>
- 
+      <div class="adv-accordion">
+        <!-- Drawer 1: Principle with ID -->
+        <details class="adv-item rv" id="principle">
+          <summary class="adv-summary">
+            <span>▸ 01 / How Knob Gestures Work Under the Hood</span>
+            <span class="adv-icon">+</span>
+          </summary>
+          <div class="adv-body">
+            <div class="cards3" style="margin-bottom:10px">
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="4"/><circle cx="10" cy="15" r="1.3"/><circle cx="14" cy="15" r="1.3"/><path d="M8 10a4 4 0 0 1 8 0"/></svg></div>
+                <h3>1 · Identify Target Controls</h3>
+                <p>When the mouse hovers over the screen, the system uses macOS Accessibility APIs to identify the hovered window and active slider elements within milliseconds.</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 10h16M8 14h8"/><circle cx="15" cy="4.5" r="2.5"/></svg></div>
+                <h3>2 · Detect &amp; Trap Knob Gestures</h3>
+                <p>Determines whether current trackpad contact represents an intentional twirl gesture. If so, raw multitouch events are trapped to avoid conflict with native swipes.</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+                <h3>3 · Geometric Calculation</h3>
+                <p>Extracts coordinate pairs from the primary touchpoints, reconstructs the virtual knob geometry, and calculates continuous angular deltas mapped to variable values.</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <h3>4 · Event Synthesis &amp; Direct Injection</h3>
+                <p>Translates rotational deltas into arrow keys, scroll events, or AX commands, injecting them into the macOS global event tap stream for instantaneous response.</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8 15l8-6"/></svg></div>
+                <h3>5 · GPU-Accelerated Rendering</h3>
+                <p>Utilizes Metal and CoreAnimation for hardware-accelerated HUD motion, delivering silky visual feedback with negligible CPU footprint.</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 12l4-4M4 12l4 4"/></svg></div>
+                <h3>6 · Single-Finger Flywheel (Pro)</h3>
+                <p>When lifting one finger, Pro locks the virtual center with 180° phase offset compensation for endless single-finger spinning; Free applies a smooth physical damping stop.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Drawer 2: Customize with ID -->
+        <details class="adv-item rv" id="customize">
+          <summary class="adv-summary">
+            <span>▸ 02 / How to Customize Knobs for Any Application</span>
+            <span class="adv-icon">+</span>
+          </summary>
+          <div class="adv-body">
+            <div class="cards3" style="margin-bottom:10px">
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <h3>1 · Identify Target Input Method</h3>
+                <p>Knob gestures translate rotation into input modes acceptable by target UI elements—such as vertical scroll, horizontal scroll, arrow keys, or dragging. A quick experiment reveals the right mode.</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg></div>
+                <h3>2 · Configure in Knob Manager</h3>
+                <p>Hover over the target slider and perform a knob gesture. Press the <span class="kbd">C</span> key to open the Knob Manager, select the identified behavior, and save your custom rule instantly.</p>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+                <h3>3 · Visual Styling &amp; Sensitivities</h3>
+                <p>Customize knob naming, knob styles (Single, Double-ring, CVK), accent colors, rotation sensitivity multipliers, and center icon stamp designs.</p>
+              </div>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
   </section>
 
-  <!-- 06 CUSTOMIZE -->
-  <section id="customize">
-    <div class="wrap">
-      <div class="sec-head rv">
-        <div class="sec-index"><span class="num">06 / CUSTOMIZE</span><span class="rule"></span></div>
-        <h2 class="sec-title">How to Customize Knobs</h2>
-        <p class="sec-desc">Appearance and animations are easy; the real power is picking the right type and configuring behaviors.</p>
-      </div>
-
-      <div class="sub-head rv"><span class="n">01 / TYPE</span><h3>Choose Type First</h3></div>
-      <div class="knobs3">
-        <div class="kcard rv">
-          <div class="fig"><svg data-knob="single" viewBox="0 0 220 220" aria-hidden="true"></svg></div>
-          <h3>Single Knob</h3>
-          <div class="en">SINGLE</div>
-          <p>Direct 1:1 rotation like a physical knob. Ideal for steppers and linear sliders.</p>
-          <div class="spec">Best for <b>Simple Controls</b> · Sliders / Steppers</div>
-        </div>
-        <div class="kcard rv">
-          <div class="fig"><svg data-knob="double" viewBox="0 0 220 220" aria-hidden="true"></svg></div>
-          <h3>Dual-Ring Knob</h3>
-          <div class="en">DUAL RING</div>
-          <p>Outer and inner rings for two distinct speeds. Perfect for browsers and code editors: fast sweep and fine tuning.</p>
-          <div class="spec">Best for <b>Dual-Speed Tasks</b> · Browsers / Editors</div>
-        </div>
-        <div class="kcard rv">
-          <div class="fig"><svg data-knob="cvk" viewBox="0 0 220 220" aria-hidden="true"></svg></div>
-          <h3>Continuous Knob</h3>
-          <div class="en">CONTINUOUS</div>
-          <p>Dynamic speed based on knob size. Ideal for frequent speed switches like video editing.</p>
-          <div class="spec">Best for <b>Dynamic Speed</b> · Video Editing</div>
-        </div>
-      </div>
-
-      <div class="sub-head rv"><span class="n">02 / BEHAVIOR</span><h3>Configure Behavior</h3></div>
-      <p class="cz-lead rv">PhantomKnob doesn't hack other apps. Instead, it <b>maps</b> rotation into native operations (scroll, arrow keys, swipes) and <b>injects</b> them into the macOS event stream. Customizing behavior answers one question: <b>What inputs does the hovered control accept?</b></p>
-      <div class="flow rv">
-        <div class="fnode">
-          <div class="fi"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.9 1 6.7 2.8L21 8"/><path d="M21 3v5h-5"/></svg></div>
-          <b>Two-Finger Rotation</b>
-          <span>Trackpad knob gesture</span>
-        </div>
-        <div class="farr" aria-hidden="true"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
-        <div class="fnode">
-          <div class="fi"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="5"/><path d="M12 7v4"/></svg></div>
-          <b>Map to System Input</b>
-          <span>Scroll · Arrow keys · Swipes</span>
-        </div>
-        <div class="farr" aria-hidden="true"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
-        <div class="fnode">
-          <div class="fi"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
-          <b>Inject Event Stream</b>
-          <span>Treated as native input</span>
-        </div>
-        <div class="farr" aria-hidden="true"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
-        <div class="fnode">
-          <div class="fi"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h5m8 0h5"/><circle cx="12" cy="12" r="3"/></svg></div>
-          <b>Hovered Control</b>
-          <span>Responds instantly</span>
-        </div>
-      </div>
-      <div class="cards3">
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/></svg></div>
-          <h3>Understand Control Input</h3>
-          <p>Determine what input the hovered element accepts. Browsers take wheel, arrow keys, or swipes — pick any and match the direction.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg></div>
-          <h3>Pre &amp; Post Actions</h3>
-          <p>Some controls require a click to focus or Enter to commit (e.g. CapCut text inputs in color wheels). Both can be configured in the customizer.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16" rx="2"/><rect x="13" y="4" width="8" height="16" rx="2"/></svg></div>
-          <h3>Two Setup Entries</h3>
-          <p>Hover any slider and press <span class="ckbd">C</span> for instant in-place customization; or open Knob Manager for full multi-knob control.</p>
-        </div>
-      </div>
-
-      <div class="sub-head rv"><span class="n">03 / LOOK</span><h3>Fine-tune Appearance</h3></div>
-      <div class="note-panel rv">Customize colors, indicators, trails, and custom skins. Features classic Edge Slide and Pro-exclusive Spacetime Warp &amp; Spatial Rift animations.</div>
-
-      <div class="vs-sum rv">
-        <p>All set? Export a <b>.pkp</b> preset or share a <b class="mono">phantomknob://</b> link with teammates.<br><a href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" style="color:var(--amber);font-weight:600">Download Free</a>, hover over any slider and press <span class="ckbd">C</span> to try—customization is easier than you think.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 07 TRUST -->
-  <section id="trust">
-    <div class="wrap">
-      <div class="sec-head rv">
-        <div class="sec-index"><span class="num">07 / TRUST</span><span class="rule"></span></div>
-        <h2 class="sec-title">Security &amp; Privacy</h2>
-        <p class="sec-desc">Permissions, privacy, and distribution — transparent by design.</p>
-      </div>
-      <div class="cards3">
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/></svg></div>
-          <h3>Why Not on the App Store?</h3>
-          <p>PhantomKnob uses Apple private multi-touch APIs and intercepts system events, making App Store distribution impossible (same as BetterTouchTool). However, the app is fully Notarized by Apple and scanned for malware.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="16" r="4"/><path d="M11 13L21 3M16.5 7.5l3 3M13.5 10.5l2 2"/></svg></div>
-          <h3>Why Accessibility Permissions?</h3>
-          <p>macOS strictly restricts apps from inspecting or controlling other windows. Accessibility API is the only standard channel. PhantomKnob only uses it to read hovered controls, intercept gestures, and inject events. It never logs or monitors keyboard input, and all processing is 100% on-device.</p>
-        </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
-          <h3>Private by Design</h3>
-          <p>No accounts, no ads, completely offline. No tracking or telemetry collected. License checks run locally, and crash reports can be turned off in Settings.</p>
-        </div>
-      </div>
-      <!-- <div class="rv" style="margin-top:18px;border:1px solid rgba(255,159,10,0.3);border-radius:16px;background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 55%),var(--panel);padding:30px 32px">
-        <div class="mono" style="font-size:0.68rem;letter-spacing:0.16em;color:var(--amber);margin-bottom:12px">WHY REVERSIBLE</div>
-        <h3 style="font-family:var(--font-head);font-size:1.15rem;font-weight:600;margin-bottom:8px">Revocable Anytime, Clean Uninstall</h3>
-        <p style="color:var(--ink-2);font-size:0.95rem;line-height:1.8">Revoke permissions anytime in System Settings → Privacy & Security → Accessibility. To uninstall, simply drag PhantomKnob to the Trash. No accounts to delete, no subscriptions to cancel, no leftover cruft.</p>
-      </div> -->
-    </div>
-  </section>
-
-  <!-- 08 PRICING -->
+  <!-- 05 PRICING -->
   <section id="pricing">
     <div class="wrap">
       <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
-        <div class="sec-index" style="justify-content:center"><span class="num">08 / PRICING</span><span class="rule"></span></div>
-        <h2 class="sec-title">Start Free, Upgrade When Ready</h2>
-        <p class="sec-desc" style="margin-left:auto;margin-right:auto">Free tier unlocks core capabilities. Pro removes all friction for maximum fluidity.</p>
+        <div class="sec-index" style="justify-content:center"><span class="num">05 / PRICING</span><span class="rule"></span></div>
+        <h2 class="sec-title">Start Free, Upgrade When You're Ready</h2>
+        <p class="sec-desc" style="margin-left:auto;margin-right:auto">Daily utility apps are permanently free with 5 pro creative app slots. Pro unlocks an unlimited software ecosystem, single-finger flywheel momentum, hardware DDC monitor dimming, and stunning animation effects.</p>
       </div>
       <div class="plans">
+        <!-- Plan 1: Free -->
         <div class="plan rv">
-          <h3>Free Edition</h3>
-          <p class="pd">Build muscle memory with full core features.</p>
-          <div class="price">$0</div>
-          <div class="ps">Free Forever</div>
+          <span class="tag free-tag">LIFETIME MAINTENANCE · READY TO GO</span>
+          <div class="plan-head">
+            <h3>Free Edition</h3>
+            <p class="pd">Always resident, zero distraction. Everything you need for daily control and essential creative workflows.</p>
+            <div class="price">
+              <span class="price-num">$0</span>
+            </div>
+            <div class="price-cycle">/ Permanently Free · Essential Features Unrestricted</div>
+            <div class="ps sub-line">No registration · Zero tracking · 100% On-device</div>
+          </div>
           <ul>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>14-day full Pro trial</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>2-finger takeover + 3-finger Quick Knob</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Classic animations (Edge Slide / Fade / Scale)</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>All knob types &amp; custom rules</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Pro creative apps support</li>
-            <li class="dim">15-minute sessions (restart anytime)</li>
-            <li class="dim">Activation delay</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>14-day full-featured Pro trial included</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>All settings and knob configurations stored locally</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>3-finger system knob + 2-finger app knob</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>Single Knob supported; post-trial newly added rules use Single Knob</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>Brightness control for built-in displays and Apple monitors</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>Deep customization for 5 pro creative apps (swap anytime)</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>24+ Precision SF Symbols vector center stamps included</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>Classic entrance/exit HUD motion + 10 daily Pro animation previews</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>Free edition continuously maintained; custom rules remain permanently usable</span></li>
           </ul>
-          <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg" style="width:100%;justify-content:center">Download Free</a>
+          <div class="plan-foot">
+            <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">Download Free</a>
+            <div class="pay-note">Apple Notarized · 100% On-device · Zero telemetry</div>
+            <p class="upgrade-note">Supports macOS 13+ · Built-in compatibility testing · Upgrade to Pro anytime in-app</p>
+          </div>
         </div>
+
+        <!-- Plan 2: Pro -->
         <div class="plan pro rv">
-          <span class="tag">Early Bird · Ends Oct 15</span>
-          <h3>Pro</h3>
-          <p class="pd">Remove all limits for seamless flow.</p>
-          <div class="price"><s class="orig">$24.99</s> $16.99 <small>/ One-time purchase</small><span class="save-badge">Save $8 · 32% OFF</span></div>
-          <div class="ps deadline">Price returns to $24.99 after Oct 15</div>
-          <div class="ps">Future updates included · No subscriptions</div>
+          <span class="tag">EARLY BIRD SPECIAL · ENDS OCT 31</span>
+          <div class="plan-head">
+            <h3>Pro License</h3>
+            <p class="pd">Infinite flywheel momentum, hardware DDC display dimming, and an unrestricted pro software ecosystem.</p>
+            <div class="price">
+              <span class="math-tip orig" tabindex="0">
+                <s class="orig-num">$27.18</s><span class="math-const">10e</span>
+                <span class="tip-box">e = 2.718281... Natural Base</span>
+              </span>
+              <span class="math-tip cur-price" tabindex="0">
+                $16.18<span class="math-const">10φ</span>
+                <span class="tip-box">φ = 1.618033... Golden Ratio</span>
+              </span>
+              <span class="save-badge">SAVE $11 · 40.5% OFF</span>
+            </div>
+            <div class="price-cycle">/ One-Time Purchase · Lifetime License · No Subscriptions</div>
+            <div class="ps deadline">Reverts to regular price $27.18 after October 31, 2026</div>
+          </div>
           <ul>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ Exclusive top animations (Spacetime Warp / Spatial Rift)</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>Unlimited session duration &amp; instant activation</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>External display DDC hardware brightness support</li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>iCloud sync across all your Macs</li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ Activate simultaneously on up to 3 personal Macs</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ Automatic iCloud sync for all presets &amp; knob rules</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 3-finger + 2-finger + Single-Finger Infinite Flywheel</b> (break wrist limits for endless sweeps)</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ Full support for Single, Double-Ring, and Continuous Variable Knobs (CVK)</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ Hardware DDC/CI brightness control for third-party external monitors</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ Unlimited pro creative app ecosystem</b> (lift the 5-slot cap entirely)</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ Import custom local SVG/PNG images as center stamp decals</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ One-click export, packaging, and sharing for preset rule packs</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ All premium HUD entrance/exit motion presets</b> (continuously expanding)</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ v2.x All future updates included free</b>, one-time purchase for perpetual ownership</span></li>
           </ul>
-          <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">Buy Pro License →</a>
-          <p class="upgrade-note">Already installed free edition? Upgrade directly in app menu "About PhantomKnob…" without redownloading.</p>
+          <div class="plan-foot">
+            <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">Buy Pro License →</a>
+            <div class="pay-note">Secure USD checkout · Credit Card / Apple Pay / PayPal</div>
+            <p class="upgrade-note">Already using the free edition? Upgrade directly in the app menu under "About PhantomKnob" without reinstalling.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 09 FAQ -->
+  <!-- 06 FAQ -->
   <section id="faq">
     <div class="wrap">
       <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
-        <div class="sec-index" style="justify-content:center"><span class="num">09 / FAQ</span><span class="rule"></span></div>
+        <div class="sec-index" style="justify-content:center"><span class="num">06 / FAQ</span><span class="rule"></span></div>
         <h2 class="sec-title">Frequently Asked Questions</h2>
       </div>
       <div class="faq-list">
         <div class="qa rv" data-open="false">
-          <button aria-expanded="false">Is Accessibility permission safe?<span class="pm">+</span></button>
-          <div class="ans"><p>Permissions are strictly used to read hovered controls and inject scroll/key events. Never logs keyboard input, 100% on-device. <a href="#trust" style="color:var(--amber)">See Security &amp; Privacy</a>.</p></div>
+          <button aria-expanded="false">Is granting Accessibility permission safe?<span class="pm">+</span></button>
+          <div class="ans"><p>Yes, completely. Permissions are used solely to identify the control under your cursor and dispatch synthetic scrolling / keystroke events. Interception is strictly restricted to multitouch trackpad touch coordinates and the optional 'C' key shortcut. PhantomKnob never monitors keyboard typing, and all processing stays strictly on-device. <a href="#trust" style="color:var(--amber)">Learn more in the Security &amp; Privacy section</a>.</p></div>
         </div>
         <div class="qa rv" data-open="false">
-          <button aria-expanded="false">What happens after the 15-minute free session?<span class="pm">+</span></button>
-          <div class="ans"><p>Control mode ends automatically with no penalty or cooldown. Rotate three fingers or press <span class="kbd">⌘⌥K</span> to restart immediately, with just a brief activation delay.</p></div>
+          <button aria-expanded="false">Why does the outer ring feel slower on the double-ring knob?<span class="pm">+</span></button>
+          <div class="ans"><p>Because the knob calculates adjustments from angular degrees rather than linear distance. At larger radii, rotating the same angle requires a longer circumferential physical travel on your trackpad, which naturally feels slower and significantly more precise. Thus, larger outer rings are inherently optimized for sub-pixel microscopic tuning. You can also customize speed multipliers and reverse inner/outer ratios to suit your personal preference.</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">What if 5 pro creative app slots aren't enough?<span class="pm">+</span></button>
+          <div class="ans"><p>First, everyday utility tools like Chrome, Safari, Xcode, and VS Code do not consume your slot quota and are permanently unrestricted. For pro creative suites like Final Cut Pro, CapCut, Lightroom, and Logic Pro, the free edition provides 5 fully active slots. You can swap apps in and out of active slots whenever needed. If you manage dozens of pro tools and need simultaneous double-ring and CVK models, upgrading to Pro lifts all application limits permanently.</p></div>
+        </div>
+        <div class="qa rv" data-open="false">
+          <button aria-expanded="false">What are the Single-Finger Flywheel and External Monitor DDC Dimming?<span class="pm">+</span></button>
+          <div class="ans"><p><b>Single-Finger Infinite Flywheel</b>: When rotating with two fingers, lifting one finger activates our dynamic center-locking and 180° phase offset algorithm, allowing you to spin continuously with a single finger around the virtual center. This completely bypasses human wrist rotation limits and is a game-changer for long timeline scrubbing.<br><br><b>External Monitor DDC Dimming</b>: macOS does not natively support keyboard brightness keys for non-Apple third-party monitors (Dell, LG, ASUS, etc.). PhantomKnob speaks DDC/CI hardware protocol directly to adjust the physical monitor backlights on whichever display your mouse rests on.</p></div>
         </div>
         <div class="qa rv" data-open="false">
           <button aria-expanded="false">Is my trackpad compatible?<span class="pm">+</span></button>
-          <div class="ans"><p>All multi-touch Mac trackpads are supported, including every MacBook built-in trackpad and Magic Trackpad. Built-in diagnostic validates compatibility on first launch.</p></div>
+          <div class="ans"><p>All multitouch-capable Mac trackpads are supported, including MacBook built-in trackpads and external Apple Magic Trackpads. PhantomKnob features built-in hardware compatibility detection upon first launch.</p></div>
         </div>
         <div class="qa rv" data-open="false">
-          <button aria-expanded="false">Can I create custom rules for apps without presets?<span class="pm">+</span></button>
-          <div class="ans"><p>Yes! Hover over any slider and press <span class="kbd">C</span> for instant in-place customization. See <a href="#customize" style="color:var(--amber)">How to Customize</a> for full details.</p></div>
-        </div>
-        <div class="qa rv" data-open="false">
-          <button aria-expanded="false">When does early bird pricing end?<span class="pm">+</span></button>
-          <div class="ans"><p>After October 15, Pro returns to $24.99. Buy now for $16.99 one-time purchase with all future updates included.</p></div>
+          <button aria-expanded="false">Can I configure custom rules for unlisted apps?<span class="pm">+</span></button>
+          <div class="ans"><p>Yes, absolutely. Hover over any target slider, perform a knob gesture, and press <span class="kbd">C</span> to customize the behavior on the spot. Your custom rule is saved permanently. <a href="#customize" style="color:var(--amber)">See the Customization guide above</a>.</p></div>
         </div>
       </div>
     </div>
@@ -820,13 +1018,13 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <section class="final">
     <div class="ring" aria-hidden="true"></div>
     <div class="wrap rv">
-      <h2>A Universe of Control, Within Reach</h2>
-      <p>Download PhantomKnob for free, verify compatibility in seconds, and start rotating today.</p>
-      <a class="btn btn-primary" style="height:58px;padding:0 34px;font-size:1.05rem" href="https://github.com/benwu232/PhantomKnob/releases/latest/">
+      <h2>Limitless Control, Centered on Your Trackpad</h2>
+      <p>Download PhantomKnob for free, verify compatibility in seconds, and start turning.</p>
+      <a class="btn btn-primary" style="height:58px;padding:0 34px;font-size:1.05rem" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
         Download Free
       </a>
-      <p class="hero-meta">No sign-up required · Upgrade to Pro anytime within the app</p>
+      <p class="hero-meta">No account required · Always resident with zero flow interruption · Upgrade to Pro anytime in-app</p>
     </div>
   </section>
 
@@ -834,19 +1032,33 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 
 <footer>
   <div class="wrap foot">
-    <a class="brand" href="#top"><img src="assets/appicon.png" alt="">PhantomKnob</a>
+    <a class="brand" href="#top"><img src="assets/appicon.png" alt="PhantomKnob Icon">PhantomKnob</a>
     <div class="foot-links">
-      <a href="index_zh.html">简体中文</a>
+      <a href="index_zh.html">中文版</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="terms.html">Terms of Service</a>
     </div>
-    <span class="pn">PK-LP-01 · REV A · © 2026 BEN WU</span>
+    <span class="pn">PK-LP-01 · REV EN · © 2026 BEN WU</span>
   </div>
 </footer>
 
 <script>
 (function(){
   "use strict";
+
+  // Smart Language Switcher: Preserves current hash and records preference
+  var langSwitch = document.getElementById("lang-switch");
+  if(langSwitch){
+    langSwitch.addEventListener("click", function(e){
+      e.preventDefault();
+      try {
+        localStorage.setItem("pk_preferred_lang", "zh");
+      } catch(err){}
+      var hash = window.location.hash || "";
+      window.location.href = "index_zh.html" + hash;
+    });
+  }
+
   var NS="http://www.w3.org/2000/svg";
   var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -857,25 +1069,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     return n;
   }
 
-  function ticks(g,cx,cy,r,count,baseLen,majorEvery,majorMul,color,opacityBase,rotDeg){
-    rotDeg=rotDeg||0;
-    for(var i=0;i<count;i++){
-      var a=(i*2*Math.PI/count)+rotDeg*Math.PI/180;
-      var major=(i%majorEvery===0);
-      var len=major?baseLen*majorMul:baseLen;
-      var x1=cx+Math.cos(a)*(r-len), y1=cy+Math.sin(a)*(r-len);
-      var x2=cx+Math.cos(a)*r, y2=cy+Math.sin(a)*r;
-      var dist=Math.min(i,count-i)/(count/2);
-      var op=opacityBase*(1-0.6*dist);
-      el("line",{x1:x1.toFixed(2),y1:y1.toFixed(2),x2:x2.toFixed(2),y2:y2.toFixed(2),
-        stroke:color,"stroke-opacity":op.toFixed(3),"stroke-width":major?2.2:1.3},g);
-    }
-  }
-
-  function needle(g,cx,cy,innerR,outerR,color,width){
-    el("line",{x1:cx+innerR,y1:cy,x2:cx+outerR,y2:cy,stroke:color,"stroke-width":width,"stroke-linecap":"round"},g);
-  }
-
   function arcPath(cx,cy,r,a0,a1){
     var rad0=a0*Math.PI/180, rad1=a1*Math.PI/180;
     var x0=cx+r*Math.cos(rad0), y0=cy+r*Math.sin(rad0);
@@ -884,54 +1077,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     var sweep=a1>a0?1:0;
     return "M"+x0.toFixed(2)+" "+y0.toFixed(2)+" A"+r+" "+r+" 0 "+large+" "+sweep+" "+x1.toFixed(2)+" "+y1.toFixed(2);
   }
-
-  function buildKnob(svg,type){
-    // single matches the app's dot indicator; double/cvk keep legacy needle style (pending redesign)
-    var cx=110,cy=110,r=86;
-    var blue="#0a84ff",green="#30d158";
-    if(type==="single"){
-      var g=el("g",{},svg);
-      ticks(g,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
-      var rot=el("g",{transform:"rotate(-38 "+cx+" "+cy+")"},svg);
-      el("circle",{cx:(cx+r*0.62).toFixed(1),cy:cy,r:8,fill:blue,filter:"url(#dotGlow)"},rot);
-      var t=el("text",{x:cx,y:cy+24,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":9,fill:"rgba(255,255,255,0.4)"},svg);
-      t.textContent="1.0x";
-    }
-    if(type==="double"){
-      var go=el("g",{},svg);
-      ticks(go,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
-      var roto=el("g",{transform:"rotate(24 "+cx+" "+cy+")"},svg);
-      needle(roto,cx-r*0.66+6,cy,12,r*0.66-6,blue,3);
-      var ri=r*0.58;
-      var gi=el("g",{},svg);
-      ticks(gi,cx,cy,ri,36,ri*0.2,6,1.5,green,0.5);
-      var roti=el("g",{transform:"rotate(-64 "+cx+" "+cy+")"},svg);
-      needle(roti,cx,cy,8,ri-4,green,2.6);
-      el("circle",{cx:cx,cy:cy,r:14,fill:"rgba(48,209,88,0.16)",stroke:green,"stroke-width":1.2},svg);
-      var lo=el("text",{x:cx+r*0.86,y:cy+30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(122,187,255,0.75)"},svg);
-      lo.textContent="1.0x";
-      var li=el("text",{x:cx,y:cy+ri+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8.5,fill:"rgba(48,209,88,0.75)"},svg);
-      li.textContent="0.1x";
-    }
-    if(type==="cvk"){
-      var gc=el("g",{},svg);
-      ticks(gc,cx,cy,r,60,r*0.14,5,1.55,blue,0.55);
-      el("circle",{cx:cx,cy:cy,r:r*0.52,fill:"rgba(48,209,88,0.07)",stroke:green,"stroke-opacity":0.35,"stroke-width":1},svg);
-      el("path",{d:arcPath(cx,cy,r*0.52,-210,-150),stroke:green,"stroke-opacity":0.5,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
-      el("path",{d:arcPath(cx,cy,r*0.36,-200,-160),stroke:green,"stroke-opacity":0.35,"stroke-width":2,fill:"none","stroke-linecap":"round"},svg);
-      var rotc=el("g",{transform:"rotate(-12 "+cx+" "+cy+")"},svg);
-      needle(rotc,cx,cy,8,r*0.62-4,blue,3);
-      el("circle",{cx:cx,cy:cy,r:16,fill:"rgba(10,132,255,0.18)",stroke:blue,"stroke-width":1.3},svg);
-      var z1=el("text",{x:cx-r*0.42,y:cy-r*0.42,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
-      z1.textContent="10x";
-      var z2=el("text",{x:cx+r*0.30,y:cy+r*0.30,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":8,fill:"rgba(255,255,255,0.4)"},svg);
-      z2.textContent="0.1x";
-      var sc=el("text",{x:cx,y:cy+r*0.52+22,"text-anchor":"middle","font-family":"IBM Plex Mono,monospace","font-size":10,"font-weight":"600",fill:"rgba(48,209,88,0.85)"},svg);
-      sc.textContent="2.5x";
-    }
-  }
-
-  document.querySelectorAll('svg[data-knob]').forEach(function(s){buildKnob(s,s.getAttribute("data-knob"));});
 
   var stage = document.getElementById("stage");
   var replayBtn = document.getElementById("replayBtn");
@@ -1005,7 +1150,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       t = 0;
     }
 
-    // Phase 0: Blank Trackpad Silence (1.2s: 0ms ~ 1200ms)
+    // Phase 0: Blank Trackpad Silence (0ms ~ 1200ms)
     if(t < 1200){
       touchPoints.style.opacity = "0";
       knobBody.style.opacity = "0";
@@ -1026,7 +1171,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       hv.textContent = "";
       hv.style.opacity = "0";
     }
-    // Phase 1: Touchdown & Shockwave Ripples (1.0s: 1200ms ~ 2200ms)
+    // Phase 1: Touchdown & Ripples (1200ms ~ 2200ms)
     else if(t < 2200){
       var p = (t - 1200) / 1000;
       var ep = easeOutCubic(p);
@@ -1063,7 +1208,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       hv.textContent = "";
       hv.style.opacity = "0";
     }
-    // Phase 2: Dual-Arc Ring Extrusion (1.3s: 2200ms ~ 3500ms) - Slowed by 2x
+    // Phase 2: Dual-Arc Ring Extrusion (2200ms ~ 3500ms)
     else if(t < 3500){
       var p = (t - 2200) / 1300;
       var ep = easeInOutCubic(p);
@@ -1089,7 +1234,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       hv.textContent = "";
       hv.style.opacity = "0";
     }
-    // Phase 3: Capsule Needle Ignition & Shoot (0.5s: 3500ms ~ 4000ms) - Slowed by 2x
+    // Phase 3: Capsule Needle Ignition (3500ms ~ 4000ms)
     else if(t < 4000){
       var p = (t - 3500) / 500;
       var ep = easeOutCubic(p);
@@ -1114,7 +1259,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       hv.textContent = "";
       hv.style.opacity = "0";
     }
-    // Phase 4: Rotation & Dynamic Dialing to 60% (1.6s: 4000ms ~ 5600ms)
+    // Phase 4: Rotation & Dynamic Dialing (4000ms ~ 5600ms)
     else if(t < 5600){
       var p = (t - 4000) / 1600;
       var ep = easeInOutCubic(p);
@@ -1149,7 +1294,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         htrail.setAttribute("d", "");
       }
     }
-    // Phase 5: Golden Hold & Subtle Breathing (2.5s: 5600ms ~ 8100ms)
+    // Phase 5: Golden Hold & Subtle Breathing (5600ms ~ 8100ms)
     else if(t < 8100){
       touchPoints.style.opacity = "1";
       padG1.setAttribute("transform", "translate(165.15 54.85) scale(1) translate(-165.15 -54.85)");
@@ -1172,7 +1317,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       var breath = 0.92 + 0.08 * Math.sin((t - 5600) * 0.003);
       knobBody.style.opacity = breath.toFixed(3);
     }
-    // Phase 6A: Fingers Lift Off Glass (0.5s: 8100ms ~ 8600ms) - Touch points shrink to 0
+    // Phase 6A: Fingers Lift Off Glass (8100ms ~ 8600ms)
     else if(t < 8600){
       var p = (t - 8100) / 500;
       var ep = easeInCubic(p);
@@ -1188,7 +1333,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       hv.textContent = "60%";
       hv.style.opacity = "1";
     }
-    // Phase 6B: Pause 1 (Hands Off, Knob & Trail Suspended Still) (0.5s: 8600ms ~ 9100ms)
+    // Phase 6B: Pause 1 (8600ms ~ 9100ms)
     else if(t < 9100){
       touchPoints.style.opacity = "0";
       knobBody.style.opacity = "1";
@@ -1198,35 +1343,31 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       hv.textContent = "60%";
       hv.style.opacity = "1";
     }
-    // Phase 6C: Trail Arc & 60% Readout Fade Out (0.35s: 9100ms ~ 9450ms)
+    // Phase 6C: Trail Arc Fade Out (9100ms ~ 9450ms)
     else if(t < 9450){
       touchPoints.style.opacity = "0";
-
       var p = (t - 9100) / 350;
       var fade = Math.max(0, 1 - p);
       htrail.style.opacity = fade.toFixed(3);
       hv.style.opacity = (fade * 0.9).toFixed(3);
-
       knobBody.style.opacity = "1";
       logoAssembly.setAttribute("transform", "rotate(216 110 110)");
     }
-    // Phase 6D: Pause 2 (Isolated Pure Logo Solo) (0.6s: 9450ms ~ 10050ms) - Extended to 0.6s
+    // Phase 6D: Pause 2 (9450ms ~ 10050ms)
     else if(t < 10050){
       touchPoints.style.opacity = "0";
       htrail.style.opacity = "0";
       hv.style.opacity = "0";
       hv.textContent = "";
-
       knobBody.style.opacity = "1";
       logoAssembly.setAttribute("transform", "rotate(216 110 110)");
     }
-    // Phase 6E: Virtual Knob Body Slow Elegant Dissolve (1.2s: 10050ms ~ 11250ms) - Slower and gentler
+    // Phase 6E: Virtual Knob Body Dissolve (10050ms ~ 11250ms)
     else if(t < 11250){
       touchPoints.style.opacity = "0";
       htrail.style.opacity = "0";
       hv.style.opacity = "0";
       hv.textContent = "";
-
       var p = (t - 10050) / 1200;
       var bodyFade = Math.max(0, 1 - easeOutCubic(p));
       knobBody.style.opacity = bodyFade.toFixed(3);
@@ -1249,6 +1390,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 
   rafId = requestAnimationFrame(tick);
 
+  // FAQ Accordion
   document.querySelectorAll(".qa").forEach(function(qa){
     var btn=qa.querySelector("button");
     var ans=qa.querySelector(".ans");
@@ -1267,6 +1409,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     });
   });
 
+  // Reveal On Scroll
   if("IntersectionObserver" in window && !reduced){
     var io=new IntersectionObserver(function(entries){
       entries.forEach(function(en){
@@ -1277,7 +1420,91 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   }else{
     document.querySelectorAll(".rv").forEach(function(n){n.classList.add("in");});
   }
+  // Video Modal Logic
+  (function(){
+    var modal = document.getElementById("videoModal");
+    var iframe = document.getElementById("videoIframe");
+    var heroBtn = document.getElementById("heroDemoBtn");
+    var stageBtn = document.getElementById("stageDemoBtn");
+    var closeBtn = document.getElementById("videoModalClose");
+    var extLink = document.getElementById("videoExternalLink");
+
+    var isZh = document.documentElement.lang.startsWith("zh");
+    var videoConfig = {
+      embedUrl: isZh 
+        ? "https://player.bilibili.com/player.html?isOutside=true&high_quality=1&danmaku=0&autoplay=1"
+        : "https://www.youtube-nocookie.com/embed/placeholder?autoplay=1&rel=0&modestbranding=1",
+      externalUrl: isZh
+        ? "https://www.bilibili.com"
+        : "https://www.youtube.com"
+    };
+
+    function openModal(){
+      if(!modal) return;
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      if(iframe && !iframe.getAttribute("src")){
+        iframe.src = videoConfig.embedUrl;
+      }
+      if(extLink){
+        extLink.href = videoConfig.externalUrl;
+      }
+    }
+
+    function closeModal(){
+      if(!modal) return;
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      if(iframe){
+        iframe.src = "";
+      }
+    }
+
+    if(heroBtn) heroBtn.addEventListener("click", openModal);
+    if(stageBtn) stageBtn.addEventListener("click", openModal);
+    if(closeBtn) closeBtn.addEventListener("click", closeModal);
+
+    if(modal){
+      modal.addEventListener("click", function(e){
+        if(e.target === modal){
+          closeModal();
+        }
+      });
+    }
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && modal && modal.classList.contains("active")){
+        closeModal();
+      }
+    });
+  })();
+
 })();
 </script>
+
+  <!-- Video Modal -->
+  <div class="video-modal-backdrop" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="PhantomKnob Live Demo Video">
+    <div class="video-modal-box">
+      <button class="video-modal-close" id="videoModalClose" aria-label="Close video (Esc)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div class="video-player-container">
+        <iframe id="videoIframe" class="video-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <div class="video-modal-footer">
+        <div class="video-modal-info">
+          <span class="v-badge">Live Footage</span>
+          <span class="v-title">Trackpad into Physical Dial · CapCut, Safari, QuickTime &amp; Global 3-Finger Gestures</span>
+        </div>
+        <a class="video-external-link" id="videoExternalLink" href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+          Watch on YouTube
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
