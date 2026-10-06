@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
+  <a href="https://github.com/benwu232/PhantomKnob/releases/">
     <img alt="下载 DMG" src="https://img.shields.io/badge/下载-macOS%20DMG-blue?logo=apple&style=for-the-badge" />
   </a>
   <a href="https://github.com/benwu232/PhantomKnob/actions"><img alt="构建状态" src="https://img.shields.io/github/actions/workflow/status/benwu232/phantom_knob_mac/release.yml?style=flat-square&label=构建" /></a>
@@ -44,7 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.s
 #### 手动下载安装
 1.  点击上方下载徽章**下载**最新的 `.dmg` 安装包。
 2.  将 `PhantomKnob.app` **拖拽**至 `/Applications` 文件夹中。
-3.  **启动**应用，并在系统设置提示时授予**辅助功能权限 (Accessibility Permissions)**（模拟系统按键和滑块控制必须使用此权限）。
+3.  **启动**应用，并在系统设置提示时授予**辅助功能权限 (Accessibility)** 与 **输入监控权限 (Input Monitoring)**（用于模拟滑块控制与转动时 C 键定制防透传）。
 
 ### 开源协议
 本软件基于 [MIT 协议](LICENSE) 开源。

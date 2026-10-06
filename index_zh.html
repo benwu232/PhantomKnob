@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PhantomKnob 幻影旋钮 2.0 — 解锁封印在触控板里的魔法旋钮</title>
-<meta name="description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
+<title>PhantomKnob 幻影旋钮 — 解锁封印在触控板里的魔法旋钮</title>
+<meta name="description" content="PhantomKnob 把 Mac 触控板变成一颗万能虚拟旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
 <link rel="icon" type="image/png" href="assets/appicon32.png">
 <link rel="apple-touch-icon" href="assets/appicon.png">
 
@@ -17,7 +17,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://benwu232.github.io/PhantomKnob/index_zh.html">
 <meta property="og:title" content="PhantomKnob — 解锁封印在触控板里的魔法旋钮">
-<meta property="og:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能虚拟旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
+<meta property="og:description" content="PhantomKnob 把 Mac 触控板变成一颗万能虚拟旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
 <meta property="og:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
@@ -27,12 +27,12 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PhantomKnob 幻影旋钮 2.0 — 解锁封印在触控板里的魔法旋钮">
-<meta name="twitter:description" content="PhantomKnob 2.0 把 Mac 触控板变成一颗万能旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
+<meta name="twitter:title" content="PhantomKnob 幻影旋钮 — 解锁封印在触控板里的魔法旋钮">
+<meta name="twitter:description" content="PhantomKnob 把 Mac 触控板变成一颗万能旋钮：全天常驻、终身流畅，常用日常软件全免，支持 5 款专业创作 App 深度全功能定制；Pro 解锁无限应用生态、单指飞轮与外接屏硬件调光。无需硬件，免费下载。">
 <meta name="twitter:image" content="https://benwu232.github.io/PhantomKnob/assets/appicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
 <script>
 // Prevent root-domain Service Worker (e.g. from benwu232.github.io Jekyll Chirpy) from intercepting/caching PhantomKnob
@@ -230,7 +230,8 @@ section{padding:96px 0}
 @media (max-width:760px){.flow{grid-template-columns:1fr;gap:10px}.farr{transform:rotate(90deg)}}
 
 /* dual wings layout */
-.dual-wings{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:1080px;margin:0 auto}
+.dual-wings{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1240px;margin:0 auto}
+@media (max-width:1080px){.dual-wings{grid-template-columns:1fr;gap:20px;max-width:720px}}
 .wing-card{border:1px solid var(--line);border-radius:20px;background:var(--panel);padding:36px 32px;display:flex;flex-direction:column;position:relative;transition:border-color .25s,box-shadow .25s}
 .wing-card:hover{border-color:rgba(255,159,10,0.4);box-shadow:0 12px 36px rgba(0,0,0,0.35)}
 .wing-card.pro-card{border-color:rgba(255,159,10,0.35);background:linear-gradient(180deg,rgba(255,159,10,0.04),transparent 45%),var(--panel)}
@@ -346,7 +347,11 @@ section{padding:96px 0}
 .final .hero-meta{margin-top:20px}
 
 /* footer */
-footer{border-top:1px solid var(--line-soft);padding:34px 0}
+footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
+.foot-manifesto{text-align:center;padding:52px 20px 48px;border-bottom:1px solid var(--line-soft);margin-bottom:34px}
+.foot-manifesto .fm-inner{display:inline-flex;flex-direction:column;align-items:flex-end;max-width:100%}
+.foot-manifesto .fm-text{font-family:var(--font-head);font-size:clamp(1.15rem,2.4vw,1.4rem);font-style:italic;color:var(--ink);letter-spacing:-0.01em;line-height:1.5;margin-bottom:10px;text-align:center}
+.foot-manifesto .fm-author{display:inline-block;font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.06em;color:var(--amber);text-align:right}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
 .foot .brand{font-size:0.92rem}
 .foot .brand img{width:22px;height:22px}
@@ -372,6 +377,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   .steps,.cards3,.knobs3,.shots,.plans{grid-template-columns:1fr}
   .knob-holder{width:250px;height:250px}
   .stage{aspect-ratio:auto;padding:26px 20px 24px}
+  .foot-manifesto{padding:42px 12px 38px;margin-bottom:28px}
   .foot{justify-content:center;text-align:center}
 }
 @media (prefers-reduced-motion:reduce){
@@ -381,6 +387,48 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 }
 
 /* ---------- Video Modal & Demo Buttons ---------- */
+.video-modal-tabs{
+  display:flex;
+  gap:8px;
+  padding:12px 18px 0;
+  background:rgba(255,255,255,0.02);
+  border-bottom:1px solid var(--line-soft);
+  overflow-x:auto;
+  white-space:nowrap;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.video-modal-tabs::-webkit-scrollbar{
+  display:none;
+}
+.v-tab{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 16px;
+  border-radius:8px 8px 0 0;
+  font-family:var(--font-mono);
+  font-size:0.8rem;
+  letter-spacing:0.02em;
+  color:var(--ink-2);
+  background:transparent;
+  border:none;
+  border-bottom:2px solid transparent;
+  cursor:pointer;
+  transition:all .2s ease;
+  flex-shrink:0;
+}
+.v-tab:hover{
+  color:var(--ink);
+  background:rgba(255,255,255,0.04);
+}
+.v-tab.active{
+  color:var(--amber);
+  border-bottom-color:var(--amber);
+  background:var(--amber-soft);
+  font-weight:600;
+}
+
 .btn-demo{cursor:pointer;font-family:inherit;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.14);color:var(--ink)}
 .btn-demo:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-soft);transform:translateY(-2px)}
 .btn-demo svg{fill:currentColor}
@@ -553,7 +601,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
       <a href="#pricing"><span class="n">05</span>定价</a>
       <a href="#faq"><span class="n">06</span>FAQ</a>
       <a href="./" class="lang-btn" id="lang-switch" title="English Version">🌐 EN</a>
-      <a class="nav-cta" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+      <a class="nav-cta" href="https://github.com/benwu232/PhantomKnob/releases/">下载免费版</a>
     </div>
   </nav>
 </header>
@@ -565,7 +613,6 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     <div class="wrap hero-grid">
       <div>
         <div class="hero-top-row">
-          <!-- <span class="badge"><span class="dot"></span>✨ v2.0.0</span> -->
           <div class="hero-quote">
             <span class="hq-text">“任何足够先进的技术，皆与魔法无异。”</span>
             <span class="hq-author">— 阿瑟·C·克拉克</span>
@@ -574,71 +621,71 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         <h1>解锁封印在触控板里的<br><span class="turn">魔法旋钮</span></h1>
         <p class="hero-sub">无需额外硬件和繁琐连线，把触控板变为随身携带的实体旋钮与创意控制台，尤其适合移动场景。</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
-            <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+          <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/">
+            <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"></path></svg>
             下载免费版
           </a>
           <!-- <a class="btn btn-ghost" href="#features">先看看它能干什么 ↓</a> -->
                   <button class="btn btn-demo" id="heroDemoBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            观看 45 秒实机演示
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+            观看 36 秒实机演示
           </button>
         </div>
-        <p class="hero-meta"><span><b>全天常驻 · 零心流打断</b></span><span><b>常用工具全免 + 5 款专业 App 深度定制</b></span><span>macOS 13+ · 支持 MacBook &amp; 妙控板</span></p>
+        <p class="hero-meta"><span><b>常用工具全免 + 5 款专业 App 深度定制</b></span><span>macOS 13+ · 支持 MacBook &amp; 妙控板</span></p>
       </div>
 
             <div class="stage" id="stage">
         <button class="stage-demo-badge" id="stageDemoBtn" aria-label="观看实机演示">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
           <span>实操演示</span>
         </button>
         <button class="replay-btn" id="replayBtn" title="重播解封仪式" aria-label="重播解封仪式">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4v6h6M23 20v-6h-6"></path><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
         </button>
         <div class="knob-zone">
           <div class="knob-holder" id="knobHolder" aria-label="PhantomKnob 解锁封印动画">
             <svg viewBox="0 0 220 220" aria-hidden="true" id="heroSvg">
               <defs>
                 <filter id="capsuleGlow" filterUnits="userSpaceOnUse" x="20" y="20" width="180" height="180">
-                  <feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="#67d5fa" flood-opacity="0.8"/>
+                  <feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="#67d5fa" flood-opacity="0.8"></feDropShadow>
                 </filter>
                 <filter id="padShadow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.45"/>
+                  <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.45"></feDropShadow>
                 </filter>
                 <linearGradient id="ringGrad" gradientUnits="userSpaceOnUse" x1="32" y1="110" x2="188" y2="110">
-                  <stop offset="0" stop-color="#4da3f7"/>
-                  <stop offset="0.55" stop-color="#3b7bf0"/>
-                  <stop offset="1" stop-color="#4f46e5"/>
+                  <stop offset="0" stop-color="#4da3f7"></stop>
+                  <stop offset="0.55" stop-color="#3b7bf0"></stop>
+                  <stop offset="1" stop-color="#4f46e5"></stop>
                 </linearGradient>
                 <linearGradient id="padGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#f8dfe3"/>
-                  <stop offset="1" stop-color="#eab7c3"/>
+                  <stop offset="0" stop-color="#f8dfe3"></stop>
+                  <stop offset="1" stop-color="#eab7c3"></stop>
                 </linearGradient>
               </defs>
-              <path id="htrail" fill="none" stroke="#5ac8fa" stroke-opacity="0.65" stroke-width="2.6" stroke-linecap="round" d=""/>
-              <g id="logoAssembly">
-                <g id="knobBody">
-                  <circle id="knobRing" cx="110" cy="110" r="78" fill="none" stroke="url(#ringGrad)" stroke-width="21"/>
-                  <path id="drawArc1" fill="none" stroke="url(#ringGrad)" stroke-width="21" d=""/>
-                  <path id="drawArc2" fill="none" stroke="url(#ringGrad)" stroke-width="21" d=""/>
-                  <line id="knobNeedle" x1="98.7" y1="98.7" x2="72.5" y2="72.5" stroke="#7ddcfc" stroke-width="11" stroke-linecap="round" filter="url(#capsuleGlow)"/>
+              <path id="htrail" fill="none" stroke="#5ac8fa" stroke-opacity="0.65" stroke-width="2.6" stroke-linecap="round" d="" style="opacity: 0;"></path>
+              <g id="logoAssembly" transform="rotate(0 110 110)" style="opacity: 1;">
+                <g id="knobBody" style="opacity: 1;">
+                  <circle id="knobRing" cx="110" cy="110" r="78" fill="none" stroke="url(#ringGrad)" stroke-width="21" style="opacity: 1;"></circle>
+                  <path id="drawArc1" fill="none" stroke="url(#ringGrad)" stroke-width="21" d="" style="opacity: 1;"></path>
+                  <path id="drawArc2" fill="none" stroke="url(#ringGrad)" stroke-width="21" d="" style="opacity: 1;"></path>
+                  <line id="knobNeedle" x1="98.7" y1="98.7" x2="92.64" y2="92.64" stroke="#7ddcfc" stroke-width="11" stroke-linecap="round" filter="url(#capsuleGlow)" style="opacity: 1;"></line>
                 </g>
-                <g id="touchPoints">
-                  <g id="padG1">
-                    <circle id="rip1a" cx="165.15" cy="54.85" r="22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
-                    <circle id="rip1b" cx="165.15" cy="54.85" r="30" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
-                    <circle cx="165.15" cy="54.85" r="16" fill="url(#padGrad)" filter="url(#padShadow)"/>
+                <g id="touchPoints" style="opacity: 1;">
+                  <g id="padG1" transform="translate(165.15 54.85) scale(1) translate(-165.15 -54.85)">
+                    <circle id="rip1a" cx="165.15" cy="54.85" r="36.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" style="opacity: 0;"></circle>
+                    <circle id="rip1b" cx="165.15" cy="54.85" r="43.7" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1" style="opacity: 0;"></circle>
+                    <circle cx="165.15" cy="54.85" r="16" fill="url(#padGrad)" filter="url(#padShadow)"></circle>
                   </g>
-                  <g id="padG2">
-                    <circle id="rip2a" cx="54.85" cy="165.15" r="22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
-                    <circle id="rip2b" cx="54.85" cy="165.15" r="30" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
-                    <circle cx="54.85" cy="165.15" r="16" fill="url(#padGrad)" filter="url(#padShadow)"/>
+                  <g id="padG2" transform="translate(54.85 165.15) scale(1) translate(-54.85 -165.15)">
+                    <circle id="rip2a" cx="54.85" cy="165.15" r="36.0" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" style="opacity: 0;"></circle>
+                    <circle id="rip2b" cx="54.85" cy="165.15" r="43.7" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1" style="opacity: 0;"></circle>
+                    <circle cx="54.85" cy="165.15" r="16" fill="url(#padGrad)" filter="url(#padShadow)"></circle>
                   </g>
                 </g>
               </g>
             </svg>
           </div>
-          <div class="knob-readout mono" id="hv"></div>
+          <div class="knob-readout mono" id="hv" style="opacity: 0;"></div>
         </div>
       </div>
     </div>
@@ -647,110 +694,147 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <!-- 01 FEATURES -->
     <!-- 01 SCENES -->
     <!-- 01 SCENES -->
+    <!-- 01 / SCENES -->
+    <!-- 01 / SCENES -->
+    <!-- 01 / SCENES -->
   <section id="scenes">
     <div class="wrap">
-      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
-        <div class="sec-index" style="justify-content:center"><span class="num">01 / SCENES</span><span class="rule"></span></div>
-        <h2 class="sec-title">两大核心场景：为技术极客与专业人士量身定制</h2>
+      <div class="sec-head rv in" style="text-align:center;margin-left:auto;margin-right:auto">
+        <div class="sec-kicker">01 / SCENES</div>
+        <h2 class="sec-title">三大应用场景：为技术极客与专业人士量身定制</h2>
         <!-- <p class="sec-desc" style="margin-left:auto;margin-right:auto"><s>无需额外硬件。在日常中享受三指盲调的乐趣，在专业创作中解放双手提升效率。</s></p> -->
       </div>
       <div class="dual-wings">
         <!-- Wing 1: Geek System Quick Knob -->
-        <div class="wing-card rv">
+        <div class="wing-card rv in">
           <div class="wing-tags">
             <span class="wing-tag highlight">交互极客首选</span>
             <span class="wing-tag">系统级快捷交互</span>
             <span class="wing-tag">零按键干扰</span>
           </div>
           <h3>系统快捷旋钮<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">极致体验，高效优雅</span></h3>
+          <div style="margin-top:14px"><button class="btn btn-demo" id="quickKnobDemoBtn" style="height:38px;font-size:0.84rem;padding:0 16px"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> 观看实机演示 (36s)</button></div>
           <p class="wing-desc">三指旋钮：手感定位，体验非凡。</p>
-
-
 
           <ul class="wing-list">
             <li class="wing-item">
               <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
               </div>
               <div class="wing-item-content">
-                <b>三指旋钮 · 支持盲操</b>
-                <p>触控板左侧旋转调音量，右侧旋转调亮度。无需繁琐操作，无需视线转移，保持专注。</p>
+                <b>三指旋钮 · 化繁为简</b>
+                <p>在触控板左侧旋转调音量，右侧旋转调亮度。</p>
               </div>
             </li>
             <li class="wing-item">
               <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
               </div>
               <div class="wing-item-content">
                 <b>酷炫动画特效</b>
-                <p>内置多款入场与出场动画特效。每一次转动都极具科技仪式感，让指尖操作兼具实用与视觉愉悦。</p>
+                <p>内置多款入场与出场动画特效。让旋钮操作兼具实用与视觉愉悦。</p>
               </div>
             </li>
             <li class="wing-item">
               <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
               </div>
               <div class="wing-item-content">
                 <b>支持多显示器独立调节亮度</b>
-                <p>当有多台显示器时，只调节鼠标所在屏幕的亮度。支持通过 DDC/CI 协议调节外接显示器亮度，省去繁琐操作，多屏用户首选。</p>
+                <p>当有多台显示器时，亮度旋钮只调节鼠标所在屏幕的亮度。<br>支持通过 DDC/CI 协议调节外接显示器亮度。</p>
               </div>
             </li>
             <li class="wing-item">
               <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               </div>
               <div class="wing-item-content">
-                <b>日常高频场景举例</b>
-                <p>1. 沉浸影音娱乐<br>全屏观影或戴耳机听歌时，随手一转即调音量，优雅从容。<br>2. 深夜暗光护眼<br>关灯码字或夜读，右侧轻旋柔和降光，无缝呵护双眼。<br>3. 突发快速静音<br>会议通话或突发状况时，反向轻转瞬间压低音量，从容自如。</p>
+                <b>快捷旋钮应用举例</b>
+                <p>1. 沉浸影音娱乐：随手一转即调音量，优雅从容。<br>2. 深夜暗光护眼：右侧轻旋柔和降光，呵护双眼。<br>3. 突发快速静音：反向轻转瞬间压低音量，从容自如。</p>
               </div>
             </li>
           </ul>
         </div>
 
-        <!-- Wing 2: Pro Creative Controller Alternative -->
-        <div class="wing-card pro-card rv">
+        <!-- Wing 2: Daily Apps & Browsing (NEW) -->
+        <div class="wing-card rv in">
+          <div class="wing-tags">
+            <span class="wing-tag highlight">高频日常</span>
+            <span class="wing-tag">影音与长页浏览</span>
+            <span class="wing-tag">类似滚轮</span>
+          </div>
+          <h3>日常应用<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">全新体验</span></h3>
+          <div style="margin-top:14px"><button class="btn btn-demo" id="dailyAppsDemoBtn" style="height:38px;font-size:0.84rem;padding:0 16px"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> 观看日常应用演示 (82s)</button></div>
+          <p class="wing-desc">两指旋钮，类似鼠标滚轮。</p>
+
+          <ul class="wing-list">
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="2"></circle></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>三种旋钮类型，适用于不同场景</b>
+                <p>1. 单旋钮模拟实体旋钮；<br>2. 双环旋钮内外环对应快慢两挡速度，随时切换；<br>3. 无级变速旋钮速度随旋钮大小变化，快慢随心。</p>
+              </div>
+            </li>
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="4.5"></circle><path d="M12 3v2M12 19v2"></path></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>单指飞轮</b>
+                <p>两指旋转结束未到目标时，抬起一指，用剩余单指继续围绕虚拟中心旋转，长调节不断线。</p>
+              </div>
+            </li>
+            
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>日常应用场景举例</b>
+                <p>1. 观看视频：在 QuickTime 中快速想看的部分。<br>2. 阅读浏览：不管是网页小说还是资料论文，都可以快速定位到阅读位置。随心所欲，从容掌控。</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Wing 3: Pro Creative Controller Alternative -->
+        <div class="wing-card pro-card rv in">
           <div class="wing-tags">
             <span class="wing-tag highlight">生产力跃升</span>
-            <span class="wing-tag">专业剪辑控制台平替</span>
-            <span class="wing-tag">代替外接控制台</span>
+            <span class="wing-tag">便携控制台</span>
           </div>
-          <h3>移动创意控制台<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">部分代替外接实体旋钮或控制台，专业提效</span></h3>
+          <h3>移动创意控制台<br><span style="font-size:1.05rem;color:var(--amber);font-weight:500">便携控制台，专业提效</span></h3>
+          <div style="margin-top:14px"><button class="btn btn-demo" id="proAppsDemoBtn" style="height:38px;font-size:0.84rem;padding:0 16px"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> 观看专业工作流演示 (104s)</button></div>
           <p class="wing-desc">两指旋钮：先定位，后控制，既快速又精准。</p>
           <ul class="wing-list">
             <li class="wing-item">
               <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="2"/></svg>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="2"></circle></svg>
               </div>
               <div class="wing-item-content">
-                <b>三种旋钮类型，适用于不同的应用场景</b>
-                <p>1. 单旋钮模拟实体旋钮；<br>2. 双环旋钮内外环对应两种速度，可在使用中随时切换；<br>3. 无级变速旋钮速度随旋钮大小变化，快慢随心。</p>
+                <b>三种旋钮类型 + 单指飞轮</b>
+                <p>1. 单旋钮和单指飞轮模拟实体旋钮的使用体验；<br>2. 双环旋钮和无级变速旋钮超越实体旋钮，带来全新体验。</p>
+              </div>
+            </li>
+
+            <li class="wing-item">
+              <div class="wing-item-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><circle cx="4" cy="12" r="2"></circle><circle cx="12" cy="10" r="2"></circle><circle cx="20" cy="14" r="2"></circle></svg>
+              </div>
+              <div class="wing-item-content">
+                <b>旋钮定制与专属适配</b>
+                <p>针对具体应用尤其是专业应用提供预设的旋钮，在检测到相关应用时，自动加载该应用的定制旋钮。大幅提高工作效率。<br>支持使用旋钮时按 C 键调出旋钮管理器进一步定制。</p>
               </div>
             </li>
             <li class="wing-item">
               <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="4.5"/><path d="M12 3v2M12 19v2"/></svg>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               </div>
               <div class="wing-item-content">
-                <b>单指飞轮</b>
-                <p>Pro 版支持无限飞轮续转：抬起一指，用剩余单指继续围绕虚拟中心旋转，长调节不断线；Free 版两指抬一指平滑阻尼刹停。</p>
-              </div>
-            </li>
-            <li class="wing-item">
-              <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </div>
-              <div class="wing-item-content">
-                <b>旋钮定制</b>
-                <p>可针对具体应用适配行为，还可定制旋钮的外观和动画效果。能力超强，不落俗套。不断增加对专业软件的预设旋钮。</p>
-              </div>
-            </li>
-            <li class="wing-item">
-              <div class="wing-item-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><circle cx="4" cy="12" r="2"/><circle cx="12" cy="10" r="2"/><circle cx="20" cy="14" r="2"/></svg>
-              </div>
-              <div class="wing-item-content">
-                <b>应用场景举例</b>
-                <p>1. 用双环旋钮在Xcode里浏览代码，内环快速移动，外环慢速阅读。<br> 2. 用无级变速旋钮在视频编辑软件（Final Cut Pro / 剪映 / Premiere）中的时间线上随意变速定位，既能快速浏览，也能逐帧微调。<br>3. 光标悬停在 Final Cut Pro 与专业音频插件的各类旋钮与数值框上直接旋转，获得媲美实体调音调色台的顺滑手感。<br>4. 微调曝光、高光、阴影与曲线色调。眼睛关注画面细节，手指在触控板上自然微转，直觉调色一气呵成。</p>
+                <b>专业应用场景举例</b>
+                <p>1. CapCut/剪映时间轴穿梭：微旋卡音频节奏点，快转跨轨道飞梭。<br>2. 调色参数悬停即调：光标停在曝光/HSL/RGB文本框直接旋转，实现盲调心流。</p>
               </div>
             </li>
           </ul>
@@ -762,57 +846,57 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <!-- 02 VS HARDWARE -->
   <section id="vs">
     <div class="wrap">
-      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+      <div class="sec-head rv in" style="text-align:center;margin-left:auto;margin-right:auto">
         <div class="sec-index" style="justify-content:center"><span class="num">02 / VS HARDWARE</span><span class="rule"></span></div>
         <h2 class="sec-title">为什么选择触控板，而不是实体控制台？</h2>
         <p class="sec-desc" style="margin-left:auto;margin-right:auto">调色、剪辑与混音需要好旋钮——但这不意味着你要随身携带笨重的外设。</p>
       </div>
       <div class="vs-grid3">
         <!-- Contrast 1 -->
-        <div class="vs-col rv">
+        <div class="vs-col rv in">
           <span class="vs-col-badge">01 · 移动出行与场景</span>
           <h3>轻便无负重 · 随行即用</h3>
           <div class="vs-contrast-box bad">
             <div class="label">✕ 传统实体控制台（TourBox / 剪辑台）</div>
-            <p>重达 300g~800g，必须装包随身携带，易刮蹭碰撞。在高铁小桌板、飞机经济舱、咖啡馆局促小圆桌或膝上办公时，根本没有多余空间拿出来摆放。</p>
+            <p>重达 300g~800g，必须装包随身携带，易刮蹭碰撞，不适用于高铁、飞机、咖啡馆等移动场景。</p>
           </div>
           <div class="vs-contrast-box good">
             <div class="label">✓ PhantomKnob 幻影旋钮</div>
-            <p><b>零额外硬件，零携带负重，无繁琐接线</b>。只要带上 MacBook，你的专属旋转控制台就已经随身就位。咖啡馆、旅行中，随时随地展开专业级工作流。</p>
+            <p><b>零额外硬件，零携带负重</b>。只需带上 MacBook，随时随地展开专业级工作流。</p>
           </div>
         </div>
 
         <!-- Contrast 2 -->
-        <div class="vs-col rv">
+        <div class="vs-col rv in">
           <span class="vs-col-badge">02 · 拥有成本与门槛</span>
           <h3>十倍价格差 · 极高回报</h3>
           <div class="vs-contrast-box bad">
             <div class="label">✕ 传统实体控制台</div>
-            <p>入门外接硬件旋钮动辄 $150 ~ $300，专业级视频/音频调色台甚至高达 $600~$2000+。购买门槛高，若闲置则成为积灰的沉没成本。</p>
+            <p>价格动辄 $150 ~ $300，专业级甚至高达 $600~$2000+。购买门槛高，一旦闲置沉没成本高昂。</p>
           </div>
           <div class="vs-contrast-box good">
             <div class="label">✓ PhantomKnob 幻影旋钮</div>
-            <p><b>不足实体硬件 1/10 的价格</b>。无需买新硬件，以极低代价彻底解锁封印在触控板里的硬件潜能。</p>
+            <p><b>不足实体硬件 1/10 的价格，无需购买新硬件。</b>以极低代价彻底解锁封印在触控板里的硬件潜能。即便再升级也不心疼。</p>
           </div>
         </div>
 
         <!-- Contrast 3 -->
-        <div class="vs-col rv">
+        <div class="vs-col rv in">
           <span class="vs-col-badge">03 · 桌面纯净与线缆</span>
           <h3>无线缆拘束 · 纯净优雅</h3>
           <div class="vs-contrast-box bad">
             <div class="label">✕ 传统实体控制台</div>
-            <p>多占用一个 USB 接口或需要额外 Type-C 扩展坞，桌面线缆缠绕；无线版本需要定期充电并忍受蓝牙连接延迟与偶发休眠断连。</p>
+            <p>占用硬件接口；桌面线缆缠绕；有时还会没电；还要处理各种硬件故障。</p>
           </div>
           <div class="vs-contrast-box good">
             <div class="label">✓ PhantomKnob 幻影旋钮</div>
-            <p><b>无繁琐连线、零电池负担</b>。基于 创新技术和专利算法，在触控板上模拟并超越物理旋钮的体验，极速响应，极简纯粹。</p>
+            <p><b>无繁琐连线、零电池负担</b>。随机携带，开机即用。</p>
           </div>
         </div>
       </div>
-      <div class="vs-sum rv" style="margin-top:32px">
+      <div class="vs-sum rv in" style="margin-top:32px">
         <p>无需再为外接控制器纠结预算与背包重量——立即免费体验触控板的全新交互维度</p>
-        <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+        <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/">下载免费版</a>
       </div>
     </div>
   </section>
@@ -820,47 +904,47 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <!-- 03 ONBOARD & TRUST -->
   <section id="start">
     <div class="wrap">
-      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+      <div class="sec-head rv in" style="text-align:center;margin-left:auto;margin-right:auto">
         <div class="sec-index" style="justify-content:center"><span class="num">03 / ONBOARD &amp; TRUST</span><span class="rule"></span></div>
         <h2 class="sec-title">上手极其简单 · 安全注重隐私</h2>
         <p class="sec-desc" style="margin-left:auto;margin-right:auto">3 秒熟悉自然手势，纯本机离线运行，安全透明无负担。</p>
       </div>
       <div class="steps">
-        <div class="step rv">
+        <div class="step rv in">
           <div class="idx mono">STEP 1</div>
           <div class="fig">
             <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
-              <path d="M75 14l16 18h-10v22h-12V32H59z" fill="#ff9f0a" opacity="0.9"/>
-              <rect x="52" y="62" width="46" height="8" rx="4" stroke="rgba(255,255,255,0.3)"/>
+              <path d="M75 14l16 18h-10v22h-12V32H59z" fill="#ff9f0a" opacity="0.9"></path>
+              <rect x="52" y="62" width="46" height="8" rx="4" stroke="rgba(255,255,255,0.3)"></rect>
             </svg>
           </div>
           <h3>下载安装 Mac App</h3>
           <p>DMG 直链下载，已通过 Apple 官方公证（Notarized）。免费版即含全部核心能力，首次启动自动完成触控板兼容性测试。</p>
         </div>
-        <div class="step rv">
+        <div class="step rv in">
           <div class="idx mono">STEP 2</div>
           <div class="fig">
             <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
-              <rect x="30" y="16" width="90" height="56" rx="9" stroke="rgba(255,255,255,0.3)"/>
-              <path d="M66 36l-5 3 0 6 5 3z" fill="#ff9f0a"/>
-              <rect x="70" y="34" width="34" height="5" rx="2.5" stroke="rgba(255,255,255,0.35)"/>
-              <rect x="70" y="44" width="24" height="5" rx="2.5" stroke="rgba(255,255,255,0.2)"/>
-              <circle cx="117" cy="24" r="7" fill="#30d158" opacity="0.9"/>
-              <path d="M114 24l2.2 2.2 4-4.4" stroke="#0d0d0f" stroke-width="1.6" stroke-linecap="round"/>
+              <rect x="30" y="16" width="90" height="56" rx="9" stroke="rgba(255,255,255,0.3)"></rect>
+              <path d="M66 36l-5 3 0 6 5 3z" fill="#ff9f0a"></path>
+              <rect x="70" y="34" width="34" height="5" rx="2.5" stroke="rgba(255,255,255,0.35)"></rect>
+              <rect x="70" y="44" width="24" height="5" rx="2.5" stroke="rgba(255,255,255,0.2)"></rect>
+              <circle cx="117" cy="24" r="7" fill="#30d158" opacity="0.9"></circle>
+              <path d="M114 24l2.2 2.2 4-4.4" stroke="#0d0d0f" stroke-width="1.6" stroke-linecap="round"></path>
             </svg>
           </div>
-          <h3>授予辅助功能权限</h3>
-          <p>macOS 对跨 App 控制管理严格，辅助功能是唯一正规通道。仅用于读取悬停位置控件并发送调节事件，绝不读取键盘输入，全程在本机。</p>
+          <h3>授予系统权限（辅助功能与输入监控）</h3>
+          <p>macOS 对跨 App 控制管理严格，辅助功能与输入监控是官方标准通道。仅用于读取悬停位置控件、发送调节事件以及在旋转时捕获 'C' 键定制和其它预设热键，绝不常驻监听日常打字，全程纯本机离线运行。</p>
         </div>
-        <div class="step rv">
+        <div class="step rv in">
           <div class="idx mono">STEP 3</div>
           <div class="fig">
             <svg width="150" height="84" viewBox="0 0 150 84" fill="none" aria-hidden="true">
-              <rect x="30" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"/>
-              <rect x="72" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"/>
-              <rect x="66" y="22" width="6" height="22" fill="#0d0d0f"/>
-              <rect x="78" y="14" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
-              <rect x="78" y="30" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"/>
+              <rect x="30" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"></rect>
+              <rect x="72" y="20" width="36" height="26" rx="6" stroke="#ff9f0a"></rect>
+              <rect x="66" y="22" width="6" height="22" fill="#0d0d0f"></rect>
+              <rect x="78" y="14" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"></rect>
+              <rect x="78" y="30" width="6" height="4" rx="2" stroke="rgba(255,255,255,0.3)"></rect>
               <text x="75" y="72" font-family="IBM Plex Mono,monospace" font-size="12" fill="rgba(255,255,255,0.55)" text-anchor="middle">唤醒旋钮</text>
             </svg>
           </div>
@@ -871,18 +955,18 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 
       <!-- Trust Cards with ID -->
       <div class="cards3" id="trust" style="margin-top:28px">
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
+        <div class="fcard rv in">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><path d="M9.5 12l2 2 3.5-4"></path></svg></div>
           <h3>Apple 官方公证背书</h3>
           <p>每个正式发布版本均通过 Apple 官方服务器恶意代码扫描公证与签名，确保安全无篡改。</p>
         </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="8" cy="16" r="4"/><path d="M11 13L21 3M16.5 7.5l3 3M13.5 10.5l2 2"/></svg></div>
-          <h3>零键盘读取 · 纯手势拦截</h3>
-          <p>辅助功能权限用于读取悬停鼠标下的控件并注入旋转事件，拦截范围限定在触控板多点触控手势和'c'键。</p>
+        <div class="fcard rv in">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="8" cy="16" r="4"></circle><path d="M11 13L21 3M16.5 7.5l3 3M13.5 10.5l2 2"></path></svg></div>
+          <h3>零按键日志记录 · 纯手势与定制</h3>
+          <p>按键拦截仅在双指/三指旋转旋钮时生效，专门用于捕获定制键（如 C 键）与功能热键。我们绝不常驻监听日常打字，绝不记录任何按键日志，绝不存储或上传任何用户隐私数据。</p>
         </div>
-        <div class="fcard rv">
-          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/></svg></div>
+        <div class="fcard rv in">
+          <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"></rect><path d="M5 9v11h14V9M10 13h4"></path></svg></div>
           <h3>100% 离线运行 · 无账号追踪</h3>
           <p>无服务器后端、无账号注册、无网络隐私上报、无订阅陷阱。</p>
         </div>
@@ -893,14 +977,14 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <!-- 04 ADVANCED -->
   <section id="advanced">
     <div class="wrap">
-      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+      <div class="sec-head rv in" style="text-align:center;margin-left:auto;margin-right:auto">
         <div class="sec-index" style="justify-content:center"><span class="num">04 / ADVANCED</span><span class="rule"></span></div>
         <h2 class="sec-title">深入探索 · 底层技术与高级定制</h2>
         <p class="sec-desc" style="margin-left:auto;margin-right:auto">专为技术爱好者与硬核玩家准备。无需了解这些，你也可以直接开箱即用。</p>
       </div>
       <div class="adv-accordion">
         <!-- Drawer 1: Principle with ID -->
-        <details class="adv-item rv" id="principle">
+        <details class="adv-item rv in" id="principle" open="">
           <summary class="adv-summary">
             <span>▸ 01 / 旋钮手势工作的基本原理</span>
             <span class="adv-icon">+</span>
@@ -908,33 +992,33 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
           <div class="adv-body">
             <div class="cards3" style="margin-bottom:10px">
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="4"/><circle cx="10" cy="15" r="1.3"/><circle cx="14" cy="15" r="1.3"/><path d="M8 10a4 4 0 0 1 8 0"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="4"></rect><circle cx="10" cy="15" r="1.3"></circle><circle cx="14" cy="15" r="1.3"></circle><path d="M8 10a4 4 0 0 1 8 0"></path></svg></div>
                 <h3>1 · 识别目标控件</h3>
                 <p>鼠标悬停在屏幕上时，通过系统 Accessibility API 毫秒级识别鼠标下方的具体 App 窗口与可调控滑块元素。</p>
               </div>
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 10h16M8 14h8"/><circle cx="15" cy="4.5" r="2.5"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="M4 10h16M8 14h8"></path><circle cx="15" cy="4.5" r="2.5"></circle></svg></div>
                 <h3>2 · 识别旋钮手势并处理</h3>
                 <p>判断当前的手势是否是旋钮手势。如果是，则拦截触点事件，防止与原生手势冲突。</p>
               </div>
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></div>
                 <h3>3 · 计算旋钮参数</h3>
                 <p>根据触点确定当前旋钮手势的类型。提取两个最高权重的触点坐标，用它们重建旋钮（方便后续显示）并记录旋钮旋转的角度，然后把旋转角度映射为调整值。</p>
               </div>
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg></div>
                 <h3>4 · 事件合成与直接注入</h3>
                 <p>将角度增量按定制的旋钮行为转化为方向键、鼠标滚轮等事件，插入 macOS 全局事件流，实现对目标控件的控制。</p>
               </div>
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8 15l8-6"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M8 15l8-6"></path></svg></div>
                 <h3>5 · GPU 渲染动画效果</h3>
                 <p>采用 Metal / CoreAnimation 硬件加速渲染 HUD 入场出场动画效果，做出酷炫效果的同时对CPU 消耗微乎其微。</p>
               </div>
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 12l4-4M4 12l4 4"/></svg></div>
-                <h3>6 · 单指续转（Pro 专属）</h3>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16M4 12l4-4M4 12l4 4"></path></svg></div>
+                <h3>6 · 单指飞轮（Pro 专属）</h3>
                 <p>Pro 版在抬起一指时，系统自动锁定虚拟中心并补偿 180° 相位偏置，平滑过渡到单指飞轮长程调控；Free 版则自然物理阻尼刹停。</p>
               </div>
 
@@ -943,7 +1027,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
         </details>
 
         <!-- Drawer 2: Customize with ID -->
-        <details class="adv-item rv" id="customize">
+        <details class="adv-item rv in" id="customize">
           <summary class="adv-summary">
             <span>▸ 02 / 如何为软件定制旋钮</span>
             <span class="adv-icon">+</span>
@@ -951,17 +1035,17 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
           <div class="adv-body">
             <div class="cards3" style="margin-bottom:10px">
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
                 <h3>1 · 了解控件的控制方式确定确定旋钮的行为</h3>
                 <p>旋钮手势并不是macOS原生手势，它只能通过模拟成目标控件可接受的输入方式来控制目标控件。通常目标控件可接受鼠标滚轮、方向键或两指平移等输入方式的控制。可通过简单的实验了解目标控件的控制方式。</p>
               </div>
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4.5"></circle></svg></div>
                 <h3>2 · 在旋钮管理器中设置</h3>
                 <p>把鼠标移到目标控件上，做旋钮手势，这时会出现旋钮HUD ，但调整时控件不一定响应。这时按‘c'键调出旋钮管理器，在其中旋钮行为里指定上一步找到的控制方式，之后旋钮就可以控制该控件了。</p>
               </div>
               <div class="fcard">
-                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+                <div class="fi"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div>
                 <h3>3 · 其它定制</h3>
                 <p> 还可在旋钮管理器里为这个旋钮命名、选择类型、颜色、样式、速度等。</p>
               </div>
@@ -974,14 +1058,14 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <!-- 05 PRICING -->
   <section id="pricing">
     <div class="wrap">
-      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+      <div class="sec-head rv in" style="text-align:center;margin-left:auto;margin-right:auto">
         <div class="sec-index" style="justify-content:center"><span class="num">05 / PRICING</span><span class="rule"></span></div>
         <h2 class="sec-title">从免费开始，需要时再升级</h2>
         <p class="sec-desc" style="margin-left:auto;margin-right:auto">日常工具全免，Free 版支持定制 5 个专业软件；Pro 版解锁无限软件生态、单指飞轮手感、DDC/CI外接屏硬件调光与超酷旋钮动画效果。</p>
       </div>
       <div class="plans">
         <!-- Plan 1: Free -->
-        <div class="plan rv">
+        <div class="plan rv in">
           <span class="tag free-tag">长期维护 · 开箱即用</span>
           <div class="plan-head">
             <h3>免费版</h3>
@@ -993,25 +1077,25 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             <div class="ps sub-line">无需注册 · 零隐私追踪 · 纯本机运行</div>
           </div>
           <ul>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>14 天 Pro 全功能试用</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>设置和旋钮定制存在本地</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>三指旋钮 + 两指旋钮</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>支持单旋钮，试用期结束后新增旋钮不支持双环旋钮和无级变速旋钮</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>支持调节内置屏与 Apple 官方显示器亮度</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>支持 5 款专业创作 App 深度定制（可随时更换）</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>中心贴图内置 24+ 款精工矢量图章 (SF Symbols)</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>经典入场离场动画效果 + 每日 10 次 Pro 动画效果尝鲜</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span>免费版功能持续维护，到期自建规则永久可用</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>14 天 Pro 全功能试用</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>设置和旋钮定制存在本地</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>三指旋钮 + 两指旋钮</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>支持单旋钮，试用期结束后新增旋钮不支持双环旋钮和无级变速旋钮</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>支持调节内置屏与 Apple 官方显示器亮度</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>支持 5 款专业创作 App 深度定制（可随时更换）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>中心贴图内置 24+ 款精工矢量图章 (SF Symbols)</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>经典入场离场动画效果 + 每日 10 次 Pro 动画效果尝鲜</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span>免费版功能持续维护，到期自建规则永久可用</span></li>
           </ul>
           <div class="plan-foot">
-            <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">下载免费版</a>
+            <a class="btn btn-ghost" href="https://github.com/benwu232/PhantomKnob/releases/">下载免费版</a>
             <div class="pay-note">Apple 官方安全公证 · 100% 本机离线运行 · 零隐私追踪</div>
             <p class="upgrade-note">支持 macOS 13+ · 内置硬件兼容性检测 · 菜单内随时可升级 Pro</p>
           </div>
         </div>
 
         <!-- Plan 2: Pro -->
-        <div class="plan pro rv">
+        <div class="plan pro rv in">
           <span class="tag">首发限定 · 10/31 截止</span>
           <div class="plan-head">
             <h3>Pro</h3>
@@ -1031,16 +1115,16 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
             <div class="ps deadline">2026 年 10 月 31 日后恢复原价 $27.18</div>
           </div>
           <ul>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 支持同时激活 3 台个人 Mac</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 配置和旋钮定制随 iCloud 自动同步</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 三指旋钮 + 两指旋钮 + 单指飞轮续转</b>（突破手腕生理限制，长调节不断线）</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 支持单旋钮 + 双环旋钮 + 无级变速旋钮</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 除内置屏和Apple官方显示器外还支持通过 DDC/CI 调节第三方外接显示器亮度</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 解锁无限专业应用全功能生态</b>（彻底解除 5 槽位限制）</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 中心贴图支持从本地导入自定义图章</b>（我的旋钮我做主）</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 规则包一键导出打包分享</b></span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ 尊享全部入场离场动画效果</b>（数量持续扩充）</span></li>
-            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span><b>⚡️ v2.x 所有后续版本永久免费更新</b>，一次买断终身享用</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 支持同时激活 3 台个人 Mac</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 配置和旋钮定制随 iCloud 自动同步</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 三指旋钮 + 两指旋钮 + 单指飞轮续转</b>（突破手腕生理限制，长调节不断线）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 支持单旋钮 + 双环旋钮 + 无级变速旋钮</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 除内置屏和Apple官方显示器外还支持通过 DDC/CI 调节第三方外接显示器亮度</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 解锁无限专业应用全功能生态</b>（彻底解除 5 槽位限制）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 中心贴图支持从本地导入自定义图章</b>（我的旋钮我做主）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 规则包一键导出打包分享</b></span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 尊享全部入场离场动画效果</b>（数量持续扩充）</span></li>
+            <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ v2.x 所有后续版本免费更新</b>，一次买断终身享用</span></li>
           </ul>
           <div class="plan-foot">
             <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">立即购买 →</a>
@@ -1055,34 +1139,34 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <!-- 06 FAQ -->
   <section id="faq">
     <div class="wrap">
-      <div class="sec-head rv" style="text-align:center;margin-left:auto;margin-right:auto">
+      <div class="sec-head rv in" style="text-align:center;margin-left:auto;margin-right:auto">
         <div class="sec-index" style="justify-content:center"><span class="num">06 / FAQ</span><span class="rule"></span></div>
         <h2 class="sec-title">常见问题</h2>
       </div>
       <div class="faq-list">
-        <div class="qa rv" data-open="false">
-          <button aria-expanded="false">辅助功能权限安全吗？<span class="pm">+</span></button>
-          <div class="ans"><p>权限只用于读取悬停控件与发送滚动 / 按键事件，拦截范围仅限触控板手势，不读取键盘输入，处理全程在本机。<a href="#trust" style="color:var(--amber)">详见"安全与隐私"一节</a>。</p></div>
+        <div class="qa rv in" data-open="false">
+          <button aria-expanded="false">为什么 PhantomKnob 没有上架 Mac App Store？<span class="pm">+</span></button>
+          <div class="ans" style="max-height: 0px;"><p>PhantomKnob 是一款深度调用底层硬件能力的生产力引擎，需要在系统底层捕获触控板的多点触控原始数据流，并跨应用模拟物理旋钮的连续操作。苹果 Mac App Store 强制实施的“App 沙盒机制（App Sandbox）”严格禁止任何第三方软件进行全局多点触控捕获、跨应用事件合成以及全局拦截（这也是 Raycast、Alfred、BetterTouchTool 等专业级 Mac 效率工具均未上架 App Store 的物理技术限制）。<br><br><b>安全保证:</b> PhantomKnob 使用苹果官方开发者证书（Developer ID）签名，并已通过 <b>Apple 官方公证服务（Apple Notarized）</b>。每一次构建版本均经过苹果官方安全服务器的自动化逆向与恶意代码查杀认证，确保纯净、安全、无篡改。</p></div>
         </div>
-        <div class="qa rv" data-open="false">
-          <button aria-expanded="false">为什么外环反而速度更慢？<span class="pm">+</span></button>
-          <div class="ans"><p>因为旋钮使用角度变化来调节变量的，半径越大，旋转相同角度时，边缘移动的距离越长，因此相同线速度下感觉更慢。所以大的旋钮天然适合速度更慢、精度更高的场景。这和人的直觉相反。当然双环旋钮和无级变速旋钮的设置都是很灵活的，您完全可以按照您的想法设置不同的规则（比如外环速度快，内环速度慢）。</p></div>
+        <div class="qa rv in" data-open="false">
+          <button aria-expanded="false">PhantomKnob 需要哪些系统权限？授权安全吗？<span class="pm">+</span></button>
+          <div class="ans" style="max-height: 0px;"><p>为实现流畅的旋钮操作，PhantomKnob 严格仅需两项 macOS 标准系统权限：<br><br><b>1. 辅助功能 (Accessibility):</b> 用于实时识别光标下方可调节的滑块、输入框与数值控件，并合成平滑的旋钮滚动动作。<br><b>2. 输入监控 (Input Monitoring):</b> 仅在<b>双指或三指旋转旋钮处于激活状态时</b>生效，专门用于捕获 <span class="kbd">C</span> 键以唤起旋钮管理器以及拦截热键，其他场合均不启动。<br><br><b>零记录与纯本地承诺:</b> 我们绝不常驻监听日常打字，绝不收集键盘日志，绝不记录任何密码或文本内容。软件完全在本地离线运行，绝不上传您的任何交互数据。<a href="#trust" style="color:var(--amber)">详见“安全与隐私”一节</a>。</p></div>
         </div>
-        <div class="qa rv" data-open="false">
+        <div class="qa rv in" data-open="true">
+          <button aria-expanded="true">为什么外环反而速度更慢？<span class="pm">+</span></button>
+          <div class="ans" style="max-height: 98px;"><p>因为旋钮使用角度变化来调节变量的，半径越大，旋转相同角度时，边缘移动的距离越长，因此相同线速度下感觉更慢。所以大的旋钮天然适合速度更慢、精度更高的场景，这和人的直觉相反。当然双环旋钮和无级变速旋钮的设置都是很灵活的，您完全可以按照您的想法设置不同的规则（比如外环速度快，内环速度慢）。</p></div>
+        </div>
+        <div class="qa rv in" data-open="false">
           <button aria-expanded="false">5 个专业创作 App 槽位不够用怎么办？<span class="pm">+</span></button>
-          <div class="ans"><p>首先，Chrome、Safari、Xcode、VS Code 等日常高频工具全部免配额且终身免费；针对 Final Cut Pro、剪映 / CapCut、Lightroom、Logic Pro 等专业创作工具，免费版提供 5 个全功能活跃槽位（单旋钮 / 双环 / CVK 自由开放）。第 6 款及以上超量软件仍可免费配置标准单旋钮，更支持随时把超量软件调换入活跃槽位，灵活性极高。如需同时管理数十款专业软件的高阶双环生态，升级 Pro 即可彻底解锁无限软件生态。</p></div>
+          <div class="ans" style="max-height: 0px;"><p>首先，Chrome、Safari、Xcode、VS Code 等日常高频工具全部免配额且终身免费；针对 Final Cut Pro、剪映 / CapCut、Lightroom、Logic Pro 等专业创作工具，免费版提供 5 个全功能活跃槽位（单旋钮 / 双环 / CVK 自由开放）。第 6 款及以上超量软件仍可免费配置标准单旋钮，更支持随时把超量软件调换入活跃槽位，灵活性极高。如需同时管理数十款专业软件的高阶双环生态，升级 Pro 即可彻底解锁无限软件生态。</p></div>
         </div>
-        <div class="qa rv" data-open="false">
-          <button aria-expanded="false">单指无限飞轮续转和外接屏调光分别是什么？<span class="pm">+</span></button>
-          <div class="ans"><p><b>单指无限飞轮续转</b>：双指起旋后，若抬起一指，系统自动启用动态中心锁定与 180° 相位补偿算法，允许你用单指绕圆心持续无限旋转，彻底突破人手腕生理翻转角度极限，是长程视频时间线穿梭与大范围调值的刚需神器（免费版抬指则停止）。<br><br><b>外接显示器硬件调光</b>：macOS 原生不支持第三方非苹果外接屏（Dell / LG / ASUS 等）的键盘亮度键控制。PhantomKnob 底层直接写入 DDC/CI 硬件协议，Pro 版让你无需安装额外繁重工具，直接在触控板上旋转调节外接显示器的物理背光（鼠标在哪个显示器，就调节它的亮度）。</p></div>
+        <div class="qa rv in" data-open="false">
+          <button aria-expanded="false">单指飞轮续转和外接屏调光分别是什么？<span class="pm">+</span></button>
+          <div class="ans" style="max-height: 0px;"><p><b>单指飞轮</b>：双指起旋后，若抬起一指，系统自动启用动态中心锁定与 180° 相位补偿算法，允许你用单指绕圆心持续无限旋转，彻底突破人手腕生理翻转角度极限，是长程视频时间线穿梭与大范围调值的刚需神器（免费版抬指则停止）。<br><br><b>外接显示器硬件调光</b>：macOS 原生不支持第三方非苹果外接屏（Dell / LG / ASUS 等）的键盘亮度键控制。PhantomKnob 底层直接写入 DDC/CI 硬件协议，Pro 版让你无需安装额外繁重工具，直接在触控板上旋转调节外接显示器的物理背光（鼠标在哪个显示器，就调节它的亮度）。</p></div>
         </div>
-        <div class="qa rv" data-open="false">
+        <div class="qa rv in" data-open="false">
           <button aria-expanded="false">我的触控板兼容吗？<span class="pm">+</span></button>
-          <div class="ans"><p>所有支持多点触控的 Mac 触控板均可使用，包括每台 MacBook 的内置触控板与 Apple Magic Trackpad。App 内置兼容性检测，第一次运行即可验证。</p></div>
-        </div>
-        <div class="qa rv" data-open="false">
-          <button aria-expanded="false">能为没有预设的 App 建规则吗？<span class="pm">+</span></button>
-          <div class="ans"><p>可以。悬停任意滑块，按 <span class="kbd">C</span> 就地快速定制，配置一次永久生效。选类型、配行为的完整方法，<a href="#customize" style="color:var(--amber)">详见"怎样定制旋钮"一节</a>。</p></div>
+          <div class="ans" style="max-height: 0px;"><p>所有支持多点触控的 Mac 触控板均可使用，包括每台 MacBook 的内置触控板与 Apple Magic Trackpad。App 内置兼容性检测，第一次运行即可验证。</p></div>
         </div>
       </div>
     </div>
@@ -1091,11 +1175,11 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
   <!-- FINAL CTA -->
   <section class="final">
     <div class="ring" aria-hidden="true"></div>
-    <div class="wrap rv">
+    <div class="wrap rv in">
       <h2>方寸之间，掌驭万物</h2>
       <p>免费下载 PhantomKnob，几秒钟验证兼容性，立即开始旋转。</p>
-      <a class="btn btn-primary" style="height:58px;padding:0 34px;font-size:1.05rem" href="https://github.com/benwu232/PhantomKnob/releases/latest/">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+      <a class="btn btn-primary" style="height:58px;padding:0 34px;font-size:1.05rem" href="https://github.com/benwu232/PhantomKnob/releases/">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"></path></svg>
         下载免费版
       </a>
       <p class="hero-meta">无需注册 · 全天常驻无打断 · 免费版内可随时升级 Pro</p>
@@ -1105,14 +1189,22 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
 </main>
 
 <footer>
-  <div class="wrap foot">
-    <a class="brand" href="#top"><img src="assets/appicon.png" alt="">PhantomKnob<span class="zh">幻影旋钮</span></a>
-    <div class="foot-links">
-      <a href="./">English</a>
-      <a href="privacy.html">隐私政策</a>
-      <a href="terms.html">服务条款</a>
+  <div class="wrap">
+    <div class="foot-manifesto rv">
+      <div class="fm-inner">
+        <p class="fm-text">“预测未来的最好方式，就是去创造它。”</p>
+        <span class="fm-author">— 艾伦·凯 (Alan Kay)</span>
+      </div>
     </div>
-    <span class="pn">PK-LP-01 · REV A · © 2026 BEN WU</span>
+    <div class="foot">
+      <a class="brand" href="#top"><img src="assets/appicon.png" alt="">PhantomKnob<span class="zh">幻影旋钮</span></a>
+      <div class="foot-links">
+        <a href="./">English</a>
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">服务条款</a>
+      </div>
+      <span class="pn">PK-LP-01 · REV A · © 2026 BEN WU</span>
+    </div>
   </div>
 </footer>
 
@@ -1569,91 +1661,190 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0}
     document.querySelectorAll(".rv").forEach(function(n){n.classList.add("in");});
   }
 
-  // Video Modal Logic
+// Video Matrix & Modal Logic (Extensible Data-Driven)
   (function(){
-    var modal = document.getElementById("videoModal");
-    var iframe = document.getElementById("videoIframe");
-    var heroBtn = document.getElementById("heroDemoBtn");
-    var stageBtn = document.getElementById("stageDemoBtn");
-    var closeBtn = document.getElementById("videoModalClose");
-    var extLink = document.getElementById("videoExternalLink");
+    function initVideoModal(){
+      var modal = document.getElementById("videoModal");
+      var iframe = document.getElementById("videoIframe");
+      var closeBtn = document.getElementById("videoModalClose");
+      var extLink = document.getElementById("videoExternalLink");
+      var vTitle = document.querySelector(".video-modal-info .v-title");
+      var tabsContainer = document.getElementById("videoModalTabs");
+      var fileNotice = document.getElementById("fileProtocolNotice");
 
-    var isZh = document.documentElement.lang.startsWith("zh");
-    var videoConfig = {
-      embedUrl: isZh 
-        ? "https://player.bilibili.com/player.html?isOutside=true&high_quality=1&danmaku=0&autoplay=1"
-        : "https://www.youtube-nocookie.com/embed/placeholder?autoplay=1&rel=0&modestbranding=1",
-      externalUrl: isZh
-        ? "https://www.bilibili.com"
-        : "https://www.youtube.com"
-    };
+      var isZh = document.documentElement.lang.startsWith("zh");
+      var currentVideo = "quick_knob";
 
-    function openModal(){
-      if(!modal) return;
-      modal.classList.add("active");
-      modal.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-      if(iframe && !iframe.getAttribute("src")){
-        iframe.src = videoConfig.embedUrl;
+      // Data-driven video matrix (easily add more videos in the future)
+      var videoMatrix = {
+        quick_knob: {
+          titleZh: "⚡️ 快捷旋钮篇 · 三指旋转盲调系统音量与屏幕亮度、Space Warp/Rift 炫酷 HUD",
+          titleEn: "⚡️ Quick Knob · 3-Finger System Volume & Brightness, Space Warp/Rift HUD",
+          youtubeId: "sW381I42dwc",
+          bvid: "",
+          externalUrl: "https://youtu.be/sW381I42dwc"
+        },
+        daily_apps: {
+          titleZh: "🧭 日常应用篇 · QuickTime 逐帧变速飞轮卡点与 Safari 双环无级精读漫游",
+          titleEn: "🧭 Daily Apps · QuickTime Frame-by-frame Shuttle & Safari Dual-Ring Browsing",
+          youtubeId: "OO-nl7yFb_A",
+          bvid: "",
+          externalUrl: "https://youtu.be/OO-nl7yFb_A"
+        },
+        pro_apps: {
+          titleZh: "🎬 专业应用篇 · CapCut 剪映时间轴 CVK 飞轮穿梭与调色文本框悬停盲调",
+          titleEn: "🎬 Pro Apps · CapCut Timeline Flywheel & Hover Parameter Color Grading",
+          youtubeId: "EIoTdJ-p-Uo",
+          bvid: "",
+          externalUrl: "https://youtu.be/EIoTdJ-p-Uo"
+        }
+      };
+
+      function buildEmbedUrl(cfg){
+        if(isZh && cfg.bvid){
+          return "https://player.bilibili.com/player.html?bvid=" + cfg.bvid + "&page=1&high_quality=1&danmaku=0&autoplay=1";
+        }
+        var origin = (window.location.protocol === "http:" || window.location.protocol === "https:")
+          ? "&origin=" + encodeURIComponent(window.location.origin)
+          : "";
+        return "https://www.youtube.com/embed/" + cfg.youtubeId + "?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1" + origin;
       }
-      if(extLink){
-        extLink.href = videoConfig.externalUrl;
+
+      function setVideo(key){
+        var cfg = videoMatrix[key];
+        if(!cfg) return;
+        currentVideo = key;
+
+        if(tabsContainer){
+          var tabs = tabsContainer.querySelectorAll(".v-tab");
+          for(var i = 0; i < tabs.length; i++){
+            var t = tabs[i];
+            if(t.getAttribute("data-target") === key){
+              t.classList.add("active");
+              if(t.scrollIntoView){
+                t.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+              }
+            } else {
+              t.classList.remove("active");
+            }
+          }
+        }
+
+        if(iframe) iframe.src = buildEmbedUrl(cfg);
+        if(extLink) {
+          extLink.href = (isZh && cfg.bvid) ? ("https://www.bilibili.com/video/" + cfg.bvid) : cfg.externalUrl;
+        }
+        if(vTitle) vTitle.textContent = isZh ? cfg.titleZh : cfg.titleEn;
       }
-    }
 
-    function closeModal(){
-      if(!modal) return;
-      modal.classList.remove("active");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-      if(iframe){
-        iframe.src = "";
+      function openModal(targetKey){
+        if(!modal) return;
+        modal.classList.add("active");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        if(fileNotice && window.location.protocol === "file:"){
+          fileNotice.style.display = "block";
+        }
+        setVideo(targetKey || "quick_knob");
       }
-    }
 
-    if(heroBtn) heroBtn.addEventListener("click", openModal);
-    if(stageBtn) stageBtn.addEventListener("click", openModal);
-    if(closeBtn) closeBtn.addEventListener("click", closeModal);
+      function closeModal(){
+        if(!modal) return;
+        modal.classList.remove("active");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if(iframe) iframe.src = "";
+      }
 
-    if(modal){
-      modal.addEventListener("click", function(e){
-        if(e.target === modal){
+      if(tabsContainer){
+        tabsContainer.addEventListener("click", function(e){
+          var tabBtn = e.target.closest(".v-tab");
+          if(tabBtn){
+            var target = tabBtn.getAttribute("data-target");
+            if(target && target !== currentVideo){
+              setVideo(target);
+            }
+          }
+        });
+      }
+
+      function bindBtn(id, key){
+        var btn = document.getElementById(id);
+        if(btn){
+          btn.addEventListener("click", function(e){
+            e.preventDefault();
+            openModal(key);
+          });
+        }
+      }
+
+      bindBtn("heroDemoBtn", "quick_knob");
+      bindBtn("stageDemoBtn", "quick_knob");
+      bindBtn("quickKnobDemoBtn", "quick_knob");
+      bindBtn("dailyAppsDemoBtn", "daily_apps");
+      bindBtn("proAppsDemoBtn", "pro_apps");
+      bindBtn("capcutDemoBtn", "pro_apps");
+
+      if(closeBtn) closeBtn.addEventListener("click", closeModal);
+      if(modal){
+        modal.addEventListener("click", function(e){
+          if(e.target === modal) closeModal();
+        });
+      }
+      document.addEventListener("keydown", function(e){
+        if(e.key === "Escape" && modal && modal.classList.contains("active")){
           closeModal();
         }
       });
+
+      window.openPhantomVideo = openModal;
     }
 
-    document.addEventListener("keydown", function(e){
-      if(e.key === "Escape" && modal && modal.classList.contains("active")){
-        closeModal();
-      }
-    });
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", initVideoModal);
+    } else {
+      initVideoModal();
+    }
   })();
 
-})();
-</script>
+})();</script>
 
   <!-- Video Modal -->
   <div class="video-modal-backdrop" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="PhantomKnob 实机演示视频">
     <div class="video-modal-box">
+      <div class="video-modal-tabs" id="videoModalTabs">
+        <button class="v-tab active" data-target="quick_knob">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+          <span>⚡️ 快捷旋钮篇 (36s)</span>
+        </button>
+        <button class="v-tab" data-target="daily_apps">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+          <span>🧭 日常应用篇 (82s)</span>
+        </button>
+        <button class="v-tab" data-target="pro_apps">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+          <span>🎬 专业应用篇 (104s)</span>
+        </button>
+      </div>
       <button class="video-modal-close" id="videoModalClose" aria-label="关闭视频 (Esc)">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
+      <div id="fileProtocolNotice" style="display:none;background:rgba(255,159,10,0.12);border:1px solid rgba(255,159,10,0.3);color:var(--amber);font-size:0.78rem;padding:8px 14px;border-radius:8px;margin:8px 18px 0;line-height:1.4">
+        ⚠️ 提示：您当前通过本地 <code>file://</code> 协议打开。YouTube 出于安全机制（错误 153）要求必须在 HTTP/HTTPS 环境下加载。请启动本地静态服务（如执行 <code>python3 -m http.server 8000</code> 访问 <code>http://localhost:8000</code>）或线上访问；亦可直接点击下方「在 YouTube 上观看」。
+      </div>
       <div class="video-player-container">
-        <iframe id="videoIframe" class="video-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <iframe id="videoIframe" class="video-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
       </div>
       <div class="video-modal-footer">
         <div class="video-modal-info">
           <span class="v-badge">实机实拍</span>
-          <span class="v-title">Mac 触控板变物理旋钮 · CapCut 剪映、Safari、QuickTime 与系统三指实操</span>
+          <span class="v-title">⚡️ 快捷旋钮篇 · 三指旋转盲调系统音量与屏幕亮度、Space Warp/Rift 炫酷 HUD</span>
         </div>
-        <a class="video-external-link" id="videoExternalLink" href="https://www.bilibili.com" target="_blank" rel="noopener noreferrer">
-          在 Bilibili 打开原片
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <a class="video-external-link" id="videoExternalLink" href="https://youtu.be/sW381I42dwc" target="_blank" rel="noopener noreferrer">
+          在 YouTube 上观看
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         </a>
       </div>
     </div>
   </div>
-
-</body>
-</html>
+</body></html>

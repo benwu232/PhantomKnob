@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/benwu232/PhantomKnob/releases/latest/download/PhantomKnob.dmg">
+  <a href="https://github.com/benwu232/PhantomKnob/releases/">
     <img alt="Download DMG" src="https://img.shields.io/badge/Download-macOS%20DMG-blue?logo=apple&style=for-the-badge" />
   </a>
   <a href="https://github.com/benwu232/PhantomKnob/actions"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/benwu232/phantom_knob_mac/release.yml?style=flat-square&label=build" /></a>
@@ -44,7 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.s
 #### Manual Download
 1.  **Download** the latest `.dmg` install package from the badge above.
 2.  **Drag and drop** `PhantomKnob.app` to your `/Applications` folder.
-3.  **Launch** it and grant **Accessibility Permissions** (辅助功能权限) in System Settings when prompted.
+3.  **Launch** it and grant **Accessibility & Input Monitoring Permissions** in System Settings when prompted (required for slider control and C-key customization).
 
 ### License
 This software is released under the [MIT License](LICENSE).
