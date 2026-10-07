@@ -6,15 +6,15 @@
     <description>Most recent updates for PhantomKnob.</description>
     <language>en</language>
     <item>
-      <title>PhantomKnob v2.2.9</title>
-      <pubDate>Tue, 06 Oct 2026 23:08:36 +0000</pubDate>
-      <sparkle:version>1130</sparkle:version>
-      <sparkle:shortVersionString>2.2.9</sparkle:shortVersionString>
-      <sparkle:releaseNotesLink>https://github.com/benwu232/PhantomKnob/releases/tag/v2.2.9</sparkle:releaseNotesLink>
-      <enclosure url="https://github.com/benwu232/PhantomKnob/releases/download/v2.2.9/PhantomKnob_v2.2.9.dmg"
-                 sparkle:version="1130"
-                 sparkle:shortVersionString="2.2.9"
-                 sparkle:edSignature="Rv2s5BALvgyAhpDJqPH+WkH4qynjKCu2TNupJANbvgqcaKvxG2FPm3dP/7vmtx6bdstIabFrA8KV9pjfsrqNDw==" length="7239007"
+      <title>PhantomKnob v2.2.10</title>
+      <pubDate>Wed, 07 Oct 2026 23:56:46 +0000</pubDate>
+      <sparkle:version>1134</sparkle:version>
+      <sparkle:shortVersionString>2.2.10</sparkle:shortVersionString>
+      <sparkle:releaseNotesLink>https://github.com/benwu232/PhantomKnob/releases/tag/v2.2.10</sparkle:releaseNotesLink>
+      <enclosure url="https://github.com/benwu232/PhantomKnob/releases/download/v2.2.10/PhantomKnob_v2.2.10.dmg"
+                 sparkle:version="1134"
+                 sparkle:shortVersionString="2.2.10"
+                 sparkle:edSignature="3K1E80J4KKlHmhm64xErOrOynFc0sJjVlA8KUuOCarkM/AyeddDi9Y0eUNYVL7zEAkmGhWnEEHLwtBhA926GDw==" length="7269959"
                  type="application/octet-stream" />
     </item>
   </channel>
