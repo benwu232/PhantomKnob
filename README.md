@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://benwu232.github.io/PhantomKnob/">
-    <img src="assets/logo.png" alt="PhantomKnob Logo" width="128" style="border-radius: 24px;">
+    <img src="assets/appicon.png" alt="PhantomKnob App Icon" width="128" style="border-radius: 24px;">
   </a>
 </p>
 
@@ -26,11 +26,6 @@
   <img alt="Platform" src="https://img.shields.io/badge/Platform-macOS%2013%2B-blue?logo=apple&style=flat-square" />
   <img alt="Architecture" src="https://img.shields.io/badge/Architecture-Apple%20Silicon%20%7C%20Intel-success?style=flat-square" />
   <img alt="Security" src="https://img.shields.io/badge/Security-Apple%20Notarized-green?logo=apple&style=flat-square" />
-  <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-Free%20%2F%20Pro%20Lifetime-purple?style=flat-square" /></a>
-</p>
-
-<p align="center">
-  <img src="assets/screenshot_hud.png" alt="PhantomKnob HUD Interface" width="800" style="max-width: 100%; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
 </p>
 
 ---
@@ -49,7 +44,6 @@
 - [💎 Free vs. Pro Feature Matrix](#pricing-matrix)
 - [🔒 Security & Privacy Commitments](#security-privacy)
 - [❓ Frequently Asked Questions (FAQ)](#faq)
-- [📄 License & Distribution](#license)
 
 ---
 
@@ -108,10 +102,6 @@ Once permissions are granted, click the menu bar icon or press the global hotkey
 - **Hardware DDC/CI Dimming (Pro)**: Direct low-level DDC/CI communication allows you to control the real hardware backlight of third-party external monitors (e.g., Dell, LG, ASUS, BenQ) without extra heavy utilities.
 - **Cinematic HUD Visuals**: Built-in Space Warp, Rift, and Halo GPU-accelerated entrance and exit animations.
 
-<p align="center">
-  <img src="assets/screenshot_overlay.png" alt="System Quick Knob HUD" width="700" style="border-radius: 8px;" />
-</p>
-
 ---
 
 <a id="scene-daily-apps"></a>
@@ -136,10 +126,6 @@ Once permissions are granted, click the menu bar icon or press the global hotkey
 - **Pre-Tuned Pro App Profiles**: Comes with built-in presets for CapCut / 剪映, Final Cut Pro, DaVinci Resolve, Adobe Lightroom, and Logic Pro. Automatically activates custom profiles when switching apps.
 - **Timeline Shuttle**: In CapCut/FCP, make micro-turns to catch audio beats, or spin fast to shuttle across large multi-track timelines.
 - **Hover-and-Turn Flow**: Don't waste time clicking and dragging tiny numeric sliders. Simply hover your cursor over exposure, contrast, temperature, or HSL/RGB text fields, and rotate on the trackpad.
-
-<p align="center">
-  <img src="assets/screenshot_settings.png" alt="PhantomKnob Settings and Customization Interface" width="700" style="border-radius: 8px;" />
-</p>
 
 ---
 
@@ -204,7 +190,7 @@ Free version provides lifetime core everyday tools and 5 customizable profession
 | Features | Free Edition | Pro Edition |
 | :--- | :---: | :---: |
 | **Price** | **$0 / Free Forever** | **$16.18** (Launch deal until Oct 31, reg. $27.18) |
-| **License Model** | Unlimited personal use | Lifetime purchase, **no subscriptions** |
+| **Model** | Unlimited personal use | Lifetime purchase, **no subscriptions** |
 | **Simultaneous Mac Activations** | 1 Mac | **3 Personal Macs** |
 | **3-Finger Quick Knob (Volume / Brightness)** | ✅ Included | ✅ Included |
 | **Built-in & Apple Display Dimming** | ✅ Included | ✅ Included |
@@ -267,18 +253,6 @@ All multitouch-enabled Mac trackpads are supported, including built-in MacBook t
 <br>
 We offer a hassle-free <b>14-Day 100% Money-Back Guarantee</b>. If Pro does not meet your expectations, send your Lemon Squeezy order number to <a href="mailto:phantomknob232@gmail.com">phantomknob232@gmail.com</a> within 14 days of purchase for a full refund. For complete terms, visit our <a href="refund.html">Refund Policy</a>.
 </details>
-
----
-
-<a id="license"></a>
-## 📄 License & Distribution
-
-- The repository documentation, website frontend, and install scripts are licensed under the [MIT License](LICENSE).
-- The **PhantomKnob macOS Application** is distributed as freemium software:
-  - Free edition includes permanent core features and a 14-day full Pro trial.
-  - Pro edition is subject to a commercial license agreement (one-time lifetime purchase).
-
----
 
 <p align="center">
   <b>Precision control at your fingertips.</b><br>

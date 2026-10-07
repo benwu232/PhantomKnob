@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://benwu232.github.io/PhantomKnob/index_zh.html">
-    <img src="assets/logo.png" alt="PhantomKnob Logo" width="128" style="border-radius: 24px;">
+    <img src="assets/appicon.png" alt="PhantomKnob App Icon" width="128" style="border-radius: 24px;">
   </a>
 </p>
 
@@ -26,11 +26,6 @@
   <img alt="平台支持" src="https://img.shields.io/badge/平台-macOS%2013%2B-blue?logo=apple&style=flat-square" />
   <img alt="架构支持" src="https://img.shields.io/badge/架构-Apple%20Silicon%20%7C%20Intel-success?style=flat-square" />
   <img alt="官方公证" src="https://img.shields.io/badge/安全-Apple%20Notarized-green?logo=apple&style=flat-square" />
-  <a href="#license"><img alt="软件授权" src="https://img.shields.io/badge/授权-免费版%20%2F%20Pro%20买断-purple?style=flat-square" /></a>
-</p>
-
-<p align="center">
-  <img src="assets/screenshot_hud.png" alt="PhantomKnob HUD 界面预览" width="800" style="max-width: 100%; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
 </p>
 
 ---
@@ -49,7 +44,6 @@
 - [💎 免费版 vs Pro 版特性矩阵](#pricing-matrix)
 - [🔒 安全与隐私承诺](#security-privacy)
 - [❓ 常见问题解答 (FAQ)](#faq)
-- [📄 开源与软件许可 (License)](#license)
 
 ---
 
@@ -108,10 +102,6 @@ curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.s
 - **DDC/CI 硬件协议支持 (Pro)**：无需安装第三方繁重工具，直接通过底层 DDC/CI 协议调节第三方外接显示器（如 Dell、LG、ASUS）的真实物理背光。
 - **电影级 HUD 视觉特效**：内置 Space Warp、Rift、Halo 等多款 GPU 硬件加速入场与出场动效，兼顾实用与视觉愉悦。
 
-<p align="center">
-  <img src="assets/screenshot_overlay.png" alt="系统快捷旋钮 HUD" width="700" style="border-radius: 8px;" />
-</p>
-
 ---
 
 <a id="scene-daily-apps"></a>
@@ -136,10 +126,6 @@ curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.s
 - **专为创作 App 深度定制**：针对剪映 / CapCut、Final Cut Pro、DaVinci Resolve、Adobe Lightroom、Logic Pro 等提供专属预设旋钮。检测到前台应用时自动加载匹配方案。
 - **时间轴穿梭**：在剪映 / FCP 中，微旋精确卡音频节奏点，大角度快转跨轨道飞梭穿梭。
 - **悬停即调心流**：无需用鼠标点击拖拽狭小的数值滑块，只需将鼠标指针悬停在曝光、对比度、HSL、RGB 调色文本框上，直接在触控板上旋转，实现沉浸式盲调。
-
-<p align="center">
-  <img src="assets/screenshot_settings.png" alt="PhantomKnob 设置与定制界面" width="700" style="border-radius: 8px;" />
-</p>
 
 ---
 
@@ -204,7 +190,7 @@ PhantomKnob 是一个深度调用 macOS 底层能力的极客生产力引擎，�
 | 功能特性 | 免费版 (Free) | 专业版 (Pro) |
 | :--- | :---: | :---: |
 | **价格方案** | **$0 / 永久免费** | **$16.18**（原价 $27.18，10/31 前首发优惠） |
-| **授权模式** | 个人无限制 | 一次性买断，终身使用，**无任何订阅** |
+| **使用模式** | 个人无限制 | 一次性买断，终身使用，**无任何订阅** |
 | **可激活个人 Mac 设备数** | 1 台 | **3 台同时激活** |
 | **三指系统快捷旋钮 (音量 / 亮度)** | ✅ 支持 | ✅ 支持 |
 | **内置屏与 Apple 官方显示器调光** | ✅ 支持 | ✅ 支持 |
@@ -267,18 +253,6 @@ PhantomKnob 需要在系统底层监听多点触控板的原始坐标流，并�
 <br>
 支持。我们提供 **14 天无条件退款保证 (14-Day Money-Back Guarantee)**。如果您购买 Pro 版后觉得不符合预期，只需在购买后 14 天内发送邮件至 <a href="mailto:phantomknob232@gmail.com">phantomknob232@gmail.com</a> 并附上您的 Lemon Squeezy 订单号，我们将为您办理全额退款。详见官方主页的<a href="refund.html">退款政策 (Refund Policy)</a>。
 </details>
-
----
-
-<a id="license"></a>
-## 📄 开源与软件许可 (License)
-
-- 本 GitHub 仓库中的网页前端、脚本与文档遵循 [MIT License](LICENSE) 开源；
-- **PhantomKnob macOS 应用程序** 为免费增值软件（Freemium）：
-  - 基础功能永久免费，附赠 14 天 Pro 全功能免费试用；
-  - 高级功能遵循商业授权协议（可单次买断升级）。
-
----
 
 <p align="center">
   <b>方寸之间，掌驭万物。</b><br>
