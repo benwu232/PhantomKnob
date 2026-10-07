@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/benwu232/PhantomKnob/releases/"><img alt="最新版本" src="https://img.shields.io/badge/版本-v2.2.7-orange?style=flat-square" /></a>
+  <a href="https://github.com/benwu232/PhantomKnob/releases/latest"><img alt="最新版本" src="https://img.shields.io/github/v/release/benwu232/PhantomKnob?style=flat-square&color=orange&label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC" /></a>
   <img alt="平台支持" src="https://img.shields.io/badge/平台-macOS%2013%2B-blue?logo=apple&style=flat-square" />
   <img alt="架构支持" src="https://img.shields.io/badge/架构-Apple%20Silicon%20%7C%20Intel-success?style=flat-square" />
   <img alt="官方公证" src="https://img.shields.io/badge/安全-Apple%20Notarized-green?logo=apple&style=flat-square" />

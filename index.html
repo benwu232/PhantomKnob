@@ -592,16 +592,21 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
         <h1><span class="h1-line">Unlock the <span class="turn">Magic Knob</span></span><br><span class="h1-line">Inside Your Trackpad</span></h1>
         <p class="hero-sub">Transform your Mac trackpad into a physical rotary dial and creative grading console. Zero extra hardware, zero tangled cables — engineered for seamless mobile workflow.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/">
+          <a class="btn btn-primary" href="https://github.com/benwu232/PhantomKnob/releases/" id="heroDownloadBtn">
             <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"></path></svg>
-            Download Free
+            <span>Download Free</span>
+            <span id="heroVersionTag" style="font-size:0.84em;opacity:0.85;margin-left:4px;font-family:var(--font-mono)">(v2.2.9)</span>
           </a>
                   <button class="btn btn-demo" id="heroDemoBtn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
             Watch 36s Live Demo
           </button>
         </div>
-        <p class="hero-meta"><span><b>Daily Tools Free + 5 Pro App Slots</b></span><span>macOS 13+ · MacBook &amp; Magic Trackpad</span></p>
+        <p class="hero-meta">
+          <span><b>Daily Tools Free + 5 Pro App Slots</b></span>
+          <span>macOS 13+ · MacBook &amp; Magic Trackpad</span>
+          <span id="versionMeta" style="display:inline-flex;align-items:center;gap:4px">Latest: <b id="versionNumber" style="color:var(--amber)">v2.2.9</b> · <a class="release-notes-link" href="https://github.com/benwu232/PhantomKnob/releases" style="text-decoration:underline;color:var(--ink-2)" target="_blank" rel="noopener">Release Notes</a></span>
+        </p>
       </div>
 
             <div class="stage" id="stage">
@@ -1699,6 +1704,81 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
     } else {
       initVideoModal();
     }
+  })();
+
+  // Dynamically fetch latest GitHub Release DMG direct download URL & update buttons/version
+  (function initReleaseDownload(){
+    var CACHE_KEY = "pk_latest_release_cache";
+    var CACHE_TIME_KEY = "pk_latest_release_time";
+    var CACHE_TTL = 30 * 60 * 1000; // 30 minutes cache to avoid GitHub API rate limits
+
+    function applyReleaseData(data){
+      if(!data || !data.tag_name) return;
+      var tagName = data.tag_name;
+      var dmgAsset = null;
+      if(data.assets && data.assets.length){
+        for(var i = 0; i < data.assets.length; i++){
+          var a = data.assets[i];
+          if(a.name && a.name.toLowerCase().endsWith(".dmg")){
+            dmgAsset = a;
+            break;
+          }
+        }
+      }
+      var dmgUrl = dmgAsset ? dmgAsset.browser_download_url : null;
+
+      // 1. Replace all download buttons with direct DMG link
+      var downloadBtns = document.querySelectorAll('a[href*="github.com/benwu232/PhantomKnob/releases"]');
+      downloadBtns.forEach(function(btn){
+        if(btn.classList.contains("release-notes-link")) return;
+        if(dmgUrl){
+          btn.href = dmgUrl;
+          btn.setAttribute("download", "");
+          btn.setAttribute("title", "Direct download " + (dmgAsset.name || (tagName + " DMG")));
+        }
+      });
+
+      // 2. Update version tags and numbers
+      var heroVerTag = document.getElementById("heroVersionTag");
+      if(heroVerTag){
+        heroVerTag.textContent = "(" + tagName + ")";
+      }
+      var verNum = document.getElementById("versionNumber");
+      if(verNum){
+        verNum.textContent = tagName;
+      }
+      var verBadges = document.querySelectorAll(".pk-latest-version");
+      verBadges.forEach(function(el){
+        el.textContent = tagName;
+      });
+    }
+
+    try {
+      var cached = localStorage.getItem(CACHE_KEY);
+      var cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+      var now = Date.now();
+      if(cached && cachedTime && (now - parseInt(cachedTime, 10)) < CACHE_TTL){
+        applyReleaseData(JSON.parse(cached));
+        return;
+      }
+    } catch(e){}
+
+    fetch("https://api.github.com/repos/benwu232/PhantomKnob/releases/latest")
+      .then(function(res){
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+          localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+        } catch(e){}
+        applyReleaseData(data);
+      })
+      .catch(function(err){
+        // Graceful fallback: keeps original release page link
+        console.warn("Using fallback releases link:", err);
+      });
   })();
 
 })();</script>

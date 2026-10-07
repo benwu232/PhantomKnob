@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/benwu232/PhantomKnob/releases/"><img alt="Latest Release" src="https://img.shields.io/badge/Release-v2.2.7-orange?style=flat-square" /></a>
+  <a href="https://github.com/benwu232/PhantomKnob/releases/latest"><img alt="Latest Release" src="https://img.shields.io/github/v/release/benwu232/PhantomKnob?style=flat-square&color=orange&label=Release" /></a>
   <img alt="Platform" src="https://img.shields.io/badge/Platform-macOS%2013%2B-blue?logo=apple&style=flat-square" />
   <img alt="Architecture" src="https://img.shields.io/badge/Architecture-Apple%20Silicon%20%7C%20Intel-success?style=flat-square" />
   <img alt="Security" src="https://img.shields.io/badge/Security-Apple%20Notarized-green?logo=apple&style=flat-square" />
