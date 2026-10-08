@@ -270,6 +270,16 @@ section{padding:96px 0}
 /* pricing */
 .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto;align-items:stretch}
 .plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative;display:flex;flex-direction:column}
+.promo-box{margin-bottom:12px;background:rgba(255,159,10,0.06);border:1px dashed rgba(255,159,10,0.35);border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:6px}
+.promo-box-header{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem}
+.promo-badge{color:var(--amber);font-weight:600;font-family:var(--font-mono)}
+.promo-auto-hint{color:var(--ink-3);font-size:0.72rem}
+.promo-code-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.promo-code{font-family:var(--font-mono);font-size:0.95rem;font-weight:700;letter-spacing:0.08em;color:var(--amber);background:rgba(0,0,0,0.3);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,159,10,0.2)}
+.promo-copy-btn{display:inline-flex;align-items:center;gap:4px;background:rgba(255,159,10,0.15);color:var(--amber);border:1px solid rgba(255,159,10,0.3);border-radius:6px;padding:4px 9px;font-size:0.75rem;cursor:pointer;font-family:inherit;transition:all .15s ease}
+.promo-copy-btn:hover{background:rgba(255,159,10,0.25);border-color:var(--amber)}
+.promo-copy-btn.copied{background:#30d158;color:#000;border-color:#30d158}
+
 .plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
 .plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
 .plan .tag.free-tag{background:rgba(255,255,255,0.06);color:var(--ink-2);border:1px solid var(--line);letter-spacing:0.12em}
@@ -1065,23 +1075,23 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
 
         <!-- Plan 2: Pro -->
         <div class="plan pro rv in">
-          <span class="tag">EARLY BIRD SPECIAL · ENDS OCT 31</span>
+          <span class="tag" id="pro-promo-tag">EARLY BIRD SPECIAL · ENDS NOV 9</span>
           <div class="plan-head">
             <h3>Pro License</h3>
             <p class="pd">Infinite flywheel momentum, hardware DDC display dimming, and an unrestricted pro software ecosystem.</p>
             <div class="price">
-              <span class="math-tip orig" tabindex="0">
+              <span class="math-tip orig" tabindex="0" id="pro-orig-price">
                 <s class="orig-num">$27.18</s><span class="math-const">10e</span>
                 <span class="tip-box">e = 2.718281... Natural Base</span>
               </span>
-              <span class="math-tip cur-price" tabindex="0">
+              <span class="math-tip cur-price" tabindex="0" id="pro-cur-price">
                 $16.18<span class="math-const">10φ</span>
                 <span class="tip-box">φ = 1.618033... Golden Ratio</span>
               </span>
-              <span class="save-badge">SAVE $11 · 40.5% OFF</span>
+              <span class="save-badge" id="pro-save-badge">SAVE $11 · 40.5% OFF</span>
             </div>
             <div class="price-cycle">/ One-Time Purchase · Lifetime License · No Subscriptions</div>
-            <div class="ps deadline">Reverts to regular price $27.18 after October 31, 2026</div>
+            <div class="ps deadline" id="pro-deadline-text">Early bird offer valid until Nov 9, 2026, 00:00 UTC. Returns to $27.18 after.</div>
           </div>
           <ul>
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ Activate simultaneously on up to 3 personal Macs</b></span></li>
@@ -1096,7 +1106,20 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ v2.x All future updates included free</b>, one-time purchase for perpetual ownership</span></li>
           </ul>
           <div class="plan-foot">
-            <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">Buy Pro License →</a>
+            <div class="promo-box" id="promo-coupon-box">
+              <div class="promo-box-header">
+                <span class="promo-badge">Early Bird Save $11</span>
+                <span class="promo-auto-hint">Auto-applied at checkout</span>
+              </div>
+              <div class="promo-code-row">
+                <code class="promo-code" id="promo-code-val">QYNDIWMW</code>
+                <button type="button" class="promo-copy-btn" id="promo-copy-btn" title="Click to copy promo code">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 4v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2h-8a2 2 0 00-2 2z"></path><path d="M16 18v2a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h2"></path></svg>
+                  <span class="copy-text">Copy Code</span>
+                </button>
+              </div>
+            </div>
+            <a class="btn btn-primary" id="buy-pro-btn" href="https://benwu232.lemonsqueezy.com/checkout/buy/da9296da-8b59-44d6-bac5-e6c36714fdbc?checkout[discount_code]=QYNDIWMW" target="_blank" rel="noopener">Buy Pro License →</a>
             <div class="pay-note">Secure USD checkout · Processed by Lemon Squeezy (MoR) · Credit Card / Apple Pay / PayPal</div>
             <p class="upgrade-note">Already using the free edition? Upgrade directly in the app menu under "About PhantomKnob" without reinstalling.</p>
           </div>
@@ -1837,4 +1860,5 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
 
 
 
+<script src="assets/promo.js" defer></script>
 </body></html>

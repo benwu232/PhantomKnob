@@ -1,0 +1,11 @@
+{
+  "active": true,
+  "code": "QYNDIWMW",
+  "discountAmount": 11,
+  "originalPrice": 27.18,
+  "discountedPrice": 16.18,
+  "deadline": "2026-11-09T00:00:00Z",
+  "deadlineTextZh": "2026 年 11 月 9 日 00:00 UTC 前享受早鸟特惠，之后恢复原价 $27.18",
+  "deadlineTextEn": "Early bird offer valid until Nov 9, 2026, 00:00 UTC. Returns to $27.18 after.",
+  "checkoutBaseUrl": "https://benwu232.lemonsqueezy.com/checkout/buy/da9296da-8b59-44d6-bac5-e6c36714fdbc"
+}

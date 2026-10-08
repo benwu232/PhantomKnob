@@ -296,6 +296,16 @@ section{padding:96px 0}
 /* pricing */
 .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:860px;margin:0 auto;align-items:stretch}
 .plan{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:34px 32px;position:relative;display:flex;flex-direction:column}
+.promo-box{margin-bottom:12px;background:rgba(255,159,10,0.06);border:1px dashed rgba(255,159,10,0.35);border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:6px}
+.promo-box-header{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem}
+.promo-badge{color:var(--amber);font-weight:600;font-family:var(--font-mono)}
+.promo-auto-hint{color:var(--ink-3);font-size:0.72rem}
+.promo-code-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.promo-code{font-family:var(--font-mono);font-size:0.95rem;font-weight:700;letter-spacing:0.08em;color:var(--amber);background:rgba(0,0,0,0.3);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,159,10,0.2)}
+.promo-copy-btn{display:inline-flex;align-items:center;gap:4px;background:rgba(255,159,10,0.15);color:var(--amber);border:1px solid rgba(255,159,10,0.3);border-radius:6px;padding:4px 9px;font-size:0.75rem;cursor:pointer;font-family:inherit;transition:all .15s ease}
+.promo-copy-btn:hover{background:rgba(255,159,10,0.25);border-color:var(--amber)}
+.promo-copy-btn.copied{background:#30d158;color:#000;border-color:#30d158}
+
 .plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
 .plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
 .plan .tag.free-tag{background:rgba(255,255,255,0.06);color:var(--ink-2);border:1px solid var(--line);letter-spacing:0.12em}
@@ -1101,23 +1111,23 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
 
         <!-- Plan 2: Pro -->
         <div class="plan pro rv in">
-          <span class="tag">首发限定 · 10/31 截止</span>
+          <span class="tag" id="pro-promo-tag">首发限定 · 11/9 截止</span>
           <div class="plan-head">
             <h3>Pro</h3>
             <p class="pd">生理极限手感，硬核硬件控制，无限创作生态。</p>
             <div class="price">
-              <span class="math-tip orig" tabindex="0">
+              <span class="math-tip orig" tabindex="0" id="pro-orig-price">
                 <s class="orig-num">$27.18</s><span class="math-const">10e</span>
                 <span class="tip-box">e = 2.718281... 自然底数</span>
               </span>
-              <span class="math-tip cur-price" tabindex="0">
+              <span class="math-tip cur-price" tabindex="0" id="pro-cur-price">
                 $16.18<span class="math-const">10φ</span>
                 <span class="tip-box">φ = 1.618033... 黄金分割比</span>
               </span>
-              <span class="save-badge">省 $11 · 40.5% OFF</span>
+              <span class="save-badge" id="pro-save-badge">省 $11 · 40.5% OFF</span>
             </div>
             <div class="price-cycle">/ 一次性买断 · 终身使用 · 无任何订阅</div>
-            <div class="ps deadline">2026 年 10 月 31 日后恢复原价 $27.18</div>
+            <div class="ps deadline" id="pro-deadline-text">2026 年 11 月 9 日 00:00 UTC 前享受早鸟特惠，之后恢复原价 $27.18</div>
           </div>
           <ul>
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ 支持同时激活 3 台个人 Mac</b></span></li>
@@ -1132,7 +1142,20 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
             <li><svg width="15" height="15" fill="none" stroke="#ff9f0a" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"></path></svg><span><b>⚡️ v2.x 所有后续版本免费更新</b>，一次买断终身享用</span></li>
           </ul>
           <div class="plan-foot">
-            <a class="btn btn-primary" href="https://benwu232.lemonsqueezy.com/checkout/buy/745d4e0d-3c01-4264-bbe2-46ed187ddf10" target="_blank" rel="noopener">立即购买 →</a>
+            <div class="promo-box" id="promo-coupon-box">
+              <div class="promo-box-header">
+                <span class="promo-badge">早鸟专属立减 $11</span>
+                <span class="promo-auto-hint">点击购买已自动应用</span>
+              </div>
+              <div class="promo-code-row">
+                <code class="promo-code" id="promo-code-val">QYNDIWMW</code>
+                <button type="button" class="promo-copy-btn" id="promo-copy-btn" title="点击复制优惠码">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 4v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2h-8a2 2 0 00-2 2z"></path><path d="M16 18v2a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h2"></path></svg>
+                  <span class="copy-text">复制优惠码</span>
+                </button>
+              </div>
+            </div>
+            <a class="btn btn-primary" id="buy-pro-btn" href="https://benwu232.lemonsqueezy.com/checkout/buy/da9296da-8b59-44d6-bac5-e6c36714fdbc?checkout[discount_code]=QYNDIWMW" target="_blank" rel="noopener">立即购买 →</a>
             <div class="pay-note">全渠道纯美元结算 · Lemon Squeezy (MoR) 担保交易 · 信用卡 / Apple Pay / PayPal</div>
             <p class="upgrade-note">已安装免费版？在 App 菜单「关于 PhantomKnob…」中即可升级，无需重新下载。</p>
           </div>
@@ -1932,4 +1955,5 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
       </div>
     </div>
   </div>
+<script src="assets/promo.js" defer></script>
 </body></html>
