@@ -10,6 +10,7 @@
     var now = new Date();
     var deadline = new Date(data.deadline);
     var isExpired = !data.active || now >= deadline;
+    var promoBanner = document.getElementById("promo-banner");
     var promoBox = document.getElementById("promo-coupon-box");
     var promoTag = document.getElementById("pro-promo-tag");
     var saveBadge = document.getElementById("pro-save-badge");
@@ -20,6 +21,7 @@
     var isZh = document.documentElement.lang.indexOf("zh") !== -1;
 
     if (isExpired) {
+      if (promoBanner) promoBanner.style.display = "none";
       if (promoBox) promoBox.style.display = "none";
       if (promoTag) promoTag.style.display = "none";
       if (saveBadge) saveBadge.style.display = "none";

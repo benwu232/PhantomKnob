@@ -280,6 +280,24 @@ section{padding:96px 0}
 .promo-copy-btn:hover{background:rgba(255,159,10,0.25);border-color:var(--amber)}
 .promo-copy-btn.copied{background:#30d158;color:#000;border-color:#30d158}
 
+/* promo banner & coupon box */
+.promo-banner{background:linear-gradient(90deg,rgba(255,159,10,0.14),rgba(255,159,10,0.06),rgba(255,159,10,0.14));border-bottom:1px solid rgba(255,159,10,0.28);padding:9px 16px;text-align:center;font-size:0.86rem;position:sticky;top:60px;z-index:90;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.promo-banner-inner{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.promo-banner b{color:var(--amber);font-weight:600}
+.promo-banner code{font-family:var(--font-mono);background:rgba(0,0,0,0.45);border:1px solid rgba(255,159,10,0.3);padding:2px 7px;border-radius:5px;color:var(--amber);font-weight:700}
+.promo-banner .pb-link{color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-weight:500;transition:color .2s}
+.promo-banner .pb-link:hover{color:var(--amber)}
+
+.promo-box{margin-bottom:12px;background:rgba(255,159,10,0.06);border:1px dashed rgba(255,159,10,0.35);border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:6px}
+.promo-box-header{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem}
+.promo-badge{color:var(--amber);font-weight:600;font-family:var(--font-mono)}
+.promo-auto-hint{color:var(--ink-3);font-size:0.72rem}
+.promo-code-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.promo-code{font-family:var(--font-mono);font-size:0.95rem;font-weight:700;letter-spacing:0.08em;color:var(--amber);background:rgba(0,0,0,0.3);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,159,10,0.2)}
+.promo-copy-btn{display:inline-flex;align-items:center;gap:4px;background:rgba(255,159,10,0.15);color:var(--amber);border:1px solid rgba(255,159,10,0.3);border-radius:6px;padding:4px 9px;font-size:0.75rem;cursor:pointer;font-family:inherit;transition:all .15s ease}
+.promo-copy-btn:hover{background:rgba(255,159,10,0.25);border-color:var(--amber)}
+.promo-copy-btn.copied{background:#30d158;color:#000;border-color:#30d158}
+
 .plan.pro{border-color:rgba(255,159,10,0.45);background:linear-gradient(180deg,rgba(255,159,10,0.05),transparent 40%),var(--panel)}
 .plan .tag{position:absolute;top:-13px;left:30px;font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;color:#17120b;background:var(--amber);border-radius:6px;padding:4px 11px;font-weight:500}
 .plan .tag.free-tag{background:rgba(255,255,255,0.06);color:var(--ink-2);border:1px solid var(--line);letter-spacing:0.12em}
@@ -586,6 +604,14 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
     </div>
   </nav>
 </header>
+
+<aside class="promo-banner" id="promo-banner" aria-label="Promotion Announcement">
+  <div class="wrap promo-banner-inner">
+    <span>🎉</span>
+    <span><b>Early Bird Special Live!</b> Save $11 with code <code>QYNDIWMW</code> (Ends Nov 9, 2026 UTC)</span>
+    <a href="#pricing" class="pb-link">View Offer →</a>
+  </div>
+</aside>
 
 <main id="top">
 
