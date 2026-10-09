@@ -78,3 +78,21 @@ describe("Legal pages bilingual files and links", () => {
     assert.ok(privacyZh.includes('href="index_zh.html"'), "privacy_zh.html must link back to index_zh.html");
   });
 });
+
+describe("Index pages preference symmetry", () => {
+  test("index.html records preference as English", () => {
+    const indexEn = fs.readFileSync(path.join(ROOT_DIR, "index.html"), "utf-8");
+    assert.ok(
+      indexEn.includes('localStorage.setItem("pk_preferred_lang", "en")'),
+      "index.html must set pk_preferred_lang to en on load or in script"
+    );
+  });
+
+  test("index_zh.html records preference as Chinese", () => {
+    const indexZh = fs.readFileSync(path.join(ROOT_DIR, "index_zh.html"), "utf-8");
+    assert.ok(
+      indexZh.includes('localStorage.setItem("pk_preferred_lang", "zh")'),
+      "index_zh.html must set pk_preferred_lang to zh on load"
+    );
+  });
+});

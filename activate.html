@@ -193,7 +193,12 @@
         function detectLanguage() {
             const params = new URLSearchParams(window.location.search);
             const urlLang = (params.get('lang') || '').toLowerCase();
-            if (urlLang === 'zh' || urlLang === 'en') return urlLang;
+            if (urlLang === 'zh' || urlLang === 'en') {
+                try {
+                    localStorage.setItem('pk_preferred_lang', urlLang);
+                } catch(e) {}
+                return urlLang;
+            }
 
             try {
                 const stored = localStorage.getItem('pk_preferred_lang');

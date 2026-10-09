@@ -1278,6 +1278,13 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
     localStorage.setItem("pk_preferred_lang", "zh");
   } catch(err){}
 
+  var buyBtn = document.getElementById("buy-pro-btn");
+  if(buyBtn){
+    buyBtn.addEventListener("click", function(){
+      try { localStorage.setItem("pk_preferred_lang", "zh"); } catch(e){}
+    });
+  }
+
   // Smart Language Switcher: Preserves current hash and records preference
   var langSwitch = document.getElementById("lang-switch");
   if(langSwitch){
