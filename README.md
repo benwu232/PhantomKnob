@@ -32,7 +32,7 @@
 
 ## Table of Contents
 
-- [✨ 36-Second Video Demonstrations](#video-demos)
+- [✨ Video Demonstrations](#video-demos)
 - [🚀 Quick Start & Installation](#quick-start)
 - [🎯 Three Core Scenarios](#scenes)
   - [1. System Quick Knob (3-Finger Blind Control)](#scene-quick-knob)
@@ -48,15 +48,19 @@
 ---
 
 <a id="video-demos"></a>
-## ✨ 36-Second Video Demonstrations
+## ✨ Video Demonstrations
 
-Seeing is believing. Check out these 3 high-definition demo clips showing the tactile dial simulation on a MacBook trackpad:
+Seeing is believing. Check out these demo clips (~1 minute each) showing tactile dial simulation on a MacBook trackpad:
 
 | Demo Theme | Duration | Highlights | Video Link |
 | :--- | :---: | :--- | :---: |
-| ⚡ **System Quick Knob** | 36s | 3-finger rotation for volume & brightness, Space Warp/Rift HUD animation | [▶ Watch Demo (YouTube)](https://youtu.be/sW381I42dwc) |
-| 🧭 **Daily Applications** | 82s | QuickTime frame-by-frame shuttle & Safari dual-ring stepless reading | [▶ Watch Demo (YouTube)](https://youtu.be/OO-nl7yFb_A) |
-| 🎬 **Pro Creative Workflow** | 104s | CapCut / Final Cut Pro timeline shuttle & hover-grading text fields | [▶ Watch Demo (YouTube)](https://youtu.be/EIoTdJ-p-Uo) |
+| ⚡ **System Quick Knob** | ~1m | 3-finger rotation for volume & brightness, Space Warp/Rift HUD animation | [▶ Watch Demo (YouTube)](https://youtu.be/uPkmTkVxn6s) |
+| 🧭 **Daily Applications** | ~1m | QuickTime frame-by-frame shuttle & Safari dual-ring stepless reading | [▶ Watch Demo (YouTube)](https://youtu.be/wlQIVSmAjj0) |
+| 🎬 **Pro Creative Workflow** | ~1.5m | CapCut / Final Cut Pro timeline shuttle & hover-grading text fields | [▶ Watch Demo (YouTube)](https://youtu.be/3sI8a8UzTcA) |
+| 🔐 **Grant Permissions** | <1m | Quick walkthrough of Accessibility and Input Monitoring permissions | [▶ Watch Demo (YouTube)](https://youtu.be/cuT-IoSFiKs) |
+| ⚙️ **Knob Manager Customization** | ~1m | Press 'C' to open Knob Manager and customize gestures for any app | [▶ Watch Demo (YouTube)](https://youtu.be/D_86gxjuMUE) |
+
+> 📺 **Full Playlist**: [Watch the full PhantomKnob demo playlist on YouTube](https://www.youtube.com/playlist?list=PLECiz0QykiiE)
 
 ---
 

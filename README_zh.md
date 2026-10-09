@@ -32,7 +32,7 @@
 
 ## 目录 (Table of Contents)
 
-- [✨ 36 秒实机演示视频](#video-demos)
+- [✨ 实机演示视频](#video-demos)
 - [🚀 快速开始与安装 (Quick Start)](#quick-start)
 - [🎯 三大核心应用场景](#scenes)
   - [1. 系统快捷旋钮 (三指盲调)](#scene-quick-knob)
@@ -48,15 +48,19 @@
 ---
 
 <a id="video-demos"></a>
-## ✨ 36 秒实机演示视频
+## ✨ 实机演示视频
 
-百闻不如一见。通过以下 3 支高清实机演示视频，直观感受触控板模拟物理旋钮的丝滑体验：
+百闻不如一见。通过以下实机演示视频（单支时长约 1 分钟），直观感受触控板模拟物理旋钮的丝滑体验：
 
 | 演示主题 | 时长 | 核心看点 | 视频链接 |
 | :--- | :---: | :--- | :---: |
-| ⚡ **系统快捷旋钮篇** | 36s | 三指旋转盲调系统音量与屏幕亮度、Space Warp/Rift 炫酷 HUD | [▶ 观看实机演示 (YouTube)](https://youtu.be/sW381I42dwc) |
-| 🧭 **高频日常应用篇** | 82s | QuickTime 逐帧变速飞轮卡点与 Safari 双环无级精读漫游 | [▶ 观看日常演示 (YouTube)](https://youtu.be/OO-nl7yFb_A) |
-| 🎬 **专业创意工作流篇** | 104s | 剪映 / CapCut 时间轴 CVK 飞轮穿梭与调色文本框悬停盲调 | [▶ 观看工作流演示 (YouTube)](https://youtu.be/EIoTdJ-p-Uo) |
+| ⚡ **系统快捷旋钮篇** | ~1m | 三指旋转盲调系统音量与屏幕亮度、Space Warp/Rift 炫酷 HUD | [▶ 观看演示 (YouTube)](https://youtu.be/uPkmTkVxn6s) |
+| 🧭 **高频日常应用篇** | ~1m | QuickTime 逐帧变速飞轮卡点与 Safari 双环无级精读漫游 | [▶ 观看演示 (YouTube)](https://youtu.be/wlQIVSmAjj0) |
+| 🎬 **专业创意工作流篇** | ~1.5m | 剪映 / CapCut 时间轴 CVK 飞轮穿梭与调色文本框悬停盲调 | [▶ 观看演示 (YouTube)](https://youtu.be/3sI8a8UzTcA) |
+| 🔐 **系统权限配置篇** | <1m | 快速开启辅助功能与输入监控权限，纯离线安全机制 | [▶ 观看演示 (YouTube)](https://youtu.be/cuT-IoSFiKs) |
+| ⚙️ **旋钮管理器定制篇** | ~1m | 按 'C' 键调出旋钮管理器，为任意第三方软件深度定制专属行为 | [▶ 观看演示 (YouTube)](https://youtu.be/D_86gxjuMUE) |
+
+> 📺 **完整播放列表**：[在 YouTube 上查看 PhantomKnob 全部实机演示合集](https://www.youtube.com/playlist?list=PLECiz0QykiiE)
 
 ---
 
