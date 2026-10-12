@@ -189,7 +189,7 @@ PhantomKnob is engineered to run seamlessly alongside macOS event pipelines via 
 <a id="pricing-matrix"></a>
 ## 💎 Free vs. Pro Feature Matrix
 
-Free version provides lifetime core everyday tools and 5 customizable professional app slots. Pro is a single lifetime purchase:
+Free version provides lifetime core everyday tools & dev environments and 2 customizable professional app slots. Pro is a single lifetime purchase:
 
 | Features | Free Edition | Pro Edition |
 | :--- | :---: | :---: |
@@ -202,7 +202,7 @@ Free version provides lifetime core everyday tools and 5 customizable profession
 | **2-Finger Physical Dial Simulation** | ✅ Included | ✅ Included |
 | **Knob Dial Types** | Standard Single Knob | ✅ **Single + Dual-Ring + Continuous Variable (CVK)** |
 | **Single-Finger Flywheel Infinite Spin** | ❌ (Stops upon lift) | ✅ **Included (Break wrist rotation limit)** |
-| **Pro App Customization Slots** | 5 Apps (Hot-swappable) | ✅ **Unlimited Pro Apps Ecosystem** |
+| **Pro App Customization Slots** | 2 Apps (Hot-swappable) | ✅ **Unlimited Pro Apps Ecosystem** |
 | **Everyday Tools (Safari/Chrome/VS Code)** | ✅ Free Forever | ✅ Free Forever |
 | **Cloud Sync** | Local Storage Only | ✅ **Silent iCloud Sync across devices** |
 | **Center Icon Customization** | 24+ SF Symbols | ✅ **Import Custom Vectors & Images** |
@@ -241,9 +241,9 @@ Knobs calculate change based on angular delta. With a larger radius, rotating th
 </details>
 
 <details>
-<summary><b>Q3: How do the 5 Pro App slots work in the Free version?</b></summary>
+<summary><b>Q3: How do the 2 Pro App slots work in the Free version?</b></summary>
 <br>
-Common productivity tools (Chrome, Safari, VS Code, Xcode, Finder, Notes) are completely exempt and free forever. For professional creative apps (Final Cut Pro, CapCut, Lightroom, Logic Pro, etc.), the Free edition allows you to activate up to 5 full-featured profiles simultaneously. Any extra apps can still use standard single knobs or be swapped into active slots at any time.
+Common productivity tools, media players, and coding environments (Chrome, Safari, VS Code, Cursor, Xcode, JetBrains, Finder, etc.) are completely exempt and free forever. For professional creative apps (Final Cut Pro, CapCut, Lightroom, Logic Pro, etc.), the Free edition allows you to activate up to 2 full-featured profiles simultaneously. Any extra apps can still use standard single knobs or be swapped into active slots at any time.
 </details>
 
 <details>
