@@ -22,6 +22,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/benwu232/homebrew-tap"><img alt="Homebrew Cask" src="https://img.shields.io/badge/Homebrew-phantom--knob-blue?logo=homebrew&style=flat-square" /></a>
   <a href="https://github.com/benwu232/PhantomKnob/releases/latest"><img alt="Latest Release" src="https://img.shields.io/github/v/release/benwu232/PhantomKnob?style=flat-square&color=orange&label=Release" /></a>
   <img alt="Platform" src="https://img.shields.io/badge/Platform-macOS%2013%2B-blue?logo=apple&style=flat-square" />
   <img alt="Architecture" src="https://img.shields.io/badge/Architecture-Apple%20Silicon%20%7C%20Intel-success?style=flat-square" />
@@ -67,7 +68,23 @@ Seeing is believing. Check out these demo clips (~1 minute each) showing tactile
 <a id="quick-start"></a>
 ## 🚀 Quick Start & Installation
 
-### Option A: One-Line Terminal Install (Recommended)
+### Option A: Install via Homebrew (Recommended)
+
+```bash
+brew install --cask benwu232/tap/phantom-knob
+```
+
+*To update later:*
+```bash
+brew upgrade phantom-knob
+```
+
+*To uninstall completely:*
+```bash
+brew uninstall --zap phantom-knob
+```
+
+### Option B: One-Line Terminal Script
 
 Open your macOS Terminal, paste and run the following command:
 
@@ -75,7 +92,7 @@ Open your macOS Terminal, paste and run the following command:
 curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.sh | bash
 ```
 
-### Option B: Manual Download DMG
+### Option C: Manual Download DMG
 
 1. Download the latest `PhantomKnob.dmg` from [GitHub Releases](https://github.com/benwu232/PhantomKnob/releases/).
 2. Open the DMG image and drag `PhantomKnob.app` into your `/Applications` folder.

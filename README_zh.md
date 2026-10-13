@@ -67,7 +67,23 @@
 <a id="quick-start"></a>
 ## 🚀 快速开始与安装 (Quick Start)
 
-### 选项 A：终端一键极速安装（推荐）
+### 选项 A：通过 Homebrew 安装（极客首选·推荐）
+
+```bash
+brew install --cask benwu232/tap/phantom-knob
+```
+
+*后续升级：*
+```bash
+brew upgrade phantom-knob
+```
+
+*彻底干净卸载：*
+```bash
+brew uninstall --zap phantom-knob
+```
+
+### 选项 B：终端一键脚本安装
 
 打开 macOS 终端（Terminal），复制并粘贴运行以下命令：
 
@@ -75,7 +91,7 @@
 curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.sh | bash
 ```
 
-### 选项 B：手动下载 DMG
+### 选项 C：手动下载 DMG 安装包
 
 1. 前往 [GitHub Releases](https://github.com/benwu232/PhantomKnob/releases/) 下载最新的 `PhantomKnob.dmg` 安装包；
 2. 打开 DMG，将 `PhantomKnob.app` 拖入 `/Applications`（应用程序）文件夹；

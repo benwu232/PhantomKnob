@@ -582,6 +582,19 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
     gap:10px;
   }
 }
+
+/* hero brew terminal pill */
+.hero-brew-box{display:inline-flex;align-items:center;gap:10px;padding:7px 12px;background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.1);border-radius:10px;font-family:var(--font-mono);font-size:0.78rem;color:var(--ink-2);margin-bottom:18px;max-width:100%;transition:border-color .2s,background .2s}
+.hero-brew-box:hover{border-color:rgba(255,159,10,0.35);background:rgba(255,255,255,0.05)}
+.hero-brew-box .brew-prompt{color:var(--amber);font-weight:600;user-select:none}
+.hero-brew-box .brew-cmd{color:var(--ink);font-family:inherit;font-size:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-brew-box .brew-copy-btn{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink-2);padding:3px 8px;border-radius:6px;font-family:inherit;font-size:0.72rem;cursor:pointer;transition:all .18s ease;user-select:none;margin-left:auto}
+.hero-brew-box .brew-copy-btn:hover{background:var(--amber-soft);border-color:rgba(255,159,10,0.4);color:var(--amber)}
+.hero-brew-box .brew-copy-btn.copied{background:rgba(48,209,88,0.15);border-color:rgba(48,209,88,0.4);color:#30d158}
+.step-brew-hint{display:flex;align-items:center;gap:8px;margin-top:12px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:8px;font-family:var(--font-mono);font-size:0.75rem;flex-wrap:wrap}
+.step-brew-hint .sbh-label{color:var(--amber);font-size:0.7rem;letter-spacing:0.04em}
+.step-brew-hint .sbh-code{color:var(--ink);background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);word-break:break-all}
+
 </style>
 </head>
 <body>
@@ -636,6 +649,15 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
                   <button class="btn btn-demo" id="heroDemoBtn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
             Watch Live Demo
+          </button>
+        </div>
+        <div class="hero-brew-box" id="heroBrewBox">
+          <span class="brew-prompt">$</span>
+          <code class="brew-cmd" id="heroBrewCmd">brew install --cask benwu232/tap/phantom-knob</code>
+          <button class="brew-copy-btn" id="heroBrewCopyBtn" type="button" title="Copy to clipboard" aria-label="Copy Homebrew install command">
+            <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span class="copy-label">Copy</span>
           </button>
         </div>
         <p class="hero-meta">
@@ -1931,4 +1953,33 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
 
 
 <script src="assets/promo.js" defer></script>
+<script>
+  // Homebrew click to copy handler
+  (function initBrewCopy(){
+    var copyBtn = document.getElementById("heroBrewCopyBtn");
+    var cmdEl = document.getElementById("heroBrewCmd");
+    if(!copyBtn || !cmdEl) return;
+    copyBtn.addEventListener("click", function(){
+      var text = cmdEl.textContent.trim();
+      navigator.clipboard.writeText(text).then(function(){
+        copyBtn.classList.add("copied");
+        var copyIcon = copyBtn.querySelector(".copy-icon");
+        var checkIcon = copyBtn.querySelector(".check-icon");
+        var label = copyBtn.querySelector(".copy-label");
+        if(copyIcon) copyIcon.style.display = "none";
+        if(checkIcon) checkIcon.style.display = "inline-block";
+        var origText = label ? label.textContent : "Copy";
+        if(label) label.textContent = label.getAttribute("data-copied") || "Copied!";
+        setTimeout(function(){
+          copyBtn.classList.remove("copied");
+          if(copyIcon) copyIcon.style.display = "inline-block";
+          if(checkIcon) checkIcon.style.display = "none";
+          if(label) label.textContent = origText;
+        }, 2000);
+      }).catch(function(err){
+        console.error("Failed to copy command:", err);
+      });
+    });
+  })();
+</script>
 </body></html>
