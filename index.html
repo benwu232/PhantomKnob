@@ -595,6 +595,21 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
 .step-brew-hint .sbh-label{color:var(--amber);font-size:0.7rem;letter-spacing:0.04em}
 .step-brew-hint .sbh-code{color:var(--ink);background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);word-break:break-all}
 
+
+/* foot-contact strip */
+.foot-contact{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:34px}
+@media (max-width:768px){.foot-contact{grid-template-columns:1fr}}
+.fc-card{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.025);border:1px solid var(--line-soft);border-radius:14px;padding:18px 22px;transition:all .2s ease}
+.fc-card:hover{background:rgba(255,255,255,0.045);border-color:rgba(255,159,10,0.3);transform:translateY(-1px)}
+.fc-icon{font-size:1.7rem;line-height:1;flex-shrink:0}
+.fc-body{flex:1;min-width:0}
+.fc-title{font-family:var(--font-head);font-size:0.95rem;font-weight:600;color:var(--ink);margin-bottom:4px}
+.fc-desc{font-size:0.78rem;color:var(--ink-2);line-height:1.45;margin:0}
+.fc-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-family:var(--font-mono);font-size:0.75rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);text-decoration:none;white-space:nowrap;flex-shrink:0;transition:all .18s ease}
+.fc-btn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);color:#fff}
+.fc-btn-amber{background:rgba(255,159,10,0.08);border-color:rgba(255,159,10,0.25);color:var(--amber)}
+.fc-btn-amber:hover{background:rgba(255,159,10,0.18);border-color:rgba(255,159,10,0.45);color:#fff}
+
 </style>
 </head>
 <body>
@@ -1236,6 +1251,30 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
 
 <footer>
   <div class="wrap">
+    <!-- SUPPORT & CONTACT STRIP -->
+    <div class="foot-contact rv">
+      <div class="fc-card">
+        <div class="fc-icon">🐙</div>
+        <div class="fc-body">
+          <div class="fc-title">Bug Reports & Feature Ideas</div>
+          <p class="fc-desc">Found an issue or have a workflow suggestion? Open an issue on GitHub.</p>
+        </div>
+        <a class="fc-btn" href="https://github.com/benwu232/phantom_knob_mac/issues" target="_blank" rel="noopener">
+          GitHub Issues ↗
+        </a>
+      </div>
+      <div class="fc-card">
+        <div class="fc-icon">✉️</div>
+        <div class="fc-body">
+          <div class="fc-title">Direct Support & Inquiries</div>
+          <p class="fc-desc">For volume licensing, business inquiries, or private support, drop us an email.</p>
+        </div>
+        <a class="fc-btn fc-btn-amber" href="mailto:phantomknob232@gmail.com?subject=%5BPhantomKnob%5D%20Support%20%26%20Inquiry">
+          phantomknob232@gmail.com ↗
+        </a>
+      </div>
+    </div>
+
     <div class="foot-manifesto rv">
       <div class="fm-inner">
         <p class="fm-text">“The best way to predict the future is to invent it.”</p>
@@ -1246,6 +1285,8 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
       <a class="brand" href="#top"><img src="assets/appicon.png" alt="PhantomKnob Icon">PhantomKnob</a>
       <div class="foot-links">
         <a href="index_zh.html">中文版</a>
+        <a href="https://github.com/benwu232/phantom_knob_mac/issues" target="_blank" rel="noopener">GitHub Issues</a>
+        <a href="mailto:phantomknob232@gmail.com">Contact</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
         <a href="refund.html">Refund Policy</a>
