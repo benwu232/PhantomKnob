@@ -975,8 +975,8 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
               <path d="M114 24l2.2 2.2 4-4.4" stroke="#0d0d0f" stroke-width="1.6" stroke-linecap="round"></path>
             </svg>
           </div>
-          <h3>Grant System Permissions (Accessibility &amp; Input Monitoring)</h3>
-          <p>macOS strictly regulates cross-application control; Accessibility and Input Monitoring are the official standard channels. Used solely to inspect hovered controls, emit adjustment events, and capture the 'C' key customization and preset hotkeys during rotation. Never monitors daily typing, running 100% locally and offline.</p>
+          <h3>Grant System Permissions (Accessibility Only)</h3>
+          <p>macOS strictly regulates cross-application control; Accessibility is the sole official standard channel. Used solely to inspect hovered controls and emit adjustment events. No Input Monitoring or Screen Recording required, never monitors daily typing, running 100% locally and offline.</p>
           <div style="margin-top:14px"><button class="btn btn-demo" id="permissionsDemoBtn" style="height:38px;font-size:0.84rem;padding:0 16px"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> Watch Permissions Demo</button></div>
         </div>
         <div class="step rv in">
@@ -1207,7 +1207,7 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
         </div>
         <div class="qa rv in" data-open="false">
           <button aria-expanded="false">What system permissions does PhantomKnob require? Is it safe to authorize?<span class="pm">+</span></button>
-          <div class="ans" style="max-height: 0px;"><p>To deliver a fluid rotary experience, PhantomKnob strictly requires only two standard macOS system permissions:<br><br><b>1. Accessibility:</b> Used to inspect adjustable sliders, text fields, and numerical controls under the cursor in real time, and synthesize smooth rotary scrolling actions.<br><b>2. Input Monitoring:</b> Active <b>only while two-finger or three-finger knob rotation is underway</b>, specifically dedicated to capturing the <span class="kbd">C</span> key to bring up the Knob Manager and intercepting preset hotkeys; never active at any other time.<br><br><b>Zero Logging &amp; 100% Offline Promise:</b> We never monitor daily typing in the background, never collect keystroke logs, and never record passwords or text content. The software operates completely offline on your device and never uploads any of your interaction data. <a href="#trust" style="color:var(--amber)">See the 'Security &amp; Privacy' section for details</a>.</p></div>
+          <div class="ans" style="max-height: 0px;"><p>To deliver a fluid rotary experience, PhantomKnob strictly <b>requires only 1 standard macOS system permission</b>:<br><br><b>Accessibility:</b> Used to inspect adjustable sliders, text fields, and numerical controls under the cursor in real time, and synthesize smooth rotary scrolling actions. Custom knob creation via the <span class="kbd">C</span> key is also handled securely without requiring Input Monitoring.<br><br><b>No Input Monitoring Required:</b> You never need to grant Input Monitoring or Screen Recording permissions. We never monitor daily typing in the background, never collect keystroke logs, and never record passwords or text content. The software operates completely offline on your device and never uploads any of your interaction data. <a href="#trust" style="color:var(--amber)">See the 'Security &amp; Privacy' section for details</a>.</p></div>
         </div>
         <div class="qa rv in" data-open="false">
           <button aria-expanded="false">Why does the outer ring feel slower on the Dual-Ring knob and CVK?<span class="pm">+</span></button>
@@ -1724,8 +1724,8 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
           externalUrl: "https://youtu.be/3sI8a8UzTcA"
         },
         grant_permissions: {
-          titleZh: "🔐 权限配置篇 · 快速开启辅助功能与输入监控权限（官方通道·纯离线）",
-          titleEn: "🔐 Permissions · Grant Accessibility & Input Monitoring Permissions",
+          titleZh: "🔐 权限配置篇 · 快速开启辅助功能权限（仅需 1 项权限·纯离线）",
+          titleEn: "🔐 Permissions · Grant Accessibility Permission (Single Permission)",
           youtubeId: "cuT-IoSFiKs",
           bvid: "",
           externalUrl: "https://youtu.be/cuT-IoSFiKs"

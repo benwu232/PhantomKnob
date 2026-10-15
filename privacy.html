@@ -47,8 +47,8 @@
             <h2>4. Compliance with Accessibility APIs</h2>
             <p>Phantom Knob requests macOS Accessibility permission to perform window focus detection, identify slider elements under the cursor, and inject input scroll events.</p>
 
-            <h2>5. Compliance with Input Monitoring APIs</h2>
-            <p>Phantom Knob requests macOS Input Monitoring permission (kTCCServiceListenEvent) strictly and solely to capture the 'C' key customization shortcut and intercept hotkeys while a knob rotation gesture is actively taking place. This prevents customization keystrokes from leaking into your text editors, code, or background windows. We strictly do not record, store, log, or transmit keystrokes, passwords, or typed text under any circumstances.</p>
+            <h2>5. No Input Monitoring Required & Zero Keystroke Logging</h2>
+            <p>Phantom Knob <strong>does not require and does not request</strong> macOS Input Monitoring permission (kTCCServiceListenEvent). Keystroke interception during active rotation (such as the 'C' key customization shortcut) relies solely on standard Accessibility privileges. Under no circumstances do we record, store, log, or transmit keystrokes, passwords, or typed text.</p>
 
             <h2>6. Changes to This Policy</h2>
             <p>We may update this privacy policy from time to time. We will post any adjustments on this page and update the "Last Updated" timestamp.</p>

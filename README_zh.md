@@ -57,7 +57,7 @@
 | ⚡ **系统快捷旋钮篇** | ~1m | 三指旋转盲调系统音量与屏幕亮度、Space Warp/Rift 炫酷 HUD | [▶ 观看演示 (YouTube)](https://youtu.be/uPkmTkVxn6s) |
 | 🧭 **高频日常应用篇** | ~1m | QuickTime 逐帧变速飞轮卡点与 Safari 双环无级精读漫游 | [▶ 观看演示 (YouTube)](https://youtu.be/wlQIVSmAjj0) |
 | 🎬 **专业创意工作流篇** | ~1.5m | 剪映 / CapCut 时间轴 CVK 飞轮穿梭与调色文本框悬停盲调 | [▶ 观看演示 (YouTube)](https://youtu.be/3sI8a8UzTcA) |
-| 🔐 **系统权限配置篇** | <1m | 快速开启辅助功能与输入监控权限，纯离线安全机制 | [▶ 观看演示 (YouTube)](https://youtu.be/cuT-IoSFiKs) |
+| 🔐 **系统权限配置篇** | <1m | 快速开启辅助功能权限（仅需 1 项权限），纯离线安全机制 | [▶ 观看演示 (YouTube)](https://youtu.be/cuT-IoSFiKs) |
 | ⚙️ **旋钮管理器定制篇** | ~1m | 按 'C' 键调出旋钮管理器，为任意第三方软件深度定制专属行为 | [▶ 观看演示 (YouTube)](https://youtu.be/D_86gxjuMUE) |
 
 > 📺 **完整播放列表**：[在 YouTube 上查看 PhantomKnob 全部实机演示合集](https://www.youtube.com/playlist?list=PLECiz0QykiiE)
@@ -100,11 +100,10 @@ curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.s
 ### 权限配置与启用
 
 > [!IMPORTANT]
-> 首次启动时，macOS 会提示授予两项标准系统权限：
-> 1. **辅助功能 (Accessibility)**：用于识别鼠标指针下方悬停的滑块/输入控件，并合成平滑的旋钮调节事件；
-> 2. **输入监控 (Input Monitoring)**：仅在双指/三指旋转旋钮处于激活状态时生效，专门捕获 <kbd>C</kbd> 键以调出旋钮管理器与功能热键。
+> 首次启动时，macOS 仅需授予 1 项标准系统权限：
+> - **辅助功能 (Accessibility)**：用于识别鼠标指针下方悬停的滑块/输入控件，并合成平滑的旋钮调节事件；旋转时按 <kbd>C</kbd> 键定制亦通过此通道安全完成。
 >
-> **隐私保证**：我们**绝不常驻监听日常打字**，**绝不记录任何键盘日志**，软件全程 100% 本机离线运行。
+> **免除输入监控**：无需授予【输入监控】或【屏幕录制】权限。我们**绝不常驻监听日常打字**，**绝不记录任何键盘日志**，软件全程 100% 本机离线运行。
 
 授予权限后，点击 macOS 菜单栏中的 **PhantomKnob** 图标，或按下全局热键 <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>K</kbd> 即可启用旋钮（图标变绿即表示就绪）。
 
@@ -234,7 +233,7 @@ PhantomKnob 是一个深度调用 macOS 底层能力的极客生产力引擎，�
 ## 🔒 安全与隐私承诺
 
 - **Apple 官方安全公证 (Notarized)**：PhantomKnob 使用苹果官方开发者证书（Developer ID）签名，每个正式版本在发布前均上传至 Apple 官方服务器进行自动化安全扫描与公证，杜绝任何恶意代码。
-- **零按键记录 (Zero Keystroke Logging)**：输入监控权限仅在多指旋转旋钮处于激活状态时用于拦截功能热键与 <kbd>C</kbd> 键。我们绝不常驻监听日常打字，绝不记录任何键入字符与密码。
+- **零按键记录与免输入监控**：PhantomKnob 完全无需开启“输入监控”权限。我们绝不常驻监听日常打字，绝不记录任何键入字符与密码。
 - **100% 本机离线运行**：软件没有任何远程上报服务端，不收集任何用户交互数据，无用户追踪，无账号注册门槛。
 
 ---

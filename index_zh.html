@@ -1011,8 +1011,8 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
               <path d="M114 24l2.2 2.2 4-4.4" stroke="#0d0d0f" stroke-width="1.6" stroke-linecap="round"></path>
             </svg>
           </div>
-          <h3>授予系统权限（辅助功能与输入监控）</h3>
-          <p>macOS 对跨 App 控制管理严格，辅助功能与输入监控是官方标准通道。仅用于读取悬停位置控件、发送调节事件以及在旋转时捕获 'C' 键定制和其它预设热键，绝不常驻监听日常打字，全程纯本机离线运行。</p>
+          <h3>授予系统权限（仅需辅助功能）</h3>
+          <p>macOS 对跨 App 控制管理严格，辅助功能 (Accessibility) 是官方标准唯一通道。仅用于读取悬停位置控件与发送调节事件。无需输入监控、无需屏幕录制，绝不常驻监听日常打字，全程纯本机离线运行。</p>
           <div style="margin-top:14px"><button class="btn btn-demo" id="permissionsDemoBtn" style="height:38px;font-size:0.84rem;padding:0 16px"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg> 观看权限配置演示</button></div>
         </div>
         <div class="step rv in">
@@ -1243,7 +1243,7 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
         </div>
         <div class="qa rv in" data-open="false">
           <button aria-expanded="false">PhantomKnob 需要哪些系统权限？授权安全吗？<span class="pm">+</span></button>
-          <div class="ans" style="max-height: 0px;"><p>为实现流畅的旋钮操作，PhantomKnob 严格仅需两项 macOS 标准系统权限：<br><br><b>1. 辅助功能 (Accessibility):</b> 用于实时识别光标下方可调节的滑块、输入框与数值控件，并合成平滑的旋钮滚动动作。<br><b>2. 输入监控 (Input Monitoring):</b> 仅在<b>双指或三指旋转旋钮处于激活状态时</b>生效，专门用于捕获 <span class="kbd">C</span> 键以唤起旋钮管理器以及拦截热键，其他场合均不启动。<br><br><b>零记录与纯本地承诺:</b> 我们绝不常驻监听日常打字，绝不收集键盘日志，绝不记录任何密码或文本内容。软件完全在本地离线运行，绝不上传您的任何交互数据。<a href="#trust" style="color:var(--amber)">详见“安全与隐私”一节</a>。</p></div>
+          <div class="ans" style="max-height: 0px;"><p>为实现流畅的旋钮操作，PhantomKnob 严格<b>仅需 1 项 macOS 标准系统权限</b>：<br><br><b>辅助功能 (Accessibility):</b> 用于实时识别光标下方可调节的滑块、输入框与数值控件，并合成平滑的旋钮滚动动作。旋转时按 <span class="kbd">C</span> 键定制旋钮亦通过此通道安全完成，<b>完全无需开启“输入监控 (Input Monitoring)”权限</b>，杜绝任何键盘监听担忧。<br><br><b>零记录与纯本地承诺:</b> 我们绝不常驻监听日常打字，绝不收集键盘日志，绝不记录任何密码或文本内容。软件完全在本地离线运行，绝不上传您的任何交互数据。<a href="#trust" style="color:var(--amber)">详见“安全与隐私”一节</a>。</p></div>
         </div>
         <div class="qa rv in" data-open="true">
           <button aria-expanded="true">为什么外环反而速度更慢？<span class="pm">+</span></button>
@@ -1830,8 +1830,8 @@ footer{border-top:1px solid var(--line-soft);padding:0 0 34px}
           externalUrl: "https://youtu.be/3sI8a8UzTcA"
         },
         grant_permissions: {
-          titleZh: "🔐 权限配置篇 · 快速开启辅助功能与输入监控权限（官方通道·纯离线）",
-          titleEn: "🔐 Permissions · Grant Accessibility & Input Monitoring Permissions",
+          titleZh: "🔐 权限配置篇 · 快速开启辅助功能权限（仅需 1 项权限·纯离线）",
+          titleEn: "🔐 Permissions · Grant Accessibility Permission (Single Permission)",
           youtubeId: "cuT-IoSFiKs",
           bvid: "",
           externalUrl: "https://youtu.be/cuT-IoSFiKs"

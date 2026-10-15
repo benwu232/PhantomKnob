@@ -58,7 +58,7 @@ Seeing is believing. Check out these demo clips (~1 minute each) showing tactile
 | ⚡ **System Quick Knob** | ~1m | 3-finger rotation for volume & brightness, Space Warp/Rift HUD animation | [▶ Watch Demo (YouTube)](https://youtu.be/uPkmTkVxn6s) |
 | 🧭 **Daily Applications** | ~1m | QuickTime frame-by-frame shuttle & Safari dual-ring stepless reading | [▶ Watch Demo (YouTube)](https://youtu.be/wlQIVSmAjj0) |
 | 🎬 **Pro Creative Workflow** | ~1.5m | CapCut / Final Cut Pro timeline shuttle & hover-grading text fields | [▶ Watch Demo (YouTube)](https://youtu.be/3sI8a8UzTcA) |
-| 🔐 **Grant Permissions** | <1m | Quick walkthrough of Accessibility and Input Monitoring permissions | [▶ Watch Demo (YouTube)](https://youtu.be/cuT-IoSFiKs) |
+| 🔐 **Grant Permissions** | <1m | Quick walkthrough of Accessibility permission (single permission) | [▶ Watch Demo (YouTube)](https://youtu.be/cuT-IoSFiKs) |
 | ⚙️ **Knob Manager Customization** | ~1m | Press 'C' to open Knob Manager and customize gestures for any app | [▶ Watch Demo (YouTube)](https://youtu.be/D_86gxjuMUE) |
 
 > 📺 **Full Playlist**: [Watch the full PhantomKnob demo playlist on YouTube](https://www.youtube.com/playlist?list=PLECiz0QykiiE)
@@ -101,11 +101,10 @@ curl -fsSL https://raw.githubusercontent.com/benwu232/PhantomKnob/main/install.s
 ### Permissions & Activation
 
 > [!IMPORTANT]
-> Upon initial launch, macOS will request two standard system permissions:
-> 1. **Accessibility**: Required to inspect hover targets (sliders, text inputs) and synthesize smooth rotary scrolling events.
-> 2. **Input Monitoring**: Only active while a 2-finger or 3-finger rotation gesture is engaged, used to capture the <kbd>C</kbd> key for opening the Knob Manager and intercepting hotkeys.
+> Upon initial launch, macOS strictly requests only 1 standard system permission:
+> - **Accessibility**: Required to inspect hover targets (sliders, text inputs), synthesize smooth rotary scrolling events, and capture the <kbd>C</kbd> key for customizing knobs.
 >
-> **Zero Keylogging Guarantee**: We **never** listen to regular typing, **never** record keystroke logs, and the app operates **100% locally and offline**.
+> **No Input Monitoring Required**: You do not need to grant Input Monitoring or Screen Recording permissions. We **never** listen to regular typing, **never** record keystroke logs, and the app operates **100% locally and offline**.
 
 Once permissions are granted, click the menu bar icon or press the global hotkey <kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>K</kbd> to enable knob gestures (the icon will turn green).
 
@@ -235,7 +234,7 @@ Free version provides lifetime core everyday tools & dev environments and 2 cust
 ## 🔒 Security & Privacy Commitments
 
 - **Apple Notarized**: PhantomKnob is signed with an official Apple Developer ID certificate and automatically scanned and notarized by Apple verification servers to ensure it is free from malicious components.
-- **Zero Keystroke Logging**: Input Monitoring permission is exclusively queried while a multi-touch rotary gesture is active to capture hotkeys and the <kbd>C</kbd> customization key. We never record or transmit keystroke logs.
+- **Zero Keystroke Logging & No Input Monitoring**: PhantomKnob does not require Input Monitoring permission. We never record or transmit keystroke logs, running 100% locally.
 - **100% Offline & Local**: No remote telemetry servers, no user accounts required, and zero network tracking.
 
 ---

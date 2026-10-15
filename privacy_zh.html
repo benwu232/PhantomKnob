@@ -47,8 +47,8 @@
             <h2>4. macOS 辅助功能（Accessibility）权限合规</h2>
             <p>Phantom Knob 请求辅助功能权限，严格仅用于窗口焦点探测、识别光标当前悬停的滑块调节组件、以及注入平滑输入滚动事件。</p>
 
-            <h2>5. macOS 输入监控（Input Monitoring）权限合规说明</h2>
-            <p>Phantom Knob 请求 macOS 输入监控权限（kTCCServiceListenEvent），<strong>严格且唯一</strong>用于捕捉“C”键自定义快捷操作，以及在旋钮手势激活期间拦截对应功能热键，防止快捷键泄漏至您的代码编辑器或打字窗口中。<strong>在任何情况下，我们绝不记录、绝不存储、绝不记录日志，也绝不传输任何键盘敲击内容、密码或输入的文本。</strong></p>
+            <h2>5. 免除输入监控（No Input Monitoring）与零键盘监听承诺</h2>
+            <p>Phantom Knob <strong>无需且不请求</strong> macOS 输入监控权限（kTCCServiceListenEvent）。我们在系统底层完全依靠官方辅助功能通道拦截旋钮旋转时的特定自定义热键（如“C”键调出旋钮管理器）。<strong>在任何情况下，我们绝不记录、绝不存储、绝不记录日志，也绝不监听任何键盘日常输入、密码或文本内容。</strong></p>
 
             <h2>6. 政策变更</h2>
             <p>我们可能会根据合规要求或功能迭代更新本隐私政策。任何修订都将在此页面发布，并同步更新“最后更新日期”。</p>
